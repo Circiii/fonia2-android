@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- bg (#F4F6FF) of Fonia 2, so the window behind Compose matches before the first frame. -->
+    <color name="bg">#FFF4F6FF</color>
+    <color name="accent">#FF2F5BFF</color>
+
+    <style name="Theme.Colector" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

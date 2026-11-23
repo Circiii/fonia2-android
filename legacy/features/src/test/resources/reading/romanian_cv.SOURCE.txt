@@ -1,0 +1,9 @@
+romanian_cv.dict: the Romanian pronunciation dictionary of the Montreal Forced Aligner, v2.0.0, unchanged.
+
+Source:  https://github.com/MontrealCorpusTools/mfa-models/tree/main/dictionary/romanian/cv/v2.0.0
+Maker:   VoxCommunis (Ahn E., Chodroff E. 2022, VoxCommunis Corpus, https://osf.io/t957v)
+Licence: CC0 1.0 according to the README; meta.json says "CC BY 4.0", so it is credited here either way.
+SHA-256: 5e4b905dfcfbfb0f59e2c83aa8ae3cd9a6195dc5daf1dacc5618c28300e14687
+
+ReadingContentTests checks that every word of the reading lists in assets/drafts/reading.json is in it. It is test
+data only and is not packaged in the app.

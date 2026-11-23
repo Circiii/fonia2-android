@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Microphone for every exercise, camera for the mouth mirror. No network: Fonia sends and downloads nothing
+         (the models ship in the APK); INTERNET / ACCESS_NETWORK_STATE that libraries (ONNX Runtime, Media3) bring are
+         removed here, and checkDebugOnnxRuntime fails the build if INTERNET is back in the merged manifest. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
+    <!-- enableOnBackInvokedCallback: the back gesture shows the page under the one being closed and the page follows
+         the finger, as the swipe from the edge does on iOS.
+         configChanges: like the iOS app, the screen keeps its state when the theme, the font size or the window
+         change; Compose redraws for the new configuration instead of the activity being rebuilt. -->
+    <application
+        android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.Fonia">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="uiMode|fontScale|density|locale|layoutDirection|keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- onnxruntime-android 1.31 starts Microsoft's 1DS telemetry from this provider at every launch: it loads the
+             runtime, reads android_id, the phone model, locale and time zone, and uploads events over HTTP. A children's
+             app sends nothing to third parties (docs/REGULI.md, 03 §2.3), so the provider is removed; without its Java
+             client the runtime's telemetry has no way out ("Android telemetry is unavailable because the 1DS Java
+             HttpClient was not initialized"), and ZipaModel.load also switches it off. checkDebugOnnxRuntime fails the
+             build if the provider comes back. -->
+        <provider
+            android:name="ai.onnxruntime.TelemetryInitializer"
+            android:authorities="${applicationId}.onnxruntime_telemetry_initializer"
+            tools:node="remove" />
+    </application>
+</manifest>

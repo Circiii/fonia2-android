@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "version": "ciorna-2026-11-06",
+  "status": "ciornă",
+  "approvedBy": null,
+  "notice": "Ciornă: propozițiile sunt scrise pentru Fonia și așteaptă verificarea unui profesor de română, iar cele în engleză, a unui profesor de engleză.",
+  "sources": {
+    "texts": "Propozițiile și întrebările sunt scrise pentru Fonia.",
+    "rule": "Un cuvânt iese în față când trec cel puțin 2 din 3 indici față de cuvintele vecine: e cu 30 % mai lung, cu 3 dB mai tare, cu 2 semitonuri mai sus. Durata și tăria cântăresc de 1,5 ori cât tonul. Praguri de pornire din raportul H (F2), încă necalibrate.",
+    "marks": "Cuvântul de apăsat e între asteriscuri. Întrebarea dinainte arată de ce el e cel important."
+  },
+  "sets": [
+    {
+      "language": "ro",
+      "items": [
+        { "id": "ro-01", "context": "Pleacă trenul mâine?", "text": "Nu, trenul pleacă *azi*." },
+        { "id": "ro-02", "context": "Ai spus verde?", "text": "Am spus *roșu*, nu verde." },
+        { "id": "ro-03", "context": "Maria a adus prăjitura?", "text": "Nu, *Ana* a adus prăjitura." },
+        { "id": "ro-04", "context": "Concertul începe la opt?", "text": "Concertul începe la *șapte*." },
+        { "id": "ro-05", "context": "Vrei un ceai?", "text": "Nu, mulțumesc, vreau doar *apă*." },
+        { "id": "ro-06", "context": "Ați luat premiul al doilea?", "text": "Am luat premiul *întâi*." },
+        { "id": "ro-07", "context": "Câte idei aveți pentru proiect?", "text": "Avem *trei* idei pentru proiect." },
+        { "id": "ro-08", "context": "Ai citit toată cartea?", "text": "Am citit doar *jumătate* din ea." },
+        { "id": "ro-09", "context": "Biblioteca e închisă luni?", "text": "Biblioteca e închisă *duminică*." },
+        { "id": "ro-10", "context": "Mergeți la munte în vacanță?", "text": "Mergem la *mare*, nu la munte." },
+        { "id": "ro-11", "context": "Prezentarea durează zece minute?", "text": "Durează *cinci* minute, nu *zece*." },
+        { "id": "ro-12", "context": "Cine a câștigat meciul?", "text": "Echipa *noastră* a câștigat meciul." },
+        { "id": "ro-13", "context": "Lucrezi singur la proiect?", "text": "Lucrăm *împreună*, toată clasa." },
+        { "id": "ro-14", "context": "Ți-a plăcut filmul?", "text": "Mi-a plăcut *foarte* mult." },
+        { "id": "ro-15", "context": "Ai terminat tema azi?", "text": "Am terminat-o *ieri*, înainte de cină." },
+        { "id": "ro-16", "context": "Ai pus cheile în geantă?", "text": "Le-am pus pe *masă*, lângă ușă." }
+      ]
+    },
+    {
+      "language": "en",
+      "items": [
+        { "id": "en-01", "context": "Did you say Tuesday?", "text": "I said *Thursday*." },
+        { "id": "en-02", "context": "Is the meeting at nine?", "text": "The meeting is at *ten*." },
+        { "id": "en-03", "context": "Did Mark send the report?", "text": "*Anna* sent the report." },
+        { "id": "en-04", "context": "Would you like some coffee?", "text": "I'd like some *tea*, please." },
+        { "id": "en-05", "context": "Was it your idea?", "text": "It was *our* idea." },
+        { "id": "en-06", "context": "Are we leaving tomorrow?", "text": "We're leaving *today*." },
+        { "id": "en-07", "context": "Did you read the whole book?", "text": "I read *half* of it." },
+        { "id": "en-08", "context": "Is the shop closed on Monday?", "text": "It's closed on *Sunday*." },
+        { "id": "en-09", "context": "Is it a five-minute talk?", "text": "It's *fifteen* minutes, not *five*." },
+        { "id": "en-10", "context": "Did you take the bus?", "text": "No, I *walked* to work." }
+      ]
+    }
+  ]
+}

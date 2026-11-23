@@ -1,0 +1,59 @@
+{
+  "sound": "ts",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.ts",
+  "caption": "Limba atinge sus, apoi suflă ca la S.",
+  "steps": [{"icon": "lips", "label": "Zâmbet", "reveals": ["lips"]}, {"icon": "teeth", "label": "Dinții aproape", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba atinge", "reveals": ["tongue"]}],
+  "description": "Pentru Ț: vârful limbii atinge întâi locul din spatele dinților de sus, apoi se desprinde și aerul iese ca la S.",
+  "therapistNote": "Ț: față ca la S. Secțiune animată — (1) ocluzie: vârful/lama lipite de creasta alveolară din spatele incisivilor de sus (inel galben la contact), aerul se adună în spatele limbii; (2) eliberare: limba coboară în poziția de S și aerul iese într-un puf scurt, apoi șir îngust, rece. Fără voce. Verificați locul ocluziei și că eliberarea ajunge exact în poziția de S. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.1,
+    "lipSpread": 0.8,
+    "lipPart": 0.9,
+    "tongueTip": -0.5,
+    "tongueRaise": 0.45,
+    "tongueGroove": 1.0,
+    "tongueForward": 0.15
+  },
+  "animation": {
+    "loopSec": 1.8,
+    "keys": [
+      {
+        "t": 0.0,
+        "spring": "fast",
+        "params": {
+          "tongueTip": 0.5,
+          "tongueRaise": 0.65,
+          "tongueGroove": 0.0,
+          "tongueForward": 0.3
+        }
+      },
+      {
+        "t": 0.55,
+        "spring": "fast"
+      }
+    ]
+  },
+  "flutter": null,
+  "air": {"stream": "narrow", "warm": false, "stop": true},
+  "voiced": false,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

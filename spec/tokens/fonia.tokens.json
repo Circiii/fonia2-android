@@ -1,0 +1,92 @@
+{
+  "$description": "Fonia 2 design tokens, GENERATED from core/designsystem tokens/FoniaTokens.kt by TokensTest. Do not edit.",
+  "color": {
+    "bg": { "$type": "color", "$value": "#F4F6FF", "$description": "the Paper background" },
+    "surface": { "$type": "color", "$value": "#FFFFFF", "$description": "cards, sheets, text on accent, the button on Stage" },
+    "fill": { "$type": "color", "$value": "#E6EEFF", "$description": "fields, progress rail, pressed state, selection | never: accent text on it (4.44:1)" },
+    "separator": { "$type": "color", "$value": "#DFE4F7", "$description": "decorative lines | never: the only outline of a control (1.27:1)" },
+    "inkSecondary": { "$type": "color", "$value": "#5A638A", "$description": "secondary text, field outlines" },
+    "ink": { "$type": "color", "$value": "#131A3A", "$description": "text, icons, plain letters, the Breathe background" },
+    "accent": { "$type": "color", "$value": "#2F5BFF", "$description": "THE main action, selection, progress, the Stage background | never: two filled accent things on one screen" },
+    "accentDeep": { "$type": "color", "$value": "#14228A", "$description": "blue text, pressed, rim of the blue sticker" },
+    "voice": { "$type": "color", "$value": "#FF4F93", "$description": "the child's sound: target sticker edge, listening MicCapsule | never: text; a lone mark on bg (2.87:1)" },
+    "voiceDeep": { "$type": "color", "$value": "#8A1247", "$description": "rim of the pink sticker, text on pink faces | never: 'wrong' or warnings" },
+    "parrot": { "$type": "color", "$value": "#17B55E", "$description": "Foni, confirmed by the adult, the success sticker | never: white text on it (2.69:1); a mark without outline" },
+    "parrotDeep": { "$type": "color", "$value": "#0A5A30", "$description": "green text, rim of the green sticker" },
+    "sun": { "$type": "color", "$value": "#FFD23F", "$description": "stars, celebration, the golden wagon | never: text; an ordinary button background" },
+    "sunDeep": { "$type": "color", "$value": "#9A6200", "$description": "rim of the yellow sticker, text on yellow faces | never: small text on sun (3.53:1)" },
+    "stickerShadow": { "$type": "color", "$value": "#00000033", "$description": "the sticker's own shadow (part of the drawing, not depth)" },
+    "sheetShadow": { "$type": "color", "$value": "#131A3A1F", "$description": "shadow of the rising sheet" },
+    "stickerGloss": { "$type": "color", "$value": "#FFFFFF8C", "$description": "gloss crescent on the sticker face" }
+  },
+  "sticker": {
+    "Voice": { "face": { "$type": "color", "$value": "#FFF6E6", "$description": "face of the Voice sticker" }, "edge": { "$type": "color", "$value": "#FF4F93", "$description": "the child's sound: target sticker edge, listening MicCapsule | never: text; a lone mark on bg (2.87:1)" }, "rim": { "$type": "color", "$value": "#8A1247", "$description": "rim of the pink sticker, text on pink faces | never: 'wrong' or warnings" } },
+    "Parrot": { "face": { "$type": "color", "$value": "#EFFFE0", "$description": "face of the Parrot sticker" }, "edge": { "$type": "color", "$value": "#17B55E", "$description": "Foni, confirmed by the adult, the success sticker | never: white text on it (2.69:1); a mark without outline" }, "rim": { "$type": "color", "$value": "#0A5A30", "$description": "green text, rim of the green sticker" } },
+    "Sun": { "face": { "$type": "color", "$value": "#FFF3B8", "$description": "face of the Sun sticker" }, "edge": { "$type": "color", "$value": "#FFD23F", "$description": "stars, celebration, the golden wagon | never: text; an ordinary button background" }, "rim": { "$type": "color", "$value": "#9A6200", "$description": "rim of the yellow sticker, text on yellow faces | never: small text on sun (3.53:1)" } },
+    "Sky": { "face": { "$type": "color", "$value": "#E6EEFF", "$description": "fields, progress rail, pressed state, selection | never: accent text on it (4.44:1)" }, "edge": { "$type": "color", "$value": "#6C8BFF", "$description": "edge of the Sky sticker" }, "rim": { "$type": "color", "$value": "#14228A", "$description": "blue text, pressed, rim of the blue sticker" } }
+  },
+  "type": {
+    "fontFamily": { "$type": "fontFamily", "$value": "Allo" },
+    "display": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "40sp", "fontWeight": 800, "lineHeight": "44sp", "ROND": 100 }, "$description": "screen titles for the child, END" },
+    "title": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "28sp", "fontWeight": 750, "lineHeight": "34sp", "ROND": 100 }, "$description": "titles" },
+    "title2": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "22sp", "fontWeight": 700, "lineHeight": "28sp", "ROND": 100 }, "$description": "card titles" },
+    "headline": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "18sp", "fontWeight": 650, "lineHeight": "24sp", "ROND": 100 }, "$description": "buttons, rows" },
+    "body": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "17sp", "fontWeight": 500, "lineHeight": "24sp", "ROND": 85 }, "$description": "text" },
+    "label": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "15sp", "fontWeight": 600, "lineHeight": "20sp", "ROND": 85 }, "$description": "labels, chips" },
+    "caption": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "13sp", "fontWeight": 500, "lineHeight": "18sp", "ROND": 85 }, "$description": "notes; nothing below 13 sp" },
+    "practiceWord": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "56sp", "fontWeight": 900, "lineHeight": "64sp", "ROND": 100 }, "$description": "LiveWord (shrinks to 36 sp); plain letters 300" },
+    "practiceLine": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "28sp", "fontWeight": 400, "lineHeight": "38sp", "ROND": 85 }, "$description": "sentences, tongue twisters" },
+    "counter": { "$type": "typography", "$value": { "fontFamily": "Allo", "fontSize": "28sp", "fontWeight": 800, "lineHeight": "32sp", "ROND": 100 }, "$description": "counters, with tnum" },
+    "rondGrown": { "$type": "number", "$value": 30 },
+    "heroLetter": { "$type": "dimension", "$value": "200dp" }
+  },
+  "space": {
+    "xxs": { "$type": "dimension", "$value": "4dp" },
+    "xs": { "$type": "dimension", "$value": "8dp" },
+    "s": { "$type": "dimension", "$value": "12dp" },
+    "m": { "$type": "dimension", "$value": "16dp" },
+    "l": { "$type": "dimension", "$value": "24dp" },
+    "xl": { "$type": "dimension", "$value": "32dp" },
+    "xxl": { "$type": "dimension", "$value": "48dp" },
+    "pageKid": { "$type": "dimension", "$value": "20dp" },
+    "pageGrown": { "$type": "dimension", "$value": "16dp" }
+  },
+  "corner": {
+    "field": { "$type": "dimension", "$value": "8dp" },
+    "chip": { "$type": "dimension", "$value": "12dp" },
+    "card": { "$type": "dimension", "$value": "20dp" },
+    "sheet": { "$type": "dimension", "$value": "28dp" },
+    "button": { "$type": "string", "$value": "capsule" }
+  },
+  "motion": {
+    "bounce": { "$type": "spring", "$value": { "dampingRatio": 0.55, "stiffness": 500 }, "$description": "buttons, syllables, the comma, sticker sticking" },
+    "follow": { "$type": "spring", "$value": { "dampingRatio": 0.95, "stiffness": 400 }, "$description": "everything that follows the voice" },
+    "reward": { "$type": "spring", "$value": { "dampingRatio": 0.45, "stiffness": 400 }, "$description": "POP, Correct; once per screen" },
+    "comma": { "$type": "spring", "$value": { "dampingRatio": 0.5, "stiffness": 400 }, "$description": "the falling comma of Ș/Ț and slot-drop" },
+    "quick": { "$type": "duration", "$value": "140ms" },
+    "standard": { "$type": "duration", "$value": "260ms" },
+    "slow": { "$type": "duration", "$value": "480ms" },
+    "out": { "$type": "cubicBezier", "$value": [0.2, 0.8, 0.3, 1] },
+    "stagger": { "$type": "duration", "$value": "40ms" },
+    "staggerMax": { "$type": "duration", "$value": "320ms" },
+    "particlesMax": { "$type": "number", "$value": 150 },
+    "trembleFps": { "$type": "number", "$value": 8 }
+  },
+  "letter": {
+    "wghtMin": { "$type": "number", "$value": 180 },
+    "wghtMax": { "$type": "number", "$value": 900 },
+    "scaleMin": { "$type": "number", "$value": 0.8 },
+    "scaleMax": { "$type": "number", "$value": 1.3 },
+    "scalePop": { "$type": "number", "$value": 1.7 },
+    "rimMinEm": { "$type": "number", "$value": 0.06 },
+    "rimMaxEm": { "$type": "number", "$value": 0.24 },
+    "edgeMinEm": { "$type": "number", "$value": 0.03 },
+    "edgeMaxEm": { "$type": "number", "$value": 0.12 },
+    "shadowDxEm": { "$type": "number", "$value": 0.03 },
+    "shadowDyEm": { "$type": "number", "$value": 0.09 },
+    "deflateRate": { "$type": "number", "$value": 1.6 },
+    "rondSharp": { "$type": "number", "$value": 10 },
+    "rondRound": { "$type": "number", "$value": 100 },
+    "energyScale": { "$type": "number", "$value": 0.012 }
+  }
+}

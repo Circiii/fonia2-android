@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- CameraFaceTracker opens the front camera, only while the mirror is on screen. No INTERNET: nothing in this
+         module talks to the network (NoNetworkTests). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+    <!-- litert-api declares these for downloading AI packs from Google Play, which Fonia never does (the models ship
+         in the APK). A data-sync foreground service would also need a Play Console declaration. If the app ever needs
+         FOREGROUND_SERVICE itself, it declares it in :app, whose manifest takes precedence. -->
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"
+        tools:node="remove" />
+</manifest>

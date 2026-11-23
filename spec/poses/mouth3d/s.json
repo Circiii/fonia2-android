@@ -1,0 +1,41 @@
+{
+  "sound": "s",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.s",
+  "caption": "Zâmbește, limba jos, după dinți.",
+  "steps": [{"icon": "lips", "label": "Zâmbet", "reveals": ["lips"]}, {"icon": "teeth", "label": "Dinții aproape", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba jos", "reveals": ["tongue"]}],
+  "description": "Pentru S: buzele zâmbesc, dinții sunt aproape lipiți, vârful limbii stă jos, în spatele dinților de jos, iar pe mijlocul limbii e un șănțuleț pentru aer.",
+  "therapistNote": "S: față — zâmbet larg cu colțurile ridicate, incisivii la 1–2 mm (aproape închiși), dinții sus și jos vizibili. Secțiune — vârful limbii jos, pe fața din spate a incisivilor de jos; lama ridicată aproape de creasta alveolară; șanț median îngust (secțiunea arată linia mediană a șanțului). Aer: șir îngust, rece (albastru), pe mijlocul limbii, iese printre incisivi. Fără voce. Verificați distanța lamă–creastă, poziția vârfului și că aerul nu iese lateral. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.1,
+    "lipSpread": 0.8,
+    "lipPart": 0.9,
+    "tongueTip": -0.5,
+    "tongueRaise": 0.45,
+    "tongueGroove": 1.0,
+    "tongueForward": 0.15
+  },
+  "animation": null,
+  "flutter": null,
+  "air": {"stream": "narrow", "warm": false, "stop": false},
+  "voiced": false,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

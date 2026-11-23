@@ -1,0 +1,759 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "twisters": [
+  {
+   "id": "t.1",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "s"
+   ],
+   "text": "Sus pe sanie stă Sami, sub sanie stă un sac.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.1",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.2",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "s"
+   ],
+   "text": "Sosul sare-n supă, supa sare-n sos.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "t.2",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.3",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "s"
+   ],
+   "text": "Sus, sus, sus, sare Sami sus.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 7,
+   "voice": "t.3",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.4",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "s",
+    "ș"
+   ],
+   "text": "Șase sași în șase saci.",
+   "source": "folk",
+   "folkRef": "Traditional Romanian tongue twister (oral folklore), full text. Given after the S-Ș pairs.",
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 7,
+   "voice": "t.4",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.5",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ș"
+   ],
+   "text": "Păpușa Șuși șade-n coș și șoptește: șșș!",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "human-needed",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.6",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ș"
+   ],
+   "text": "Șase șoimi șoptesc și șed pe șine.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 10,
+   "voice": "t.6",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.7",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ș"
+   ],
+   "text": "Știu că știi că știu că știi.",
+   "source": "folk",
+   "folkRef": "Traditional Romanian tongue twister (oral folklore), short form.",
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "7+",
+   "difficulty": 1,
+   "syllables": 7,
+   "voice": "t.7",
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.8",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "z"
+   ],
+   "text": "Zoe și Zizi zăresc zece zâne pe zid.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "t.8",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.9",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "z"
+   ],
+   "text": "Zuzu zice zi de zi: zum, zum, zum!",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 10,
+   "voice": "t.9",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.10",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "z"
+   ],
+   "text": "Zuzu zboară, Zizi zâmbește.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 8,
+   "voice": "t.10",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.11",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "j"
+   ],
+   "text": "Jojo joacă jos un joc cu jeleu.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 10,
+   "voice": "t.11",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.12",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "j"
+   ],
+   "text": "Jana ajunge jos cu-n bagaj bej.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 10,
+   "voice": "t.12",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.13",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "j"
+   ],
+   "text": "Jos, jos, jos, jucăria e jos.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 8,
+   "voice": "t.13",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.14",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ț"
+   ],
+   "text": "Țuțu ține-n lăbuțe un băț și-o ață.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.14",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.15",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ț"
+   ],
+   "text": "Un puiuț, doi puiuți, toți țopăie-n pătuț.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 9,
+   "voice": "t.15",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.16",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ț"
+   ],
+   "text": "Țuțu țopăie, puiuțul țopăie.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 8,
+   "voice": "t.16",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.17",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ce"
+   ],
+   "text": "Cinci pitici cer nuci, cinci nuci cer pitici.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "7+",
+   "difficulty": 2,
+   "syllables": 10,
+   "voice": "t.17",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.18",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ce"
+   ],
+   "text": "Cici face cinci ceaiuri și zice: ce de ceai!",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "human-needed",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.19",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ce"
+   ],
+   "text": "Cinci arici mănâncă nuci.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 7,
+   "voice": "t.19",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.20",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ge"
+   ],
+   "text": "Gigi unge gem pe deget și fuge la geam.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.20",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.21",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ge"
+   ],
+   "text": "Ninge, ninge, Gelu-și pune mingea-n geantă.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.21",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.22",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "ge"
+   ],
+   "text": "Gigi și Gina au gem și mingi.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 8,
+   "voice": "t.22",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.23",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "r"
+   ],
+   "text": "Rada ară, Radu rade, rața râde.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.23",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.24",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "r"
+   ],
+   "text": "Trei tigri trag trei trăsuri.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 1,
+   "syllables": 6,
+   "voice": "t.24",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.25",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "r"
+   ],
+   "text": "Rică râde, racul râde, râul curge.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "t.25",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.26",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "r"
+   ],
+   "text": "Capra calcă piatra, piatra crapă-n patru.",
+   "source": "folk",
+   "folkRef": "Traditional Romanian tongue twister (oral folklore), first line only; the ending (a curse) is left out for children.",
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "7+",
+   "difficulty": 2,
+   "syllables": 12,
+   "voice": "t.26",
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.27",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "l"
+   ],
+   "text": "Leul Lalalu lipește litere pe lună.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 3,
+   "syllables": 13,
+   "voice": "t.27",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.28",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "l"
+   ],
+   "text": "Un balon alb, un val, un cal: la-la-la la bal!",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 3,
+   "syllables": 13,
+   "voice": "human-needed",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.29",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "l"
+   ],
+   "text": "Lalalu cântă la lună: la-la-la.",
+   "source": "original",
+   "folkRef": null,
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "4+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "human-needed",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  },
+  {
+   "id": "t.30",
+   "type": "twister",
+   "rung": "twister",
+   "sounds": [
+    "s",
+    "r",
+    "l"
+   ],
+   "text": "Un vultur stă pe pisc cu un pix în plisc.",
+   "source": "folk",
+   "folkRef": "Traditional Romanian tongue twister (oral folklore), full text. Older children.",
+   "tempos": [
+    "slow",
+    "step"
+   ],
+   "ageBand": "7+",
+   "difficulty": 2,
+   "syllables": 11,
+   "voice": "t.30",
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   }
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirror of FoniaPalette.bg for the window background before Compose draws (checked by NoRawColorsTest). -->
+    <color name="fonia_bg">#FFF4F6FF</color>
+</resources>

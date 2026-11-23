@@ -1,0 +1,178 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "template": {
+  "opening": [
+   0,
+   15
+  ],
+  "warmup": [
+   15,
+   45
+  ],
+  "block1": [
+   50,
+   105
+  ],
+  "move": [
+   105,
+   120
+  ],
+  "block2": [
+   120,
+   170
+  ],
+  "block3": [
+   175,
+   220
+  ],
+  "final": [
+   220,
+   240
+  ],
+  "warmupMaxSeconds": 60,
+  "warmupExercises": 2,
+  "oneMore": {
+   "block": 6,
+   "seconds": 90
+  },
+  "longPauseDays": 7,
+  "surpriseSlot": [
+   4,
+   6
+  ]
+ },
+ "blocks": {
+  "listen": {
+   "block1": null,
+   "block2": 4,
+   "block3": 4
+  },
+  "warmup": {
+   "block1": null,
+   "block2": 2,
+   "block3": 1
+  },
+  "isolated": {
+   "block1": "warmup",
+   "block2": 5,
+   "block3": 5
+  },
+  "syllables": {
+   "block1": "isolated",
+   "block2": 4,
+   "block3": 4
+  },
+  "back": {
+   "block1": "syllables",
+   "block2": 4,
+   "block3": 4
+  },
+  "wordsInitial": {
+   "block1": "syllables",
+   "block2": 9,
+   "block3": 9
+  },
+  "wordsMedial": {
+   "block1": "syllables",
+   "block2": 9,
+   "block3": 9
+  },
+  "wordsFinal": {
+   "block1": "syllables",
+   "block2": 9,
+   "block3": 9
+  },
+  "clusters": {
+   "block1": "syllables",
+   "block2": 9,
+   "block3": 9
+  },
+  "pairs": {
+   "block1": "words",
+   "block2": 3,
+   "block3": 2
+  },
+  "sentences": {
+   "block1": "words",
+   "block2": 3,
+   "block3": 3
+  },
+  "twister": {
+   "block1": "sentences",
+   "block2": 1,
+   "block3": 1
+  },
+  "retell": {
+   "block1": "sentences",
+   "block2": 1,
+   "block3": 1
+  },
+  "everyday": {
+   "block1": "words",
+   "block2": 1,
+   "block3": 3
+  }
+ },
+ "block1Counts": {
+  "warmup": 2,
+  "isolated": 6,
+  "syllables": 4,
+  "words": 6,
+  "sentences": 3
+ },
+ "takes": {
+  "listen": 1,
+  "hold": 1,
+  "syllables": 1,
+  "words": 1,
+  "pairs": 1,
+  "sentence": 1,
+  "twister": 2,
+  "retell": 1,
+  "mission": 1,
+  "warmup": 3
+ },
+ "adaptation": {
+  "targetLow": 0.8,
+  "targetHigh": 0.85,
+  "window": 10,
+  "harderAbove": 0.9,
+  "harderBlocks": 2,
+  "easierBelow": 0.7,
+  "firstSessionNewShare": 0.5,
+  "levels": {
+   "easier": {
+    "holdSeconds": 1.0,
+    "trainLength": 2,
+    "newShare": 0.15,
+    "modelBeforeEach": true,
+    "tempo": "slow"
+   },
+   "steady": {
+    "holdSeconds": 1.5,
+    "trainLength": 3,
+    "newShare": 0.3,
+    "modelBeforeEach": false,
+    "tempo": "step"
+   },
+   "harder": {
+    "holdSeconds": 3.0,
+    "trainLength": 5,
+    "newShare": 0.4,
+    "modelBeforeEach": false,
+    "tempo": "step"
+   }
+  }
+ },
+ "review": {
+  "intervals": [
+   1,
+   2,
+   4,
+   8,
+   16
+  ],
+  "maxPerSession": 3
+ }
+}

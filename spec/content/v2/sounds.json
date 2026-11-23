@@ -1,0 +1,217 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "rungs": [
+  "listen",
+  "warmup",
+  "isolated",
+  "syllables",
+  "back",
+  "wordsInitial",
+  "wordsMedial",
+  "wordsFinal",
+  "clusters",
+  "pairs",
+  "sentences",
+  "twister",
+  "retell",
+  "everyday"
+ ],
+ "sounds": [
+  {
+   "id": "s",
+   "slug": "s",
+   "letter": "S",
+   "file": "sounds/s.json",
+   "hero": "Sâsâilă",
+   "emoji": "🐍",
+   "holdMode": "sustain",
+   "voiced": false,
+   "confusions": [
+    "ș",
+    "z",
+    "ț"
+   ]
+  },
+  {
+   "id": "ș",
+   "slug": "sh",
+   "letter": "Ș",
+   "file": "sounds/sh.json",
+   "hero": "Șușu",
+   "emoji": "🚂",
+   "holdMode": "sustain",
+   "voiced": false,
+   "confusions": [
+    "s",
+    "j"
+   ]
+  },
+  {
+   "id": "z",
+   "slug": "z",
+   "letter": "Z",
+   "file": "sounds/z.json",
+   "hero": "Zuzu",
+   "emoji": "🐝",
+   "holdMode": "sustain",
+   "voiced": true,
+   "confusions": [
+    "s",
+    "j"
+   ]
+  },
+  {
+   "id": "j",
+   "slug": "j",
+   "letter": "J",
+   "file": "sounds/j.json",
+   "hero": "Vâjâilă",
+   "emoji": "🌬️",
+   "holdMode": "sustain",
+   "voiced": true,
+   "confusions": [
+    "z",
+    "ș"
+   ]
+  },
+  {
+   "id": "ț",
+   "slug": "ts",
+   "letter": "Ț",
+   "file": "sounds/ts.json",
+   "hero": "Țuțu",
+   "emoji": "🐭",
+   "holdMode": "burst",
+   "voiced": false,
+   "confusions": [
+    "s",
+    "ce"
+   ]
+  },
+  {
+   "id": "ce",
+   "slug": "ce",
+   "letter": "CE",
+   "file": "sounds/ce.json",
+   "hero": "Cici",
+   "emoji": "💧",
+   "holdMode": "burst",
+   "voiced": false,
+   "confusions": [
+    "ț",
+    "ș",
+    "ge"
+   ]
+  },
+  {
+   "id": "ge",
+   "slug": "ge",
+   "letter": "GE",
+   "file": "sounds/ge.json",
+   "hero": "Gigel",
+   "emoji": "🛵",
+   "holdMode": "burst",
+   "voiced": true,
+   "confusions": [
+    "ce",
+    "z",
+    "j"
+   ]
+  },
+  {
+   "id": "r",
+   "slug": "r",
+   "letter": "R",
+   "file": "sounds/r.json",
+   "hero": "Rică",
+   "emoji": "🐯",
+   "holdMode": "burst",
+   "voiced": true,
+   "confusions": [
+    "l"
+   ]
+  },
+  {
+   "id": "l",
+   "slug": "l",
+   "letter": "L",
+   "file": "sounds/l.json",
+   "hero": "Lalalu",
+   "emoji": "🦁",
+   "holdMode": "sustain",
+   "voiced": true,
+   "confusions": [
+    "r"
+   ]
+  }
+ ],
+ "warmups": [
+  {
+   "id": "burta-balon",
+   "say": "Mâna pe burtă. Umflă balonul, apoi suflă lung."
+  },
+  {
+   "id": "pupic",
+   "say": "Fă gura ca pentru un pupic!"
+  },
+  {
+   "id": "zambet",
+   "say": "Zâmbește cât poți de larg!"
+  },
+  {
+   "id": "zambet-pupic",
+   "say": "Schimbă: zâmbet, pupic, zâmbet, pupic!"
+  },
+  {
+   "id": "hipopotam",
+   "say": "Deschide gura mare, ca un hipopotam!"
+  },
+  {
+   "id": "motorasul-buzelor",
+   "say": "Buze moi. Fă ca motorul: brrr!"
+  },
+  {
+   "id": "calul",
+   "say": "Plescăie cu limba: clop, clop, clop!"
+  },
+  {
+   "id": "catelusul",
+   "say": "Scoate limba și bag-o la loc!"
+  },
+  {
+   "id": "ceasul",
+   "say": "Mută limba dintr-un colț în altul!"
+  },
+  {
+   "id": "cameleon",
+   "say": "Întinde limba spre nas, apoi spre bărbie!"
+  },
+  {
+   "id": "limba-sus-gura",
+   "say": "Deschide gura. Urcă limba după dinții de sus."
+  },
+  {
+   "id": "gat-vibreaza",
+   "say": "Palma pe gât. Spune lung: mmmm."
+  },
+  {
+   "id": "sarpele-lung",
+   "say": "Sâsâie cât mai lung, ca un șarpe."
+  },
+  {
+   "id": "morisca",
+   "say": "Suflă tare în morișcă! Acum încet."
+  },
+  {
+   "id": "periuta",
+   "say": "Limba e periuță. Atinge fiecare dinte."
+  }
+ ],
+ "files": [
+  "twisters.json",
+  "foni_lines.json",
+  "parent.json",
+  "lesson.json"
+ ]
+}

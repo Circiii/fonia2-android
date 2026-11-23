@@ -1,0 +1,2116 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "sound": "z",
+ "slug": "z",
+ "letter": "Z",
+ "graphemes": [
+  "z"
+ ],
+ "hero": {
+  "name": "Zuzu",
+  "who": "albinuța",
+  "emoji": "🐝",
+  "says": "zzzz",
+  "saysVoice": "human-needed",
+  "line": "Albinuța Zuzu zboară din floare în floare: zzzz! Palma pe gât și bâzâie cu ea.",
+  "lineVoice": "human-needed",
+  "chapters": {
+   "listen": {
+    "key": "open.z.listen",
+    "text": "Ascultă bine! Albinuța Zuzu încurcă uneori cuvintele. O prinzi?",
+    "voice": "open.z.listen"
+   },
+   "warmup": {
+    "key": "open.z.warmup",
+    "text": "Înainte de joacă, trezim gura împreună cu Zuzu.",
+    "voice": "open.z.warmup"
+   },
+   "isolated": {
+    "key": "open.z.isolated",
+    "text": "Zuzu bâzâie lung. Bâzâie și tu, cât poți!",
+    "voice": "open.z.isolated"
+   },
+   "syllables": {
+    "key": "open.z.syllables",
+    "text": "Zuzu pune sunetul lângă vocale. Urcă în trenul de silabe!",
+    "voice": "open.z.syllables"
+   },
+   "back": {
+    "key": "open.z.back",
+    "text": "Acum sunetul vine la urmă. Zuzu te așteaptă la capăt.",
+    "voice": "open.z.back"
+   },
+   "wordsInitial": {
+    "key": "open.z.wordsInitial",
+    "text": "Zuzu a pierdut cuvintele care încep cu Z. Le căutăm?",
+    "voice": "open.z.wordsInitial"
+   },
+   "wordsMedial": {
+    "key": "open.z.wordsMedial",
+    "text": "Unele cuvinte ascund Z la mijloc. Le găsim împreună?",
+    "voice": "open.z.wordsMedial"
+   },
+   "wordsFinal": {
+    "key": "open.z.wordsFinal",
+    "text": "Acum Z stă la final. Ține-l până la capăt!",
+    "voice": "open.z.wordsFinal"
+   },
+   "clusters": {
+    "key": "open.z.clusters",
+    "text": "Z are vecini noi, alte consoane. Hai să-i cunoaștem!",
+    "voice": "open.z.clusters"
+   },
+   "pairs": {
+    "key": "open.z.pairs",
+    "text": "Două cuvinte seamănă mult. Zuzu le încurcă. Ajuți?",
+    "voice": "open.z.pairs"
+   },
+   "sentences": {
+    "key": "open.z.sentences",
+    "text": "Zuzu spune povești scurte. Spune-le și tu, cuvânt cu cuvânt.",
+    "voice": "open.z.sentences"
+   },
+   "twister": {
+    "key": "open.z.twister",
+    "text": "O frământare! Întâi rar, ca melcul. Apoi puțin mai repede.",
+    "voice": "open.z.twister"
+   },
+   "retell": {
+    "key": "open.z.retell",
+    "text": "Uite trei poze cu Zuzu. Ce s-a întâmplat?",
+    "voice": "open.z.retell"
+   },
+   "everyday": {
+    "key": "open.z.everyday",
+    "text": "Azi Z vine cu tine acasă. Ai o misiune!",
+    "voice": "open.z.everyday"
+   }
+  }
+ },
+ "voiced": true,
+ "holdMode": "sustain",
+ "typicalByAge": 5,
+ "confusions": [
+  "s",
+  "j"
+ ],
+ "howParent": [
+  "Zâmbet larg, ca la S.",
+  "Vârful limbii jos, în spatele dinților de jos.",
+  "Palma pe gât: trebuie să bâzâie."
+ ],
+ "warmups": [
+  "zambet",
+  "gat-vibreaza",
+  "sarpele-lung",
+  "periuta"
+ ],
+ "rungs": [
+  "listen",
+  "warmup",
+  "isolated",
+  "syllables",
+  "back",
+  "wordsInitial",
+  "wordsMedial",
+  "wordsFinal",
+  "clusters",
+  "pairs",
+  "sentences",
+  "twister",
+  "retell",
+  "everyday"
+ ],
+ "plan": {
+  "wordsInitial": 12,
+  "wordsMedial": 12,
+  "wordsFinal": 9,
+  "clusters": 10
+ },
+ "errors": [
+  {
+   "kind": "omission",
+   "instructionKey": "fb.z.omission",
+   "adultKey": "adult.z.omission"
+  },
+  {
+   "kind": "stopping",
+   "instructionKey": "fb.z.stopping",
+   "adultKey": "adult.z.stopping"
+  },
+  {
+   "kind": "weakOrShort",
+   "instructionKey": "fb.z.weakOrShort",
+   "adultKey": "adult.z.weakOrShort"
+  },
+  {
+   "kind": "devoicing",
+   "instructionKey": "fb.z.devoicing",
+   "adultKey": "adult.z.devoicing"
+  },
+  {
+   "kind": "placeSwap",
+   "instructionKey": "fb.z.placeSwap",
+   "adultKey": "adult.z.placeSwap"
+  },
+  {
+   "kind": "lateral",
+   "instructionKey": "fb.z.lateral",
+   "adultKey": "adult.z.lateral"
+  },
+  {
+   "kind": "interdental",
+   "instructionKey": "fb.z.interdental",
+   "adultKey": "adult.z.interdental"
+  }
+ ],
+ "items": [
+  {
+   "id": "z.l.1",
+   "type": "listen",
+   "rung": "listen",
+   "text": "zână",
+   "foil": "sână",
+   "mimics": "devoicing",
+   "emoji": "🧚",
+   "icon": "zynae",
+   "voice": "w.zynae",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.2",
+   "type": "listen",
+   "rung": "listen",
+   "text": "zid",
+   "foil": "sid",
+   "mimics": "devoicing",
+   "emoji": "🧱",
+   "icon": "zid",
+   "voice": "w.zid",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.3",
+   "type": "listen",
+   "rung": "listen",
+   "text": "vază",
+   "foil": "vasă",
+   "mimics": "devoicing",
+   "emoji": "🏺",
+   "icon": "vazae",
+   "voice": "w.vazae",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.4",
+   "type": "listen",
+   "rung": "listen",
+   "text": "buză",
+   "foil": "bujă",
+   "mimics": "placeSwap",
+   "emoji": "👄",
+   "icon": "buzae",
+   "voice": "w.buzae",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.5",
+   "type": "listen",
+   "rung": "listen",
+   "text": "zece",
+   "foil": "dece",
+   "mimics": "stopping",
+   "emoji": "🔟",
+   "icon": "zece",
+   "voice": "w.zece",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.6",
+   "type": "listen",
+   "rung": "listen",
+   "text": "poză",
+   "foil": "pojă",
+   "mimics": "placeSwap",
+   "emoji": "🖼️",
+   "icon": "pozae",
+   "voice": "w.pozae",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.7",
+   "type": "listen",
+   "rung": "listen",
+   "text": "zâmbet",
+   "foil": "jâmbet",
+   "mimics": "placeSwap",
+   "emoji": "😀",
+   "icon": "zymbet",
+   "voice": "w.zymbet",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.l.8",
+   "type": "listen",
+   "rung": "listen",
+   "text": "muzică",
+   "foil": "mujică",
+   "mimics": "placeSwap",
+   "emoji": "🎵",
+   "icon": "muzicae",
+   "voice": "w.muzicae",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.h.1",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "zzz",
+   "mode": "sustain",
+   "prompt": "Bâzâie lung, ca Zuzu!",
+   "promptVoice": "z.h.1.prompt",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.h.2",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "zzz",
+   "mode": "sustain",
+   "prompt": "Palma pe gât și bâzâie!",
+   "promptVoice": "z.h.2.prompt",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.h.3",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "zzz",
+   "mode": "sustain",
+   "prompt": "Bâzâie până zboară albinuța!",
+   "promptVoice": "z.h.3.prompt",
+   "voice": "human-needed",
+   "difficulty": 3,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.za",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "za",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.zo",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "zo",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.zu",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "zu",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.ze",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "ze",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.zi",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "zi",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.zae",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "ză",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.cv.zy",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "zâ",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.az",
+   "type": "syllable",
+   "rung": "back",
+   "text": "az",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.oz",
+   "type": "syllable",
+   "rung": "back",
+   "text": "oz",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.uz",
+   "type": "syllable",
+   "rung": "back",
+   "text": "uz",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.ez",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ez",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.iz",
+   "type": "syllable",
+   "rung": "back",
+   "text": "iz",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vc.aez",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ăz",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.aza",
+   "type": "syllable",
+   "rung": "back",
+   "text": "aza",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.ozo",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ozo",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.uzu",
+   "type": "syllable",
+   "rung": "back",
+   "text": "uzu",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.eze",
+   "type": "syllable",
+   "rung": "back",
+   "text": "eze",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.izi",
+   "type": "syllable",
+   "rung": "back",
+   "text": "izi",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.y.vcv.aezae",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ăză",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zynae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zână",
+   "pos": "initial",
+   "emoji": "🧚",
+   "icon": "zynae",
+   "voice": "w.zynae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zid",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zid",
+   "pos": "initial",
+   "emoji": "🧱",
+   "icon": "zid",
+   "voice": "w.zid",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zymbet",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zâmbet",
+   "pos": "initial",
+   "emoji": "😀",
+   "icon": "zymbet",
+   "voice": "w.zymbet",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zaepadae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zăpadă",
+   "pos": "initial",
+   "emoji": "❄️",
+   "icon": "zaepadae",
+   "voice": "w.zaepadae",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zece",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zece",
+   "pos": "initial",
+   "emoji": "🔟",
+   "icon": "zece",
+   "voice": "w.zece",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "ce"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zambilae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zambilă",
+   "pos": "initial",
+   "emoji": "🪻",
+   "icon": "zambilae",
+   "voice": "w.zambilae",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zero",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zero",
+   "pos": "initial",
+   "emoji": "0️⃣",
+   "icon": "zero",
+   "voice": "w.zero",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zar",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zar",
+   "pos": "initial",
+   "emoji": "🎲",
+   "icon": "zar",
+   "voice": "w.zar",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.ziar",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ziar",
+   "pos": "initial",
+   "emoji": "📰",
+   "icon": "ziar",
+   "voice": "w.ziar",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zebrae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zebră",
+   "pos": "initial",
+   "emoji": "🦓",
+   "icon": "zebrae",
+   "voice": "w.zebrae",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zahaer",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zahăr",
+   "pos": "initial",
+   "emoji": null,
+   "icon": "zahaer",
+   "voice": "w.zahaer",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wi.zimbru",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "zimbru",
+   "pos": "initial",
+   "emoji": "🦬",
+   "icon": "zimbru",
+   "voice": "w.zimbru",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.vazae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "vază",
+   "pos": "medial",
+   "emoji": "🏺",
+   "icon": "vazae",
+   "voice": "w.vazae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.buzae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "buză",
+   "pos": "medial",
+   "emoji": "👄",
+   "icon": "buzae",
+   "voice": "w.buzae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.pozae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "poză",
+   "pos": "medial",
+   "emoji": "🖼️",
+   "icon": "pozae",
+   "voice": "w.pozae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.cazan",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "cazan",
+   "pos": "medial",
+   "emoji": null,
+   "icon": "cazan",
+   "voice": "w.cazan",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.gazon",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "gazon",
+   "pos": "medial",
+   "emoji": null,
+   "icon": "gazon",
+   "voice": "w.gazon",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.muzicae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "muzică",
+   "pos": "medial",
+   "emoji": "🎵",
+   "icon": "muzicae",
+   "voice": "w.muzicae",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.cozonac",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "cozonac",
+   "pos": "medial",
+   "emoji": "🍞",
+   "icon": "cozonac",
+   "voice": "w.cozonac",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.magazin",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "magazin",
+   "pos": "medial",
+   "emoji": "🏪",
+   "icon": "magazin",
+   "voice": "w.magazin",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.mazaere",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "mazăre",
+   "pos": "medial",
+   "emoji": "🫛",
+   "icon": "mazaere",
+   "voice": "w.mazaere",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.dinozaur",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "dinozaur",
+   "pos": "medial",
+   "emoji": "🦕",
+   "icon": "dinozaur",
+   "voice": "w.dinozaur",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.bluzae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "bluză",
+   "pos": "medial",
+   "emoji": "👚",
+   "icon": "bluzae",
+   "voice": "w.bluzae",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wm.televizor",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "televizor",
+   "pos": "medial",
+   "emoji": "📺",
+   "icon": "televizor",
+   "voice": "w.televizor",
+   "syllables": 4,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "r",
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.ovaez",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "ovăz",
+   "pos": "final",
+   "emoji": "🌾",
+   "icon": "ovaez",
+   "voice": "w.ovaez",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.gaz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "gaz",
+   "pos": "final",
+   "emoji": null,
+   "icon": "gaz",
+   "voice": "w.gaz",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.miez",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "miez",
+   "pos": "final",
+   "emoji": null,
+   "icon": "miez",
+   "voice": "w.miez",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.autobuz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "autobuz",
+   "pos": "final",
+   "emoji": "🚌",
+   "icon": "autobuz",
+   "voice": "w.autobuz",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.roz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "roz",
+   "pos": "final",
+   "emoji": "🩷",
+   "icon": "roz",
+   "voice": "w.roz",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.orez",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "orez",
+   "pos": "final",
+   "emoji": "🍚",
+   "icon": "orez",
+   "voice": "w.orez",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.obraz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "obraz",
+   "pos": "final",
+   "emoji": null,
+   "icon": "obraz",
+   "voice": "w.obraz",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.praz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "praz",
+   "pos": "final",
+   "emoji": null,
+   "icon": "praz",
+   "voice": "w.praz",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wf.troleibuz",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "troleibuz",
+   "pos": "final",
+   "emoji": "🚎",
+   "icon": "troleibuz",
+   "voice": "w.troleibuz",
+   "syllables": 3,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "r",
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.zmeu",
+   "type": "word",
+   "rung": "clusters",
+   "text": "zmeu",
+   "pos": "cluster",
+   "emoji": "🪁",
+   "icon": "zmeu",
+   "voice": "w.zmeu",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.mynz",
+   "type": "word",
+   "rung": "clusters",
+   "text": "mânz",
+   "pos": "cluster",
+   "emoji": "🐎",
+   "icon": "mynz",
+   "voice": "w.mynz",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.ghiozdan",
+   "type": "word",
+   "rung": "clusters",
+   "text": "ghiozdan",
+   "pos": "cluster",
+   "emoji": "🎒",
+   "icon": "ghiozdan",
+   "voice": "w.ghiozdan",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.cizme",
+   "type": "word",
+   "rung": "clusters",
+   "text": "cizme",
+   "pos": "cluster",
+   "emoji": "👢",
+   "icon": "cizme",
+   "voice": "w.cizme",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "ce"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.frunzae",
+   "type": "word",
+   "rung": "clusters",
+   "text": "frunză",
+   "pos": "cluster",
+   "emoji": "🍃",
+   "icon": "frunzae",
+   "voice": "w.frunzae",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.brynzae",
+   "type": "word",
+   "rung": "clusters",
+   "text": "brânză",
+   "pos": "cluster",
+   "emoji": "🧀",
+   "icon": "brynzae",
+   "voice": "w.brynzae",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.varzae",
+   "type": "word",
+   "rung": "clusters",
+   "text": "varză",
+   "pos": "cluster",
+   "emoji": "🥬",
+   "icon": "varzae",
+   "voice": "w.varzae",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.zbor",
+   "type": "word",
+   "rung": "clusters",
+   "text": "zbor",
+   "pos": "cluster",
+   "emoji": "✈️",
+   "icon": "zbor",
+   "voice": "w.zbor",
+   "syllables": 1,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.zmeurae",
+   "type": "word",
+   "rung": "clusters",
+   "text": "zmeură",
+   "pos": "cluster",
+   "emoji": null,
+   "icon": "zmeurae",
+   "voice": "w.zmeurae",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.wc.zgyrie-nori",
+   "type": "word",
+   "rung": "clusters",
+   "text": "zgârie-nori",
+   "pos": "cluster",
+   "emoji": "🏙️",
+   "icon": "zgyrie-nori",
+   "voice": "w.zgyrie-nori",
+   "syllables": 3,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.p.zar-sar",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "zar / sar",
+   "a": "zar",
+   "b": "sar",
+   "contrast": "s",
+   "emojiA": "🎲",
+   "emojiB": "🦘",
+   "voiceA": "w.zar",
+   "voiceB": "w.sar",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.p.vaze-vase",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "vaze / vase",
+   "a": "vaze",
+   "b": "vase",
+   "contrast": "s",
+   "emojiA": "🏺",
+   "emojiB": "🍽️",
+   "voiceA": "w.vaze",
+   "voiceB": "w.vase",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.p.zare-sare",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "zare / sare",
+   "a": "zare",
+   "b": "sare",
+   "contrast": "s",
+   "emojiA": "🌅",
+   "emojiB": "🧂",
+   "voiceA": "w.zare",
+   "voiceB": "w.sare",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.p.zar-jar",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "zar / jar",
+   "a": "zar",
+   "b": "jar",
+   "contrast": "j",
+   "emojiA": "🎲",
+   "emojiB": "🔥",
+   "voiceA": "w.zar",
+   "voiceB": "w.jar",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.p.cozi-coji",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "cozi / coji",
+   "a": "cozi",
+   "b": "coji",
+   "contrast": "j",
+   "emojiA": "🎀",
+   "emojiB": "🥔",
+   "voiceA": "w.cozi",
+   "voiceB": "w.coji",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.1",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Zâna zice bună ziua.",
+   "words": 4,
+   "voice": "z.n.1",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.2",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Vaza e pe zid.",
+   "words": 4,
+   "voice": "z.n.2",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.3",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Zoe vede zece poze.",
+   "words": 4,
+   "voice": "z.n.3",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.4",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "În magazin e muzică.",
+   "words": 4,
+   "voice": "z.n.4",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.5",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Zâna zâmbește în zăpadă.",
+   "words": 4,
+   "voice": "z.n.5",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.6",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Buzele zânei sunt roz.",
+   "words": 4,
+   "voice": "z.n.6",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.n.7",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Zoe ia un cozonac.",
+   "words": 4,
+   "voice": "z.n.7",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.r.1",
+   "type": "story",
+   "rung": "retell",
+   "text": "O zână zboară peste zăpadă. Pe zăpadă găsește un zmeu. Zâna ridică zmeul în vânt.",
+   "pictures": [
+    "🧚",
+    "❄️",
+    "🪁"
+   ],
+   "lines": [
+    "O zână zboară peste zăpadă.",
+    "Pe zăpadă găsește un zmeu.",
+    "Zâna ridică zmeul în vânt."
+   ],
+   "lineVoices": [
+    "z.r.1.1",
+    "z.r.1.2",
+    "z.r.1.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.r.2",
+   "type": "story",
+   "rung": "retell",
+   "text": "Zoe are o vază goală. Pune în vază o zambilă. Vaza stă lângă zid.",
+   "pictures": [
+    "🏺",
+    "🪻",
+    "🧱"
+   ],
+   "lines": [
+    "Zoe are o vază goală.",
+    "Pune în vază o zambilă.",
+    "Vaza stă lângă zid."
+   ],
+   "lineVoices": [
+    "z.r.2.1",
+    "z.r.2.2",
+    "z.r.2.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.r.3",
+   "type": "story",
+   "rung": "retell",
+   "text": "Zoe merge cu autobuzul. Coboară la magazin. Cumpără un cozonac.",
+   "pictures": [
+    "🚌",
+    "🏪",
+    "🍞"
+   ],
+   "lines": [
+    "Zoe merge cu autobuzul.",
+    "Coboară la magazin.",
+    "Cumpără un cozonac."
+   ],
+   "lineVoices": [
+    "z.r.3.1",
+    "z.r.3.2",
+    "z.r.3.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.m.1",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "La prânz: bună ziua!",
+   "voice": "z.m.1",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.m.2",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Numără până la zece.",
+   "voice": "z.m.2",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.m.3",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Vezi o albină? Bâzâie: zzz!",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.m.4",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Găsiți ceva roz în casă.",
+   "voice": "z.m.4",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "z.m.5",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Pe stradă, căutați trecerea de zebră.",
+   "voice": "z.m.5",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  }
+ ]
+}

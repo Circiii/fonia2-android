@@ -1,0 +1,2391 @@
+{
+ "almost_a.mp3": {
+  "role": "almost",
+  "dur": 0.6,
+  "M": -9.6,
+  "tp": 2.0,
+  "z": 2.2,
+  "p_vs_bad": 0.96,
+  "tags": [
+   [
+    "a snare hit",
+    2.4
+   ],
+   [
+    "a success chime",
+    2.2
+   ],
+   [
+    "a triangle hit",
+    2.2
+   ],
+   [
+    "a cat meowing",
+    2.1
+   ]
+  ],
+  "shape": "short swell (attack 185 ms, decays in 295 ms)",
+  "bright_hz": 2685,
+  "flatness": 0.0,
+  "attack_ms": 185.0,
+  "decay_ms": 295.0,
+  "partials": [
+   "Ab5+12",
+   "G5+35",
+   "Ab4+6",
+   "F#5+3"
+  ],
+  "low300_pct": 0.5
+ },
+ "almost_b.mp3": {
+  "role": "almost",
+  "dur": 0.6,
+  "M": -28.0,
+  "tp": -10.0,
+  "z": 3.7,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a kalimba note",
+    3.9
+   ],
+   [
+    "a success chime",
+    3.2
+   ],
+   [
+    "a chat message pop",
+    2.5
+   ],
+   [
+    "a glass ting",
+    2.4
+   ]
+  ],
+  "shape": "busy, 6.7 onsets/s, tonal, pitch ~124 Hz (B2) (attack 0 ms, decays in 327 ms)",
+  "bright_hz": 718,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 327.0,
+  "partials": [
+   "B4+4",
+   "Eb5+1",
+   "E5+6",
+   "F#5+3"
+  ],
+  "low300_pct": 0.0
+ },
+ "end_a.mp3": {
+  "role": "end",
+  "dur": 3.0,
+  "M": -4.9,
+  "tp": 2.9,
+  "z": 2.1,
+  "p_vs_bad": 0.93,
+  "tags": [
+   [
+    "a kalimba note",
+    3.3
+   ],
+   [
+    "a success chime",
+    3.0
+   ],
+   [
+    "a glockenspiel run",
+    2.5
+   ],
+   [
+    "a music box melody",
+    2.4
+   ]
+  ],
+  "shape": "busy, 1.7 onsets/s, tonal, pitch ~132 Hz (C3) (attack 52 ms, decays in 1261 ms)",
+  "bright_hz": 993,
+  "flatness": 0.0,
+  "attack_ms": 52.0,
+  "decay_ms": 1261.0,
+  "partials": [
+   "C5+6",
+   "E6+6",
+   "C6+6",
+   "D6+5"
+  ],
+  "low300_pct": 1.0
+ },
+ "end_b.mp3": {
+  "role": "end",
+  "dur": 2.56,
+  "M": -7.8,
+  "tp": 2.7,
+  "z": 2.6,
+  "p_vs_bad": 0.97,
+  "tags": [
+   [
+    "a success chime",
+    2.8
+   ],
+   [
+    "a notification ding",
+    2.2
+   ],
+   [
+    "a kalimba note",
+    2.0
+   ],
+   [
+    "a magic sparkle chime",
+    1.9
+   ]
+  ],
+  "shape": "2 separate events (attack 99 ms, decays in 827 ms)",
+  "bright_hz": 782,
+  "flatness": 0.0,
+  "attack_ms": 99.0,
+  "decay_ms": 827.0,
+  "partials": [
+   "G4+4",
+   "G5+1",
+   "F4-4",
+   "Ab4-5"
+  ],
+  "low300_pct": 44.6
+ },
+ "end_c.mp3": {
+  "role": "end",
+  "dur": 3.0,
+  "M": -11.8,
+  "tp": 0.5,
+  "z": 1.9,
+  "p_vs_bad": 0.77,
+  "tags": [
+   [
+    "a success chime",
+    3.2
+   ],
+   [
+    "a kalimba note",
+    3.0
+   ],
+   [
+    "a doorbell",
+    2.5
+   ],
+   [
+    "a notification ding",
+    2.4
+   ]
+  ],
+  "shape": "busy, 1.7 onsets/s, tonal, pitch ~132 Hz (C3) (attack 19 ms, decays in 1317 ms)",
+  "bright_hz": 1051,
+  "flatness": 0.0,
+  "attack_ms": 19.0,
+  "decay_ms": 1317.0,
+  "partials": [
+   "G5+4",
+   "C6+6",
+   "E5+17",
+   "C5+16"
+  ],
+  "low300_pct": 4.1
+ },
+ "foni_cheer.mp3": {
+  "role": "foni",
+  "dur": 0.8,
+  "M": -3.9,
+  "tp": 2.2,
+  "z": 2.2,
+  "p_vs_bad": 0.08,
+  "tags": [
+   [
+    "a balloon squeak",
+    3.8
+   ],
+   [
+    "a kettle whistling",
+    3.0
+   ],
+   [
+    "a finger squeaking on glass",
+    2.7
+   ],
+   [
+    "a sustained glass harp tone",
+    2.2
+   ]
+  ],
+  "shape": "short swell (attack 260 ms, decays in 230 ms)",
+  "bright_hz": 4132,
+  "flatness": 0.0,
+  "attack_ms": 260.0,
+  "decay_ms": 230.0,
+  "partials": [
+   "B6+13",
+   "D7-2",
+   "D7-31",
+   "C#7-47"
+  ],
+  "low300_pct": 0.1,
+  "bird_z": 1.1,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.9
+ },
+ "foni_curious.mp3": {
+  "role": "foni",
+  "dur": 0.6,
+  "M": -15.9,
+  "tp": -4.2,
+  "z": 2.1,
+  "p_vs_bad": 0.93,
+  "tags": [
+   [
+    "a balloon squeak",
+    2.8
+   ],
+   [
+    "a finger squeaking on glass",
+    2.7
+   ],
+   [
+    "ice cubes in a glass",
+    2.7
+   ],
+   [
+    "a record scratch",
+    2.6
+   ]
+  ],
+  "shape": "busy, 8.3 onsets/s (attack 15 ms, decays in 478 ms)",
+  "bright_hz": 3521,
+  "flatness": 0.0,
+  "attack_ms": 15.0,
+  "decay_ms": 478.0,
+  "partials": [
+   "F#5-30",
+   "F5-12",
+   "F#7-25",
+   "F#7-43"
+  ],
+  "low300_pct": 0.1,
+  "bird_z": 0.6,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.99
+ },
+ "foni_giggle.mp3": {
+  "role": "foni",
+  "dur": 0.8,
+  "M": -13.7,
+  "tp": -0.1,
+  "z": 2.4,
+  "p_vs_bad": 0.49,
+  "tags": [
+   [
+    "a finger squeaking on glass",
+    3.7
+   ],
+   [
+    "a balloon squeak",
+    3.6
+   ],
+   [
+    "a record scratch",
+    2.7
+   ],
+   [
+    "a sustained glass harp tone",
+    2.5
+   ]
+  ],
+  "shape": "busy, 5.0 onsets/s (attack 285 ms, decays in 52 ms)",
+  "bright_hz": 2711,
+  "flatness": 0.0,
+  "attack_ms": 285.0,
+  "decay_ms": 52.0,
+  "partials": [
+   "B6+37",
+   "C7-23",
+   "C#7+46",
+   "G6+42"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 0.6,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.87
+ },
+ "foni_happy.mp3": {
+  "role": "foni",
+  "dur": 0.6,
+  "M": -7.8,
+  "tp": 1.9,
+  "z": 3.1,
+  "p_vs_bad": 0.9,
+  "tags": [
+   [
+    "a balloon squeak",
+    3.0
+   ],
+   [
+    "a rooster crowing",
+    2.7
+   ],
+   [
+    "a record scratch",
+    2.7
+   ],
+   [
+    "a finger squeaking on glass",
+    2.7
+   ]
+  ],
+  "shape": "busy, 6.7 onsets/s (attack 3 ms, decays in 175 ms)",
+  "bright_hz": 4135,
+  "flatness": 0.0,
+  "attack_ms": 3.0,
+  "decay_ms": 175.0,
+  "partials": [
+   "Ab7-39",
+   "Ab7-15",
+   "G7+34",
+   "G7+3"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 1.5,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.97
+ },
+ "foni_hello.mp3": {
+  "role": "foni",
+  "dur": 0.68,
+  "M": -11.0,
+  "tp": -1.6,
+  "z": 2.8,
+  "p_vs_bad": 0.62,
+  "tags": [
+   [
+    "a balloon squeak",
+    3.2
+   ],
+   [
+    "a finger squeaking on glass",
+    2.9
+   ],
+   [
+    "a doorbell",
+    2.4
+   ],
+   [
+    "a sustained glass harp tone",
+    2.4
+   ]
+  ],
+  "shape": "busy, 5.9 onsets/s (attack 148 ms, decays in 167 ms)",
+  "bright_hz": 2426,
+  "flatness": 0.0,
+  "attack_ms": 148.0,
+  "decay_ms": 167.0,
+  "partials": [
+   "B6-5",
+   "B6-47",
+   "Bb6+24",
+   "B6+24"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 0.7,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.97
+ },
+ "foni_squawk.mp3": {
+  "role": "foni",
+  "dur": 0.48,
+  "M": -13.7,
+  "tp": 2.5,
+  "z": 2.5,
+  "p_vs_bad": 0.92,
+  "tags": [
+   [
+    "a snare hit",
+    2.8
+   ],
+   [
+    "a metal scrape",
+    2.6
+   ],
+   [
+    "a triangle hit",
+    2.5
+   ],
+   [
+    "a rooster crowing",
+    2.4
+   ]
+  ],
+  "shape": "short swell (attack 188 ms, decays in 66 ms)",
+  "bright_hz": 2913,
+  "flatness": 0.0,
+  "attack_ms": 188.0,
+  "decay_ms": 66.0,
+  "partials": [
+   "Bb6+46",
+   "Ab6-21",
+   "Ab6+43",
+   "G6+36"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 0.6,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.95
+ },
+ "foni_surprised.mp3": {
+  "role": "foni",
+  "dur": 0.48,
+  "M": -5.0,
+  "tp": 2.3,
+  "z": 2.5,
+  "p_vs_bad": 0.43,
+  "tags": [
+   [
+    "a balloon squeak",
+    4.1
+   ],
+   [
+    "a kettle whistling",
+    2.9
+   ],
+   [
+    "an explosion",
+    2.9
+   ],
+   [
+    "a record scratch",
+    2.8
+   ]
+  ],
+  "shape": "busy, 10.4 onsets/s (attack 0 ms, decays in 387 ms)",
+  "bright_hz": 3351,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 387.0,
+  "partials": [
+   "E7-0",
+   "E7-32",
+   "E7+22",
+   "F7-11"
+  ],
+  "low300_pct": 0.1,
+  "bird_z": 0.8,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.91
+ },
+ "foni_think.mp3": {
+  "role": "foni",
+  "dur": 0.8,
+  "M": -23.2,
+  "tp": -7.8,
+  "z": 2.6,
+  "p_vs_bad": 0.96,
+  "tags": [
+   [
+    "a record scratch",
+    3.4
+   ],
+   [
+    "a squishy wet squelch",
+    3.2
+   ],
+   [
+    "a quick swipe",
+    2.8
+   ],
+   [
+    "a metal scrape",
+    2.7
+   ]
+  ],
+  "shape": "short one-shot (attack 20 ms, decays in 109 ms)",
+  "bright_hz": 2914,
+  "flatness": 0.0,
+  "attack_ms": 20.0,
+  "decay_ms": 109.0,
+  "partials": [
+   "C7-39",
+   "C#7-9",
+   "C7+6",
+   "B6+36"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 0.5,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.99
+ },
+ "good_a.mp3": {
+  "role": "good",
+  "dur": 1.2,
+  "M": -7.6,
+  "tp": 3.5,
+  "z": 3.0,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a kalimba note",
+    3.7
+   ],
+   [
+    "a success chime",
+    3.0
+   ],
+   [
+    "a doorbell",
+    2.7
+   ],
+   [
+    "an alarm clock beeping",
+    2.5
+   ]
+  ],
+  "shape": "short transient, tonal, pitch ~199 Hz (G3) (attack 0 ms, decays in 410 ms)",
+  "bright_hz": 914,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 410.0,
+  "partials": [
+   "B5+21",
+   "G5+15",
+   "D5+17",
+   "D6+17"
+  ],
+  "low300_pct": 0.1
+ },
+ "good_b.mp3": {
+  "role": "good",
+  "dur": 1.2,
+  "M": -25.8,
+  "tp": -11.5,
+  "z": 2.2,
+  "p_vs_bad": 0.72,
+  "tags": [
+   [
+    "a kalimba note",
+    3.7
+   ],
+   [
+    "a success chime",
+    2.9
+   ],
+   [
+    "a notification ding",
+    2.7
+   ],
+   [
+    "a glass ting",
+    2.5
+   ]
+  ],
+  "shape": "busy, 13.3 onsets/s, tonal, pitch ~88 Hz (F2) (attack 8 ms, decays in 469 ms)",
+  "bright_hz": 729,
+  "flatness": 0.0,
+  "attack_ms": 8.0,
+  "decay_ms": 469.0,
+  "partials": [
+   "A4+1",
+   "C5+1",
+   "F4-3",
+   "F7+27"
+  ],
+  "low300_pct": 0.0
+ },
+ "good_c.mp3": {
+  "role": "good",
+  "dur": 1.0,
+  "M": -10.0,
+  "tp": 1.3,
+  "z": 3.3,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a kalimba note",
+    2.9
+   ],
+   [
+    "a glockenspiel run",
+    2.1
+   ],
+   [
+    "a success chime",
+    2.1
+   ],
+   [
+    "a bubble pop",
+    2.0
+   ]
+  ],
+  "shape": "busy, 5.0 onsets/s (attack 37 ms, decays in 135 ms)",
+  "bright_hz": 1707,
+  "flatness": 0.0,
+  "attack_ms": 37.0,
+  "decay_ms": 135.0,
+  "partials": [
+   "E7+2",
+   "F6+2",
+   "A6+2",
+   "A7-2"
+  ],
+  "low300_pct": 0.0
+ },
+ "levelup_a.mp3": {
+  "role": "levelup",
+  "dur": 1.48,
+  "M": -12.0,
+  "tp": -0.4,
+  "z": 2.4,
+  "p_vs_bad": 0.97,
+  "tags": [
+   [
+    "a kalimba note",
+    2.7
+   ],
+   [
+    "a success chime",
+    2.4
+   ],
+   [
+    "a sustained glass harp tone",
+    2.0
+   ],
+   [
+    "a celesta note",
+    1.9
+   ]
+  ],
+  "shape": "busy, 5.4 onsets/s, tonal, pitch ~66 Hz (C2) (attack 107 ms, decays in 825 ms)",
+  "bright_hz": 858,
+  "flatness": 0.0,
+  "attack_ms": 107.0,
+  "decay_ms": 825.0,
+  "partials": [
+   "E4+1",
+   "A4+2",
+   "C4-5",
+   "G4+3"
+  ],
+  "low300_pct": 16.6
+ },
+ "levelup_b.mp3": {
+  "role": "levelup",
+  "dur": 1.48,
+  "M": -11.6,
+  "tp": 0.9,
+  "z": 2.3,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a success chime",
+    3.1
+   ],
+   [
+    "a magic sparkle chime",
+    2.9
+   ],
+   [
+    "a kalimba note",
+    2.7
+   ],
+   [
+    "a glockenspiel run",
+    2.6
+   ]
+  ],
+  "shape": "busy, 3.4 onsets/s, tonal, pitch ~117 Hz (Bb2) (attack 90 ms, decays in 904 ms)",
+  "bright_hz": 2506,
+  "flatness": 0.0,
+  "attack_ms": 90.0,
+  "decay_ms": 904.0,
+  "partials": [
+   "C6+8",
+   "D6+5",
+   "F6+5",
+   "A5+5"
+  ],
+  "low300_pct": 0.1
+ },
+ "mic_a.mp3": {
+  "role": "mic",
+  "dur": 0.48,
+  "M": -14.0,
+  "tp": 2.8,
+  "z": 2.9,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "ice cubes in a glass",
+    3.1
+   ],
+   [
+    "bubbles underwater",
+    2.8
+   ],
+   [
+    "a liquid bloop",
+    2.5
+   ],
+   [
+    "a kalimba note",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 41 ms, decays in 156 ms)",
+  "bright_hz": 2767,
+  "flatness": 0.0,
+  "attack_ms": 41.0,
+  "decay_ms": 156.0,
+  "partials": [
+   "C7-27",
+   "Ab6+26",
+   "Bb6+48",
+   "B6+32"
+  ],
+  "low300_pct": 0.7
+ },
+ "mic_b.mp3": {
+  "role": "mic",
+  "dur": 0.48,
+  "M": -10.9,
+  "tp": -0.2,
+  "z": 3.4,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "bubbles underwater",
+    3.6
+   ],
+   [
+    "a liquid bloop",
+    3.0
+   ],
+   [
+    "a bubble pop",
+    2.9
+   ],
+   [
+    "a kalimba note",
+    2.5
+   ]
+  ],
+  "shape": "busy, 12.5 onsets/s (attack 129 ms, decays in 187 ms)",
+  "bright_hz": 444,
+  "flatness": 0.0,
+  "attack_ms": 129.0,
+  "decay_ms": 187.0,
+  "partials": [
+   "Eb4+41",
+   "B3+45",
+   "F4+37",
+   "Ab4+33"
+  ],
+  "low300_pct": 64.3
+ },
+ "mirror_a.mp3": {
+  "role": "mirror",
+  "dur": 1.0,
+  "M": -17.7,
+  "tp": -6.8,
+  "z": 0.6,
+  "p_vs_bad": 0.04,
+  "tags": [
+   [
+    "a triangle hit",
+    3.9
+   ],
+   [
+    "a bicycle bell",
+    2.7
+   ],
+   [
+    "a doorbell",
+    2.5
+   ],
+   [
+    "a small bell",
+    2.3
+   ]
+  ],
+  "shape": "busy, 11.0 onsets/s (attack 56 ms, decays in 544 ms)",
+  "bright_hz": 10100,
+  "flatness": 0.0002,
+  "attack_ms": 56.0,
+  "decay_ms": 544.0,
+  "partials": [
+   "C#9-9",
+   "E9-38",
+   "C#9-16",
+   "C#9-1"
+  ],
+  "low300_pct": 0.1
+ },
+ "mirror_b.mp3": {
+  "role": "mirror",
+  "dur": 1.0,
+  "M": -25.1,
+  "tp": -8.5,
+  "z": 1.1,
+  "p_vs_bad": 0.43,
+  "tags": [
+   [
+    "a glockenspiel run",
+    2.9
+   ],
+   [
+    "a kalimba note",
+    2.7
+   ],
+   [
+    "a doorbell",
+    2.7
+   ],
+   [
+    "a triangle hit",
+    2.6
+   ]
+  ],
+  "shape": "busy, 8.0 onsets/s (attack 0 ms, decays in 548 ms)",
+  "bright_hz": 7376,
+  "flatness": 0.0001,
+  "attack_ms": 0.0,
+  "decay_ms": 548.0,
+  "partials": [
+   "A8-12",
+   "Ab6+14",
+   "F7+33",
+   "A8-21"
+  ],
+  "low300_pct": 0.2
+ },
+ "navback_a.mp3": {
+  "role": "navback",
+  "dur": 0.48,
+  "M": -11.7,
+  "tp": 2.4,
+  "z": 0.9,
+  "p_vs_bad": 0.09,
+  "tags": [
+   [
+    "a fast whoosh",
+    3.2
+   ],
+   [
+    "a punchy impact hit",
+    3.0
+   ],
+   [
+    "a snare hit",
+    2.6
+   ],
+   [
+    "a deep cinematic whoosh",
+    2.3
+   ]
+  ],
+  "shape": "short one-shot (attack 76 ms, decays in 160 ms)",
+  "bright_hz": 518,
+  "flatness": 0.0,
+  "attack_ms": 76.0,
+  "decay_ms": 160.0,
+  "partials": [
+   "Eb4+21",
+   "G4-7",
+   "D4-48",
+   "C#5-30"
+  ],
+  "low300_pct": 34.7
+ },
+ "navfwd_a.mp3": {
+  "role": "navfwd",
+  "dur": 0.48,
+  "M": -19.0,
+  "tp": -3.8,
+  "z": -0.7,
+  "p_vs_bad": 0.01,
+  "tags": [
+   [
+    "a triangle hit",
+    4.2
+   ],
+   [
+    "a metal scrape",
+    3.1
+   ],
+   [
+    "a sustained glass harp tone",
+    2.6
+   ],
+   [
+    "a glass ting",
+    2.5
+   ]
+  ],
+  "shape": "busy, 10.4 onsets/s (attack 0 ms, decays in 298 ms)",
+  "bright_hz": 8562,
+  "flatness": 0.0001,
+  "attack_ms": 0.0,
+  "decay_ms": 298.0,
+  "partials": [
+   "F9-4",
+   "F9-37",
+   "G7+32",
+   "F9+42"
+  ],
+  "low300_pct": 0.3
+ },
+ "page_a.mp3": {
+  "role": "page",
+  "dur": 0.48,
+  "M": -15.0,
+  "tp": 1.7,
+  "z": 1.4,
+  "p_vs_bad": 0.74,
+  "tags": [
+   [
+    "a fast whoosh",
+    3.1
+   ],
+   [
+    "a spray can hissing",
+    3.1
+   ],
+   [
+    "a whip pan transition",
+    2.5
+   ],
+   [
+    "a record scratch",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 59 ms, decays in 114 ms)",
+  "bright_hz": 5032,
+  "flatness": 0.0002,
+  "attack_ms": 59.0,
+  "decay_ms": 114.0,
+  "partials": [
+   "A6+28",
+   "A6-15",
+   "Bb6+47",
+   "Ab6+31"
+  ],
+  "low300_pct": 3.6
+ },
+ "pop_a.mp3": {
+  "role": "pop",
+  "dur": 0.6,
+  "M": -11.5,
+  "tp": 2.8,
+  "z": 4.5,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a mouth pop",
+    2.8
+   ],
+   [
+    "a kalimba note",
+    2.6
+   ],
+   [
+    "a rubber stretch",
+    2.4
+   ],
+   [
+    "a fast whoosh",
+    2.3
+   ]
+  ],
+  "shape": "short transient (attack 11 ms, decays in 145 ms)",
+  "bright_hz": 2200,
+  "flatness": 0.0,
+  "attack_ms": 11.0,
+  "decay_ms": 145.0,
+  "partials": [
+   "Eb6+5",
+   "C6-8",
+   "E6+21",
+   "Ab6-13"
+  ],
+  "low300_pct": 0.4
+ },
+ "pop_b.mp3": {
+  "role": "pop",
+  "dur": 0.68,
+  "M": -50.0,
+  "tp": -28.7,
+  "z": 1.2,
+  "p_vs_bad": 0.01,
+  "tags": [
+   [
+    "a kick drum",
+    3.5
+   ],
+   [
+    "a sub bass drop",
+    2.7
+   ],
+   [
+    "a punchy impact hit",
+    2.6
+   ],
+   [
+    "a big drum hit",
+    2.5
+   ]
+  ],
+  "shape": "short transient, tonal, pitch ~159 Hz (Eb3) (attack 4 ms, decays in 267 ms)",
+  "bright_hz": 419,
+  "flatness": 0.0,
+  "attack_ms": 4.0,
+  "decay_ms": 267.0,
+  "partials": [
+   "B3+25",
+   "D5+37",
+   "G4+44",
+   "F6+3"
+  ],
+  "low300_pct": 100.0
+ },
+ "pop_c.mp3": {
+  "role": "pop",
+  "dur": 0.48,
+  "M": -15.7,
+  "tp": 2.6,
+  "z": 5.2,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a mouth pop",
+    4.1
+   ],
+   [
+    "a bubble pop",
+    3.8
+   ],
+   [
+    "a cork pop",
+    3.7
+   ],
+   [
+    "a liquid bloop",
+    3.3
+   ]
+  ],
+  "shape": "short transient (attack 8 ms, decays in 43 ms)",
+  "bright_hz": 726,
+  "flatness": 0.0,
+  "attack_ms": 8.0,
+  "decay_ms": 43.0,
+  "partials": [
+   "E5+42",
+   "D5-2",
+   "Eb5+33",
+   "B4-29"
+  ],
+  "low300_pct": 1.0
+ },
+ "retake_a.mp3": {
+  "role": "retake",
+  "dur": 0.6,
+  "M": -33.4,
+  "tp": -18.9,
+  "z": 2.2,
+  "p_vs_bad": 0.65,
+  "tags": [
+   [
+    "a kalimba note",
+    3.6
+   ],
+   [
+    "an error buzz",
+    2.6
+   ],
+   [
+    "a success chime",
+    2.1
+   ],
+   [
+    "a notification ding",
+    2.1
+   ]
+  ],
+  "shape": "busy, 6.7 onsets/s, tonal, pitch ~98 Hz (G2) (attack 4 ms, decays in 370 ms)",
+  "bright_hz": 457,
+  "flatness": 0.0,
+  "attack_ms": 4.0,
+  "decay_ms": 370.0,
+  "partials": [
+   "D4+0",
+   "G4-1",
+   "A4-2",
+   "F4+1"
+  ],
+  "low300_pct": 44.0
+ },
+ "retake_b.mp3": {
+  "role": "retake",
+  "dur": 0.6,
+  "M": -33.8,
+  "tp": -21.9,
+  "z": 0.6,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a triangle hit",
+    3.5
+   ],
+   [
+    "a glass ting",
+    2.9
+   ],
+   [
+    "a kalimba note",
+    2.4
+   ],
+   [
+    "a wine glass ring",
+    2.4
+   ]
+  ],
+  "shape": "busy, 8.3 onsets/s, tonal, pitch ~1354 Hz (E6) (attack 0 ms, decays in 517 ms)",
+  "bright_hz": 7215,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 517.0,
+  "partials": [
+   "E7+41",
+   "E7+19",
+   "F9+20",
+   "F9+11"
+  ],
+  "low300_pct": 0.2
+ },
+ "star_a.mp3": {
+  "role": "star",
+  "dur": 1.0,
+  "M": -14.9,
+  "tp": -1.2,
+  "z": 1.6,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a triangle hit",
+    3.6
+   ],
+   [
+    "a glass ting",
+    2.8
+   ],
+   [
+    "a sustained glass harp tone",
+    2.7
+   ],
+   [
+    "a small bell",
+    2.7
+   ]
+  ],
+  "shape": "busy, 12.0 onsets/s, tonal, pitch ~125 Hz (B2) (attack 0 ms, decays in 686 ms)",
+  "bright_hz": 3906,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 686.0,
+  "partials": [
+   "B6+19",
+   "C7+20",
+   "E7+20",
+   "D7+16"
+  ],
+  "low300_pct": 0.1
+ },
+ "star_b.mp3": {
+  "role": "star",
+  "dur": 0.88,
+  "M": -21.8,
+  "tp": -8.6,
+  "z": 1.5,
+  "p_vs_bad": 0.92,
+  "tags": [
+   [
+    "a triangle hit",
+    4.4
+   ],
+   [
+    "a glass ting",
+    3.1
+   ],
+   [
+    "a kalimba note",
+    3.1
+   ],
+   [
+    "a doorbell",
+    2.8
+   ]
+  ],
+  "shape": "busy, 12.5 onsets/s, tonal, pitch ~344 Hz (F4) (attack 3 ms, decays in 398 ms)",
+  "bright_hz": 4926,
+  "flatness": 0.0,
+  "attack_ms": 3.0,
+  "decay_ms": 398.0,
+  "partials": [
+   "A6+8",
+   "F6+6",
+   "C9-29",
+   "C9-22"
+  ],
+  "low300_pct": 0.0
+ },
+ "step_a.mp3": {
+  "role": "step",
+  "dur": 0.48,
+  "M": -39.7,
+  "tp": -26.6,
+  "z": 1.0,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a kalimba note",
+    2.9
+   ],
+   [
+    "a glass ting",
+    2.3
+   ],
+   [
+    "a success chime",
+    2.3
+   ],
+   [
+    "a triangle hit",
+    2.3
+   ]
+  ],
+  "shape": "busy, 8.3 onsets/s (attack 12 ms, decays in 296 ms)",
+  "bright_hz": 2073,
+  "flatness": 0.0,
+  "attack_ms": 12.0,
+  "decay_ms": 296.0,
+  "partials": [
+   "Bb6-17",
+   "A6+34",
+   "Bb6+26",
+   "Ab6-4"
+  ],
+  "low300_pct": 0.1
+ },
+ "tap_a.mp3": {
+  "role": "tap",
+  "dur": 0.48,
+  "M": -52.2,
+  "tp": -35.6,
+  "z": 2.3,
+  "p_vs_bad": 0.98,
+  "tags": [
+   [
+    "a kick drum",
+    3.3
+   ],
+   [
+    "a punchy impact hit",
+    2.4
+   ],
+   [
+    "a wooden block hit",
+    2.3
+   ],
+   [
+    "a kalimba note",
+    2.2
+   ]
+  ],
+  "shape": "busy, 8.3 onsets/s (attack 2 ms, decays in 205 ms)",
+  "bright_hz": 730,
+  "flatness": 0.0,
+  "attack_ms": 2.0,
+  "decay_ms": 205.0,
+  "partials": [
+   "G4+35",
+   "B3+25",
+   "D5+37",
+   "F6+3"
+  ],
+  "low300_pct": 99.2
+ },
+ "tap_b.mp3": {
+  "role": "tap",
+  "dur": 0.48,
+  "M": -29.5,
+  "tp": -5.1,
+  "z": 1.5,
+  "p_vs_bad": 0.62,
+  "tags": [
+   [
+    "a can opening",
+    3.2
+   ],
+   [
+    "a toggle switch click",
+    2.5
+   ],
+   [
+    "a soft key release click",
+    2.5
+   ],
+   [
+    "a mouth pop",
+    2.5
+   ]
+  ],
+  "shape": "short one-shot (attack 105 ms, decays in 68 ms)",
+  "bright_hz": 4739,
+  "flatness": 0.0001,
+  "attack_ms": 105.0,
+  "decay_ms": 68.0,
+  "partials": [
+   "Bb6+18",
+   "Bb6-38",
+   "C5-43",
+   "A4+41"
+  ],
+  "low300_pct": 55.6
+ },
+ "unlock_a.mp3": {
+  "role": "unlock",
+  "dur": 1.0,
+  "M": -20.2,
+  "tp": -2.2,
+  "z": 3.5,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a triangle hit",
+    3.1
+   ],
+   [
+    "a bicycle bell",
+    2.8
+   ],
+   [
+    "a glockenspiel run",
+    2.6
+   ],
+   [
+    "a magic sparkle chime",
+    2.5
+   ]
+  ],
+  "shape": "short one-shot (attack 84 ms, decays in 522 ms)",
+  "bright_hz": 5774,
+  "flatness": 0.0001,
+  "attack_ms": 84.0,
+  "decay_ms": 522.0,
+  "partials": [
+   "Bb7-2",
+   "A7+13",
+   "C7+28",
+   "C8+30"
+  ],
+  "low300_pct": 10.5
+ },
+ "star_c.mp3": {
+  "role": "star",
+  "dur": 1.0,
+  "M": -13.5,
+  "tp": -1.9,
+  "z": 2.1,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a triangle hit",
+    3.3
+   ],
+   [
+    "a glockenspiel run",
+    2.7
+   ],
+   [
+    "a doorbell",
+    2.6
+   ],
+   [
+    "a success chime",
+    2.6
+   ]
+  ],
+  "shape": "busy, 5.0 onsets/s (attack 11 ms, decays in 626 ms)",
+  "bright_hz": 4235,
+  "flatness": 0.0,
+  "attack_ms": 11.0,
+  "decay_ms": 626.0,
+  "partials": [
+   "G7+8",
+   "F7+5",
+   "C7+4",
+   "E7+7"
+  ],
+  "low300_pct": 0.1
+ },
+ "star_d.mp3": {
+  "role": "star",
+  "dur": 0.88,
+  "M": -28.3,
+  "tp": -19.2,
+  "z": 1.6,
+  "p_vs_bad": 0.14,
+  "tags": [
+   [
+    "a kalimba note",
+    3.7
+   ],
+   [
+    "a success chime",
+    3.0
+   ],
+   [
+    "a glass ting",
+    2.9
+   ],
+   [
+    "a triangle hit",
+    2.7
+   ]
+  ],
+  "shape": "busy, 13.6 onsets/s, tonal, pitch ~988 Hz (B5) (attack 7 ms, decays in 663 ms)",
+  "bright_hz": 2778,
+  "flatness": 0.0,
+  "attack_ms": 7.0,
+  "decay_ms": 663.0,
+  "partials": [
+   "F#7+1",
+   "B6+0",
+   "F#7-27",
+   "F#7+28"
+  ],
+  "low300_pct": 0.0
+ },
+ "mirror_c.mp3": {
+  "role": "mirror",
+  "dur": 1.0,
+  "M": -26.1,
+  "tp": -15.5,
+  "z": 2.3,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a triangle hit",
+    3.9
+   ],
+   [
+    "a magic sparkle chime",
+    2.9
+   ],
+   [
+    "keys jingling",
+    2.7
+   ],
+   [
+    "a small bell",
+    2.6
+   ]
+  ],
+  "shape": "busy, 9.0 onsets/s (attack 0 ms, decays in 694 ms)",
+  "bright_hz": 7981,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 694.0,
+  "partials": [
+   "B8-8",
+   "D9+2",
+   "G8+15",
+   "G8+6"
+  ],
+  "low300_pct": 0.0
+ },
+ "mirror_d.mp3": {
+  "role": "mirror",
+  "dur": 1.0,
+  "M": -14.4,
+  "tp": -1.3,
+  "z": 0.5,
+  "p_vs_bad": 0.66,
+  "tags": [
+   [
+    "a triangle hit",
+    4.6
+   ],
+   [
+    "a small bell",
+    2.7
+   ],
+   [
+    "a glass ting",
+    2.4
+   ],
+   [
+    "ice cubes in a glass",
+    2.4
+   ]
+  ],
+  "shape": "busy, 10.0 onsets/s (attack 7 ms, decays in 450 ms)",
+  "bright_hz": 7384,
+  "flatness": 0.0,
+  "attack_ms": 7.0,
+  "decay_ms": 450.0,
+  "partials": [
+   "G8+15",
+   "Ab8-1",
+   "B8-42",
+   "Bb7+7"
+  ],
+  "low300_pct": 0.0
+ },
+ "retake_c.mp3": {
+  "role": "retake",
+  "dur": 0.68,
+  "M": -55.0,
+  "tp": -40.9,
+  "z": 2.6,
+  "p_vs_bad": 0.6,
+  "tags": [
+   [
+    "a kalimba note",
+    3.2
+   ],
+   [
+    "an error buzz",
+    2.5
+   ],
+   [
+    "a chat message pop",
+    2.2
+   ],
+   [
+    "a celesta note",
+    2.0
+   ]
+  ],
+  "shape": "busy, 10.3 onsets/s, tonal, pitch ~262 Hz (C4) (attack 0 ms, decays in 404 ms)",
+  "bright_hz": 1556,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 404.0,
+  "partials": [
+   "C4-1",
+   "F4+8",
+   "G4+35",
+   "D4+30"
+  ],
+  "low300_pct": 99.6
+ },
+ "retake_d.mp3": {
+  "role": "retake",
+  "dur": 0.6,
+  "M": -23.9,
+  "tp": 1.4,
+  "z": 0.8,
+  "p_vs_bad": 0.93,
+  "tags": [
+   [
+    "a box lid closing",
+    3.7
+   ],
+   [
+    "a punchy impact hit",
+    3.5
+   ],
+   [
+    "a suction cup pop",
+    2.8
+   ],
+   [
+    "a wooden block hit",
+    2.7
+   ]
+  ],
+  "shape": "short transient (attack 3 ms, decays in 76 ms)",
+  "bright_hz": 2529,
+  "flatness": 0.0,
+  "attack_ms": 3.0,
+  "decay_ms": 76.0,
+  "partials": [
+   "C4+9",
+   "G4+41",
+   "D4-4",
+   "F4+47"
+  ],
+  "low300_pct": 31.6
+ },
+ "page_b.mp3": {
+  "role": "page",
+  "dur": 0.48,
+  "M": -14.8,
+  "tp": -0.7,
+  "z": -0.7,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a snare hit",
+    3.6
+   ],
+   [
+    "a triangle hit",
+    2.6
+   ],
+   [
+    "an error buzz",
+    2.2
+   ],
+   [
+    "a kick drum",
+    1.9
+   ]
+  ],
+  "shape": "short transient (attack 0 ms, decays in 332 ms)",
+  "bright_hz": 6949,
+  "flatness": 0.0003,
+  "attack_ms": 0.0,
+  "decay_ms": 332.0,
+  "partials": [
+   "Ab6-29",
+   "F#7-22",
+   "B8+16",
+   "C#9-47"
+  ],
+  "low300_pct": 0.1
+ },
+ "page_c.mp3": {
+  "role": "page",
+  "dur": 0.48,
+  "M": -10.7,
+  "tp": 0.2,
+  "z": -1.5,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a balloon squeak",
+    2.9
+   ],
+   [
+    "a triangle hit",
+    2.7
+   ],
+   [
+    "a record scratch",
+    2.6
+   ],
+   [
+    "a rubber stretch",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 32 ms, decays in 350 ms)",
+  "bright_hz": 3950,
+  "flatness": 0.0,
+  "attack_ms": 32.0,
+  "decay_ms": 350.0,
+  "partials": [
+   "F#7-42",
+   "F7+7",
+   "F7-27",
+   "F7+29"
+  ],
+  "low300_pct": 0.1
+ },
+ "mic_bblip.wav": {
+  "role": "mic",
+  "dur": 0.118,
+  "M": -21.8,
+  "tp": -1.3,
+  "z": 3.7,
+  "p_vs_bad": 0.96,
+  "tags": [
+   [
+    "an error buzz",
+    3.0
+   ],
+   [
+    "a wooden block hit",
+    3.0
+   ],
+   [
+    "a digital glitch",
+    2.9
+   ],
+   [
+    "a snare hit",
+    2.3
+   ]
+  ],
+  "shape": "short transient, tonal, pitch ~930 Hz (Bb5) (attack 6 ms, decays in 22 ms)",
+  "bright_hz": 1939,
+  "flatness": 0.0,
+  "attack_ms": 6.0,
+  "decay_ms": 22.0,
+  "partials": [
+   "Bb5-16",
+   "Bb6+2",
+   "Bb7+29",
+   "F7+20"
+  ],
+  "low300_pct": 0.0
+ },
+ "mirror_bshim.wav": {
+  "role": "mirror",
+  "dur": 1.2,
+  "M": -9.4,
+  "tp": -1.2,
+  "z": 2.5,
+  "p_vs_bad": 1.0,
+  "tags": [
+   [
+    "a success chime",
+    4.3
+   ],
+   [
+    "a magic sparkle chime",
+    3.6
+   ],
+   [
+    "a triangle hit",
+    2.3
+   ],
+   [
+    "a glockenspiel run",
+    2.3
+   ]
+  ],
+  "shape": "busy, 5.8 onsets/s, tonal, pitch ~131 Hz (C3) (attack 122 ms, decays in 962 ms)",
+  "bright_hz": 3316,
+  "flatness": 0.0011,
+  "attack_ms": 122.0,
+  "decay_ms": 962.0,
+  "partials": [
+   "G6-1",
+   "E6+1",
+   "B6-0",
+   "F7-2"
+  ],
+  "low300_pct": 0.0
+ },
+ "page_bflick.wav": {
+  "role": "page",
+  "dur": 0.32,
+  "M": -21.8,
+  "tp": 0.5,
+  "z": -0.5,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a box lid closing",
+    3.4
+   ],
+   [
+    "a plastic case snapping shut",
+    2.9
+   ],
+   [
+    "a punchy impact hit",
+    2.6
+   ],
+   [
+    "a snare hit",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 29 ms, decays in 55 ms)",
+  "bright_hz": 5454,
+  "flatness": 0.0129,
+  "attack_ms": 29.0,
+  "decay_ms": 55.0,
+  "partials": [
+   "Bb4-45",
+   "Bb5-1",
+   "Eb5+13",
+   "Eb4-20"
+  ],
+  "low300_pct": 4.9
+ },
+ "page_bsoft.wav": {
+  "role": "page",
+  "dur": 0.35,
+  "M": -22.7,
+  "tp": 1.2,
+  "z": -0.2,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a snare hit",
+    4.7
+   ],
+   [
+    "a wooden block hit",
+    4.0
+   ],
+   [
+    "a box lid closing",
+    3.3
+   ],
+   [
+    "a punchy impact hit",
+    3.0
+   ]
+  ],
+  "shape": "short transient (attack 15 ms, decays in 131 ms)",
+  "bright_hz": 1621,
+  "flatness": 0.0,
+  "attack_ms": 15.0,
+  "decay_ms": 131.0,
+  "partials": [
+   "Eb4-28",
+   "F4-10",
+   "F#4+37",
+   "A4+41"
+  ],
+  "low300_pct": 15.9
+ },
+ "star_bup4.wav": {
+  "role": "star",
+  "dur": 0.749,
+  "M": -8.3,
+  "tp": 0.6,
+  "z": 2.9,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a success chime",
+    4.4
+   ],
+   [
+    "a magic sparkle chime",
+    3.2
+   ],
+   [
+    "a notification ding",
+    2.8
+   ],
+   [
+    "a triangle hit",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 116 ms, decays in 303 ms)",
+  "bright_hz": 2845,
+  "flatness": 0.0,
+  "attack_ms": 116.0,
+  "decay_ms": 303.0,
+  "partials": [
+   "D7+0",
+   "A6+0",
+   "E6-0",
+   "Ab8-45"
+  ],
+  "low300_pct": 0.0
+ },
+ "step_bwood.wav": {
+  "role": "step",
+  "dur": 0.161,
+  "M": -18.7,
+  "tp": 1.8,
+  "z": 2.0,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a wooden block hit",
+    3.6
+   ],
+   [
+    "a punchy impact hit",
+    2.7
+   ],
+   [
+    "a single mechanical keyboard key press",
+    2.6
+   ],
+   [
+    "a snare hit",
+    2.4
+   ]
+  ],
+  "shape": "short transient (attack 4 ms, decays in 68 ms)",
+  "bright_hz": 1678,
+  "flatness": 0.0001,
+  "attack_ms": 4.0,
+  "decay_ms": 68.0,
+  "partials": [
+   "G5+4",
+   "Ab5+35",
+   "C6+37",
+   "A5+19"
+  ],
+  "low300_pct": 3.1
+ },
+ "tap_bboop.wav": {
+  "role": "tap",
+  "dur": 0.116,
+  "M": -19.5,
+  "tp": 2.0,
+  "z": 0.5,
+  "p_vs_bad": 0.17,
+  "tags": [
+   [
+    "a kick drum",
+    3.9
+   ],
+   [
+    "a punchy impact hit",
+    3.4
+   ],
+   [
+    "a snare hit",
+    3.1
+   ],
+   [
+    "a wooden block hit",
+    2.8
+   ]
+  ],
+  "shape": "short transient (attack 0 ms, decays in 59 ms)",
+  "bright_hz": 473,
+  "flatness": 0.0,
+  "attack_ms": 0.0,
+  "decay_ms": 59.0,
+  "partials": [
+   "B3+25",
+   "D4-22",
+   "F4-36",
+   "G4+19"
+  ],
+  "low300_pct": 57.8
+ },
+ "tap_bsoft.wav": {
+  "role": "tap",
+  "dur": 0.18,
+  "M": -15.8,
+  "tp": 1.6,
+  "z": 0.4,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "an error buzz",
+    3.2
+   ],
+   [
+    "a snare hit",
+    2.9
+   ],
+   [
+    "a success chime",
+    2.4
+   ],
+   [
+    "a chat message pop",
+    2.2
+   ]
+  ],
+  "shape": "short one-shot, tonal, pitch ~132 Hz (C3) (attack 21 ms, decays in 76 ms)",
+  "bright_hz": 818,
+  "flatness": 0.0,
+  "attack_ms": 21.0,
+  "decay_ms": 76.0,
+  "partials": [
+   "G4+9",
+   "E5+45",
+   "G5+4",
+   "D6+12"
+  ],
+  "low300_pct": 2.2
+ },
+ "tap_bstep.wav": {
+  "role": "tap",
+  "dur": 0.18,
+  "M": -16.4,
+  "tp": 1.9,
+  "z": 0.7,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a snare hit",
+    3.5
+   ],
+   [
+    "an error buzz",
+    2.8
+   ],
+   [
+    "a punchy impact hit",
+    2.6
+   ],
+   [
+    "a cork pop",
+    2.4
+   ]
+  ],
+  "shape": "short one-shot (attack 25 ms, decays in 88 ms)",
+  "bright_hz": 887,
+  "flatness": 0.0,
+  "attack_ms": 25.0,
+  "decay_ms": 88.0,
+  "partials": [
+   "A4+46",
+   "G5-9",
+   "A5+34",
+   "Ab5-45"
+  ],
+  "low300_pct": 2.3
+ },
+ "tap_bthup.wav": {
+  "role": "tap",
+  "dur": 0.099,
+  "M": -19.8,
+  "tp": 2.0,
+  "z": 2.0,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a punchy impact hit",
+    3.9
+   ],
+   [
+    "a kick drum",
+    3.5
+   ],
+   [
+    "a wooden block hit",
+    3.4
+   ],
+   [
+    "a box lid closing",
+    2.7
+   ]
+  ],
+  "shape": "short transient (attack 2 ms, decays in 48 ms)",
+  "bright_hz": 542,
+  "flatness": 0.0,
+  "attack_ms": 2.0,
+  "decay_ms": 48.0,
+  "partials": [
+   "D4-13",
+   "C4-30",
+   "B4+30",
+   "C#6+16"
+  ],
+  "low300_pct": 86.4
+ },
+ "tick_bglock.wav": {
+  "role": "tick",
+  "dur": 0.42,
+  "M": -14.5,
+  "tp": 2.0,
+  "z": 1.7,
+  "p_vs_bad": 0.94,
+  "tags": [
+   [
+    "a glass ting",
+    3.3
+   ],
+   [
+    "a triangle hit",
+    2.9
+   ],
+   [
+    "a wooden block hit",
+    2.9
+   ],
+   [
+    "a kalimba note",
+    2.9
+   ]
+  ],
+  "shape": "busy, 9.5 onsets/s, tonal, pitch ~131 Hz (C3) (attack 8 ms, decays in 225 ms)",
+  "bright_hz": 1486,
+  "flatness": 0.0,
+  "attack_ms": 8.0,
+  "decay_ms": 225.0,
+  "partials": [
+   "C6+0",
+   "C5+6",
+   "F#7-45",
+   "F#6-46"
+  ],
+  "low300_pct": 0.0
+ },
+ "foni_cockatiel.mp3": {
+  "role": "foni",
+  "dur": 0.6,
+  "M": -13.0,
+  "tp": -3.9,
+  "z": 1.3,
+  "p_vs_bad": 0.01,
+  "tags": [
+   [
+    "a balloon squeak",
+    3.1
+   ],
+   [
+    "a finger squeaking on glass",
+    2.7
+   ],
+   [
+    "a record scratch",
+    2.5
+   ],
+   [
+    "a sustained glass harp tone",
+    2.2
+   ]
+  ],
+  "shape": "short swell (attack 190 ms, decays in 94 ms)",
+  "bright_hz": 2603,
+  "flatness": 0.0,
+  "attack_ms": 190.0,
+  "decay_ms": 94.0,
+  "partials": [
+   "C7+4",
+   "C#7-42",
+   "C7+33",
+   "C#7+43"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": -0.3,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.72
+ },
+ "foni_budgie.mp3": {
+  "role": "foni",
+  "dur": 0.8,
+  "M": -16.1,
+  "tp": -3.2,
+  "z": 3.0,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "ice cubes in a glass",
+    3.0
+   ],
+   [
+    "a balloon squeak",
+    2.6
+   ],
+   [
+    "a record scratch",
+    2.6
+   ],
+   [
+    "a finger squeaking on glass",
+    2.5
+   ]
+  ],
+  "shape": "busy, 8.8 onsets/s (attack 143 ms, decays in 145 ms)",
+  "bright_hz": 3307,
+  "flatness": 0.0,
+  "attack_ms": 143.0,
+  "decay_ms": 145.0,
+  "partials": [
+   "Bb6-43",
+   "Eb6+48",
+   "F#6+32",
+   "D6+24"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": 0.8,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.99
+ },
+ "foni_lovebird.mp3": {
+  "role": "foni",
+  "dur": 0.6,
+  "M": -10.8,
+  "tp": 0.2,
+  "z": 1.4,
+  "p_vs_bad": 0.39,
+  "tags": [
+   [
+    "a triangle hit",
+    3.7
+   ],
+   [
+    "ice cubes in a glass",
+    2.9
+   ],
+   [
+    "a glass ting",
+    2.8
+   ],
+   [
+    "a metal scrape",
+    2.6
+   ]
+  ],
+  "shape": "busy, 6.7 onsets/s (attack 5 ms, decays in 225 ms)",
+  "bright_hz": 5467,
+  "flatness": 0.0,
+  "attack_ms": 5.0,
+  "decay_ms": 225.0,
+  "partials": [
+   "Eb8-49",
+   "Eb8-38",
+   "G8-3",
+   "D8+1"
+  ],
+  "low300_pct": 0.0,
+  "bird_z": -0.0,
+  "bird_vs_toy": 0.0,
+  "p_real": 0.94
+ },
+ "page_d.mp3": {
+  "role": "page",
+  "dur": 0.48,
+  "M": -17.0,
+  "tp": 0.4,
+  "z": -0.6,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "an error buzz",
+    3.1
+   ],
+   [
+    "a snare hit",
+    3.0
+   ],
+   [
+    "a digital glitch",
+    2.8
+   ],
+   [
+    "a record scratch",
+    2.1
+   ]
+  ],
+  "shape": "short one-shot (attack 84 ms, decays in 185 ms)",
+  "bright_hz": 2668,
+  "flatness": 0.0001,
+  "attack_ms": 84.0,
+  "decay_ms": 185.0,
+  "partials": [
+   "D6+32",
+   "A4+9",
+   "E5-2",
+   "A5+39"
+  ],
+  "low300_pct": 23.4
+ },
+ "page_e.mp3": {
+  "role": "page",
+  "dur": 0.48,
+  "M": -22.2,
+  "tp": 2.6,
+  "z": 1.1,
+  "p_vs_bad": 0.02,
+  "tags": [
+   [
+    "a punchy impact hit",
+    2.9
+   ],
+   [
+    "an apple falling on grass",
+    2.5
+   ],
+   [
+    "a kick drum",
+    2.5
+   ],
+   [
+    "a body falling on the ground",
+    2.2
+   ]
+  ],
+  "shape": "short one-shot (attack 27 ms, decays in 110 ms)",
+  "bright_hz": 1452,
+  "flatness": 0.0,
+  "attack_ms": 27.0,
+  "decay_ms": 110.0,
+  "partials": [
+   "C4-30",
+   "B9-8",
+   "D4-4",
+   "F#4+40"
+  ],
+  "low300_pct": 99.3
+ },
+ "tap_c.mp3": {
+  "role": "tap",
+  "dur": 0.48,
+  "M": -33.0,
+  "tp": -9.4,
+  "z": 1.9,
+  "p_vs_bad": 0.99,
+  "tags": [
+   [
+    "a mouth pop",
+    4.0
+   ],
+   [
+    "a liquid bloop",
+    3.9
+   ],
+   [
+    "a water drop",
+    3.5
+   ],
+   [
+    "a bubble pop",
+    3.4
+   ]
+  ],
+  "shape": "short transient (attack 4 ms, decays in 30 ms)",
+  "bright_hz": 2605,
+  "flatness": 0.0,
+  "attack_ms": 4.0,
+  "decay_ms": 30.0,
+  "partials": [
+   "F#5+33",
+   "Ab5-50",
+   "C#5+5",
+   "Eb5-11"
+  ],
+  "low300_pct": 0.2
+ },
+ "tap_d.mp3": {
+  "role": "tap",
+  "dur": 0.48,
+  "M": -27.0,
+  "tp": -14.7,
+  "z": 1.3,
+  "p_vs_bad": 0.0,
+  "tags": [
+   [
+    "a sub bass drop",
+    3.5
+   ],
+   [
+    "a kick drum",
+    3.3
+   ],
+   [
+    "an error buzz",
+    3.2
+   ],
+   [
+    "a punchy impact hit",
+    2.5
+   ]
+  ],
+  "shape": "short transient, tonal, pitch ~105 Hz (Ab2) (attack 7 ms, decays in 370 ms)",
+  "bright_hz": 160,
+  "flatness": 0.0,
+  "attack_ms": 7.0,
+  "decay_ms": 370.0,
+  "partials": [
+   "B3+30",
+   "D4+13",
+   "G4+35",
+   "F4-21"
+  ],
+  "low300_pct": 100.0
+ }
+}

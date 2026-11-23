@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- :platform:camera's debug recording tool writes face landmarks to a file: not in the Fonia app, even in debug
+         (docs/v2/04 §11: no landmark is ever written). It stays in :platform:camera's own debug builds. -->
+    <application>
+        <activity android:name="tech.fonia.facecamera.FaceRecorderActivity" tools:node="remove" />
+    </application>
+</manifest>

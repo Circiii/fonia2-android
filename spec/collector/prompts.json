@@ -1,0 +1,236 @@
+{
+  "version": "colector-rostiri-1",
+  "note": "Liste originale, scrise pentru Fonia Colector (nu din vreo carte). Elemente 'baza>imitatie'; fara '>' imitatia nu se poate scrie si se urmeaza indicatia.",
+  "packs": [
+    { "id": "A", "title": "Pachetul A", "sounds": ["s", "ș", "z", "j"] },
+    { "id": "B", "title": "Pachetul B", "sounds": ["r", "l"] },
+    { "id": "C", "title": "Pachetul C", "sounds": ["ț", "ce", "ge"] }
+  ],
+  "sounds": [
+    {
+      "sound": "s", "key": "s", "letter": "S",
+      "isolated": { "text": "sss", "hint": "prelung, cât o respirație scurtă" },
+      "syllables": ["sa", "so", "su", "se", "si", "as"],
+      "initial": ["sare", "soare", "supă"],
+      "medial": ["masă", "casă", "pisică"],
+      "final": ["nas", "os", "ananas"],
+      "sentences": ["Pisica stă pe masă.", "Sara pune sare în supă."],
+      "child": [
+        { "text": "soare", "position": "initial", "pic": "☀️" },
+        { "text": "supă", "position": "initial", "pic": "🍲" },
+        { "text": "pisică", "position": "medial", "pic": "🐱" },
+        { "text": "casă", "position": "medial", "pic": "🏠" },
+        { "text": "nas", "position": "final", "pic": "👃" },
+        { "text": "os", "position": "final", "pic": "🦴" }
+      ],
+      "errors": [
+        { "kind": "PlaceSwap", "heardAs": "ș", "wave": 1, "hint": "cu Ș în loc de S", "items": ["sa>șa", "so>șo", "sare>șare", "masă>mașă", "nas>naș"] },
+        { "kind": "Stopping", "heardAs": "t", "wave": 1, "hint": "cu T în loc de S", "items": ["sa>ta", "so>to", "sare>tare", "masă>mată", "nas>nat"] },
+        { "kind": "Omission", "wave": 1, "hint": "fără sunetul S", "items": ["sa>a", "so>o", "sare>are", "masă>maă", "nas>na"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu S foarte scurt și încet, de o clipă", "items": ["sa", "so", "sare", "masă", "nas"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (S lateral)", "items": ["sa", "so", "sare", "masă", "nas"] },
+        { "kind": "Interdental", "wave": 3, "therapistOnly": true, "hint": "cu limba între dinți", "items": ["sa", "so", "sare", "masă", "nas"] }
+      ]
+    },
+    {
+      "sound": "ș", "key": "sh", "letter": "Ș",
+      "isolated": { "text": "șșș", "hint": "prelung, cu buzele rotunde" },
+      "syllables": ["șa", "șo", "șu", "șe", "și", "aș"],
+      "initial": ["șase", "șoarece", "șosete"],
+      "medial": ["mașină", "ușă", "păpușă"],
+      "final": ["coș", "cocoș", "moș"],
+      "sentences": ["Păpușa are o mașină mică.", "Un cocoș mic e pe acoperiș."],
+      "child": [
+        { "text": "șoarece", "position": "initial", "pic": "🐭" },
+        { "text": "șosete", "position": "initial", "pic": "🧦" },
+        { "text": "mașină", "position": "medial", "pic": "🚗" },
+        { "text": "ușă", "position": "medial", "pic": "🚪" },
+        { "text": "cocoș", "position": "final", "pic": "🐓" },
+        { "text": "coș", "position": "final", "pic": "🧺" }
+      ],
+      "errors": [
+        { "kind": "PlaceSwap", "heardAs": "s", "wave": 1, "hint": "cu S în loc de Ș", "items": ["șa>sa", "șo>so", "șase>sase", "mașină>masină", "coș>cos"] },
+        { "kind": "Stopping", "heardAs": "t", "wave": 2, "hint": "cu T în loc de Ș", "items": ["șa>ta", "șo>to", "șase>tase", "mașină>matină", "coș>cot"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul Ș", "items": ["șa>a", "șo>o", "șase>ase", "mașină>maină", "coș>co"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu Ș foarte scurt și încet, de o clipă", "items": ["șa", "șo", "șase", "mașină", "coș"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (Ș lateral)", "items": ["șa", "șo", "șase", "mașină", "coș"] },
+        { "kind": "Interdental", "wave": 3, "therapistOnly": true, "hint": "cu limba între dinți", "items": ["șa", "șo", "șase", "mașină", "coș"] }
+      ]
+    },
+    {
+      "sound": "z", "key": "z", "letter": "Z",
+      "isolated": { "text": "zzz", "hint": "prelung, ca o albină" },
+      "syllables": ["za", "zo", "zu", "ze", "zi", "az"],
+      "initial": ["zână", "zebră", "zahăr"],
+      "medial": ["vază", "buză", "frunză"],
+      "final": ["orez", "autobuz", "obraz"],
+      "sentences": ["Zâna are o vază albă.", "Ana pune orez pe farfurie."],
+      "child": [
+        { "text": "zână", "position": "initial", "pic": "🧚" },
+        { "text": "zebră", "position": "initial", "pic": "🦓" },
+        { "text": "buză", "position": "medial", "pic": "👄" },
+        { "text": "frunză", "position": "medial", "pic": "🍃" },
+        { "text": "orez", "position": "final", "pic": "🍚" },
+        { "text": "autobuz", "position": "final", "pic": "🚌" }
+      ],
+      "errors": [
+        { "kind": "Devoicing", "heardAs": "s", "wave": 1, "hint": "fără voce, cu S în loc de Z", "items": ["za>sa", "zo>so", "zână>sână", "vază>vasă", "zebră>sebră"] },
+        { "kind": "PlaceSwap", "heardAs": "j", "wave": 2, "hint": "cu J în loc de Z", "items": ["za>ja", "zo>jo", "zână>jână", "vază>vajă", "orez>orej"] },
+        { "kind": "Stopping", "heardAs": "d", "wave": 2, "hint": "cu D în loc de Z", "items": ["za>da", "zo>do", "zână>dână", "vază>vadă", "orez>ored"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul Z", "items": ["za>a", "zo>o", "zână>ână", "vază>vaă", "orez>ore"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu Z foarte scurt și încet, de o clipă", "items": ["za", "zo", "zână", "vază", "orez"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (Z lateral)", "items": ["za", "zo", "zână", "vază", "orez"] },
+        { "kind": "Interdental", "wave": 3, "therapistOnly": true, "hint": "cu limba între dinți", "items": ["za", "zo", "zână", "vază", "orez"] }
+      ]
+    },
+    {
+      "sound": "j", "key": "j", "letter": "J",
+      "isolated": { "text": "jjj", "hint": "prelung, cu buzele rotunde și cu voce" },
+      "syllables": ["ja", "jo", "ju", "je", "ji", "aj"],
+      "initial": ["joc", "jucărie", "jeleu"],
+      "medial": ["pijama", "prăjitură", "vrăjitor"],
+      "final": ["garaj", "bagaj", "curaj"],
+      "sentences": ["Jucăria e pe jos.", "Bunicul pune bagajul în garaj."],
+      "child": [
+        { "text": "jucărie", "position": "initial", "pic": "🧸" },
+        { "text": "jaguar", "position": "initial", "pic": "🐆" },
+        { "text": "prăjitură", "position": "medial", "pic": "🍰" },
+        { "text": "vrăjitor", "position": "medial", "pic": "🧙" },
+        { "text": "bagaj", "position": "final", "pic": "🧳" },
+        { "text": "garaj", "position": "final", "pic": "🚗" }
+      ],
+      "errors": [
+        { "kind": "Devoicing", "heardAs": "ș", "wave": 1, "hint": "fără voce, cu Ș în loc de J", "items": ["ja>șa", "jo>șo", "joc>șoc", "pijama>pișama", "jeleu>șeleu"] },
+        { "kind": "PlaceSwap", "heardAs": "z", "wave": 2, "hint": "cu Z în loc de J", "items": ["ja>za", "jo>zo", "joc>zoc", "pijama>pizama", "garaj>garaz"] },
+        { "kind": "Stopping", "heardAs": "d", "wave": 2, "hint": "cu D în loc de J", "items": ["ja>da", "jo>do", "joc>doc", "pijama>pidama", "garaj>garad"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul J", "items": ["ja>a", "jo>o", "joc>oc", "pijama>piama", "garaj>gara"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu J foarte scurt și încet, de o clipă", "items": ["ja", "jo", "joc", "pijama", "garaj"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (J lateral)", "items": ["ja", "jo", "joc", "pijama", "garaj"] },
+        { "kind": "Interdental", "wave": 3, "therapistOnly": true, "hint": "cu limba între dinți", "items": ["ja", "jo", "joc", "pijama", "garaj"] }
+      ]
+    },
+    {
+      "sound": "r", "key": "r", "letter": "R",
+      "isolated": { "text": "rrr", "hint": "vârful limbii vibrează sus" },
+      "syllables": ["ra", "ro", "ru", "re", "ri", "ar"],
+      "initial": ["rac", "roată", "rochie"],
+      "medial": ["pară", "mare", "barcă"],
+      "final": ["nor", "măr", "covor"],
+      "sentences": ["Racul are o roată.", "Pe mare e un nor."],
+      "child": [
+        { "text": "rochie", "position": "initial", "pic": "👗" },
+        { "text": "rac", "position": "initial", "pic": "🦞" },
+        { "text": "pară", "position": "medial", "pic": "🍐" },
+        { "text": "barcă", "position": "medial", "pic": "⛵" },
+        { "text": "măr", "position": "final", "pic": "🍎" },
+        { "text": "nor", "position": "final", "pic": "☁️" }
+      ],
+      "errors": [
+        { "kind": "RtoL", "heardAs": "l", "wave": 1, "hint": "cu L în loc de R", "items": ["ra>la", "ro>lo", "rac>lac", "pară>pală", "nor>nol"] },
+        { "kind": "RtoGlide", "heardAs": "i", "wave": 2, "hint": "cu un I scurt în loc de R", "items": ["ra>ia", "ro>io", "rac>iac", "pară>paia", "nor>noi"] },
+        { "kind": "RtoVowel", "heardAs": "î", "wave": 2, "hint": "cu o vocală scurtă (Î sau Ă) în loc de R, fără ca limba să atingă sus", "items": ["ra", "ro", "rac", "pară", "nor"] },
+        { "kind": "RUvular", "heardAs": "ʁ", "wave": 2, "hint": "cu R din gât, ca în franceză", "items": ["ra", "ro", "rac", "pară", "nor"] },
+        { "kind": "Omission", "wave": 1, "hint": "fără sunetul R", "items": ["ra>a", "ro>o", "rac>ac", "pară>paă", "nor>no"] }
+      ]
+    },
+    {
+      "sound": "l", "key": "l", "letter": "L",
+      "isolated": { "text": "lll", "hint": "vârful limbii lipit sus, după dinți" },
+      "syllables": ["la", "lo", "lu", "le", "li", "al"],
+      "initial": ["lac", "lună", "lapte"],
+      "medial": ["balon", "pilot", "cămilă"],
+      "final": ["cal", "bol", "fotbal"],
+      "sentences": ["Lupul bea lapte.", "Calul are un balon."],
+      "child": [
+        { "text": "lună", "position": "initial", "pic": "🌙" },
+        { "text": "lapte", "position": "initial", "pic": "🥛" },
+        { "text": "balon", "position": "medial", "pic": "🎈" },
+        { "text": "cămilă", "position": "medial", "pic": "🐫" },
+        { "text": "cal", "position": "final", "pic": "🐴" },
+        { "text": "fotbal", "position": "final", "pic": "⚽" }
+      ],
+      "errors": [
+        { "kind": "LtoGlide", "heardAs": "i", "wave": 2, "hint": "cu un I scurt în loc de L", "items": ["la>ia", "lo>io", "lună>iună", "balon>baion", "cal>cai"] },
+        { "kind": "LtoGlide", "heardAs": "u", "wave": 2, "hint": "cu un U scurt în loc de L", "items": ["la>ua", "lo>uo", "lună>uună", "balon>bauon", "cal>cau"] },
+        { "kind": "LtoR", "heardAs": "r", "wave": 2, "hint": "cu R în loc de L", "items": ["la>ra", "lo>ro", "lună>rună", "balon>baron", "cal>car"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul L", "items": ["la>a", "lo>o", "lună>ună", "balon>baon", "cal>ca"] }
+      ]
+    },
+    {
+      "sound": "ț", "key": "ts", "letter": "Ț",
+      "isolated": { "text": "ț", "hint": "doar sunetul, scurt" },
+      "syllables": ["ța", "țo", "țu", "țe", "ți", "aț"],
+      "initial": ["țap", "țurțur", "țânțar"],
+      "medial": ["rață", "fetiță", "brățară"],
+      "final": ["căluț", "pătuț", "drăguț"],
+      "sentences": ["Fetița are un căluț.", "Țapul e lângă rață."],
+      "child": [
+        { "text": "țap", "position": "initial", "pic": "🐐" },
+        { "text": "țânțar", "position": "initial", "pic": "🦟" },
+        { "text": "rață", "position": "medial", "pic": "🦆" },
+        { "text": "fetiță", "position": "medial", "pic": "👧" },
+        { "text": "căluț", "position": "final", "pic": "🐴" },
+        { "text": "pătuț", "position": "final", "pic": "🛏️" }
+      ],
+      "errors": [
+        { "kind": "Deaffrication", "heardAs": "s", "wave": 2, "hint": "doar cu șuieratul, S în loc de Ț", "items": ["ța>sa", "țo>so", "țap>sap", "rață>rasă", "căluț>călus"] },
+        { "kind": "Stopping", "heardAs": "t", "wave": 2, "hint": "cu T în loc de Ț", "items": ["ța>ta", "țo>to", "țap>tap", "rață>rată", "căluț>călut"] },
+        { "kind": "AffricatePlace", "heardAs": "ce", "wave": 2, "hint": "cu CE în loc de Ț", "items": ["ța>cea", "țo>cio", "țap>ceap", "țurțur>ciurțur", "căluț>căluci"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul Ț", "items": ["ța>a", "țo>o", "țap>ap", "rață>raă", "căluț>călu"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu Ț foarte slab, abia atins", "items": ["ța", "țo", "țap", "rață", "căluț"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (Ț lateral)", "items": ["ța", "țo", "țap", "rață", "căluț"] },
+        { "kind": "Interdental", "wave": 3, "therapistOnly": true, "hint": "cu limba între dinți", "items": ["ța", "țo", "țap", "rață", "căluț"] }
+      ]
+    },
+    {
+      "sound": "ce", "key": "ce", "letter": "CE",
+      "isolated": { "text": "ce", "hint": "doar sunetul de la începutul lui „ceas”, scurt" },
+      "syllables": ["ce", "ci", "cea", "cio", "ciu", "ici"],
+      "initial": ["ceas", "ceapă", "ciorap"],
+      "medial": ["dulce", "vecin", "bicicletă"],
+      "final": ["arici", "nuci", "melci"],
+      "sentences": ["Ariciul are cinci nuci.", "Vecinul are un ceas."],
+      "child": [
+        { "text": "ceas", "position": "initial", "pic": "⌚" },
+        { "text": "ceapă", "position": "initial", "pic": "🧅" },
+        { "text": "bicicletă", "position": "medial", "pic": "🚲" },
+        { "text": "rinocer", "position": "medial", "pic": "🦏" },
+        { "text": "arici", "position": "final", "pic": "🦔" },
+        { "text": "melci", "position": "final", "pic": "🐌" }
+      ],
+      "errors": [
+        { "kind": "Deaffrication", "heardAs": "ș", "wave": 2, "hint": "doar cu șuieratul, Ș în loc de CE", "items": ["ce>șe", "ci>și", "ceas>șas", "dulce>dulșe", "arici>ariș"] },
+        { "kind": "Stopping", "heardAs": "t", "wave": 2, "hint": "cu T în loc de CE", "items": ["ce>te", "ci>ti", "ceas>tas", "dulce>dulte", "arici>arit"] },
+        { "kind": "AffricatePlace", "heardAs": "ț", "wave": 2, "hint": "cu Ț în loc de CE", "items": ["ce>țe", "ci>ți", "ceas>țas", "dulce>dulțe", "arici>ariț"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul CE", "items": ["ce>e", "ci>i", "ceas>as", "dulce>dule", "arici>ari"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu CE foarte slab, abia atins", "items": ["ce", "ci", "ceas", "dulce", "arici"] },
+        { "kind": "Lateral", "wave": 3, "therapistOnly": true, "hint": "cu aerul ieșind pe lângă măsele (CE lateral)", "items": ["ce", "ci", "ceas", "dulce", "arici"] }
+      ]
+    },
+    {
+      "sound": "ge", "key": "ge", "letter": "GE",
+      "isolated": { "text": "ge", "hint": "doar sunetul de la începutul lui „geantă”, scurt" },
+      "syllables": ["ge", "gi", "gea", "gio", "giu", "agi"],
+      "initial": ["geantă", "girafă", "gem"],
+      "medial": ["pagină", "frigider", "înger"],
+      "final": ["covrigi", "fulgi", "colegi"],
+      "sentences": ["Girafa are o geantă.", "Mama pune gem pe covrigi."],
+      "child": [
+        { "text": "girafă", "position": "initial", "pic": "🦒" },
+        { "text": "geantă", "position": "initial", "pic": "👜" },
+        { "text": "înger", "position": "medial", "pic": "👼" },
+        { "text": "pagină", "position": "medial", "pic": "📄" },
+        { "text": "covrigi", "position": "final", "pic": "🥨" },
+        { "text": "fulgi", "position": "final", "pic": "❄️" }
+      ],
+      "errors": [
+        { "kind": "Devoicing", "heardAs": "ce", "wave": 2, "hint": "fără voce, cu CE în loc de GE", "items": ["ge>ce", "gi>ci", "geantă>ceantă", "pagină>pacină", "covrigi>covrici"] },
+        { "kind": "Deaffrication", "heardAs": "j", "wave": 2, "hint": "doar cu șuieratul, J în loc de GE", "items": ["ge>je", "gi>ji", "geantă>jantă", "pagină>pajină", "covrigi>covrij"] },
+        { "kind": "AffricatePlace", "heardAs": "z", "wave": 2, "hint": "cu Z în loc de GE", "items": ["ge>ze", "gi>zi", "geantă>zantă", "pagină>pazină", "covrigi>covriz"] },
+        { "kind": "Stopping", "heardAs": "d", "wave": 2, "hint": "cu D în loc de GE", "items": ["ge>de", "gi>di", "geantă>dantă", "pagină>padină", "covrigi>covrid"] },
+        { "kind": "Omission", "wave": 2, "hint": "fără sunetul GE", "items": ["ge>e", "gi>i", "geantă>antă", "pagină>paină", "covrigi>covri"] },
+        { "kind": "WeakOrShort", "wave": 1, "hint": "cu GE foarte slab, abia atins", "items": ["ge", "gi", "geantă", "pagină", "covrigi"] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+# Model texts with no recorded clip. Regenerate with: python3 tools/missing_clips.py
+# Each line: language voices | text | where it is used
+# Texts: 256
+# Clips to record: 361
+en en | COMfortable | english stress
+en en | Can I pay by card? | english pin-bin, sentence
+en en | Feel free to fill it in. | english ship-sheep, sentence; english melody, Toate la un loc
+en en | I left my bag on the bed. | english bad-bed, sentence
+en en | I said Tuesday, not Thursday. | english melody, Cuvântul important
+en en | I think it's on the third floor. | english th, sentence; english melody, Toate la un loc
+en en | Let's check the plan again. | english bad-bed, sentence
+en en | My family lives near the hospital. | english stress, sentence; english schwa, sentence
+en en | My shirt is too short. | english work-walk, sentence; english melody, Toate la un loc
+en en | Thank you for everything. | english th, sentence
+en en | That's an interesting problem. | english stress, sentence; english schwa, sentence
+en en | The price is fine, but it's the wrong size. | english bed-bet, sentence
+en en | We visit them every weekend. | english w-v, sentence
+en en,en2,en3,en4 | Luke | english full-fool
+en en,en2,en3,en4 | ban | english cut-cat
+en en,en2,en3,en4 | bug | english cut-cat
+en en,en2,en3,en4 | bun | english cut-cat
+en en,en2,en3,en4 | cap | english cut-cat
+en en,en2,en3,en4 | cat | english cut-cat
+en en,en2,en3,en4 | cooed | english full-fool
+en en,en2,en3,en4 | could | english full-fool
+en en,en2,en3,en4 | cup | english cut-cat
+en en,en2,en3,en4 | cut | english cut-cat
+en en,en2,en3,en4 | fan | english cut-cat
+en en,en2,en3,en4 | fool | english full-fool
+en en,en2,en3,en4 | four | english work-walk
+en en,en2,en3,en4 | full | english full-fool
+en en,en2,en3,en4 | fun | english cut-cat
+en en,en2,en3,en4 | fur | english work-walk
+en en,en2,en3,en4 | hat | english cut-cat
+en en,en2,en3,en4 | hood | english full-fool
+en en,en2,en3,en4 | hut | english cut-cat
+en en,en2,en3,en4 | look | english full-fool
+en en,en2,en3,en4 | mad | english cut-cat
+en en,en2,en3,en4 | mud | english cut-cat
+en en,en2,en3,en4 | pool | english full-fool
+en en,en2,en3,en4 | pull | english full-fool
+en en,en2,en3,en4 | ran | english cut-cat
+en en,en2,en3,en4 | run | english cut-cat
+en en,en2,en3,en4 | shooed | english full-fool
+en en,en2,en3,en4 | should | english full-fool
+en en,en2,en3,en4 | soot | english full-fool
+en en,en2,en3,en4 | suit | english full-fool
+en en,en2,en3,en4 | vow | english w-v
+en en,en2,en3,en4 | who'd | english full-fool
+en en,en2,en3,en4 | wood | english full-fool
+en en,en2,en3,en4 | wooed | english full-fool
+en en,en2,en3,en4 | wow | english w-v
+ro ro | Acum Sâsâilă spune propoziții întregi, fără să se oprească. Spune-le și tu! | sound s, chapter sentences
+ro ro | Acum Zuzu zboară printre cuvinte mai grele: zmeu, cizme, zebră. Bâzâie pe rând. | sound z, chapter clusters
+ro ro | Acum apa curge pe frunze, până jos: aci, eci, ici. | sound ce, chapter back
+ro ro | Acum cântecul merge de-a-ndoaselea: al, el, il. Leul râde și cântă cu tine. | sound l, chapter back
+ro ro | Acum rotițele se învârt invers: aț, eț, iț. Țuțu le ascultă. | sound ț, chapter back
+ro ro | Acum se joacă de-a v-ați ascunselea: aj, ej, ij. Sunetul fuge la coadă. | sound j, chapter back
+ro ro | Acum sss-ul se ascunde la coadă: as, es, is. Ca vârful cozii lui Sâsâilă! | sound s, chapter back
+ro ro | Acum sss-ul stă la mijloc, ca Sâsâilă încolăcit în iarbă. Îl găsești? | sound s, chapter wordsMedial
+ro ro | Acum trenul merge cu spatele: aș, eș, iș. Șușu chicotește. | sound ș, chapter back
+ro ro | Acum vin cuvinte cu r lipit de alte sunete: tractor, frunză. Mergi încet. | sound r, chapter clusters
+ro ro | Acum vin cuvinte mai grele: lanț, munți. | sound ț, chapter clusters
+ro ro | Acum vin cuvinte mai grele: înger, fulgere, geantă. Gigel merge încet. | sound ge, chapter clusters
+ro ro | Acum Șușu merge repede, cu propoziții întregi. Ține-te bine! | sound ș, chapter sentences
+ro ro | Albinuța Zuzu e răcită. Bâzâitul ei a ajuns mic, mic de tot. | sound z, chapter meet
+ro ro | Albinuța Zuzu zboară din floare în floare: zzzz! Pune palma pe gât și bâzâie cu ea. | sound z, hero; sound z, retell
+ro ro | Altă bucată stă la mijloc, ca dungile tigrului. Caută r-ul în cuvinte. | sound r, chapter wordsMedial
+ro ro | Am ajuns! Spune-le tuturor ce am văzut pe drum. | sound ș, chapter retell
+ro ro | Am o singură rugăminte: ascultați până la capăt, apoi decideți. | diction, pauses
+ro ro | Am învățat și eu: ssss! Azi, sss-ul vine cu tine la masă și la somn. | sound s, chapter everyday
+ro ro | Ariciul are cinci cireșe. | sound ce, retell
+ro ro | Ariciul culege cireșe, cinci câte cinci. | sound ce, twister
+ro ro | Ariciul îi dă una. | sound ce, retell
+ro ro | Azi avem trei vești. Prima e bună, a doua e mai bună, iar a treia vă surprinde. | diction, pauses
+ro ro | Balonul zboară la lună. | sound l, retell
+ro ro | Bâzâitul lui Zuzu se întoarce încet, de la coadă: az, ez, iz. | sound z, chapter back
+ro ro | Ca să mârâie, tigrii își încălzesc limba. Facem și noi, ca Rică. | sound r, chapter warmup
+ro ro | Ca să sufle mai tare, Vâjâilă face gimnastică. Facem și noi, cu buzele. | sound j, chapter warmup
+ro ro | Ca să urce în ceas, Țuțu se încălzește. Încălzim și noi gura. | sound ț, chapter warmup
+ro ro | Ceasul bate acum singur. Ascultă ț-ul peste zi: puțin, mulțumesc, dinți. | sound ț, chapter everyday
+ro ro | Ceasul merge iar: ț-ț-ț! Spune cu Țuțu propoziții întregi. | sound ț, chapter sentences
+ro ro | Ceasul pornește încet. Fiecare cuvânt cu ț la început e o bătaie. | sound ț, chapter wordsInitial
+ro ro | Ceasul tresare când aude: ța, țe, ți. Spune-le cu Țuțu. | sound ț, chapter syllables
+ro ro | Cici caută cuvintele cu ci ascuns la mijloc, ca apa în pământ. | sound ce, chapter wordsMedial
+ro ro | Cici se odihnește lângă cireș. Tu caută ci peste zi. Cinci, ceai, „ce faci?” | sound ce, chapter everyday
+ro ro | Cici își face încălzirea înainte de udat. Facem și noi gimnastica gurii. | sound ce, chapter warmup
+ro ro | Cireșul a înflorit! Spune cu Cici propoziții pline de ci. | sound ce, chapter sentences
+ro ro | Cireșul are cireșe! Povestește-le prietenilor cum a crescut. | sound ce, chapter retell
+ro ro | Cireșul bea apă: cea, ce, ci. Mai stropește o dată cu Cici. | sound ce, chapter syllables
+ro ro | Cocoșul îl vede și cântă. | sound ș, retell
+ro ro | Când Zuzu e răcită, „zar” se aude „sar”. Ascultă perechile și pornește vocea. | sound z, chapter pairs
+ro ro | Cântecul e aproape gata. Îi lipsesc versurile: propoziții întregi cu L. | sound l, chapter sentences
+ro ro | Cântăreții își încălzesc gura înainte de concert. Facem și noi, ca Lalalu. | sound l, chapter warmup
+ro ro | Din tot cântecul, Lalalu mai știe doar atât: llll. Cântă-l cu el! | sound l, chapter isolated
+ro ro | Diseară e concertul! Spune-mi tu povestea leului. Eu o încurc mereu. | sound l, chapter retell
+ro ro | Eu am bâzâit „bzz” și am zburat drept în geam! Arată-i lui Zuzu: za, ze, zi. | sound z, chapter syllables
+ro ro | Eu am cerut „țeapă” la salată, nu „ceapă”! Ascultă bine perechile. | sound ce, chapter pairs
+ro ro | Eu am cântat „mia-mia”, ca o pisică! Arată-mi cum cântă leul: la, le, li. | sound l, chapter syllables
+ro ro | Eu am cântat „rac” în loc de „lac” și au fugit peștii! Ascultă bine. | sound l, chapter pairs
+ro ro | Eu am făcut „tic-tic” și motorul a tușit. Tu fă scurt, cu voce: gi-gi-gi! | sound ge, chapter isolated
+ro ro | Eu am strigat „cos” în loc de „coș”. Am oprit la croitor! Ascultă bine. | sound ș, chapter pairs
+ro ro | Eu am strigat „cucu!” și ceasul tot nu merge. Tu fă scurt: ț-ț-ț! | sound ț, chapter isolated
+ro ro | Eu am suflat „ffff” și mi-au zburat penele! Arată-i lui Vâjâilă: jjjj. | sound j, chapter isolated
+ro ro | Eu am zis „e cer” în loc de „e ger”. Am uitat fularul! Ascultă perechea. | sound ge, chapter pairs
+ro ro | Eu am zis „lac” în loc de „rac”, și racul s-a mirat! Ascultă perechile. | sound r, chapter pairs
+ro ro | Eu am zis „sap” în loc de „țap” și țapul s-a mirat! Ascultă perechile. | sound ț, chapter pairs
+ro ro | Eu am zis „șoc” în loc de „joc”. Nu s-a mai jucat nimeni! Ascultă diferența. | sound j, chapter pairs
+ro ro | Eu am încercat și a ieșit „pleosc!”, ca o găleată. Tu stropește scurt: ci-ci-ci! | sound ce, chapter isolated
+ro ro | Eu am încercat și am fluierat: fiuuu! Arată-mi tu cum sună: ssss. | sound s, chapter isolated
+ro ro | Eu am încercat și mi-a ieșit „miau”! Arată-i tu lui Rică: r, r, r. | sound r, chapter isolated
+ro ro | Eu încurc sss cu șșș și sun ca un tren! Ascultă perechile cu Sâsâilă. | sound s, chapter pairs
+ro ro | Fetița are un ursuleț, un căluț și un pătuț. | sound ț, twister
+ro ro | Fetița are un ursuleț. | sound ț, sentence
+ro ro | Gigel iese cu spatele din garaj: agi, egi, igi. | sound ge, chapter back
+ro ro | Gigel oprește la castel. Regina vrea cuvinte cu gi la mijloc. | sound ge, chapter wordsMedial
+ro ro | Gigel se odihnește în garaj. Tu ia gi-ul cu tine. La geam, cu geanta, la gem. | sound ge, chapter everyday
+ro ro | Gigel se uită pe geam. | sound ge, sentence
+ro ro | Gigel și Gina se uită pe geam: e ger! | sound ge, twister
+ro ro | Girafa mănâncă în fugă. | sound ge, retell
+ro ro | Jaguarul aleargă și o ia de jos. | sound j, retell
+ro ro | Jaguarul are o jucărie. | sound j, retell
+ro ro | Jeni se joacă jos cu jucăriile, lângă garaj. | sound j, twister
+ro ro | Jucăria e pe plajă. | sound j, retell
+ro ro | Jumătate de jeleu e jos, jos e jumătate de jeleu. | sound j, twister
+ro ro | La capătul cuvântului, Zuzu se odihnește. Bâzâie acolo: autobuz, orez! | sound z, chapter wordsFinal
+ro ro | La capătul cuvântului, sss-ul e scurt, ca o codiță. Nas, os, ananas! | sound s, chapter wordsFinal
+ro ro | La fiecare stație urcă un cuvânt nou. Toate pornesc cu șșș. | sound ș, chapter wordsInitial
+ro ro | Lalalu adună cuvinte pentru cântec. Toate încep cu L, ca numele lui. | sound l, chapter wordsInitial
+ro ro | Lalalu cântă acum la lac, în fiecare seară. Cântă și tu: la baie, la plimbare. | sound l, chapter everyday
+ro ro | Leul Lalalu cântă cu limba sus: la-la-la! Cântă și tu cu el. | sound l, hero; sound l, retell
+ro ro | Leul Lalalu vrea să cânte diseară, la lac. Dar a uitat cântecul! | sound l, chapter meet
+ro ro | Leul cântă: la-la-la! | sound l, retell
+ro ro | Mai vreau puțin. | sound ț, sentence
+ro ro | Mașina are o ușă mică. | sound ș, retell
+ro ro | Mi-a plăcut să exersăm împreună. Pa-pa! | end of session, goodbye
+ro ro | Motorașul Gigel duce covrigi prin oraș. Azi nu vrea să pornească! | sound ge, chapter meet
+ro ro | Motorașul Gigel pornește: gi-gi-gi! Pune palma pe gât și pornește-l și tu. | sound ge, hero; sound ge, retell
+ro ro | Motorul merge ca uns. Spune cu Gigel propoziții întregi. | sound ge, chapter sentences
+ro ro | Motorul prinde viteză: gea, ge, gi. Spune-le cu Gigel. | sound ge, chapter syllables
+ro ro | Mulțumesc că ați venit. Astăzi vă spun trei lucruri simple. | diction, pace
+ro ro | Mârâitul se întoarce în bucățele: ra, re, ri. Spune-le cu Rică. | sound r, chapter syllables
+ro ro | Mă joc cu jucăriile mele. | sound j, sentence
+ro ro | Ne jucăm pe plajă. | sound j, sentence
+ro ro | Noi încălzim gura, Gigel își încălzește motorul. Gata de drum? | sound ge, chapter warmup
+ro ro | O bucată s-a ascuns la coadă: ar, er, ir. Rică dă din coadă! | sound r, chapter back
+ro ro | Pe cireș apar muguri. Fiecare cuvânt care începe cu ci e un mugur nou. | sound ce, chapter wordsInitial
+ro ro | Pe drum, Gigel își vede colegii. Cuvintele se termină cu gi: covrigi, fulgi. | sound ge, chapter wordsFinal
+ro ro | Pe plajă, vântul găsește cuvinte mai grele: plajă, vrăjitoare. Spune-le rar. | sound j, chapter clusters
+ro ro | Pisica sare pe sanie. | sound s, retell
+ro ro | Prima stație e aproape: șa, șe, și. Spune-le, ca să oprim acolo. | sound ș, chapter syllables
+ro ro | Primul client e o girafă! Cuvintele de azi încep cu gi. | sound ge, chapter wordsInitial
+ro ro | Pune palma pe gât și bâzâie: zzzz. Zuzu ascultă cum gâdilă. | sound z, chapter isolated
+ro ro | Rața are un pătuț mic. | sound ț, retell
+ro ro | Rața merge la râu. | sound r, retell
+ro ro | Rața îl alungă cu o aripă. | sound ț, retell
+ro ro | Rața și racul râd. | sound r, retell
+ro ro | Rică mârâie acum prin junglă. Tu ia r-ul cu tine. În parc, la masă, în mașină. | sound r, chapter everyday
+ro ro | Rică mârâie iar: rrr! Spune cu el propoziții. Apoi, frământări de limbă. | sound r, chapter sentences
+ro ro | Rică ridică roșii rotunde de pe raft. | sound r, twister
+ro ro | Rică vrea să le spună tuturor cum și-a găsit mârâitul. Spune-o tu. | sound r, chapter retell
+ro ro | Rică își găsește r-ul la începutul cuvintelor. Ajută-l: rac, roată, rață! | sound r, chapter wordsInitial
+ro ro | Sanda are o sanie. | sound s, retell
+ro ro | Sania se oprește lângă casă. | sound s, retell
+ro ro | Sara sare sus, Sanda sare sus, sus sar surorile. | sound s, twister
+ro ro | Stropitoarea Cici are grijă de un cireș mic. Azi e tare însetat. | sound ce, chapter meet
+ro ro | Stropitoarea Cici udă florile: ci-ci-ci! Stropește și tu, scurt, ca ea. | sound ce, hero; sound ce, retell
+ro ro | Sub cireș au venit musafiri: un arici, niște nuci. Cuvinte cu ci la capăt! | sound ce, chapter wordsFinal
+ro ro | Supa e sărată. | sound s, sentence
+ro ro | Sâsâilă alunecă prin iarbă: sssss. Hai, sâsâie și tu cu el! | sound s, hero; sound s, retell
+ro ro | Sâsâilă pune sss-ul lângă alte sunete: sa, se, si. Spune-le cu el. | sound s, chapter syllables
+ro ro | Sâsâilă vrea să audă povestea lui, spusă de tine. Eu sigur o încurc. | sound s, chapter retell
+ro ro | Sâsâilă vrea să mă învețe să sâsâi, dar eu sunt papagal! Ascultă-l tu întâi. | sound s, chapter meet
+ro ro | Sâsâilă zice că sss-ul pornește de la un zâmbet. Hai să încălzim gura! | sound s, chapter warmup
+ro ro | Sâsâilă îmi arată cuvinte care pornesc cu sss. Tu le spui, eu ascult. | sound s, chapter wordsInitial
+ro ro | Tigrul Rică mârâie când se joacă: rrr! Mârâie și tu, ca un tigru. | sound r, hero; sound r, retell
+ro ro | Tigrul Rică și-a pierdut mârâitul! Hai să-l căutăm împreună. | sound r, chapter meet
+ro ro | Toată lumea are covrigi! Povestește tu drumul lui Gigel. | sound ge, chapter retell
+ro ro | Toți copiii vor să afle cum s-a jucat vântul. Povestește-le tu. | sound j, chapter retell
+ro ro | Trenulețul Șușu pleacă la drum! Eu sunt conductorul, dar mi-am uitat chipiul. | sound ș, chapter meet
+ro ro | Trenulețul Șușu pleacă la drum: șșșș! Suflă și tu, ca trenul. | sound ș, hero; sound ș, retell
+ro ro | Ultimul vagon duce cuvinte cu șșș la capăt: coș, cocoș. | sound ș, chapter wordsFinal
+ro ro | Un cântec are nevoie de un final. Caută L-ul la capătul cuvintelor. | sound l, chapter wordsFinal
+ro ro | Un melc cere o cireașă. | sound ce, retell
+ro ro | Un rac iese din apă. | sound r, retell
+ro ro | Un șoricel iese pe ușă. | sound ș, retell
+ro ro | Un țânțar țipă lângă pătuț. | sound ț, retell
+ro ro | Unele cuvinte lipesc sss-ul de alte sunete: stea, scaun. Sâsâilă le spune rar. | sound s, chapter clusters
+ro ro | Unele cuvinte se termină cu un ț mic și iute: pătuț, căluț. | sound ț, chapter wordsFinal
+ro ro | Unele cuvinte stau în mijlocul trenului, ca „mașină” și „ușă”. Spune-le pe nume. | sound ș, chapter wordsMedial
+ro ro | Unele cuvinte își țin r-ul la capăt: măr, nor. Rică îl prinde de coadă. | sound r, chapter wordsFinal
+ro ro | Unele cuvinte țin L-ul ascuns la mijloc. Ajută-l pe leu să-l găsească. | sound l, chapter wordsMedial
+ro ro | Unele cuvinte țin jjj-ul strâns la mijloc. Vâjâilă suflă să-l scoată. | sound j, chapter wordsMedial
+ro ro | Urmează cuvinte cu L lipit de alte sunete, ca „melc” și „bluză”. | sound l, chapter clusters
+ro ro | Urmează un pod îngust. Aici sunetele stau înghesuite: pește, șapcă. | sound ș, chapter clusters
+ro ro | Vecinii întreabă cine a pornit ceasul. Povestește-le tu ce s-a întâmplat. | sound ț, chapter retell
+ro ro | Vin cuvinte mai grele: melci, porci, ciupercă. Cici le stropește pe rând. | sound ce, chapter clusters
+ro ro | Vreau un ceai cald. | sound ce, sentence
+ro ro | Vâjâilă a găsit cuvinte care încep cu jjj. Spune-le, să le ducem la joacă. | sound j, chapter wordsInitial
+ro ro | Vâjâilă prinde curaj: ja, je, ji. Spune cu el, cu palma pe gât. | sound j, chapter syllables
+ro ro | Vâjâilă se joacă afară cu toată lumea. Ia și tu jjj-ul la joacă. | sound j, chapter everyday
+ro ro | Vâjâilă suflă acum cu voce! Spune cu el propoziții întregi. | sound j, chapter sentences
+ro ro | Vâjâilă își face bagajul de drum. Cuvintele de azi se termină cu jjj. | sound j, chapter wordsFinal
+ro ro | Vântul Vâjâilă suflă printre frunze: jjjj! Pune palma pe gât și suflă cu el. | sound j, hero; sound j, retell
+ro ro | Vântul Vâjâilă vrea să se joace cu noi. Dar suflă atât de încet! | sound j, chapter meet
+ro ro | Zmeul zboară prin zăpadă. | sound z, retell
+ro ro | Zuzu bâzâie iar tare! Spune cu ea propoziții întregi, cu zzz. | sound z, chapter sentences
+ro ro | Zuzu caută zzz-ul ascuns în mijlocul cuvintelor, ca polenul în floare. | sound z, chapter wordsMedial
+ro ro | Zuzu e bine și zboară prin grădină. Când vezi o floare, bâzâie și tu. | sound z, chapter everyday
+ro ro | Zuzu le povestește florilor ce a pățit. Povestește și tu, cu vorbele tale. | sound z, chapter retell
+ro ro | Zuzu se încălzește pe o floare. Noi încălzim gura, ca să-i dăm vocea noastră. | sound z, chapter warmup
+ro ro | Zuzu zboară iar, dar jos de tot. Cuvintele care încep cu zzz o ajută să urce. | sound z, chapter wordsInitial
+ro ro | Zâna are un zmeu. | sound z, retell
+ro ro | ace | sound ț, pair ațe/ace; sound ce, pair ace/ațe
+ro ro | ațe | sound ț, pair ațe/ace; sound ce, pair ace/ațe
+ro ro | ață | sound ț, words medial
+ro ro | buză | sound z, words medial
+ro ro | cer | sound ce, pair cer/ger; sound ge, pair ger/cer
+ro ro | cojoc | sound j, words medial
+ro ro | colegi | sound ge, words final
+ro ro | cuțit | sound ț, words medial
+ro ro | căsuță | sound ț, words medial
+ro ro | dinți | sound ț, words clusters
+ro ro | fericit | sound ce, words medial
+ro ro | fetiță | sound ț, words medial
+ro ro | fugi | sound ge, words final
+ro ro | garaj | sound j, words final
+ro ro | gaz | sound z, words final
+ro ro | geacă | sound ge, words initial
+ro ro | geam | sound ge, words initial
+ro ro | ger | sound ce, pair cer/ger; sound ge, words initial; sound ge, pair ger/cer
+ro ro | jos | sound j, words initial
+ro ro | magician | sound ge, words medial
+ro ro | magie | sound ge, words medial
+ro ro | ojă | sound j, words medial
+ro ro | pijama | sound j, words medial
+ro ro | prinț | sound ț, words clusters
+ro ro | raci | sound ce, words final
+ro ro | regină | sound ge, words medial
+ro ro | scaun | sound s, words clusters
+ro ro | stea | sound s, words clusters
+ro ro | suc | sound s, words initial
+ro ro | supă | sound s, words initial
+ro ro | sută | sound s, pair sută/șută; sound ș, pair șută/sută
+ro ro | vaci | sound ce, words final
+ro ro | val | sound l, words final
+ro ro | În geantă sunt covrigi și gem. | sound ge, retell
+ro ro | Înainte de plecare, Șușu își unge roțile. Noi încălzim buzele. | sound ș, chapter warmup
+ro ro | Șoricelul doarme în coș. | sound ș, sentence
+ro ro | Șoricelul și-a pus șapca, șosetele și cămașa. | sound ș, twister
+ro ro | Șoricelul Țuțu e mic și iute: ț-ț-ț! Fă și tu ca el, scurt și repede. | sound ț, hero; sound ț, retell
+ro ro | Șușu doarme în gară. Ia șșș-ul cu tine. La ușă, în mașină, la culcare. | sound ș, chapter everyday
+ro ro | Șușu pornește cu aer cald: șșșș. Fă și tu aburul, ca el! | sound ș, chapter isolated
+ro ro | șută | sound s, pair sută/șută; sound ș, pair șută/sută
+ro ro | Țuțu caută ț-ul ascuns în mijlocul cuvintelor, printre rotițe. | sound ț, chapter wordsMedial
+ro ro | Țuțu locuiește într-un ceas mare. Azi-noapte, ceasul s-a oprit! | sound ț, chapter meet
+ro ro | Țânțarul țipă, țapul țopăie, țestoasa tace. | sound ț, twister
+ro ro | ț-ț-ț | sound ț, bursts
+ro ro | țară | sound ț, words initial
+ro ro | țeapă | sound ț, pair țeapă/ceapă; sound ce, pair ceapă/țeapă

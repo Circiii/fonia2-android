@@ -1,0 +1,41 @@
+{
+  "sound": "j",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.j",
+  "caption": "Buze rotunde, ceșcuță, pornește vocea.",
+  "steps": [{"icon": "lips", "label": "Buze rotunde", "reveals": ["lips"]}, {"icon": "teeth", "label": "Dinții aproape", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba sus", "reveals": ["tongue"]}],
+  "description": "Pentru J: la fel ca la Ș, buzele sunt rotunde și limba e o ceșcuță, dar vocea e pornită.",
+  "therapistNote": "J: aceeași poziție ca Ș (pâlnie, limba lată în căuș, vârful sus după creastă), aer lat și cald, plus vocea (marca vibrantă de la gât). Verificați că singura diferență față de Ș este vocea. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.2,
+    "lipRound": 1.0,
+    "lipPart": 0.5,
+    "tongueTip": 0.35,
+    "tongueRaise": 0.7,
+    "tongueForward": -0.45,
+    "tongueCup": 1.0
+  },
+  "animation": null,
+  "flutter": null,
+  "air": {"stream": "wide", "warm": true, "stop": false},
+  "voiced": true,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

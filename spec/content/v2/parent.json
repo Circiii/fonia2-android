@@ -1,0 +1,215 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "cards": [
+  {
+   "id": "listen-warmup",
+   "title": "Ascultăm și trezim gura",
+   "rungs": [
+    "listen",
+    "warmup"
+   ],
+   "target": "Copilul aude diferența și își mișcă buzele și limba.",
+   "goodAttempt": "Arată poza potrivită; ține poziția o secundă.",
+   "ifNot": "Faceți voi primul, în oglindă. Două exerciții ajung."
+  },
+  {
+   "id": "isolated",
+   "title": "Sunetul singur",
+   "rungs": [
+    "isolated"
+   ],
+   "target": "Sunetul sună curat, singur.",
+   "goodAttempt": "{letter} lung și egal, 2 secunde, fără alt sunet lipit.",
+   "ifNot": "Nu insistați. Opriți-vă și spuneți-i logopedului; treapta următoare se deschide doar când sună bine."
+  },
+  {
+   "id": "syllables",
+   "title": "Silabe",
+   "rungs": [
+    "syllables",
+    "back"
+   ],
+   "target": "Sunetul lipit de o vocală.",
+   "goodAttempt": "„{syllable}” dintr-o bucată, cu {letter} clar.",
+   "ifNot": "Despărțiți: „{split}”, apoi apropiați încet."
+  },
+  {
+   "id": "words",
+   "title": "Cuvinte",
+   "rungs": [
+    "wordsInitial",
+    "wordsMedial",
+    "wordsFinal",
+    "clusters"
+   ],
+   "target": "Sunetul în cuvinte, la început, la mijloc și la final.",
+   "goodAttempt": "Cuvântul întreg, cu {letter} la locul lui.",
+   "ifNot": "Spuneți voi cuvântul rar, apăsând pe sunet. După două încercări, treceți mai departe."
+  },
+  {
+   "id": "pairs",
+   "title": "Nu le încurcăm",
+   "rungs": [
+    "pairs"
+   ],
+   "target": "Deosebește {letter} de {partner}.",
+   "goodAttempt": "Arată corect poza, apoi spune ambele cuvinte.",
+   "ifNot": "Rămâneți la ascultat. Foni încurcă, copilul îl prinde."
+  },
+  {
+   "id": "speech",
+   "title": "Vorbim așa",
+   "rungs": [
+    "sentences",
+    "twister",
+    "retell",
+    "everyday"
+   ],
+   "target": "Sunetul rămâne bun și când vorbește liber.",
+   "goodAttempt": "Propoziția curge, sunetul e la locul lui.",
+   "ifNot": "Încetiniți. Fără cronometru. În restul zilei nu corectați."
+  }
+ ],
+ "tips": [
+  "Stați față în față, la aceeași înălțime, cu telefonul între voi.",
+  "Liniște în cameră: fără televizor.",
+  "Puțin și des: patru minute pe zi, la aceeași oră.",
+  "Opriți-vă cât încă e bine.",
+  "Lăudați ce a făcut: „Ai ținut sunetul lung!”",
+  "Nu-l corectați cu un „nu”. Repetați voi cuvântul, rar și frumos.",
+  "Nu corectați la masă sau în fața altora.",
+  "După două încercări care nu ies, treceți la ceva mai ușor.",
+  "Graiul de acasă e în regulă. Lucrăm doar sunetele de la logoped.",
+  "Spuneți-i logopedului ce ați auzit. Raportul din aplicație e pentru el."
+ ],
+ "summaries": [
+  {
+   "id": "attempts-best",
+   "text": "Azi: {n} încercări la {letter}. Cea mai bună: {best}.",
+   "vars": [
+    "n",
+    "letter",
+    "best"
+   ]
+  },
+  {
+   "id": "hold-longer",
+   "text": "Azi: {n} încercări. {letter} a ținut {sec} secunde, mai mult ca data trecută.",
+   "vars": [
+    "n",
+    "letter",
+    "sec"
+   ]
+  },
+  {
+   "id": "rung-done",
+   "text": "Azi ați terminat treapta „{rung}”. Mâine: „{next}”.",
+   "vars": [
+    "rung",
+    "next"
+   ]
+  },
+  {
+   "id": "harder",
+   "text": "Azi a fost mai greu la {position}. Mâine o luăm mai ușor.",
+   "vars": [
+    "position"
+   ]
+  },
+  {
+   "id": "unsure",
+   "text": "Telefonul n-a fost sigur de {k} ori. Părerea voastră a contat.",
+   "vars": [
+    "k"
+   ]
+  },
+  {
+   "id": "persisted",
+   "text": "Spuneți-i: ai încercat de {k} ori până a ieșit.",
+   "vars": [
+    "k"
+   ]
+  },
+  {
+   "id": "week",
+   "text": "{z} zile, {n} încercări.",
+   "vars": [
+    "z",
+    "n"
+   ]
+  }
+ ],
+ "reminders": [
+  {
+   "id": "anchor",
+   "text": "După {anchor}, {letter} cu Foni. Patru minute.",
+   "vars": [
+    "anchor",
+    "letter"
+   ]
+  },
+  {
+   "id": "time",
+   "text": "E ora voastră: {anchor}. Foni e gata.",
+   "vars": [
+    "anchor"
+   ]
+  },
+  {
+   "id": "monday",
+   "text": "Începem săptămâna asta? O rundă mică ajunge.",
+   "vars": []
+  },
+  {
+   "id": "weekly",
+   "text": "Vă mai amintesc doar o dată pe săptămână. Alegeți alt moment din „Pentru adult”.",
+   "vars": []
+  }
+ ],
+ "privacy": {
+  "title": "Ce se întâmplă cu vocea și cu imaginea copilului",
+  "paragraphs": [
+   "Totul rămâne pe acest telefon. Aplicația nici nu are voie să folosească internetul.",
+   "Microfonul ascultă doar când pe ecran apare capsula de microfon. Păstrăm cel mult trei înregistrări pentru fiecare sunet, cel mult 90 de zile, încuiate cu o cheie a telefonului. Ele servesc la „Ascultă-te” și la „atunci și acum”.",
+   "Camera lucrează ca o oglindă. Imaginile nu se salvează nicăieri.",
+   "Aplicația nu cere cont sau e-mail și nu are reclame. Nimeni din echipa Fonia nu vă vede datele.",
+   "Raportul pentru logoped pleacă doar dacă îl trimiteți voi, și conține numere, nu înregistrări.",
+   "„Șterge tot” din „Pentru adult” șterge tot, pe loc.",
+   "Fonia e un ajutor pentru exersat acasă și nu ține locul logopedului."
+  ]
+ },
+ "rungNames": {
+  "listen": "Ascultăm",
+  "warmup": "Trezim gura",
+  "isolated": "Sunetul singur",
+  "syllables": "Silabe",
+  "back": "Sunetul la urmă",
+  "wordsInitial": "La început de cuvânt",
+  "wordsMedial": "La mijloc de cuvânt",
+  "wordsFinal": "La final de cuvânt",
+  "clusters": "Cu alte consoane",
+  "pairs": "Nu le încurcăm",
+  "sentences": "Propoziții",
+  "twister": "Frământări",
+  "retell": "Povestim",
+  "everyday": "Acasă"
+ },
+ "positionNames": {
+  "initial": "începutul cuvântului",
+  "medial": "mijlocul cuvântului",
+  "final": "finalul cuvântului",
+  "cluster": "cuvintele cu alte consoane"
+ },
+ "partners": {
+  "s": "ș",
+  "ș": "s",
+  "z": "s",
+  "j": "z",
+  "ț": "s",
+  "ce": "ț",
+  "ge": "ce",
+  "r": "l",
+  "l": "r"
+ }
+}

@@ -1,0 +1,602 @@
+{
+ "source": "fonia-app/tools/eval_speech/report.md (iOS Simulator, WhisperKit openai_whisper-base, Core ML, CPU only)",
+ "pairs": [
+  {
+   "fixture": "en-ship",
+   "target": "ship",
+   "rival": "sheep",
+   "heard": "Shab",
+   "margin": 4.18,
+   "pTarget": 0.985,
+   "outcome": "target",
+   "ms": 1194.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-ship",
+   "target": "sheep",
+   "rival": "ship",
+   "heard": "Shab",
+   "margin": -4.18,
+   "pTarget": 0.015,
+   "outcome": "rival",
+   "ms": 946.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-sheep",
+   "target": "sheep",
+   "rival": "ship",
+   "heard": "Sheep.",
+   "margin": 3.92,
+   "pTarget": 0.981,
+   "outcome": "target",
+   "ms": 974.0,
+   "decoderSteps": 14
+  },
+  {
+   "fixture": "en-sheep",
+   "target": "ship",
+   "rival": "sheep",
+   "heard": "Sheep.",
+   "margin": -3.92,
+   "pTarget": 0.019,
+   "outcome": "rival",
+   "ms": 702.0,
+   "decoderSteps": 14
+  },
+  {
+   "fixture": "en-think",
+   "target": "think",
+   "rival": "sink",
+   "heard": "Think.",
+   "margin": 8.38,
+   "pTarget": 1.0,
+   "outcome": "target",
+   "ms": 748.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-think",
+   "target": "sink",
+   "rival": "think",
+   "heard": "Think.",
+   "margin": -8.38,
+   "pTarget": 0.0,
+   "outcome": "rival",
+   "ms": 695.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-sink",
+   "target": "sink",
+   "rival": "think",
+   "heard": "Sink!",
+   "margin": -0.08,
+   "pTarget": 0.479,
+   "outcome": "unclear",
+   "ms": 602.0,
+   "decoderSteps": 14
+  },
+  {
+   "fixture": "en-sink",
+   "target": "think",
+   "rival": "sink",
+   "heard": "Sink!",
+   "margin": 0.08,
+   "pTarget": 0.521,
+   "outcome": "unclear",
+   "ms": 593.0,
+   "decoderSteps": 14
+  },
+  {
+   "fixture": "en-wine",
+   "target": "wine",
+   "rival": "vine",
+   "heard": "Wine.",
+   "margin": 5.82,
+   "pTarget": 0.997,
+   "outcome": "target",
+   "ms": 541.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-wine",
+   "target": "vine",
+   "rival": "wine",
+   "heard": "Wine.",
+   "margin": -5.82,
+   "pTarget": 0.003,
+   "outcome": "rival",
+   "ms": 583.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-vine",
+   "target": "vine",
+   "rival": "wine",
+   "heard": "Vina.",
+   "margin": 2.19,
+   "pTarget": 0.899,
+   "outcome": "target",
+   "ms": 540.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-vine",
+   "target": "wine",
+   "rival": "vine",
+   "heard": "Vina.",
+   "margin": -2.19,
+   "pTarget": 0.101,
+   "outcome": "rival",
+   "ms": 559.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "en-walk",
+   "target": "walk",
+   "rival": "work",
+   "heard": "Walk.",
+   "margin": 8.25,
+   "pTarget": 1.0,
+   "outcome": "target",
+   "ms": 486.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-walk",
+   "target": "work",
+   "rival": "walk",
+   "heard": "Walk.",
+   "margin": -8.25,
+   "pTarget": 0.0,
+   "outcome": "rival",
+   "ms": 458.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-work",
+   "target": "work",
+   "rival": "walk",
+   "heard": "Work.",
+   "margin": 7.24,
+   "pTarget": 0.999,
+   "outcome": "target",
+   "ms": 448.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-work",
+   "target": "walk",
+   "rival": "work",
+   "heard": "Work.",
+   "margin": -7.24,
+   "pTarget": 0.001,
+   "outcome": "rival",
+   "ms": 470.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "ro-accent-sheep",
+   "target": "The sheep is on the ship.",
+   "rival": "The ship is on the ship.",
+   "heard": "The sheep is on the ship.",
+   "margin": 5.8,
+   "pTarget": 0.997,
+   "outcome": "target",
+   "ms": 610.0,
+   "decoderSteps": 24
+  },
+  {
+   "fixture": "ro-accent-think",
+   "target": "I think three things.",
+   "rival": "I sink tree sings.",
+   "heard": "I think three things.",
+   "margin": 33.2,
+   "pTarget": 1.0,
+   "outcome": "target",
+   "ms": 489.0,
+   "decoderSteps": 18
+  },
+  {
+   "fixture": "en-wrong-think",
+   "target": "I think three things.",
+   "rival": "I sink tree sings.",
+   "heard": "I sink tree sings.",
+   "margin": -3.17,
+   "pTarget": 0.04,
+   "outcome": "rival",
+   "ms": 491.0,
+   "decoderSteps": 18
+  },
+  {
+   "fixture": "ro-accent-walk",
+   "target": "I walk to work.",
+   "rival": "I work to walk.",
+   "heard": "I walk to work.",
+   "margin": 16.06,
+   "pTarget": 1.0,
+   "outcome": "target",
+   "ms": 495.0,
+   "decoderSteps": 18
+  },
+  {
+   "fixture": "en-wine",
+   "target": "ship",
+   "rival": "sheep",
+   "heard": "Wine.",
+   "margin": 0.66,
+   "pTarget": 0.659,
+   "outcome": "otherWord",
+   "ms": 426.0,
+   "decoderSteps": 13
+  },
+  {
+   "fixture": "silence",
+   "target": "ship",
+   "rival": "sheep",
+   "heard": "",
+   "margin": -0.43,
+   "pTarget": 0.395,
+   "outcome": "notHeard",
+   "ms": 422.0,
+   "decoderSteps": 12
+  },
+  {
+   "fixture": "en-animal",
+   "target": "ANimal",
+   "rival": "aniMAL",
+   "heard": "Animal.",
+   "margin": 0.0,
+   "pTarget": 0.5,
+   "outcome": "sameText",
+   "ms": 367.0,
+   "decoderSteps": 6
+  }
+ ],
+ "sentences": [
+  {
+   "fixture": "en-sentence-sheep",
+   "target": "The sheep is on the ship.",
+   "heard": "The sheep is on the ship.",
+   "result": "allHeard",
+   "score": 1.0,
+   "ms": 469.0,
+   "words": [
+    {
+     "word": "The",
+     "status": "good",
+     "heard": null,
+     "start": 0.6,
+     "end": 0.66
+    },
+    {
+     "word": "sheep",
+     "status": "good",
+     "heard": null,
+     "start": 0.66,
+     "end": 0.94
+    },
+    {
+     "word": "is",
+     "status": "good",
+     "heard": null,
+     "start": 0.94,
+     "end": 1.14
+    },
+    {
+     "word": "on",
+     "status": "good",
+     "heard": null,
+     "start": 1.12,
+     "end": 1.26
+    },
+    {
+     "word": "the",
+     "status": "good",
+     "heard": null,
+     "start": 1.26,
+     "end": 1.36
+    },
+    {
+     "word": "ship",
+     "status": "good",
+     "heard": null,
+     "start": 1.36,
+     "end": 1.74
+    }
+   ]
+  },
+  {
+   "fixture": "en-sentence-think",
+   "target": "I think three things.",
+   "heard": "I think three things.",
+   "result": "allHeard",
+   "score": 1.0,
+   "ms": 419.0,
+   "words": [
+    {
+     "word": "I",
+     "status": "good",
+     "heard": null,
+     "start": 0.54,
+     "end": 0.64
+    },
+    {
+     "word": "think",
+     "status": "good",
+     "heard": null,
+     "start": 0.64,
+     "end": 0.86
+    },
+    {
+     "word": "three",
+     "status": "good",
+     "heard": null,
+     "start": 0.86,
+     "end": 1.18
+    },
+    {
+     "word": "things",
+     "status": "good",
+     "heard": null,
+     "start": 1.16,
+     "end": 1.84
+    }
+   ]
+  },
+  {
+   "fixture": "en-wrong-think",
+   "target": "I think three things.",
+   "heard": "I sink tree sings.",
+   "result": "severalMissed",
+   "score": 0.25,
+   "ms": 424.0,
+   "words": [
+    {
+     "word": "I",
+     "status": "good",
+     "heard": null,
+     "start": 0.54,
+     "end": 0.62
+    },
+    {
+     "word": "think",
+     "status": "missed",
+     "heard": "sink",
+     "start": 0.62,
+     "end": 0.94
+    },
+    {
+     "word": "three",
+     "status": "missed",
+     "heard": "tree",
+     "start": 0.94,
+     "end": 1.26
+    },
+    {
+     "word": "things",
+     "status": "missed",
+     "heard": "sings",
+     "start": 1.26,
+     "end": 1.92
+    }
+   ]
+  },
+  {
+   "fixture": "ro-accent-sheep",
+   "target": "The sheep is on the ship.",
+   "heard": "The sheep is on the ship.",
+   "result": "allHeard",
+   "score": 1.0,
+   "ms": 493.0,
+   "words": [
+    {
+     "word": "The",
+     "status": "good",
+     "heard": null,
+     "start": 0.6,
+     "end": 0.64
+    },
+    {
+     "word": "sheep",
+     "status": "good",
+     "heard": null,
+     "start": 0.64,
+     "end": 0.82
+    },
+    {
+     "word": "is",
+     "status": "good",
+     "heard": null,
+     "start": 0.82,
+     "end": 0.96
+    },
+    {
+     "word": "on",
+     "status": "good",
+     "heard": null,
+     "start": 0.96,
+     "end": 1.08
+    },
+    {
+     "word": "the",
+     "status": "good",
+     "heard": null,
+     "start": 1.08,
+     "end": 1.18
+    },
+    {
+     "word": "ship",
+     "status": "good",
+     "heard": null,
+     "start": 1.16,
+     "end": 1.5
+    }
+   ]
+  },
+  {
+   "fixture": "ro-accent-think",
+   "target": "I think three things.",
+   "heard": "I think three things.",
+   "result": "allHeard",
+   "score": 1.0,
+   "ms": 440.0,
+   "words": [
+    {
+     "word": "I",
+     "status": "good",
+     "heard": null,
+     "start": 0.52,
+     "end": 0.6
+    },
+    {
+     "word": "think",
+     "status": "good",
+     "heard": null,
+     "start": 0.6,
+     "end": 0.86
+    },
+    {
+     "word": "three",
+     "status": "good",
+     "heard": null,
+     "start": 0.86,
+     "end": 1.16
+    },
+    {
+     "word": "things",
+     "status": "good",
+     "heard": null,
+     "start": 1.14,
+     "end": 1.74
+    }
+   ]
+  },
+  {
+   "fixture": "ro-accent-walk",
+   "target": "I walk to work.",
+   "heard": "I walk to work.",
+   "result": "allHeard",
+   "score": 1.0,
+   "ms": 446.0,
+   "words": [
+    {
+     "word": "I",
+     "status": "good",
+     "heard": null,
+     "start": 0.54,
+     "end": 0.62
+    },
+    {
+     "word": "walk",
+     "status": "good",
+     "heard": null,
+     "start": 0.62,
+     "end": 0.82
+    },
+    {
+     "word": "to",
+     "status": "good",
+     "heard": null,
+     "start": 0.82,
+     "end": 1.0
+    },
+    {
+     "word": "work",
+     "status": "good",
+     "heard": null,
+     "start": 1.0,
+     "end": 1.54
+    }
+   ]
+  },
+  {
+   "fixture": "en-sentence-sheep",
+   "target": "The ship is on the sheep.",
+   "heard": "The sheep is on the ship.",
+   "result": "severalMissed",
+   "score": 0.6,
+   "ms": 494.0,
+   "words": [
+    {
+     "word": "The",
+     "status": "good",
+     "heard": null,
+     "start": 0.6,
+     "end": 0.66
+    },
+    {
+     "word": "ship",
+     "status": "missed",
+     "heard": "sheep",
+     "start": 0.66,
+     "end": 0.92
+    },
+    {
+     "word": "is",
+     "status": "good",
+     "heard": null,
+     "start": 0.92,
+     "end": 1.14
+    },
+    {
+     "word": "on",
+     "status": "good",
+     "heard": null,
+     "start": 1.12,
+     "end": 1.26
+    },
+    {
+     "word": "the",
+     "status": "good",
+     "heard": null,
+     "start": 1.26,
+     "end": 1.36
+    },
+    {
+     "word": "sheep",
+     "status": "missed",
+     "heard": "ship",
+     "start": 1.36,
+     "end": 1.74
+    }
+   ]
+  }
+ ],
+ "speech": [
+  {
+   "fixture": "en-speech",
+   "ms": 1173.0,
+   "wordsPerMinute": 174.0,
+   "pace": "fast",
+   "fillerCounts": {
+    "basically": 1,
+    "like": 1,
+    "so": 1,
+    "um": 1
+   },
+   "hesitationsPer100Words": 3.4,
+   "pauses": 2,
+   "score": 0.8,
+   "focus": "fast",
+   "text": "Hi, everyone. Um, today I want to talk about, like, why sleep matters. So, basically, teenagers need about nine hours of sleep, and most of us get less than seven."
+  },
+  {
+   "fixture": "ro-speech",
+   "ms": 1463.0,
+   "wordsPerMinute": 190.0,
+   "pace": "fast",
+   "fillerCounts": {
+    "deci": 1,
+    "practic": 1
+   },
+   "hesitationsPer100Words": 0.0,
+   "pauses": 0,
+   "score": 0.8,
+   "focus": "fast",
+   "text": "Bună ziua tuturor. Astați vreau să vă vorbesc despre somn, deci, practic, adolescente au nevoie de 9 ore de somn, dar ce mai mulți doar mai puțin de 7."
+  }
+ ]
+}

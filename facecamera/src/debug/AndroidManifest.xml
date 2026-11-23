@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Debug builds only: the recording tool for recalibrating the face thresholds (facecamera/PARITY.md).
+         Exported so that adb shell am start -n <package>/tech.fonia.facecamera.FaceRecorderActivity opens it. -->
+    <application>
+        <activity
+            android:name="tech.fonia.facecamera.FaceRecorderActivity"
+            android:exported="true"
+            android:label="Fonia față"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+    </application>
+</manifest>

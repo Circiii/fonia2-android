@@ -1,0 +1,95 @@
+{
+  "format": 1,
+  "version": "ciorna-2026-11-06",
+  "status": "ciornă",
+  "approvedBy": null,
+  "notice": "Ciornă: biletele sunt scrise pentru Fonia după forma probei A și așteaptă verificarea unui profesor de limba română. Nu sunt bilete oficiale.",
+  "sources": {
+    "texts": "Textele și cerințele sunt scrise pentru Fonia. Nu sunt copiate din subiectele oficiale.",
+    "format": "Biletul are un text și trei cerințe: două despre text, apoi o opinie argumentată. Pregătirea durează în jur de 30 de minute (raportul H, §4.2 și F7).",
+    "keyWords": "Cuvintele dintre asteriscuri sunt doar o propunere de cuvinte-cheie pentru citire. Elevul le poate schimba cât se pregătește."
+  },
+  "exam": {
+    "preparationMinutes": 30,
+    "levels": [
+      { "name": "utilizator mediu", "description": "citește corect și cursiv" },
+      { "name": "utilizator avansat", "description": "citește corect, cursiv și conștient și formulează clar și coerent ideile textului" },
+      { "name": "utilizator experimentat", "description": "citește corect, cursiv și expresiv, susține cu argumente un punct de vedere personal și își adaptează discursul la interlocutori" }
+    ],
+    "levelsSource": "Descriptorii sunt cei publicați pentru proba A, citați după surse secundare (raportul H, §4.2). Grila oficială rămâne cea de la examen."
+  },
+  "tickets": [
+    {
+      "id": "b01",
+      "number": 1,
+      "kind": "text nonliterar",
+      "title": "Somnul elevilor",
+      "text": "Medicii spun că un adolescent are nevoie de *opt* până la *zece* ore de somn pe noapte. Cu toate acestea, cei mai mulți elevi de liceu dorm mai puțin de *șapte* ore în zilele de școală. Motivele sunt cunoscute: temele, telefonul ținut lângă pernă, orele care încep devreme. Lipsa somnului se simte toată ziua. Ea schimbă felul în care ne amintim lucrurile, cât de atenți suntem pe stradă și chiar cât de răbdători suntem cu cei din jur. Vestea bună este că somnul se poate *recupera*, dar nu într-o singură noapte de weekend. Ajută un program *regulat*, o cameră răcoroasă și o oră fără ecrane înainte de culcare. În timpul somnului, creierul pune ordine în tot ce am învățat peste zi.",
+      "tasks": [
+        "Care este tema textului? Formulează două idei pe care le transmite.",
+        "Cui crezi că i se adresează textul? Numește două indicii din text care te-au ajutat să răspunzi.",
+        "Ar trebui ca orele de la liceu să înceapă mai târziu? Exprimă-ți opinia și susține-o cu cel puțin două argumente."
+      ]
+    },
+    {
+      "id": "b02",
+      "number": 2,
+      "kind": "text literar",
+      "title": "Trenul de seară",
+      "text": "Trenul de seară întârzia, ca în fiecare vineri. Pe peronul gol, Andrei număra becurile care se aprindeau unul după altul, până la capătul liniei. Bunicul îi scrisese că vine cu trenul de șase, dar ceasul gării arăta deja *șapte* și un sfert. Un câine cu o ureche ruptă s-a așezat lângă el, ca și cum ar fi așteptat și el pe cineva. Din când în când, șinele începeau să *vibreze*, iar Andrei se ridica în picioare. De fiecare dată trecea *doar* un marfar lung, încărcat cu lemne. Când, în sfârșit, s-a auzit fluierul, băiatul n-a mai alergat. A rămas pe loc și a zărit, în fereastra luminată a ultimului vagon, *șapca* veche a bunicului.",
+      "tasks": [
+        "Ce moment surprinde fragmentul? Formulează tema textului.",
+        "Precizează două detalii prin care textul sugerează așteptarea și explică rolul unuia dintre ele.",
+        "Poate fi așteptarea la fel de importantă ca întâlnirea? Exprimă-ți punctul de vedere și susține-l cu cel puțin două argumente."
+      ]
+    },
+    {
+      "id": "b03",
+      "number": 3,
+      "kind": "text nonliterar",
+      "title": "Anunț",
+      "text": "Biblioteca Județeană caută *voluntari* pentru vacanța de vară. Căutăm elevi de liceu care pot veni de *două* ori pe săptămână, câte trei ore, în iulie și în august. Voluntarii vor citi povești copiilor de la grădiniță, îi vor ajuta pe cititorii mai în vârstă să caute cărți pe calculator și vor pune la loc volumele returnate. Nu e nevoie de pregătire specială. E nevoie de răbdare și de puțin timp liber. La final, fiecare voluntar primește o *adeverință*, iar clubul de lectură al școlii lui primește zece cărți noi. Înscrierile se fac până la *sfârșitul* lui iunie, la ghișeul de la intrare sau pe pagina bibliotecii. Vă așteptăm!",
+      "tasks": [
+        "Ce informații importante transmite anunțul? Numește trei dintre ele.",
+        "Precizează cine este emițătorul și cine este receptorul anunțului. Ce rol are ultima propoziție?",
+        "Ar trebui ca voluntariatul să fie obligatoriu pentru elevii de liceu? Exprimă-ți opinia și susține-o cu cel puțin două argumente."
+      ]
+    },
+    {
+      "id": "b04",
+      "number": 4,
+      "kind": "text nonliterar",
+      "title": "Dragi colegi",
+      "text": "Dragi colegi,\nvă scriu în numele *clubului* de ecologie. Știți cu toții terenul gol din spatele sălii de sport, unde iarna se adună zăpada, iar vara doar praful. Noi credem că acolo ar putea crește o *grădină*. Am vorbit deja cu doamna directoare, care ne-a dat voie să încercăm, dacă găsim destui elevi dispuși să ajute. Avem nevoie de cel puțin *douăzeci* de voluntari, câte o oră pe săptămână, din martie până în iunie. Vom planta legume, câteva flori și doi meri, de care vom avea grijă pe rând. Dacă vreți să veniți alături de noi, treceți vineri, după ore, pe la laboratorul de biologie. Nu trebuie să știți nimic despre plante. Vom învăța *împreună*.\nCu prietenie,\nIoana, din clasa a unsprezecea",
+      "tasks": [
+        "Care este scopul scrisorii? Formulează ideea principală.",
+        "Precizează două trăsături ale scrisorii care se văd în text și explică rolul formulei de adresare.",
+        "Este important ca elevii să ia parte la deciziile despre școala lor? Exprimă-ți opinia și susține-o cu cel puțin două argumente."
+      ]
+    },
+    {
+      "id": "b05",
+      "number": 5,
+      "kind": "text literar",
+      "title": "Ploaia de vară",
+      "text": "Ploaia a venit dintr-odată, fără să ceară voie. Întâi s-au auzit câteva picături grele pe acoperișul de tablă, ca niște degete care bat la ușă. Apoi a început să *toarne*. Curtea s-a umplut de bălți rotunde, în care cerul cenușiu tremura la fiecare strop. Găinile s-au ascuns sub căruță, iar câinele s-a tras sub prispă, cu botul pe labe. Bunica a ieșit în prag și a privit norii ca pe niște musafiri cunoscuți. „Lasă, că *trece*”, a spus ea. Și *chiar* a trecut. După o jumătate de oră, soarele a ieșit din nou, iar mirosul de pământ *ud* s-a ridicat din grădină, mai tare decât orice parfum.",
+      "tasks": [
+        "Ce imagine domină fragmentul? Formulează tema lui.",
+        "Precizează două imagini vizuale sau auditive din text și explică rolul uneia dintre ele.",
+        "Mai au oamenii de azi timp să observe natura? Exprimă-ți punctul de vedere și susține-l cu cel puțin două argumente."
+      ]
+    },
+    {
+      "id": "b06",
+      "number": 6,
+      "kind": "text nonliterar",
+      "title": "Cartea și ecranul",
+      "text": "Citim astăzi mai mult ca oricând: mesaje, articole, comentarii, notificări. Și totuși, mulți profesori spun că elevii citesc tot mai *greu* un text lung. Cercetătorii au comparat cititul pe hârtie cu cititul pe ecran și au observat ceva interesant. Când textul e scurt, diferența e mică. Când textul e lung și cere atenție, cei care citesc pe hârtie își amintesc mai bine *ordinea* ideilor. Ecranul ne învață să sărim de la un rând la altul și să căutăm repede cuvântul important. Hârtia ne obligă să mergem *încet*, pagină cu pagină. Asta nu înseamnă că trebuie să renunțăm la ecrane. Înseamnă doar că, pentru un roman sau pentru o lecție grea, merită să alegem uneori *cartea*.",
+      "tasks": [
+        "Formulează ideea principală a textului și o idee secundară.",
+        "Precizează stilul funcțional al textului și numește două trăsături ale lui care se văd în fragment.",
+        "Preferi să citești pe hârtie sau pe ecran? Exprimă-ți opinia și susține-o cu cel puțin două argumente."
+      ]
+    }
+  ]
+}

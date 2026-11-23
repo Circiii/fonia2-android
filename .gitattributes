@@ -1,0 +1,10 @@
+*.kts text eol=lf
+*.kt text eol=lf
+*.md text eol=lf
+*.xml text eol=lf
+*.toml text eol=lf
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.png binary
+domain/src/test/resources/ios-sessions.txt -text

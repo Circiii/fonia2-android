@@ -1,0 +1,590 @@
+{
+ "schema": 1,
+ "version": "2026-11-21.v0",
+ "note": "No kind is unlocked: there is no evidence yet (plan 03 §7, Q3). Wave 1 is 'trial' (the adult sees it 'în probă'); the rest is locked. An 'unlocked' entry needs 'evidence' and 'evidenceLevel' (imitations or children); a test fails otherwise.",
+ "rules": {
+  "trial": {
+   "minTokensPerClass": 30,
+   "minSpeakers": 5,
+   "maxFalseAlarm": 0.1
+  },
+  "pilot": {
+   "minTokensPerClass": 60,
+   "minSpeakers": 8,
+   "maxFalseAlarm": 0.05,
+   "minPrecision": 0.8,
+   "runtime": {
+    "calibrationTier": 1,
+    "adultPresent": true,
+    "tauErrExtra": 0.07
+   }
+  },
+  "children": {
+   "minTokensPerClass": 150,
+   "minChildren": 15,
+   "maxPerChild": 10,
+   "minCorrect": 250,
+   "minCorrectChildren": 25,
+   "maxFalseAlarmCiUpper": 0.08,
+   "minPrecisionCiLower": 0.7,
+   "maxContradictory": 0.02,
+   "minKappaHuman": 0.6
+  }
+ },
+ "entries": [
+  {
+   "sound": "s",
+   "kind": "omission",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "s",
+   "kind": "stopping",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "s",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "s",
+   "kind": "placeSwap",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "s",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "s",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "placeSwap",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ș",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "devoicing",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "placeSwap",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "z",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "devoicing",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "placeSwap",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "j",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "deaffrication",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "affricatePlace",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ț",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "deaffrication",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "affricatePlace",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ce",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "stopping",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "weakOrShort",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "deaffrication",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "devoicing",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "affricatePlace",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 11000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "lateral",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "ge",
+   "kind": "interdental",
+   "wave": 3,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {
+    "camera": true,
+    "minBandwidthHz": 16000
+   },
+   "evidence": null
+  },
+  {
+   "sound": "r",
+   "kind": "omission",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "r",
+   "kind": "rToL",
+   "wave": 1,
+   "state": "trial",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "r",
+   "kind": "rToGlide",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "r",
+   "kind": "rToVowel",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "r",
+   "kind": "rUvular",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "l",
+   "kind": "omission",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "l",
+   "kind": "lToGlide",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  },
+  {
+   "sound": "l",
+   "kind": "lToR",
+   "wave": 2,
+   "state": "locked",
+   "evidenceLevel": null,
+   "requires": {},
+   "evidence": null
+  }
+ ],
+ "signedBy": []
+}

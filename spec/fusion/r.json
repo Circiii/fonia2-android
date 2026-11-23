@@ -1,0 +1,158 @@
+{
+ "schema": 1,
+ "sound": "r",
+ "version": "2026-11-21.v1",
+ "source": "fast: hand-set v0, not trained; full: fast head pooled with ZIPA lpr (FullHead.build), 4 shared constants chosen by leave-one-voice-out grid search on synthetic adult voices (EVAL_v1.md), not trained on children",
+ "featureVersion": "e2.v0",
+ "trainedOn": null,
+ "classes": ["correct", "omission", "rToL", "rToGlide", "rToVowel", "rUvular"],
+ "levels": {
+  "omission": 1,
+  "rToL": 2,
+  "rToGlide": 2,
+  "rToVowel": 2,
+  "rUvular": 4
+ },
+ "heardAs": {
+  "rToL": "l"
+ },
+ "inputs": [
+  {
+   "name": "rTap",
+   "mean": 0.5,
+   "scale": 0.5,
+   "clip": [-1, 1]
+  },
+  {
+   "name": "dipDb",
+   "mean": 16,
+   "scale": 4,
+   "clip": [-3, 3]
+  },
+  {
+   "name": "dipMs",
+   "mean": 45,
+   "scale": 15,
+   "clip": [-2, 3]
+  },
+  {
+   "name": "uvNoiseDb",
+   "mean": -5,
+   "scale": 6,
+   "clip": [-3, 3]
+  },
+  {
+   "name": "lpr.l",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.j",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.ə",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.ʁ",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.ɹ",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.w",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "lpr.∅",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 4],
+   "mask": "hasZipa"
+  },
+  {
+   "name": "zipa.gop",
+   "mean": 0.0,
+   "scale": 3.0,
+   "clip": [-4, 0],
+   "mask": "hasZipa"
+  }
+ ],
+ "phoneMap": {
+  "rToL": "l",
+  "rToGlide": "j",
+  "rToVowel": "ə",
+  "rUvular": "ʁ",
+  "omission": "∅"
+ },
+ "fullFrom": {
+  "alpha": 0.5,
+  "c": 0.75,
+  "g": 0.5,
+  "correctBias": -0.5
+ },
+ "heads": {
+  "fast": {
+   "uses": "dsp",
+   "bias": [-1.0, -4.0, 0.0, -4.0, -4.0, -3.5],
+   "weights": [
+    [3.0, 1.2, -0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-1.0, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-1.5, -0.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-1.2, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-1.2, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+   ],
+   "temperature": 1.3
+  },
+  "full": {
+   "uses": "dsp+zipa",
+   "bias": [-0.8846, -1.5385, 0.0, -1.5385, -1.5385, -1.3462],
+   "weights": [
+    [1.1538, 0.4615, -0.3077, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5],
+    [-0.3846, -0.5769, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.25, 0.0],
+    [-0.5769, -0.1923, 0.3846, 0.0, -2.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-0.4615, -0.5769, 0.0, 0.0, 0.0, -2.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [-0.4615, -0.5769, 0.0, 0.0, 0.0, 0.0, -2.25, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.1923, 0.0, 0.0, 0.0, -2.25, 0.0, 0.0, 0.0, 0.0]
+   ],
+   "temperature": 1.0
+  }
+ },
+ "decision": {
+  "tauOk": 0.8,
+  "tauOkFast": 0.9,
+  "tauAlmost": 0.35,
+  "delta": 0.2,
+  "coarseMax": 0.15,
+  "tauErrFastExtra": 0.05,
+  "tauErr": {
+   "omission": 0.85,
+   "rToL": 0.85,
+   "rToGlide": 0.85,
+   "rToVowel": 0.85,
+   "rUvular": 0.9
+  }
+ },
+ "metrics": null
+}

@@ -1,0 +1,1639 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "feedbackVersion": "2026-11-21.v0",
+ "lines": [
+  {
+   "key": "greet.1",
+   "category": "greeting",
+   "when": "first screen of a session",
+   "text": "Bună! Eu sunt Foni.",
+   "maxSeconds": 2.0,
+   "voice": "greet.1"
+  },
+  {
+   "key": "greet.2",
+   "category": "greeting",
+   "when": "returning child",
+   "text": "Bine ai venit înapoi!",
+   "maxSeconds": 2.0,
+   "voice": "greet.2"
+  },
+  {
+   "key": "greet.3",
+   "category": "greeting",
+   "when": "session start",
+   "text": "Hai să ne jucăm cu sunetele!",
+   "maxSeconds": 2.5,
+   "voice": "greet.3"
+  },
+  {
+   "key": "greet.4",
+   "category": "greeting",
+   "when": "session start",
+   "text": "Ce bine că ai venit!",
+   "maxSeconds": 2.0,
+   "voice": "greet.4"
+  },
+  {
+   "key": "greet.5",
+   "category": "greeting",
+   "when": "after the opening line",
+   "text": "Gata? Pornim!",
+   "maxSeconds": 1.5,
+   "voice": "greet.5"
+  },
+  {
+   "key": "model.listen",
+   "category": "model",
+   "when": "before a model clip",
+   "text": "Ascultă.",
+   "maxSeconds": 1.0,
+   "voice": "model.listen"
+  },
+  {
+   "key": "model.yourTurn",
+   "category": "model",
+   "when": "after a model clip",
+   "text": "Acum tu!",
+   "maxSeconds": 1.0,
+   "voice": "model.yourTurn"
+  },
+  {
+   "key": "model.repeat",
+   "category": "model",
+   "when": "repeat after the model",
+   "text": "Spune după mine.",
+   "maxSeconds": 1.5,
+   "voice": "model.repeat"
+  },
+  {
+   "key": "model.name",
+   "category": "model",
+   "when": "naming a picture without a model",
+   "text": "Ce vezi în poză?",
+   "maxSeconds": 1.5,
+   "voice": "model.name"
+  },
+  {
+   "key": "model.together",
+   "category": "model",
+   "when": "saying it together with the adult",
+   "text": "Hai împreună.",
+   "maxSeconds": 1.5,
+   "voice": "model.together"
+  },
+  {
+   "key": "model.again",
+   "category": "model",
+   "when": "model again on request",
+   "text": "Încă o dată, împreună.",
+   "maxSeconds": 2.0,
+   "voice": "model.again"
+  },
+  {
+   "key": "model.slow",
+   "category": "model",
+   "when": "sentence modelled slowly",
+   "text": "Rar, cuvânt cu cuvânt.",
+   "maxSeconds": 2.0,
+   "voice": "model.slow"
+  },
+  {
+   "key": "step.listen",
+   "category": "step",
+   "when": "Listen",
+   "text": "Ascultă și atinge poza potrivită.",
+   "maxSeconds": 2.5,
+   "voice": "step.listen"
+  },
+  {
+   "key": "step.listen.foil",
+   "category": "step",
+   "when": "Listen, after Foni speaks",
+   "text": "Am spus bine sau am încurcat?",
+   "maxSeconds": 2.5,
+   "voice": "step.listen.foil"
+  },
+  {
+   "key": "step.warmup",
+   "category": "step",
+   "when": "Warmup",
+   "text": "Hai să trezim gura!",
+   "maxSeconds": 1.5,
+   "voice": "step.warmup"
+  },
+  {
+   "key": "step.hold.sustain",
+   "category": "step",
+   "when": "Hold, sustained sounds",
+   "text": "Ține sunetul lung, cât poți.",
+   "maxSeconds": 2.5,
+   "voice": "step.hold.sustain"
+  },
+  {
+   "key": "step.hold.burst",
+   "category": "step",
+   "when": "Hold, bursts",
+   "text": "Scurt și repede, de trei ori.",
+   "maxSeconds": 2.5,
+   "voice": "step.hold.burst"
+  },
+  {
+   "key": "step.syllables",
+   "category": "step",
+   "when": "Syllables",
+   "text": "Urcă în trenul de silabe!",
+   "maxSeconds": 2.0,
+   "voice": "step.syllables"
+  },
+  {
+   "key": "step.syllables.split",
+   "category": "step",
+   "when": "Syllables, first time on the rung",
+   "text": "Întâi despărțit, apoi legat.",
+   "maxSeconds": 2.5,
+   "voice": "step.syllables.split"
+  },
+  {
+   "key": "step.words",
+   "category": "step",
+   "when": "Words",
+   "text": "Ce vezi în poză? Spune tu.",
+   "maxSeconds": 2.0,
+   "voice": "step.words"
+  },
+  {
+   "key": "step.words.final",
+   "category": "step",
+   "when": "Words, final position",
+   "text": "Ține finalul puțin mai lung.",
+   "maxSeconds": 2.5,
+   "voice": "step.words.final"
+  },
+  {
+   "key": "step.pairs",
+   "category": "step",
+   "when": "Pairs",
+   "text": "Ascultă două cuvinte. Apoi spune-le tu.",
+   "maxSeconds": 3.0,
+   "voice": "step.pairs"
+  },
+  {
+   "key": "step.sentence",
+   "category": "step",
+   "when": "Sentence",
+   "text": "Spune toată propoziția.",
+   "maxSeconds": 2.0,
+   "voice": "step.sentence"
+  },
+  {
+   "key": "step.twister.slow",
+   "category": "step",
+   "when": "Twister, snail tempo",
+   "text": "Rar, ca melcul.",
+   "maxSeconds": 1.5,
+   "voice": "step.twister.slow"
+  },
+  {
+   "key": "step.twister.step",
+   "category": "step",
+   "when": "Twister, one step faster",
+   "text": "Acum puțin mai repede, ca iepurașul.",
+   "maxSeconds": 3.0,
+   "voice": "step.twister.step"
+  },
+  {
+   "key": "step.retell",
+   "category": "step",
+   "when": "Retell",
+   "text": "Uite trei poze. Povestește-mi!",
+   "maxSeconds": 2.5,
+   "voice": "step.retell"
+  },
+  {
+   "key": "step.mission",
+   "category": "step",
+   "when": "Mission",
+   "text": "Misiunea de azi, pentru acasă.",
+   "maxSeconds": 2.5,
+   "voice": "step.mission"
+  },
+  {
+   "key": "step.surprise",
+   "category": "step",
+   "when": "the surprise item in block 3",
+   "text": "Uite o surpriză!",
+   "maxSeconds": 1.5,
+   "voice": "step.surprise"
+  },
+  {
+   "key": "step.final",
+   "category": "step",
+   "when": "the last sure item",
+   "text": "Încă una ușoară, pentru final.",
+   "maxSeconds": 2.5,
+   "voice": "step.final"
+  },
+  {
+   "key": "move.1",
+   "category": "move",
+   "when": "Move",
+   "text": "Sus! Zboară ca mine, cu aripile mari!",
+   "maxSeconds": 2.5,
+   "voice": "move.1"
+  },
+  {
+   "key": "move.2",
+   "category": "move",
+   "when": "Move",
+   "text": "Trei respirații mari, ca un balon.",
+   "maxSeconds": 2.5,
+   "voice": "move.2"
+  },
+  {
+   "key": "move.3",
+   "category": "move",
+   "when": "Move",
+   "text": "Gura se odihnește. Scutură mâinile!",
+   "maxSeconds": 2.5,
+   "voice": "move.3"
+  },
+  {
+   "key": "move.4",
+   "category": "move",
+   "when": "Move",
+   "text": "Întinde aripile și zboară cu mine!",
+   "maxSeconds": 2.5,
+   "voice": "move.4"
+  },
+  {
+   "key": "praise.longHold.1",
+   "category": "praise",
+   "when": "sound held long",
+   "text": "Ai ținut sunetul lung!",
+   "maxSeconds": 1.5,
+   "voice": "praise.longHold.1"
+  },
+  {
+   "key": "praise.longHold.2",
+   "category": "praise",
+   "when": "sound held long",
+   "text": "Ce lung a fost!",
+   "maxSeconds": 1.5,
+   "voice": "praise.longHold.2"
+  },
+  {
+   "key": "praise.longHold.3",
+   "category": "praise",
+   "when": "sound held long",
+   "text": "Până la capăt!",
+   "maxSeconds": 1.5,
+   "voice": "praise.longHold.3"
+  },
+  {
+   "key": "praise.longerThanLast.1",
+   "category": "praise",
+   "when": "longer than last time",
+   "text": "Mai lung ca ieri!",
+   "maxSeconds": 1.5,
+   "voice": "praise.longerThanLast.1"
+  },
+  {
+   "key": "praise.longerThanLast.2",
+   "category": "praise",
+   "when": "longer than last time",
+   "text": "Ai bătut recordul tău!",
+   "maxSeconds": 1.5,
+   "voice": "praise.longerThanLast.2"
+  },
+  {
+   "key": "praise.roundLips.1",
+   "category": "praise",
+   "when": "round lips seen",
+   "text": "Buze rotunde, exact așa!",
+   "maxSeconds": 1.5,
+   "voice": "praise.roundLips.1"
+  },
+  {
+   "key": "praise.roundLips.2",
+   "category": "praise",
+   "when": "round lips seen",
+   "text": "Pupic perfect!",
+   "maxSeconds": 1.5,
+   "voice": "praise.roundLips.2"
+  },
+  {
+   "key": "praise.wideSmile.1",
+   "category": "praise",
+   "when": "wide smile seen",
+   "text": "Zâmbet de crocodil!",
+   "maxSeconds": 1.5,
+   "voice": "praise.wideSmile.1"
+  },
+  {
+   "key": "praise.wideSmile.2",
+   "category": "praise",
+   "when": "wide smile seen",
+   "text": "Ți-am văzut dinții!",
+   "maxSeconds": 1.5,
+   "voice": "praise.wideSmile.2"
+  },
+  {
+   "key": "praise.tongueIn.1",
+   "category": "praise",
+   "when": "tongue stayed behind the teeth",
+   "text": "Limba a stat după dinți!",
+   "maxSeconds": 1.5,
+   "voice": "praise.tongueIn.1"
+  },
+  {
+   "key": "praise.tongueIn.2",
+   "category": "praise",
+   "when": "tongue stayed behind the teeth",
+   "text": "Limba cuminte, în gură!",
+   "maxSeconds": 1.5,
+   "voice": "praise.tongueIn.2"
+  },
+  {
+   "key": "praise.voiceOn.1",
+   "category": "praise",
+   "when": "voicing on (Z, J, GE)",
+   "text": "Ți-a bâzâit gâtul!",
+   "maxSeconds": 1.5,
+   "voice": "praise.voiceOn.1"
+  },
+  {
+   "key": "praise.voiceOn.2",
+   "category": "praise",
+   "when": "voicing on (Z, J, GE)",
+   "text": "Motorul a pornit!",
+   "maxSeconds": 1.5,
+   "voice": "praise.voiceOn.2"
+  },
+  {
+   "key": "praise.clearS.1",
+   "category": "praise",
+   "when": "clear S",
+   "text": "Sunet ascuțit, ca un ac!",
+   "maxSeconds": 1.5,
+   "voice": "praise.clearS.1"
+  },
+  {
+   "key": "praise.clearS.2",
+   "category": "praise",
+   "when": "clear S",
+   "text": "Aer rece, drept!",
+   "maxSeconds": 1.5,
+   "voice": "praise.clearS.2"
+  },
+  {
+   "key": "praise.clearSh.1",
+   "category": "praise",
+   "when": "clear Ș",
+   "text": "Sunet rotund și cald!",
+   "maxSeconds": 1.5,
+   "voice": "praise.clearSh.1"
+  },
+  {
+   "key": "praise.clearSh.2",
+   "category": "praise",
+   "when": "clear Ș",
+   "text": "Ca un tren adevărat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.clearSh.2"
+  },
+  {
+   "key": "praise.rTrill.1",
+   "category": "praise",
+   "when": "R vibrated",
+   "text": "Limba a tremurat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.rTrill.1"
+  },
+  {
+   "key": "praise.rTrill.2",
+   "category": "praise",
+   "when": "R vibrated",
+   "text": "Ai mârâit ca Rică!",
+   "maxSeconds": 1.5,
+   "voice": "praise.rTrill.2"
+  },
+  {
+   "key": "praise.lUp.1",
+   "category": "praise",
+   "when": "L with the tongue up",
+   "text": "Limba a urcat sus!",
+   "maxSeconds": 1.5,
+   "voice": "praise.lUp.1"
+  },
+  {
+   "key": "praise.lUp.2",
+   "category": "praise",
+   "when": "L with the tongue up",
+   "text": "Ai cântat ca Lalalu!",
+   "maxSeconds": 1.5,
+   "voice": "praise.lUp.2"
+  },
+  {
+   "key": "praise.threeInRow.1",
+   "category": "praise",
+   "when": "three syllables in a row",
+   "text": "Trei la rând!",
+   "maxSeconds": 1.5,
+   "voice": "praise.threeInRow.1"
+  },
+  {
+   "key": "praise.threeInRow.2",
+   "category": "praise",
+   "when": "three syllables in a row",
+   "text": "Tot trenul, vagon cu vagon!",
+   "maxSeconds": 1.5,
+   "voice": "praise.threeInRow.2"
+  },
+  {
+   "key": "praise.finalClear.1",
+   "category": "praise",
+   "when": "final sound kept",
+   "text": "Finalul s-a auzit clar!",
+   "maxSeconds": 1.5,
+   "voice": "praise.finalClear.1"
+  },
+  {
+   "key": "praise.finalClear.2",
+   "category": "praise",
+   "when": "final sound kept",
+   "text": "N-a fugit sunetul!",
+   "maxSeconds": 1.5,
+   "voice": "praise.finalClear.2"
+  },
+  {
+   "key": "praise.persisted.1",
+   "category": "praise",
+   "when": "success after several tries",
+   "text": "Ai mai încercat și a ieșit!",
+   "maxSeconds": 1.5,
+   "voice": "praise.persisted.1"
+  },
+  {
+   "key": "praise.persisted.2",
+   "category": "praise",
+   "when": "success after several tries",
+   "text": "Nu te-ai lăsat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.persisted.2"
+  },
+  {
+   "key": "praise.afterTip.1",
+   "category": "praise",
+   "when": "success after an instruction",
+   "text": "Ai schimbat ceva și a mers!",
+   "maxSeconds": 1.5,
+   "voice": "praise.afterTip.1"
+  },
+  {
+   "key": "praise.afterTip.2",
+   "category": "praise",
+   "when": "success after an instruction",
+   "text": "Ai făcut exact ce ți-am arătat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.afterTip.2"
+  },
+  {
+   "key": "praise.namedAlone.1",
+   "category": "praise",
+   "when": "named the picture without a model",
+   "text": "Ai știut tu!",
+   "maxSeconds": 1.5,
+   "voice": "praise.namedAlone.1"
+  },
+  {
+   "key": "praise.namedAlone.2",
+   "category": "praise",
+   "when": "named the picture without a model",
+   "text": "Fără ajutor!",
+   "maxSeconds": 1.5,
+   "voice": "praise.namedAlone.2"
+  },
+  {
+   "key": "praise.caughtFoni.1",
+   "category": "praise",
+   "when": "caught Foni's mix-up",
+   "text": "M-ai prins!",
+   "maxSeconds": 1.5,
+   "voice": "praise.caughtFoni.1"
+  },
+  {
+   "key": "praise.caughtFoni.2",
+   "category": "praise",
+   "when": "caught Foni's mix-up",
+   "text": "Ai urechi bune!",
+   "maxSeconds": 1.5,
+   "voice": "praise.caughtFoni.2"
+  },
+  {
+   "key": "praise.wholeSentence.1",
+   "category": "praise",
+   "when": "whole sentence",
+   "text": "Toată propoziția, clar!",
+   "maxSeconds": 1.5,
+   "voice": "praise.wholeSentence.1"
+  },
+  {
+   "key": "praise.wholeSentence.2",
+   "category": "praise",
+   "when": "whole sentence",
+   "text": "Fiecare cuvânt s-a auzit!",
+   "maxSeconds": 1.5,
+   "voice": "praise.wholeSentence.2"
+  },
+  {
+   "key": "praise.fastTwister.1",
+   "category": "praise",
+   "when": "twister at the faster tempo",
+   "text": "Și repede, și clar!",
+   "maxSeconds": 1.5,
+   "voice": "praise.fastTwister.1"
+  },
+  {
+   "key": "praise.fastTwister.2",
+   "category": "praise",
+   "when": "twister at the faster tempo",
+   "text": "Limba nu s-a încurcat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.fastTwister.2"
+  },
+  {
+   "key": "praise.effort.1",
+   "category": "praise",
+   "when": "any honest try",
+   "text": "Bravo că ai încercat!",
+   "maxSeconds": 1.5,
+   "voice": "praise.effort.1"
+  },
+  {
+   "key": "praise.effort.2",
+   "category": "praise",
+   "when": "end of a block",
+   "text": "Ai lucrat frumos!",
+   "maxSeconds": 1.5,
+   "voice": "praise.effort.2"
+  },
+  {
+   "key": "praise.effort.3",
+   "category": "praise",
+   "when": "any honest try",
+   "text": "Îmi place cum încerci!",
+   "maxSeconds": 1.5,
+   "voice": "praise.effort.3"
+  },
+  {
+   "key": "almost.1",
+   "category": "almost",
+   "when": "Almost",
+   "text": "Aproape!",
+   "maxSeconds": 1.0,
+   "voice": "almost.1"
+  },
+  {
+   "key": "almost.2",
+   "category": "almost",
+   "when": "Almost",
+   "text": "Foarte aproape! Încă o dată.",
+   "maxSeconds": 2.0,
+   "voice": "almost.2"
+  },
+  {
+   "key": "almost.3",
+   "category": "almost",
+   "when": "Almost",
+   "text": "Aproape! Mai încercăm o dată?",
+   "maxSeconds": 2.0,
+   "voice": "almost.3"
+  },
+  {
+   "key": "almost.4",
+   "category": "almost",
+   "when": "Almost",
+   "text": "Era aproape. Hai încă una.",
+   "maxSeconds": 2.0,
+   "voice": "almost.4"
+  },
+  {
+   "key": "again.1",
+   "category": "again",
+   "when": "Retake or a miss",
+   "text": "Hai să mai încercăm.",
+   "maxSeconds": 1.5,
+   "voice": "again.1"
+  },
+  {
+   "key": "again.2",
+   "category": "again",
+   "when": "Retake or a miss",
+   "text": "Mai spune o dată.",
+   "maxSeconds": 1.5,
+   "voice": "again.2"
+  },
+  {
+   "key": "again.3",
+   "category": "again",
+   "when": "Retake or a miss",
+   "text": "Încă o dată, împreună cu mine.",
+   "maxSeconds": 2.0,
+   "voice": "again.3"
+  },
+  {
+   "key": "again.4",
+   "category": "again",
+   "when": "Retake or a miss",
+   "text": "Hai să-l mai spunem o dată.",
+   "maxSeconds": 2.0,
+   "voice": "again.4"
+  },
+  {
+   "key": "unsure.1",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Hmm, n-am auzit bine. Mai spunem o dată?",
+   "maxSeconds": 3.0,
+   "voice": "unsure.1"
+  },
+  {
+   "key": "unsure.2",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Întreabă-l pe cel mare de lângă tine.",
+   "maxSeconds": 2.5,
+   "voice": "unsure.2"
+  },
+  {
+   "key": "unsure.3",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Nu sunt sigur. Ce zice omul mare?",
+   "maxSeconds": 2.5,
+   "voice": "unsure.3"
+  },
+  {
+   "key": "unsure.4",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Hai să întrebăm un om mare.",
+   "maxSeconds": 2.0,
+   "voice": "unsure.4"
+  },
+  {
+   "key": "unsure.5",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Omul mare te-a auzit mai bine.",
+   "maxSeconds": 2.0,
+   "voice": "unsure.5"
+  },
+  {
+   "key": "unsure.6",
+   "category": "unsure",
+   "when": "Unsure",
+   "text": "Spune-i și omului mare.",
+   "maxSeconds": 2.0,
+   "voice": "unsure.6"
+  },
+  {
+   "key": "end.1",
+   "category": "end",
+   "when": "Final",
+   "text": "Gata pe azi! Ascultă-te.",
+   "maxSeconds": 2.0,
+   "voice": "end.1"
+  },
+  {
+   "key": "end.2",
+   "category": "end",
+   "when": "Final, offer one more",
+   "text": "Mai vrei una mică?",
+   "maxSeconds": 1.5,
+   "voice": "end.2"
+  },
+  {
+   "key": "end.3",
+   "category": "end",
+   "when": "goodbye",
+   "text": "Pe mâine!",
+   "maxSeconds": 1.0,
+   "voice": "end.3"
+  },
+  {
+   "key": "end.4",
+   "category": "end",
+   "when": "Final",
+   "text": "Ai muncit frumos azi.",
+   "maxSeconds": 2.0,
+   "voice": "end.4"
+  },
+  {
+   "key": "end.5",
+   "category": "end",
+   "when": "adult's turn",
+   "text": "Acum e rândul omului mare.",
+   "maxSeconds": 2.0,
+   "voice": "end.5"
+  },
+  {
+   "key": "end.6",
+   "category": "end",
+   "when": "listen to yourself",
+   "text": "Ascultă cum ai spus.",
+   "maxSeconds": 1.5,
+   "voice": "end.6"
+  },
+  {
+   "key": "end.7",
+   "category": "end",
+   "when": "Final, offer one more",
+   "text": "Încă una mică? Doar dacă vrei.",
+   "maxSeconds": 2.5,
+   "voice": "end.7"
+  },
+  {
+   "key": "end.8",
+   "category": "end",
+   "when": "goodbye",
+   "text": "Ne vedem mâine!",
+   "maxSeconds": 1.5,
+   "voice": "end.8"
+  },
+  {
+   "key": "end.9",
+   "category": "end",
+   "when": "Final",
+   "text": "M-ai ajutat mult azi.",
+   "maxSeconds": 2.0,
+   "voice": "end.9"
+  },
+  {
+   "key": "end.10",
+   "category": "end",
+   "when": "Final",
+   "text": "Gata! Litera e plină.",
+   "maxSeconds": 2.0,
+   "voice": "end.10"
+  },
+  {
+   "key": "end.11",
+   "category": "end",
+   "when": "Final",
+   "text": "Ce joacă frumoasă!",
+   "maxSeconds": 1.5,
+   "voice": "end.11"
+  },
+  {
+   "key": "end.12",
+   "category": "end",
+   "when": "goodbye",
+   "text": "Pa-pa! Zbor acasă.",
+   "maxSeconds": 1.5,
+   "voice": "end.12"
+  },
+  {
+   "key": "lock.1",
+   "category": "lock",
+   "when": "AdultGate",
+   "text": "Cheamă un om mare să te asculte.",
+   "maxSeconds": 2.5,
+   "voice": "lock.1"
+  },
+  {
+   "key": "lock.2",
+   "category": "lock",
+   "when": "AdultGate",
+   "text": "Omul mare ascultă și apasă.",
+   "maxSeconds": 2.5,
+   "voice": "lock.2"
+  },
+  {
+   "key": "lock.3",
+   "category": "lock",
+   "when": "AdultGate",
+   "text": "Mergem mai departe când sună bine.",
+   "maxSeconds": 2.5,
+   "voice": "lock.3"
+  },
+  {
+   "key": "adult.1",
+   "category": "adult",
+   "when": "adult zone",
+   "text": "Pentru adult: vocea copilului rămâne pe telefon.",
+   "maxSeconds": 3.5,
+   "voice": "adult.1"
+  },
+  {
+   "key": "adult.2",
+   "category": "adult",
+   "when": "adult judges a take",
+   "text": "Dacă a sunat bine, apăsați degetul mare.",
+   "maxSeconds": 3.0,
+   "voice": "adult.2"
+  },
+  {
+   "key": "adult.3",
+   "category": "adult",
+   "when": "adult judges a take",
+   "text": "Cum a sunat? Alegeți voi.",
+   "maxSeconds": 2.0,
+   "voice": "adult.3"
+  },
+  {
+   "key": "adult.4",
+   "category": "adult",
+   "when": "listen back together",
+   "text": "Ascultați împreună înregistrarea.",
+   "maxSeconds": 2.5,
+   "voice": "adult.4"
+  },
+  {
+   "key": "adult.5",
+   "category": "adult",
+   "when": "Mission",
+   "text": "Pentru adult: misiunea de azi e pentru acasă.",
+   "maxSeconds": 3.0,
+   "voice": "adult.5"
+  },
+  {
+   "key": "adult.6",
+   "category": "adult",
+   "when": "Mission",
+   "text": "Bifați misiunea când ați făcut-o.",
+   "maxSeconds": 2.5,
+   "voice": "adult.6"
+  },
+  {
+   "key": "warm.burta-balon",
+   "category": "warmup",
+   "when": "warm-up burta-balon",
+   "text": "Mâna pe burtă. Umflă balonul, apoi suflă lung.",
+   "maxSeconds": 4.0,
+   "voice": "warm.burta-balon"
+  },
+  {
+   "key": "warm.pupic",
+   "category": "warmup",
+   "when": "warm-up pupic",
+   "text": "Fă gura ca pentru un pupic!",
+   "maxSeconds": 4.0,
+   "voice": "warm.pupic"
+  },
+  {
+   "key": "warm.zambet",
+   "category": "warmup",
+   "when": "warm-up zambet",
+   "text": "Zâmbește cât poți de larg!",
+   "maxSeconds": 4.0,
+   "voice": "warm.zambet"
+  },
+  {
+   "key": "warm.zambet-pupic",
+   "category": "warmup",
+   "when": "warm-up zambet-pupic",
+   "text": "Schimbă: zâmbet, pupic, zâmbet, pupic!",
+   "maxSeconds": 4.0,
+   "voice": "warm.zambet-pupic"
+  },
+  {
+   "key": "warm.hipopotam",
+   "category": "warmup",
+   "when": "warm-up hipopotam",
+   "text": "Deschide gura mare, ca un hipopotam!",
+   "maxSeconds": 4.0,
+   "voice": "warm.hipopotam"
+  },
+  {
+   "key": "warm.motorasul-buzelor",
+   "category": "warmup",
+   "when": "warm-up motorasul-buzelor",
+   "text": "Buze moi. Fă ca motorul: brrr!",
+   "maxSeconds": 4.0,
+   "voice": "warm.motorasul-buzelor"
+  },
+  {
+   "key": "warm.calul",
+   "category": "warmup",
+   "when": "warm-up calul",
+   "text": "Plescăie cu limba: clop, clop, clop!",
+   "maxSeconds": 4.0,
+   "voice": "warm.calul"
+  },
+  {
+   "key": "warm.catelusul",
+   "category": "warmup",
+   "when": "warm-up catelusul",
+   "text": "Scoate limba și bag-o la loc!",
+   "maxSeconds": 4.0,
+   "voice": "warm.catelusul"
+  },
+  {
+   "key": "warm.ceasul",
+   "category": "warmup",
+   "when": "warm-up ceasul",
+   "text": "Mută limba dintr-un colț în altul!",
+   "maxSeconds": 4.0,
+   "voice": "warm.ceasul"
+  },
+  {
+   "key": "warm.cameleon",
+   "category": "warmup",
+   "when": "warm-up cameleon",
+   "text": "Întinde limba spre nas, apoi spre bărbie!",
+   "maxSeconds": 4.0,
+   "voice": "warm.cameleon"
+  },
+  {
+   "key": "warm.limba-sus-gura",
+   "category": "warmup",
+   "when": "warm-up limba-sus-gura",
+   "text": "Deschide gura. Urcă limba după dinții de sus.",
+   "maxSeconds": 4.0,
+   "voice": "warm.limba-sus-gura"
+  },
+  {
+   "key": "warm.gat-vibreaza",
+   "category": "warmup",
+   "when": "warm-up gat-vibreaza",
+   "text": "Palma pe gât. Spune lung: mmmm.",
+   "maxSeconds": 4.0,
+   "voice": "human-needed"
+  },
+  {
+   "key": "warm.sarpele-lung",
+   "category": "warmup",
+   "when": "warm-up sarpele-lung",
+   "text": "Sâsâie cât mai lung, ca un șarpe.",
+   "maxSeconds": 4.0,
+   "voice": "warm.sarpele-lung"
+  },
+  {
+   "key": "warm.morisca",
+   "category": "warmup",
+   "when": "warm-up morisca",
+   "text": "Suflă tare în morișcă! Acum încet.",
+   "maxSeconds": 4.0,
+   "voice": "warm.morisca"
+  },
+  {
+   "key": "warm.periuta",
+   "category": "warmup",
+   "when": "warm-up periuta",
+   "text": "Limba e periuță. Atinge fiecare dinte.",
+   "maxSeconds": 4.0,
+   "voice": "warm.periuta"
+  },
+  {
+   "key": "fb.s.omission",
+   "category": "errorKind",
+   "when": "s:omission",
+   "text": "Nu uita șarpele!",
+   "maxSeconds": 2.5,
+   "voice": "fb.s.omission",
+   "sound": "s",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.s.stopping",
+   "category": "errorKind",
+   "when": "s:stopping",
+   "text": "Lasă aerul să curgă lung: sss.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "s",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.s.weakOrShort",
+   "category": "errorKind",
+   "when": "s:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.s.weakOrShort",
+   "sound": "s",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.s.placeSwap",
+   "category": "errorKind",
+   "when": "s:placeSwap",
+   "text": "Zâmbește și ține limba în față.",
+   "maxSeconds": 2.5,
+   "voice": "fb.s.placeSwap",
+   "sound": "s",
+   "kind": "placeSwap"
+  },
+  {
+   "key": "fb.s.lateral",
+   "category": "errorKind",
+   "when": "s:lateral",
+   "text": "Suflă aerul pe mijloc, ca prin pai.",
+   "maxSeconds": 2.5,
+   "voice": "fb.s.lateral",
+   "sound": "s",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.s.interdental",
+   "category": "errorKind",
+   "when": "s:interdental",
+   "text": "Ține limba în spatele dinților.",
+   "maxSeconds": 2.5,
+   "voice": "fb.s.interdental",
+   "sound": "s",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.sh.omission",
+   "category": "errorKind",
+   "when": "ș:omission",
+   "text": "Nu uita de Ș!",
+   "maxSeconds": 2.5,
+   "voice": "fb.sh.omission",
+   "sound": "ș",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.sh.stopping",
+   "category": "errorKind",
+   "when": "ș:stopping",
+   "text": "Lasă aerul să curgă lin: șșș.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ș",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.sh.weakOrShort",
+   "category": "errorKind",
+   "when": "ș:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.sh.weakOrShort",
+   "sound": "ș",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.sh.placeSwap",
+   "category": "errorKind",
+   "when": "ș:placeSwap",
+   "text": "Fă buzele pâlnie, limba înapoi.",
+   "maxSeconds": 2.5,
+   "voice": "fb.sh.placeSwap",
+   "sound": "ș",
+   "kind": "placeSwap"
+  },
+  {
+   "key": "fb.sh.lateral",
+   "category": "errorKind",
+   "when": "ș:lateral",
+   "text": "Suflă pe mijloc, cu buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.sh.lateral",
+   "sound": "ș",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.sh.interdental",
+   "category": "errorKind",
+   "when": "ș:interdental",
+   "text": "Limba înăuntru, buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.sh.interdental",
+   "sound": "ș",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.z.omission",
+   "category": "errorKind",
+   "when": "z:omission",
+   "text": "Nu uita de Z!",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.omission",
+   "sound": "z",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.z.stopping",
+   "category": "errorKind",
+   "when": "z:stopping",
+   "text": "Lasă albina să bâzâie lung.",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.stopping",
+   "sound": "z",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.z.weakOrShort",
+   "category": "errorKind",
+   "when": "z:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.weakOrShort",
+   "sound": "z",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.z.devoicing",
+   "category": "errorKind",
+   "when": "z:devoicing",
+   "text": "Pune vocea: bâzâie ca albina!",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.devoicing",
+   "sound": "z",
+   "kind": "devoicing"
+  },
+  {
+   "key": "fb.z.placeSwap",
+   "category": "errorKind",
+   "when": "z:placeSwap",
+   "text": "Zâmbește, limba în față: zzz.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "z",
+   "kind": "placeSwap"
+  },
+  {
+   "key": "fb.z.lateral",
+   "category": "errorKind",
+   "when": "z:lateral",
+   "text": "Suflă aerul pe mijloc, ca prin pai.",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.lateral",
+   "sound": "z",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.z.interdental",
+   "category": "errorKind",
+   "when": "z:interdental",
+   "text": "Ține limba în spatele dinților.",
+   "maxSeconds": 2.5,
+   "voice": "fb.z.interdental",
+   "sound": "z",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.j.omission",
+   "category": "errorKind",
+   "when": "j:omission",
+   "text": "Nu uita de J!",
+   "maxSeconds": 2.5,
+   "voice": "fb.j.omission",
+   "sound": "j",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.j.stopping",
+   "category": "errorKind",
+   "when": "j:stopping",
+   "text": "Lasă vântul să sufle lung.",
+   "maxSeconds": 2.5,
+   "voice": "fb.j.stopping",
+   "sound": "j",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.j.weakOrShort",
+   "category": "errorKind",
+   "when": "j:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.j.weakOrShort",
+   "sound": "j",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.j.devoicing",
+   "category": "errorKind",
+   "when": "j:devoicing",
+   "text": "Pornește motorașul vocii: jjj.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "j",
+   "kind": "devoicing"
+  },
+  {
+   "key": "fb.j.placeSwap",
+   "category": "errorKind",
+   "when": "j:placeSwap",
+   "text": "Buzele pâlnie, limba înapoi: jjj.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "j",
+   "kind": "placeSwap"
+  },
+  {
+   "key": "fb.j.lateral",
+   "category": "errorKind",
+   "when": "j:lateral",
+   "text": "Suflă pe mijloc, cu buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.j.lateral",
+   "sound": "j",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.j.interdental",
+   "category": "errorKind",
+   "when": "j:interdental",
+   "text": "Limba înăuntru, buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.j.interdental",
+   "sound": "j",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.ts.omission",
+   "category": "errorKind",
+   "when": "ț:omission",
+   "text": "Nu uita de Ț!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ts.omission",
+   "sound": "ț",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.ts.stopping",
+   "category": "errorKind",
+   "when": "ț:stopping",
+   "text": "După t, lasă aerul să șuiere.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ț",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.ts.weakOrShort",
+   "category": "errorKind",
+   "when": "ț:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ts.weakOrShort",
+   "sound": "ț",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.ts.deaffrication",
+   "category": "errorKind",
+   "when": "ț:deaffrication",
+   "text": "Atinge dinții o clipă, apoi ț!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ț",
+   "kind": "deaffrication"
+  },
+  {
+   "key": "fb.ts.affricatePlace",
+   "category": "errorKind",
+   "when": "ț:affricatePlace",
+   "text": "Zâmbește, limba în față: ț.",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ț",
+   "kind": "affricatePlace"
+  },
+  {
+   "key": "fb.ts.lateral",
+   "category": "errorKind",
+   "when": "ț:lateral",
+   "text": "Suflă aerul pe mijloc, ca prin pai.",
+   "maxSeconds": 2.5,
+   "voice": "fb.ts.lateral",
+   "sound": "ț",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.ts.interdental",
+   "category": "errorKind",
+   "when": "ț:interdental",
+   "text": "Ține limba în spatele dinților.",
+   "maxSeconds": 2.5,
+   "voice": "fb.ts.interdental",
+   "sound": "ț",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.ce.omission",
+   "category": "errorKind",
+   "when": "ce:omission",
+   "text": "Nu uita de CE!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ce.omission",
+   "sound": "ce",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.ce.stopping",
+   "category": "errorKind",
+   "when": "ce:stopping",
+   "text": "După oprire, lasă aerul: ce!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ce",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.ce.weakOrShort",
+   "category": "errorKind",
+   "when": "ce:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ce.weakOrShort",
+   "sound": "ce",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.ce.deaffrication",
+   "category": "errorKind",
+   "when": "ce:deaffrication",
+   "text": "Oprește o clipă, apoi ce!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ce",
+   "kind": "deaffrication"
+  },
+  {
+   "key": "fb.ce.affricatePlace",
+   "category": "errorKind",
+   "when": "ce:affricatePlace",
+   "text": "Buzele pâlnie, limba puțin înapoi.",
+   "maxSeconds": 2.5,
+   "voice": "fb.ce.affricatePlace",
+   "sound": "ce",
+   "kind": "affricatePlace"
+  },
+  {
+   "key": "fb.ce.lateral",
+   "category": "errorKind",
+   "when": "ce:lateral",
+   "text": "Suflă pe mijloc: ce!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ce",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.ce.interdental",
+   "category": "errorKind",
+   "when": "ce:interdental",
+   "text": "Limba înăuntru, buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.ce.interdental",
+   "sound": "ce",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.ge.omission",
+   "category": "errorKind",
+   "when": "ge:omission",
+   "text": "Nu uita de GE!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ge.omission",
+   "sound": "ge",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.ge.stopping",
+   "category": "errorKind",
+   "when": "ge:stopping",
+   "text": "După oprire, lasă aerul: ge!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ge",
+   "kind": "stopping"
+  },
+  {
+   "key": "fb.ge.weakOrShort",
+   "category": "errorKind",
+   "when": "ge:weakOrShort",
+   "text": "Încă o dată, mai tare!",
+   "maxSeconds": 2.5,
+   "voice": "fb.ge.weakOrShort",
+   "sound": "ge",
+   "kind": "weakOrShort"
+  },
+  {
+   "key": "fb.ge.deaffrication",
+   "category": "errorKind",
+   "when": "ge:deaffrication",
+   "text": "Oprește o clipă, apoi ge!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ge",
+   "kind": "deaffrication"
+  },
+  {
+   "key": "fb.ge.devoicing",
+   "category": "errorKind",
+   "when": "ge:devoicing",
+   "text": "Pornește vocea: ge!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ge",
+   "kind": "devoicing"
+  },
+  {
+   "key": "fb.ge.affricatePlace",
+   "category": "errorKind",
+   "when": "ge:affricatePlace",
+   "text": "Buzele pâlnie: ge!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ge",
+   "kind": "affricatePlace"
+  },
+  {
+   "key": "fb.ge.lateral",
+   "category": "errorKind",
+   "when": "ge:lateral",
+   "text": "Suflă pe mijloc: ge!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "ge",
+   "kind": "lateral"
+  },
+  {
+   "key": "fb.ge.interdental",
+   "category": "errorKind",
+   "when": "ge:interdental",
+   "text": "Limba înăuntru, buzele pâlnie.",
+   "maxSeconds": 2.5,
+   "voice": "fb.ge.interdental",
+   "sound": "ge",
+   "kind": "interdental"
+  },
+  {
+   "key": "fb.r.omission",
+   "category": "errorKind",
+   "when": "r:omission",
+   "text": "Nu uita de R!",
+   "maxSeconds": 2.5,
+   "voice": "fb.r.omission",
+   "sound": "r",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.r.rToL",
+   "category": "errorKind",
+   "when": "r:rToL",
+   "text": "Lasă vârful limbii să bată sus.",
+   "maxSeconds": 2.5,
+   "voice": "fb.r.rToL",
+   "sound": "r",
+   "kind": "rToL"
+  },
+  {
+   "key": "fb.r.rToGlide",
+   "category": "errorKind",
+   "when": "r:rToGlide",
+   "text": "Ridică vârful limbii după dinți.",
+   "maxSeconds": 2.5,
+   "voice": "fb.r.rToGlide",
+   "sound": "r",
+   "kind": "rToGlide"
+  },
+  {
+   "key": "fb.r.rToVowel",
+   "category": "errorKind",
+   "when": "r:rToVowel",
+   "text": "Vârful limbii sus: rrr!",
+   "maxSeconds": 2.5,
+   "voice": "human-needed",
+   "sound": "r",
+   "kind": "rToVowel"
+  },
+  {
+   "key": "fb.r.rUvular",
+   "category": "errorKind",
+   "when": "r:rUvular",
+   "text": "Vârful limbii lucrează, nu gâtul.",
+   "maxSeconds": 2.5,
+   "voice": "fb.r.rUvular",
+   "sound": "r",
+   "kind": "rUvular"
+  },
+  {
+   "key": "fb.l.omission",
+   "category": "errorKind",
+   "when": "l:omission",
+   "text": "Nu uita de L!",
+   "maxSeconds": 2.5,
+   "voice": "fb.l.omission",
+   "sound": "l",
+   "kind": "omission"
+  },
+  {
+   "key": "fb.l.lToGlide",
+   "category": "errorKind",
+   "when": "l:lToGlide",
+   "text": "Lipește vârful limbii sus, după dinți.",
+   "maxSeconds": 2.5,
+   "voice": "fb.l.lToGlide",
+   "sound": "l",
+   "kind": "lToGlide"
+  },
+  {
+   "key": "fb.l.lToR",
+   "category": "errorKind",
+   "when": "l:lToR",
+   "text": "Ține limba lipită, nu o bate.",
+   "maxSeconds": 2.5,
+   "voice": "fb.l.lToR",
+   "sound": "l",
+   "kind": "lToR"
+  },
+  {
+   "key": "fb.correct",
+   "category": "verdict",
+   "when": "correct",
+   "text": "Bravo!",
+   "maxSeconds": 1.5,
+   "voice": "fb.correct"
+  },
+  {
+   "key": "fb.almost",
+   "category": "verdict",
+   "when": "almost",
+   "text": "Aproape!",
+   "maxSeconds": 1.5,
+   "voice": "fb.almost"
+  },
+  {
+   "key": "fb.unsure",
+   "category": "verdict",
+   "when": "unsure",
+   "text": "Hai să mai încercăm.",
+   "maxSeconds": 1.5,
+   "voice": "fb.unsure"
+  },
+  {
+   "key": "fb.retake.clipped",
+   "category": "retake",
+   "when": "clipped",
+   "text": "Ține telefonul puțin mai departe.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.clipped"
+  },
+  {
+   "key": "fb.retake.tooQuiet",
+   "category": "retake",
+   "when": "tooQuiet",
+   "text": "Mai aproape și mai tare, te rog.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.tooQuiet"
+  },
+  {
+   "key": "fb.retake.tooShort",
+   "category": "retake",
+   "when": "tooShort",
+   "text": "Mai spune o dată, rar.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.tooShort"
+  },
+  {
+   "key": "fb.retake.noSpeech",
+   "category": "retake",
+   "when": "noSpeech",
+   "text": "Mai spune o dată.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.noSpeech"
+  },
+  {
+   "key": "fb.retake.noisy",
+   "category": "retake",
+   "when": "noisy",
+   "text": "E gălăgie. Mai spune o dată.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.noisy"
+  },
+  {
+   "key": "fb.retake.dropped",
+   "category": "retake",
+   "when": "dropped",
+   "text": "Mai spune o dată.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.dropped"
+  },
+  {
+   "key": "fb.retake.adultVoice",
+   "category": "retake",
+   "when": "adultVoice",
+   "text": "Acum tu!",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.adultVoice"
+  },
+  {
+   "key": "fb.retake.otherWord",
+   "category": "retake",
+   "when": "otherWord",
+   "text": "Mai spune o dată cuvântul.",
+   "maxSeconds": 2.5,
+   "voice": "fb.retake.otherWord"
+  }
+ ]
+}

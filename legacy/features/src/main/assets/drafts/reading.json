@@ -1,0 +1,132 @@
+{
+  "format": 1,
+  "version": "ciorna-2026-11-06",
+  "status": "ciornă",
+  "approvedBy": null,
+  "notice": "Ciornă: listele și textele așteaptă verificarea unui logoped. Nu sunt materialele PEAFC.",
+  "grade": "final de clasa I",
+  "sources": {
+    "words": "Cuvintele din liste sunt alese din dicționarul MFA romanian_cv v2.0.0 (VoxCommunis): CC0 după README, CC BY 4.0 după meta.json. https://github.com/MontrealCorpusTools/mfa-models/tree/main/dictionary/romanian/cv/v2.0.0",
+    "texts": "Textele sunt scrise pentru Fonia.",
+    "syllables": "Despărțirea în silabe e făcută de mână, după regulile școlare. Silabele se numără din ea.",
+    "sets": "Setul B are aceleași lungimi și același fel de cuvinte ca setul A, în aceeași ordine: e pentru a doua probă."
+  },
+  "instructions": {
+    "lists": "Când apar cuvintele pe ecran, citește-le cu voce tare, pe rând, de la stânga la dreapta. Dacă nu știi un cuvânt, ți-l spun eu și mergi mai departe.",
+    "text": "Când apare povestea pe ecran, citește-o cu voce tare, de la început. Dacă nu știi un cuvânt, ți-l spun eu și mergi mai departe.",
+    "adult": [
+      "Atinge cuvintele citite altfel sau sărite.",
+      "Dacă se oprește la un cuvânt mai mult de 3 secunde, spune-i tu cuvântul și atinge-l.",
+      "Dacă se corectează singur, atinge cuvântul din nou: e citit bine.",
+      "Cuvintele repetate sau adăugate nu se numără."
+    ]
+  },
+  "sets": [
+    {
+      "id": "A",
+      "probes": [
+        {
+          "id": "A-mono",
+          "kind": "mono",
+          "title": "Cuvinte de o silabă",
+          "words": [
+            "bag", "rar", "stea", "joc", "fiu", "scurt", "lung", "sfat",
+            "prânz", "sar", "ies", "lac", "ou", "film", "cer", "parc",
+            "corn", "preț", "școli", "drum", "punct", "bloc", "cal", "simt",
+            "grâu", "dinți", "cerc", "cărți", "fac", "uși", "pod", "plin",
+            "foc", "cred", "văd", "vis", "pun", "zi", "dau", "vechi",
+            "șir", "mult", "gem", "semn", "calm", "cinci", "val", "stau",
+            "bani", "nord", "mic", "gros", "flori", "nas", "doi", "chei",
+            "rând", "lei", "meci", "alb"
+          ]
+        },
+        {
+          "id": "A-bi",
+          "kind": "bi",
+          "title": "Cuvinte de două silabe",
+          "words": [
+            "șa-se", "joa-că", "noap-te", "po-rumb", "zbu-ra", "car-te", "vre-me", "pa-ce",
+            "su-tă", "târ-ziu", "ban-că", "iar-nă", "școa-lă", "a-pă", "cu-țit", "fri-că",
+            "co-pac", "fru-mos", "fot-bal", "peș-te", "ca-dou", "sti-clă", "ta-ta", "ma-re",
+            "tâ-năr", "fu-ge", "min-ge", "fa-ță", "mâ-nă", "cea-ră", "soa-re", "lu-me",
+            "pa-tru", "din-te", "ve-cin", "î-nalt", "no-roc", "câi-ne", "pi-cior", "gal-ben",
+            "ca-să", "um-bră", "hai-ne", "lu-nă", "ba-ie", "do-uă", "prie-ten", "ghea-ță",
+            "cu-vânt", "șo-fer"
+          ]
+        },
+        {
+          "id": "A-tri",
+          "kind": "tri",
+          "title": "Cuvinte de trei silabe",
+          "words": [
+            "miș-ca-re", "pa-gi-nă", "pă-du-re", "bu-ni-cul", "mân-ca-re", "a-co-lo", "spa-te-le", "a-ca-să",
+            "mi-nu-nat", "ro-ți-le", "ie-pu-re", "al-bas-tru", "fe-ti-ța", "a-ju-tor", "mu-zi-că", "re-pe-de",
+            "ca-me-ră", "ve-de-re", "pis-ci-nă", "lu-mi-nă", "ju-că-rii", "o-bo-sit", "ma-ză-re", "po-ves-te",
+            "mă-mi-că", "o-bi-cei", "de-par-te", "pă-rin-te", "cu-vin-te", "te-le-fon", "în-chi-de", "fân-tâ-na",
+            "pla-ne-tă", "fe-me-ie", "bu-că-tar", "e-chi-pă", "u-șoa-ră", "bu-cu-ros", "va-can-ță", "î-na-poi"
+          ]
+        },
+        {
+          "id": "A-text",
+          "kind": "text",
+          "title": "La bunica",
+          "text": "Ana merge la bunica ei, la țară. Pe drum vede un cal și doi miei. Bunica are o casă mică, lângă pădure. În spatele casei este o grădină mare. Acolo cresc roșii, ardei și flori. Ana ia o cană verde și udă florile. Un cățel alb și mic vine în fugă. Are o minge roșie în gură. Ana aruncă mingea departe. Cățelul aleargă și o aduce înapoi. Bunica râde și le dă apă rece. Apoi fac o plăcintă cu mere. Toată casa miroase a scorțișoară. Seara, Ana și bunica stau pe bancă. Privesc cerul și numără stelele. Cățelul doarme lângă ele, cu ochii închiși. Ana spune încet: „Mâine vin iar la tine, bunico!”",
+          "syllables": "A-na mer-ge la bu-ni-ca ei, la ța-ră. Pe drum ve-de un cal și doi miei. Bu-ni-ca a-re o ca-să mi-că, lân-gă pă-du-re. În spa-te-le ca-sei es-te o gră-di-nă ma-re. A-co-lo cresc ro-șii, ar-dei și flori. A-na ia o ca-nă ver-de și u-dă flo-ri-le. Un că-țel alb și mic vi-ne în fu-gă. A-re o min-ge ro-și-e în gu-ră. A-na a-run-că min-gea de-par-te. Că-țe-lul a-lear-gă și o a-du-ce î-na-poi. Bu-ni-ca râ-de și le dă a-pă re-ce. A-poi fac o plă-cin-tă cu me-re. Toa-tă ca-sa mi-roa-se a scor-ți-șoa-ră. Sea-ra, A-na și bu-ni-ca stau pe ban-că. Pri-vesc ce-rul și nu-mă-ră ste-le-le. Că-țe-lul doar-me lân-gă e-le, cu o-chii în-chiși. A-na spu-ne în-cet: „Mâi-ne vin iar la ti-ne, bu-ni-co!”"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "probes": [
+        {
+          "id": "B-mono",
+          "kind": "mono",
+          "title": "Cuvinte de o silabă",
+          "words": [
+            "cad", "roz", "zbor", "zid", "aur", "scump", "larg", "plan",
+            "vârf", "uit", "las", "loc", "om", "port", "cui", "praf",
+            "colț", "ritm", "străzi", "tren", "sport", "glas", "cap", "spun",
+            "grajd", "câini", "circ", "mâini", "iau", "țări", "pui", "slab",
+            "fel", "merg", "țin", "ton", "rog", "an", "duc", "verzi",
+            "țel", "mici", "gol", "somn", "clar", "opt", "vas", "sunt",
+            "nuci", "sud", "nou", "greu", "mingi", "sat", "trei", "ochi",
+            "gând", "mii", "zeci", "bun"
+          ]
+        },
+        {
+          "id": "B-bi",
+          "kind": "bi",
+          "title": "Cuvinte de două silabe",
+          "words": [
+            "zi-le", "moa-ră", "doar-me", "cup-tor", "sca-ră", "lap-te", "vo-ce", "re-ce",
+            "bu-nă", "as-tăzi", "lân-gă", "toam-nă", "șco-lar", "va-ră", "ni-sip", "cla-să",
+            "co-pil", "gro-zav", "vul-can", "ro-șu", "va-gon", "gean-tă", "ma-ma", "ta-re",
+            "la-căt", "vi-ne", "ze-ce", "ța-ră", "mi-că", "sea-ră", "floa-re", "nu-me",
+            "șap-te", "min-te", "me-dic", "în-cet", "mo-tor", "pâi-ne", "ci-reși", "ver-de",
+            "ma-să", "stra-dă", "mâi-ne", "gu-ră", "che-ie", "zi-ua", "băr-bat", "pa-chet",
+            "pă-mânt", "mă-gar"
+          ]
+        },
+        {
+          "id": "B-tri",
+          "kind": "tri",
+          "title": "Cuvinte de trei silabe",
+          "words": [
+            "a-sea-ră", "ma-și-nă", "mi-nu-ne", "co-pi-lul", "plă-ce-re", "i-ni-mă", "soa-re-le", "a-fa-ră",
+            "fe-ri-cit", "u-și-le", "u-re-che", "co-boa-ră", "li-va-da", "a-proa-pe", "na-tu-ră", "bi-ne-le",
+            "ta-bă-ră", "bu-re-te", "gră-di-nă", "vi-te-ză", "po-e-zii", "să-nă-tos", "fa-so-le", "lec-tu-ră",
+            "mă-nân-că", "bu-zu-nar", "de-vre-me", "ple-ca-re", "mi-nu-te", "ma-ga-zin", "în-va-ță", "sâm-bă-tă",
+            "vi-zi-tă", "hâr-ti-e", "ju-că-tor", "o-glin-dă", "va-loa-re", "căr-bu-ne", "lec-ți-e", "în-ce-put"
+          ]
+        },
+        {
+          "id": "B-text",
+          "kind": "text",
+          "title": "Ziua din parc",
+          "text": "Mihai are o bicicletă nouă și albastră. Sâmbătă merge cu tata în parc. Pe alee sunt bălți mici după ploaia de aseară. Mihai ocolește bălțile cu grijă. Lângă lac îl vede pe Radu, colegul de clasă. Radu ține un zmeu roșu, cu o coadă lungă. Vântul suflă tare. Jucăria urcă sus de tot. Băieții aleargă pe iarba verde și râd. Apoi stau pe o bancă și mănâncă clătite. O rață cenușie vine încet spre ei. Radu îi aruncă puțină pâine. Seara, tata îl cheamă acasă. Mihai își ia la revedere de la Radu. Pe drum, cerul se face roșu ca focul. Acasă, Mihai îi spune mamei: „Mâine vreau să fac și eu un zmeu!”",
+          "syllables": "Mi-hai a-re o bi-ci-cle-tă no-uă și al-bas-tră. Sâm-bă-tă mer-ge cu ta-ta în parc. Pe a-le-e sunt bălți mici du-pă ploa-ia de a-sea-ră. Mi-hai o-co-leș-te băl-ți-le cu gri-jă. Lân-gă lac îl ve-de pe Ra-du, co-le-gul de cla-să. Ra-du ți-ne un zmeu ro-șu, cu o coa-dă lun-gă. Vân-tul su-flă ta-re. Ju-că-ri-a ur-că sus de tot. Bă-ie-ții a-lear-gă pe iar-ba ver-de și râd. A-poi stau pe o ban-că și mă-nân-că clă-ti-te. O ra-ță ce-nu-și-e vi-ne în-cet spre ei. Ra-du îi a-run-că pu-ți-nă pâi-ne. Sea-ra, ta-ta îl chea-mă a-ca-să. Mi-hai își ia la re-ve-de-re de la Ra-du. Pe drum, ce-rul se fa-ce ro-șu ca fo-cul. A-ca-să, Mi-hai îi spu-ne ma-mei: „Mâi-ne vreau să fac și eu un zmeu!”"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+ "schema": 1,
+ "version": "2026-11-21.v0",
+ "source": "hand-set v0, not trained: capture values from DSPThresholds v1 and plan 03 §8, word and measurement values from plan 03 §3-§4 [P]",
+ "capture": {
+  "maxDropped": 0,
+  "minBandSnrDb": 15,
+  "noisyRmsDb": -35,
+  "bandSnrLowHz": 4000,
+  "bandSnrHighHz": 8000,
+  "adultVoiceRatio": 0.7,
+  "childF0Hz": 260,
+  "fullBandwidthHz": 16000,
+  "placeBandwidthHz": 11000,
+  "minSampleRateHz": 32000
+ },
+ "word": {
+  "secondsPerPhoneme": 0.09,
+  "baseSeconds": 0.15,
+  "minRatio": 0.5,
+  "maxRatio": 2.5,
+  "minFitPerLabel": -3,
+  "minFitFrames": 10
+ },
+ "measure": {
+  "lookbackSeconds": 0.15,
+  "gapMarginDb": 6,
+  "neighbourSeconds": 0.15,
+  "minPlaceMs": 40,
+  "minVoicingMs": 40,
+  "onsetSearchSeconds": 0.25
+ }
+}

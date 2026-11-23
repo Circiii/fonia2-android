@@ -1,0 +1,41 @@
+{
+  "sound": "sh",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.sh",
+  "caption": "Buzele rotunde, limba ca o ceșcuță.",
+  "steps": [{"icon": "lips", "label": "Buze rotunde", "reveals": ["lips"]}, {"icon": "teeth", "label": "Dinții aproape", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba sus", "reveals": ["tongue"]}],
+  "description": "Pentru Ș: buzele sunt rotunde și împinse în față, dinții puțin depărtați, limba e ridicată, trasă înapoi și largă, ca o ceșcuță.",
+  "therapistNote": "Ș: față — buze rotunjite și împinse în față (pâlnie), incisivii ușor depărtați. Secțiune — limba lată, ridicată și trasă înapoi; vârful sus, departe de dinți (după creastă), cu „căușul” limbii; spațiu mai mare între limbă și cerul gurii decât la S. Aer: lat, cald (portocaliu), mai lent. Fără voce. Verificați retragerea vârfului față de creastă și protruzia buzelor. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.2,
+    "lipRound": 1.0,
+    "lipPart": 0.5,
+    "tongueTip": 0.35,
+    "tongueRaise": 0.7,
+    "tongueForward": -0.45,
+    "tongueCup": 1.0
+  },
+  "animation": null,
+  "flutter": null,
+  "air": {"stream": "wide", "warm": true, "stop": false},
+  "voiced": false,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

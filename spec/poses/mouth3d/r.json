@@ -1,0 +1,43 @@
+{
+  "sound": "r",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.r",
+  "caption": "Gura deschisă, vârful limbii sus tremură.",
+  "steps": [{"icon": "teeth", "label": "Gura deschisă", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba sus", "reveals": ["tongue", "lips"]}, {"icon": "air", "label": "Vibrează", "reveals": []}],
+  "description": "Pentru R: gura e deschisă, vârful limbii se ridică la creasta din spatele dinților de sus și tremură repede.",
+  "therapistNote": "R: față — gura deschisă, vârful limbii ridicat vizibil spre spatele incisivilor de sus. Secțiune — vârful ridicat spre creasta alveolară, cu un mic spațiu, vibrând (încetinit, cu semne de mișcare); corpul limbii coborât. Aer în pulsuri, în ritmul vibrației; vocea pornită. Verificați înălțimea vârfului, că nu pare retroflex sau uvular și ritmul pulsurilor (arătat încetinit, nu 25–30 Hz). Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.42,
+    "lipPart": 0.5,
+    "tongueTip": 0.6,
+    "tongueRaise": 0.55,
+    "tongueForward": 0.15
+  },
+  "animation": null,
+  "flutter": {
+    "channel": "tongueTip",
+    "amplitude": 0.12,
+    "hz": 5.0
+  },
+  "air": {"stream": "pulse", "warm": false, "stop": false},
+  "voiced": true,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": -5,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

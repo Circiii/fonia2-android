@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Debug builds only: every piece of the design system on a few pages, like MouthGallery
+         (launch argument -foniaMouths) on iOS. Exported so that
+         adb shell am start -n tech.fonia.app/tech.fonia.design.DesignGalleryActivity
+         can open it; the string extra "section" picks a page: componente, acasa, foni, guri, scene. -->
+    <application>
+        <activity
+            android:name="tech.fonia.design.DesignGalleryActivity"
+            android:exported="true"
+            android:label="Fonia design"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+    </application>
+</manifest>

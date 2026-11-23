@@ -1,0 +1,57 @@
+{
+  "sound": "l",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.l",
+  "caption": "Vârful limbii sus, după dinții de sus.",
+  "steps": [{"icon": "teeth", "label": "Gura deschisă", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba sus", "reveals": ["tongue", "lips"]}],
+  "description": "Pentru L: gura e deschisă, vârful limbii apasă pe creasta din spatele dinților de sus, iar marginile limbii coboară ca aerul să iasă pe lângă ele.",
+  "therapistNote": "L: față — gura deschisă, vârful limbii ridicat la spatele incisivilor de sus, marginile limbii coborâte (spații întunecate lateral). Secțiune animată — vârful apăsat pe creasta alveolară (inel galben), apoi eliberare ușoară; aerul trece pe lângă limbă (desenat mai deschis după lamă, fiindcă trece lateral, în afara secțiunii); vocea pornită. Verificați contactul apical, coborârea marginilor și că aerul nu e arătat pe mijloc. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.6,
+    "lipPart": 0.6,
+    "lipSpread": 0.15,
+    "tongueTip": 0.65,
+    "tongueRaise": 0.55,
+    "tongueSidesDown": 1.0,
+    "tongueForward": 0.25
+  },
+  "animation": {
+    "loopSec": 2.2,
+    "keys": [
+      {
+        "t": 0.0,
+        "spring": "normal"
+      },
+      {
+        "t": 1.5,
+        "spring": "soft",
+        "params": {
+          "tongueTip": 0.15,
+          "tongueSidesDown": 0.3
+        }
+      }
+    ]
+  },
+  "flutter": null,
+  "air": {"stream": "lateral", "warm": false, "stop": false},
+  "voiced": true,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": -5,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

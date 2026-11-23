@@ -1,0 +1,917 @@
+{
+  "rows": [
+    {
+      "name": "tap_1",
+      "duration_s": 0.097,
+      "channels": 1,
+      "momentary_max_lufs": -26.6,
+      "true_peak_dbtp": -3.3,
+      "lead_silence_ms": 1.7,
+      "tail_last10ms_db": -60.0,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 952,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4704,
+      "ff_momentary_max": -26.6,
+      "ff_true_peak": -3.3,
+      "partials": [
+        "B5+35",
+        "A5+29",
+        "C#6+11"
+      ],
+      "earshot_tags": [
+        [
+          "a mouth pop",
+          3.3
+        ],
+        [
+          "a cork pop",
+          3.1
+        ],
+        [
+          "a bubble pop",
+          2.9
+        ]
+      ],
+      "earshot_query": "a soft bubble pop",
+      "earshot_z": 2.1,
+      "p_vs_bad": 0.98,
+      "brightness_hz": 1227
+    },
+    {
+      "name": "tap_2",
+      "duration_s": 0.097,
+      "channels": 1,
+      "momentary_max_lufs": -26.5,
+      "true_peak_dbtp": -3.1,
+      "lead_silence_ms": 1.9,
+      "tail_last10ms_db": -51.7,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 863,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4477,
+      "ff_momentary_max": -26.5,
+      "ff_true_peak": -3.1,
+      "partials": [
+        "A5+45",
+        "Bb5+31",
+        "Ab5+29"
+      ],
+      "earshot_tags": [
+        [
+          "a mouth pop",
+          3.1
+        ],
+        [
+          "a bubble pop",
+          3.0
+        ],
+        [
+          "a cork pop",
+          2.9
+        ]
+      ],
+      "earshot_query": "a soft bubble pop",
+      "earshot_z": 1.9,
+      "p_vs_bad": 0.98,
+      "brightness_hz": 1222
+    },
+    {
+      "name": "tap_3",
+      "duration_s": 0.097,
+      "channels": 1,
+      "momentary_max_lufs": -26.4,
+      "true_peak_dbtp": -3.3,
+      "lead_silence_ms": 2.3,
+      "tail_last10ms_db": -34.5,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 653,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4452,
+      "ff_momentary_max": -26.4,
+      "ff_true_peak": -3.3,
+      "partials": [
+        "F5-45",
+        "F5+33",
+        "Eb5+27"
+      ],
+      "earshot_tags": [
+        [
+          "a bubble pop",
+          3.3
+        ],
+        [
+          "a mouth pop",
+          3.0
+        ],
+        [
+          "a cork pop",
+          3.0
+        ]
+      ],
+      "earshot_query": "a soft bubble pop",
+      "earshot_z": 2.3,
+      "p_vs_bad": 0.99,
+      "brightness_hz": 1000
+    },
+    {
+      "name": "card",
+      "duration_s": 0.342,
+      "channels": 2,
+      "momentary_max_lufs": -23.3,
+      "true_peak_dbtp": -4.1,
+      "lead_silence_ms": 1.0,
+      "tail_last10ms_db": -84.1,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 2479,
+      "side_over_mid_db": -15.9,
+      "ogg_bytes": 8912,
+      "ff_momentary_max": -23.3,
+      "ff_true_peak": -4.1,
+      "partials": [
+        "F#6+37",
+        "F6+12",
+        "C#6+6"
+      ],
+      "earshot_tags": [
+        [
+          "a snare hit",
+          3.0
+        ],
+        [
+          "a quick swipe",
+          3.0
+        ],
+        [
+          "a box lid closing",
+          2.7
+        ]
+      ],
+      "earshot_query": "a quick swipe",
+      "earshot_z": 3.0,
+      "p_vs_bad": 0.99,
+      "brightness_hz": 5681
+    },
+    {
+      "name": "nav_forward",
+      "duration_s": 0.325,
+      "channels": 2,
+      "momentary_max_lufs": -23.0,
+      "true_peak_dbtp": -8.9,
+      "lead_silence_ms": 0.9,
+      "tail_last10ms_db": -92.3,
+      "energy_below_300hz_pct": 0.7,
+      "centroid_hz": 506,
+      "side_over_mid_db": -20.5,
+      "ogg_bytes": 7970,
+      "ff_momentary_max": -23.0,
+      "ff_true_peak": -8.9,
+      "partials": [
+        "Ab4-3",
+        "C5-25",
+        "Bb4+26"
+      ],
+      "earshot_tags": [
+        [
+          "a fast whoosh",
+          4.0
+        ],
+        [
+          "a quick swipe",
+          3.4
+        ],
+        [
+          "a snare hit",
+          3.3
+        ]
+      ],
+      "earshot_query": "a soft airy whoosh",
+      "earshot_z": 1.6,
+      "p_vs_bad": 0.82,
+      "brightness_hz": 896
+    },
+    {
+      "name": "nav_back",
+      "duration_s": 0.342,
+      "channels": 2,
+      "momentary_max_lufs": -26.0,
+      "true_peak_dbtp": -13.0,
+      "lead_silence_ms": 0.8,
+      "tail_last10ms_db": -89.1,
+      "energy_below_300hz_pct": 3.4,
+      "centroid_hz": 422,
+      "side_over_mid_db": -19.7,
+      "ogg_bytes": 7894,
+      "ff_momentary_max": -26.0,
+      "ff_true_peak": -13.0,
+      "partials": [
+        "Ab4-19",
+        "E4-12",
+        "F#4+23"
+      ],
+      "earshot_tags": [
+        [
+          "a fast whoosh",
+          4.5
+        ],
+        [
+          "a short swish",
+          3.7
+        ],
+        [
+          "a stick swung fast through the air",
+          3.4
+        ]
+      ],
+      "earshot_query": "a soft airy whoosh",
+      "earshot_z": 2.4,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 750
+    },
+    {
+      "name": "mic_open",
+      "duration_s": 0.137,
+      "channels": 1,
+      "momentary_max_lufs": -23.0,
+      "true_peak_dbtp": -7.2,
+      "lead_silence_ms": 0.4,
+      "tail_last10ms_db": -31.1,
+      "energy_below_300hz_pct": 11.2,
+      "centroid_hz": 410,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4852,
+      "ff_momentary_max": -23.0,
+      "ff_true_peak": -7.2,
+      "partials": [
+        "G4-43",
+        "Eb4+5",
+        "B4-9"
+      ],
+      "earshot_tags": [
+        [
+          "a bubble pop",
+          3.4
+        ],
+        [
+          "bubbles underwater",
+          3.1
+        ],
+        [
+          "a cork pop",
+          3.1
+        ]
+      ],
+      "earshot_query": "a short cute bubbly blip",
+      "earshot_z": 3.9,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 621
+    },
+    {
+      "name": "good",
+      "duration_s": 1.069,
+      "channels": 2,
+      "momentary_max_lufs": -17.0,
+      "true_peak_dbtp": -9.7,
+      "lead_silence_ms": 0.7,
+      "tail_last10ms_db": -107.7,
+      "energy_below_300hz_pct": 1.1,
+      "centroid_hz": 1499,
+      "side_over_mid_db": -13.4,
+      "ogg_bytes": 19594,
+      "ff_momentary_max": -17.0,
+      "ff_true_peak": -9.7,
+      "partials": [
+        "F6+2",
+        "E7+2",
+        "A6-1"
+      ],
+      "earshot_tags": [
+        [
+          "a success chime",
+          2.8
+        ],
+        [
+          "a snare hit",
+          2.4
+        ],
+        [
+          "a chat message pop",
+          2.3
+        ]
+      ],
+      "earshot_query": "a bright happy marimba arpeggio with a sparkling chime",
+      "earshot_z": 2.7,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 1842
+    },
+    {
+      "name": "almost",
+      "duration_s": 0.561,
+      "channels": 2,
+      "momentary_max_lufs": -20.0,
+      "true_peak_dbtp": -5.5,
+      "lead_silence_ms": 0.0,
+      "tail_last10ms_db": -103.4,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 587,
+      "side_over_mid_db": -13.3,
+      "ogg_bytes": 10500,
+      "ff_momentary_max": -20.0,
+      "ff_true_peak": -5.5,
+      "partials": [
+        "C5+1",
+        "E5-4",
+        "F5+2"
+      ],
+      "earshot_tags": [
+        [
+          "a kalimba note",
+          3.6
+        ],
+        [
+          "a snare hit",
+          3.5
+        ],
+        [
+          "a success chime",
+          2.7
+        ]
+      ],
+      "earshot_query": "two soft rising marimba notes",
+      "earshot_z": 2.4,
+      "p_vs_bad": 0.84,
+      "brightness_hz": 779
+    },
+    {
+      "name": "retake",
+      "duration_s": 0.666,
+      "channels": 2,
+      "momentary_max_lufs": -23.0,
+      "true_peak_dbtp": -8.8,
+      "lead_silence_ms": 0.0,
+      "tail_last10ms_db": -106.9,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 431,
+      "side_over_mid_db": -15.2,
+      "ogg_bytes": 10575,
+      "ff_momentary_max": -23.0,
+      "ff_true_peak": -8.8,
+      "partials": [
+        "G4-1",
+        "B4-3",
+        "D5-2"
+      ],
+      "earshot_tags": [
+        [
+          "a kalimba note",
+          4.0
+        ],
+        [
+          "a success chime",
+          3.3
+        ],
+        [
+          "a notification ding",
+          2.6
+        ]
+      ],
+      "earshot_query": "two soft kalimba notes",
+      "earshot_z": 3.8,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 549
+    },
+    {
+      "name": "hold_tick",
+      "duration_s": 0.117,
+      "channels": 1,
+      "momentary_max_lufs": -26.0,
+      "true_peak_dbtp": -9.9,
+      "lead_silence_ms": 0.1,
+      "tail_last10ms_db": -39.3,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 1137,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4451,
+      "ff_momentary_max": -26.0,
+      "ff_true_peak": -9.9,
+      "partials": [
+        "C6+0",
+        "C5-1",
+        "F#7-44"
+      ],
+      "earshot_tags": [
+        [
+          "a kalimba note",
+          3.2
+        ],
+        [
+          "a success chime",
+          3.1
+        ],
+        [
+          "a triangle hit",
+          2.9
+        ]
+      ],
+      "earshot_query": "a tiny glockenspiel tick",
+      "earshot_z": 1.5,
+      "p_vs_bad": 0.66,
+      "brightness_hz": 1552
+    },
+    {
+      "name": "pop",
+      "duration_s": 0.507,
+      "channels": 2,
+      "momentary_max_lufs": -17.3,
+      "true_peak_dbtp": -3.0,
+      "lead_silence_ms": 4.6,
+      "tail_last10ms_db": -92.5,
+      "energy_below_300hz_pct": 0.1,
+      "centroid_hz": 767,
+      "side_over_mid_db": -14.9,
+      "ogg_bytes": 12012,
+      "ff_momentary_max": -17.3,
+      "ff_true_peak": -3.0,
+      "partials": [
+        "E6-5",
+        "C6-5",
+        "G6-6"
+      ],
+      "earshot_tags": [
+        [
+          "a success chime",
+          3.3
+        ],
+        [
+          "a bubble pop",
+          2.5
+        ],
+        [
+          "a chat message pop",
+          2.4
+        ]
+      ],
+      "earshot_query": "a juicy cartoon bubble pop",
+      "earshot_z": 3.6,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 2117
+    },
+    {
+      "name": "star",
+      "duration_s": 0.959,
+      "channels": 2,
+      "momentary_max_lufs": -20.1,
+      "true_peak_dbtp": -10.9,
+      "lead_silence_ms": 0.1,
+      "tail_last10ms_db": -104.9,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 4499,
+      "side_over_mid_db": -8.3,
+      "ogg_bytes": 17759,
+      "ff_momentary_max": -20.1,
+      "ff_true_peak": -10.9,
+      "partials": [
+        "G7+3",
+        "F7+0",
+        "D7+6"
+      ],
+      "earshot_tags": [
+        [
+          "a success chime",
+          4.1
+        ],
+        [
+          "a triangle hit",
+          3.8
+        ],
+        [
+          "a magic sparkle chime",
+          3.8
+        ]
+      ],
+      "earshot_query": "a twinkling magical glockenspiel sparkle",
+      "earshot_z": 3.0,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 4280
+    },
+    {
+      "name": "levelup",
+      "duration_s": 1.365,
+      "channels": 2,
+      "momentary_max_lufs": -17.1,
+      "true_peak_dbtp": -7.7,
+      "lead_silence_ms": 0.4,
+      "tail_last10ms_db": -106.2,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 1854,
+      "side_over_mid_db": -5.7,
+      "ogg_bytes": 24112,
+      "ff_momentary_max": -17.1,
+      "ff_true_peak": -7.7,
+      "partials": [
+        "C6+3",
+        "D6+1",
+        "F6-0"
+      ],
+      "earshot_tags": [
+        [
+          "a magic sparkle chime",
+          3.5
+        ],
+        [
+          "a success chime",
+          3.5
+        ],
+        [
+          "a glockenspiel run",
+          2.4
+        ]
+      ],
+      "earshot_query": "a rising magical harp glissando with chimes",
+      "earshot_z": 3.0,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 2847
+    },
+    {
+      "name": "session_end",
+      "duration_s": 2.351,
+      "channels": 2,
+      "momentary_max_lufs": -17.0,
+      "true_peak_dbtp": -9.7,
+      "lead_silence_ms": 0.6,
+      "tail_last10ms_db": -109.0,
+      "energy_below_300hz_pct": 1.0,
+      "centroid_hz": 697,
+      "side_over_mid_db": -6.9,
+      "ogg_bytes": 33658,
+      "ff_momentary_max": -17.0,
+      "ff_true_peak": -9.7,
+      "partials": [
+        "C5+1",
+        "E6+1",
+        "C6+1"
+      ],
+      "earshot_tags": [
+        [
+          "a success chime",
+          3.1
+        ],
+        [
+          "a kalimba note",
+          2.8
+        ],
+        [
+          "a music box melody",
+          2.7
+        ]
+      ],
+      "earshot_query": "a joyful short orchestral fanfare with mallets and strings",
+      "earshot_z": 2.3,
+      "p_vs_bad": 0.87,
+      "brightness_hz": 1139
+    },
+    {
+      "name": "unlock",
+      "duration_s": 0.959,
+      "channels": 2,
+      "momentary_max_lufs": -20.2,
+      "true_peak_dbtp": -6.1,
+      "lead_silence_ms": 0.6,
+      "tail_last10ms_db": -99.6,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 3984,
+      "side_over_mid_db": -3.5,
+      "ogg_bytes": 18837,
+      "ff_momentary_max": -20.2,
+      "ff_true_peak": -6.1,
+      "partials": [
+        "A7+48",
+        "A7-37",
+        "C7-22"
+      ],
+      "earshot_tags": [
+        [
+          "a triangle hit",
+          3.7
+        ],
+        [
+          "a success chime",
+          3.2
+        ],
+        [
+          "a bicycle bell",
+          2.9
+        ]
+      ],
+      "earshot_query": "a magical unlock chime",
+      "earshot_z": 3.9,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 4776
+    },
+    {
+      "name": "mirror_match",
+      "duration_s": 1.335,
+      "channels": 2,
+      "momentary_max_lufs": -20.0,
+      "true_peak_dbtp": -14.8,
+      "lead_silence_ms": 0.6,
+      "tail_last10ms_db": -93.9,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 1991,
+      "side_over_mid_db": -15.9,
+      "ogg_bytes": 22154,
+      "ff_momentary_max": -20.1,
+      "ff_true_peak": -14.8,
+      "partials": [
+        "G6-1",
+        "E6+1",
+        "F7-2"
+      ],
+      "earshot_tags": [
+        [
+          "a success chime",
+          3.9
+        ],
+        [
+          "a magic sparkle chime",
+          3.2
+        ],
+        [
+          "a kalimba note",
+          2.6
+        ]
+      ],
+      "earshot_query": "a soft magical shimmer chime",
+      "earshot_z": 2.9,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 2924
+    },
+    {
+      "name": "guide_step",
+      "duration_s": 0.117,
+      "channels": 1,
+      "momentary_max_lufs": -26.3,
+      "true_peak_dbtp": -3.6,
+      "lead_silence_ms": 0.1,
+      "tail_last10ms_db": -73.2,
+      "energy_below_300hz_pct": 0.2,
+      "centroid_hz": 946,
+      "side_over_mid_db": null,
+      "ogg_bytes": 4765,
+      "ff_momentary_max": -26.3,
+      "ff_true_peak": -3.6,
+      "partials": [
+        "G5+3",
+        "Ab5+33",
+        "C6+36"
+      ],
+      "earshot_tags": [
+        [
+          "a wooden block hit",
+          4.8
+        ],
+        [
+          "a snare hit",
+          3.8
+        ],
+        [
+          "a single mechanical keyboard key press",
+          3.2
+        ]
+      ],
+      "earshot_query": "a soft wooden block tap",
+      "earshot_z": 3.0,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 1457
+    },
+    {
+      "name": "foni_1",
+      "duration_s": 0.612,
+      "channels": 2,
+      "momentary_max_lufs": -20.4,
+      "true_peak_dbtp": -12.6,
+      "lead_silence_ms": 0.0,
+      "tail_last10ms_db": -126.1,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 3091,
+      "side_over_mid_db": -17.4,
+      "ogg_bytes": 11139,
+      "ff_momentary_max": -20.4,
+      "ff_true_peak": -12.6,
+      "partials": [
+        "G7-19",
+        "G7+5",
+        "F#7+23"
+      ],
+      "earshot_tags": [
+        [
+          "a rooster crowing",
+          3.4
+        ],
+        [
+          "a snare hit",
+          2.8
+        ],
+        [
+          "a bird chirping",
+          2.5
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 3.6,
+      "p_vs_bad": 0.99,
+      "brightness_hz": 3823
+    },
+    {
+      "name": "foni_2",
+      "duration_s": 0.694,
+      "channels": 2,
+      "momentary_max_lufs": -20.6,
+      "true_peak_dbtp": -9.2,
+      "lead_silence_ms": 0.8,
+      "tail_last10ms_db": -102.3,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 2332,
+      "side_over_mid_db": -18.2,
+      "ogg_bytes": 12746,
+      "ff_momentary_max": -20.6,
+      "ff_true_peak": -9.2,
+      "partials": [
+        "E6+43",
+        "B6-48",
+        "G6+27"
+      ],
+      "earshot_tags": [
+        [
+          "a rooster crowing",
+          2.6
+        ],
+        [
+          "a balloon squeak",
+          2.6
+        ],
+        [
+          "a snare hit",
+          2.5
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 3.4,
+      "p_vs_bad": 1.0,
+      "brightness_hz": 3382
+    },
+    {
+      "name": "foni_3",
+      "duration_s": 0.555,
+      "channels": 2,
+      "momentary_max_lufs": -20.1,
+      "true_peak_dbtp": -12.3,
+      "lead_silence_ms": 1.6,
+      "tail_last10ms_db": -98.3,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 1938,
+      "side_over_mid_db": -22.6,
+      "ogg_bytes": 10191,
+      "ff_momentary_max": -20.1,
+      "ff_true_peak": -12.3,
+      "partials": [
+        "B6+40",
+        "B6-1",
+        "C7-31"
+      ],
+      "earshot_tags": [
+        [
+          "a balloon squeak",
+          2.9
+        ],
+        [
+          "a quick swipe",
+          2.9
+        ],
+        [
+          "a snare hit",
+          2.8
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 3.5,
+      "p_vs_bad": 0.99,
+      "brightness_hz": 2441
+    },
+    {
+      "name": "foni_4",
+      "duration_s": 0.776,
+      "channels": 2,
+      "momentary_max_lufs": -20.5,
+      "true_peak_dbtp": -6.6,
+      "lead_silence_ms": 1.4,
+      "tail_last10ms_db": -103.1,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 2533,
+      "side_over_mid_db": -17.2,
+      "ogg_bytes": 12608,
+      "ff_momentary_max": -20.6,
+      "ff_true_peak": -6.6,
+      "partials": [
+        "F6-15",
+        "B6+22",
+        "B6-24"
+      ],
+      "earshot_tags": [
+        [
+          "a quick swipe",
+          3.1
+        ],
+        [
+          "a rooster crowing",
+          3.0
+        ],
+        [
+          "a record scratch",
+          3.0
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 3.0,
+      "p_vs_bad": 0.97,
+      "brightness_hz": 2760
+    },
+    {
+      "name": "foni_5",
+      "duration_s": 0.391,
+      "channels": 2,
+      "momentary_max_lufs": -20.4,
+      "true_peak_dbtp": -7.5,
+      "lead_silence_ms": 3.8,
+      "tail_last10ms_db": -124.2,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 2199,
+      "side_over_mid_db": -18.0,
+      "ogg_bytes": 8881,
+      "ff_momentary_max": -20.4,
+      "ff_true_peak": -7.5,
+      "partials": [
+        "B6+27",
+        "A6-45",
+        "Ab6+21"
+      ],
+      "earshot_tags": [
+        [
+          "a snare hit",
+          3.2
+        ],
+        [
+          "a quick swipe",
+          3.1
+        ],
+        [
+          "a triangle hit",
+          2.9
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 2.6,
+      "p_vs_bad": 0.97,
+      "brightness_hz": 3002
+    },
+    {
+      "name": "foni_6",
+      "duration_s": 0.501,
+      "channels": 2,
+      "momentary_max_lufs": -20.2,
+      "true_peak_dbtp": -16.7,
+      "lead_silence_ms": 0.0,
+      "tail_last10ms_db": -98.3,
+      "energy_below_300hz_pct": 0.0,
+      "centroid_hz": 2767,
+      "side_over_mid_db": -20.4,
+      "ogg_bytes": 9976,
+      "ff_momentary_max": -20.2,
+      "ff_true_peak": -16.7,
+      "partials": [
+        "E7+23",
+        "E7-8",
+        "E7+47"
+      ],
+      "earshot_tags": [
+        [
+          "a balloon squeak",
+          3.5
+        ],
+        [
+          "a kettle whistling",
+          3.3
+        ],
+        [
+          "a snare hit",
+          2.9
+        ]
+      ],
+      "earshot_query": "a cute small parrot chirping",
+      "earshot_z": 2.9,
+      "p_vs_bad": 0.98,
+      "brightness_hz": 3364
+    }
+  ],
+  "fails": []
+}

@@ -1,0 +1,20 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "sha256": {
+  "foni_lines.json": "2dc894fcc37b49450e2897d8b2b0d92afdc7c7168d40ee7aca1b2bf2cf358b34",
+  "lesson.json": "7584d0d82c89a85538f034ff01e4e0661ceae39b88ddb68f8f9b4f2cb9e3d122",
+  "parent.json": "c07c6c9d2108c828198570e41e7c5fce962d31183bfb1815b8c9ad256da16fcd",
+  "sounds.json": "23db0dc61552394896cfce757bf0f5452963e6efb14da029a9db1965c5d8bbbf",
+  "sounds/ce.json": "4037e5dec6c9f87f9ad95b4a3fe458856ec70af6c8c28958c67dd9a7c303d8bf",
+  "sounds/ge.json": "6de643f1e5924ab2900075b860440cfaa003b835f70c05ea336189ffd5b53ff0",
+  "sounds/j.json": "0a09e135c96452eedfc536f0ea2f2376d5dbc2321e2f965c460ebc9c5f4ac06f",
+  "sounds/l.json": "c374c01b2c51409324b8ff0fcaacfbf3b70ff9f10e2a04a3252b1f6b0eb62b5e",
+  "sounds/r.json": "d7a08c2e1025a39bce0f89b34e9f85bd997f359e2a6c91df4ff8646c480db2ac",
+  "sounds/s.json": "830a794e9075052174c53baeb772c65882eae3767225f72bc9373bcdb2486972",
+  "sounds/sh.json": "4933b5fca6b9007e1e32df8562be81d617197fa0a8df8514a1f21fb1605062ba",
+  "sounds/ts.json": "64bb8cbc341f3523e1937cf5db8fd16cf8a77d5463dedefcf9991632a1e5d0f0",
+  "sounds/z.json": "2ffca5d887a2e14b8a10addeb744cd787d60b1688d5d78335be20d5ff5c319dd",
+  "twisters.json": "15f4a5746f29bb0b2c55f8aa5a6dbef74bddf9fc400cc8c361f0d58183727e39"
+ }
+}

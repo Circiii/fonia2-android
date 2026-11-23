@@ -1,0 +1,49 @@
+{
+  "sound": "s",
+  "version": 1,
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "about": "Front-view lip target and camera checks (docs/v2/04 §1, §4, §8; logopedic convention, Ș/J/CE/GE with rounded lips). Units: aperture = inner lip gap ÷ W0, width = mouth width ÷ W0, round/spread 0…1 relative to rest. [Propunere], to be confirmed by the speech therapist.",
+  "lips": {
+    "class": "smileTeethClose",
+    "wide": 1.12,
+    "open": 0.08,
+    "round": 0.0,
+    "tol": {
+      "open": 0.35,
+      "wide": 0.08,
+      "round": 0.25
+    }
+  },
+  "cameraChecks": [
+    {
+      "feature": "round",
+      "max": 0.3,
+      "soft": 0.3,
+      "aboveMax": "lips.spread"
+    },
+    {
+      "feature": "aperture",
+      "max": 0.16,
+      "soft": 0.12,
+      "aboveMax": "mouth.openLess"
+    },
+    {
+      "feature": "width",
+      "min": 0.97,
+      "soft": 0.08,
+      "belowMin": "lips.spread"
+    }
+  ],
+  "visible": {
+    "lips": true,
+    "jaw": true,
+    "teeth": true,
+    "tongue": false,
+    "note": "Vârful limbii stă jos, după incisivii de jos: nu se vede. Camera vede doar buzele întinse și dinții apropiați; limba între dinți doar cu modelul H10."
+  },
+  "role": "chooseAdvice; confirms Interdental only with H10"
+}

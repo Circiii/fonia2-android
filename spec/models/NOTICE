@@ -1,0 +1,9 @@
+Fonia ships the following third-party models inside the app. The app has to show this text (Settings > About,
+or the licences screen) together with the other open-source notices.
+
+ZIPA-small CR-CTC (500k), (c) the ZIPA authors (Jian Zhu et al.), licensed under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/). Source: https://huggingface.co/anyspeech/zipa-small-crctc-500k
+(commit dfe87c97662606fa6db90ad06f627d4363314744). Used unmodified (int8 export by the authors).
+Paper: Zhu et al., "ZIPA: A family of efficient models for multilingual phone recognition", ACL 2025.
+
+ONNX Runtime (com.microsoft.onnxruntime:onnxruntime-android 1.31.1), (c) Microsoft Corporation, MIT License.

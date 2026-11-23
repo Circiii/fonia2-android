@@ -1,0 +1,41 @@
+{
+  "sound": "z",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.z",
+  "caption": "Zâmbește, limba jos, pornește vocea.",
+  "steps": [{"icon": "lips", "label": "Zâmbet", "reveals": ["lips"]}, {"icon": "teeth", "label": "Dinții aproape", "reveals": ["jaw"]}, {"icon": "tongue", "label": "Limba jos", "reveals": ["tongue"]}],
+  "description": "Pentru Z: la fel ca la S, buzele zâmbesc și vârful limbii stă jos, dar vocea e pornită.",
+  "therapistNote": "Z: aceeași poziție ca S (zâmbet, dinți aproape închiși, vârful jos după incisivii de jos, lamă la creastă, șanț median), aer îngust și rece pe mijloc, plus vocea: marca vibrantă de la gât. Verificați că singura diferență față de S este vocea. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.1,
+    "lipSpread": 0.8,
+    "lipPart": 0.9,
+    "tongueTip": -0.5,
+    "tongueRaise": 0.45,
+    "tongueGroove": 1.0,
+    "tongueForward": 0.15
+  },
+  "animation": null,
+  "flutter": null,
+  "air": {"stream": "narrow", "warm": false, "stop": false},
+  "voiced": true,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

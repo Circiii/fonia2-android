@@ -1,0 +1,644 @@
+{
+ "schema": 1,
+ "version": "2026-11-21.v0",
+ "note": "Animations: chapter 05 §5.2 (N2). Child lines: chapter 03 §3 tables, at most 8 words; chapter 06 owns the final wording and the keys. Shown to the child only for kinds unlocked in spec/unlock.json.",
+ "kinds": [
+  {
+   "sound": "s",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.s.omission",
+   "child": "Nu uita șarpele!",
+   "adultKey": "adult.s.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "s",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.s.stopping",
+   "child": "Lasă aerul să curgă lung: sss.",
+   "adultKey": "adult.s.stopping",
+   "adult": "În loc de S iese T; exersați S lung."
+  },
+  {
+   "sound": "s",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.s.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.s.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "s",
+   "kind": "placeSwap",
+   "animation": "comma-drop",
+   "variant": "lift",
+   "instructionKey": "fb.s.placeSwap",
+   "child": "Zâmbește și ține limba în față.",
+   "adultKey": "adult.s.placeSwap",
+   "adult": "S-ul seamănă cu Ș; cereți un zâmbet larg."
+  },
+  {
+   "sound": "s",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.s.lateral",
+   "child": "Suflă aerul pe mijloc, ca prin pai.",
+   "adultKey": "adult.s.lateral",
+   "adult": "Aerul pare să iasă pe lateral. Arătați-i logopedului."
+  },
+  {
+   "sound": "s",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.s.interdental",
+   "child": "Ține limba în spatele dinților.",
+   "adultKey": "adult.s.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "ș",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.sh.omission",
+   "child": "Nu uita de Ș!",
+   "adultKey": "adult.sh.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "ș",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.sh.stopping",
+   "child": "Lasă aerul să curgă lin: șșș.",
+   "adultKey": "adult.sh.stopping",
+   "adult": "Ș-ul pornește cu o oprire; exersați-l lung."
+  },
+  {
+   "sound": "ș",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.sh.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.sh.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "ș",
+   "kind": "placeSwap",
+   "animation": "comma-drop",
+   "variant": "drop",
+   "instructionKey": "fb.sh.placeSwap",
+   "child": "Fă buzele pâlnie, limba înapoi.",
+   "adultKey": "adult.sh.placeSwap",
+   "adult": "Ș-ul seamănă cu S; buzele țuguiate ajută."
+  },
+  {
+   "sound": "ș",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.sh.lateral",
+   "child": "Suflă pe mijloc, cu buzele pâlnie.",
+   "adultKey": "adult.sh.lateral",
+   "adult": "Sunetul pare lateral. Arătați-i logopedului."
+  },
+  {
+   "sound": "ș",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.sh.interdental",
+   "child": "Limba înăuntru, buzele pâlnie.",
+   "adultKey": "adult.sh.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "z",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.z.omission",
+   "child": "Nu uita de Z!",
+   "adultKey": "adult.z.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "z",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.z.stopping",
+   "child": "Lasă albina să bâzâie lung.",
+   "adultKey": "adult.z.stopping",
+   "adult": "Z devine D; exersați Z prelungit."
+  },
+  {
+   "sound": "z",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.z.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.z.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "z",
+   "kind": "devoicing",
+   "animation": "voicing-wave",
+   "variant": null,
+   "instructionKey": "fb.z.devoicing",
+   "child": "Pune vocea: bâzâie ca albina!",
+   "adultKey": "adult.z.devoicing",
+   "adult": "Z-ul iese fără voce; puneți mâna pe gât."
+  },
+  {
+   "sound": "z",
+   "kind": "placeSwap",
+   "animation": "swap-glide",
+   "variant": null,
+   "instructionKey": "fb.z.placeSwap",
+   "child": "Zâmbește, limba în față: zzz.",
+   "adultKey": "adult.z.placeSwap",
+   "adult": "Z-ul seamănă cu J."
+  },
+  {
+   "sound": "z",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.z.lateral",
+   "child": "Suflă aerul pe mijloc, ca prin pai.",
+   "adultKey": "adult.z.lateral",
+   "adult": "Aerul pare să iasă pe lateral. Arătați-i logopedului."
+  },
+  {
+   "sound": "z",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.z.interdental",
+   "child": "Ține limba în spatele dinților.",
+   "adultKey": "adult.z.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "j",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.j.omission",
+   "child": "Nu uita de J!",
+   "adultKey": "adult.j.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "j",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.j.stopping",
+   "child": "Lasă vântul să sufle lung.",
+   "adultKey": "adult.j.stopping",
+   "adult": "J-ul pornește cu o oprire."
+  },
+  {
+   "sound": "j",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.j.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.j.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "j",
+   "kind": "devoicing",
+   "animation": "voicing-wave",
+   "variant": null,
+   "instructionKey": "fb.j.devoicing",
+   "child": "Pornește motorașul vocii: jjj.",
+   "adultKey": "adult.j.devoicing",
+   "adult": "J-ul iese fără voce."
+  },
+  {
+   "sound": "j",
+   "kind": "placeSwap",
+   "animation": "swap-glide",
+   "variant": null,
+   "instructionKey": "fb.j.placeSwap",
+   "child": "Buzele pâlnie, limba înapoi: jjj.",
+   "adultKey": "adult.j.placeSwap",
+   "adult": "J-ul seamănă cu Z."
+  },
+  {
+   "sound": "j",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.j.lateral",
+   "child": "Suflă pe mijloc, cu buzele pâlnie.",
+   "adultKey": "adult.j.lateral",
+   "adult": "Sunetul pare lateral. Arătați-i logopedului."
+  },
+  {
+   "sound": "j",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.j.interdental",
+   "child": "Limba înăuntru, buzele pâlnie.",
+   "adultKey": "adult.j.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "ț",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.ts.omission",
+   "child": "Nu uita de Ț!",
+   "adultKey": "adult.ts.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "ț",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.ts.stopping",
+   "child": "După t, lasă aerul să șuiere.",
+   "adultKey": "adult.ts.stopping",
+   "adult": "Ț-ul se oprește la T."
+  },
+  {
+   "sound": "ț",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.ts.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.ts.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "ț",
+   "kind": "deaffrication",
+   "animation": "closure-snap",
+   "variant": "snap",
+   "instructionKey": "fb.ts.deaffrication",
+   "child": "Atinge dinții o clipă, apoi ț!",
+   "adultKey": "adult.ts.deaffrication",
+   "adult": "Lipsește oprirea scurtă din Ț."
+  },
+  {
+   "sound": "ț",
+   "kind": "affricatePlace",
+   "animation": "comma-drop",
+   "variant": "lift",
+   "instructionKey": "fb.ts.affricatePlace",
+   "child": "Zâmbește, limba în față: ț.",
+   "adultKey": "adult.ts.affricatePlace",
+   "adult": "Ț-ul seamănă cu CE."
+  },
+  {
+   "sound": "ț",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.ts.lateral",
+   "child": "Suflă aerul pe mijloc, ca prin pai.",
+   "adultKey": "adult.ts.lateral",
+   "adult": "Aerul pare să iasă pe lateral. Arătați-i logopedului."
+  },
+  {
+   "sound": "ț",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.ts.interdental",
+   "child": "Ține limba în spatele dinților.",
+   "adultKey": "adult.ts.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "ce",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.ce.omission",
+   "child": "Nu uita de CE!",
+   "adultKey": "adult.ce.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "ce",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.ce.stopping",
+   "child": "După oprire, lasă aerul: ce!",
+   "adultKey": "adult.ce.stopping",
+   "adult": "CE devine T."
+  },
+  {
+   "sound": "ce",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.ce.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.ce.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "ce",
+   "kind": "deaffrication",
+   "animation": "closure-snap",
+   "variant": "snap",
+   "instructionKey": "fb.ce.deaffrication",
+   "child": "Oprește o clipă, apoi ce!",
+   "adultKey": "adult.ce.deaffrication",
+   "adult": "Lipsește oprirea scurtă din CE."
+  },
+  {
+   "sound": "ce",
+   "kind": "affricatePlace",
+   "animation": "swap-glide",
+   "variant": null,
+   "instructionKey": "fb.ce.affricatePlace",
+   "child": "Buzele pâlnie, limba puțin înapoi.",
+   "adultKey": "adult.ce.affricatePlace",
+   "adult": "CE seamănă cu Ț."
+  },
+  {
+   "sound": "ce",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.ce.lateral",
+   "child": "Suflă pe mijloc: ce!",
+   "adultKey": "adult.ce.lateral",
+   "adult": "CE sună lateral."
+  },
+  {
+   "sound": "ce",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.ce.interdental",
+   "child": "Limba înăuntru, buzele pâlnie.",
+   "adultKey": "adult.ce.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "ge",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.ge.omission",
+   "child": "Nu uita de GE!",
+   "adultKey": "adult.ge.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "ge",
+   "kind": "stopping",
+   "animation": "closure-snap",
+   "variant": "flow",
+   "instructionKey": "fb.ge.stopping",
+   "child": "După oprire, lasă aerul: ge!",
+   "adultKey": "adult.ge.stopping",
+   "adult": "GE devine D."
+  },
+  {
+   "sound": "ge",
+   "kind": "weakOrShort",
+   "animation": "sag-and-refill",
+   "variant": null,
+   "instructionKey": "fb.ge.weakOrShort",
+   "child": "Încă o dată, mai tare!",
+   "adultKey": "adult.ge.weakOrShort",
+   "adult": "Locul e bun; sunetul e încă slab."
+  },
+  {
+   "sound": "ge",
+   "kind": "deaffrication",
+   "animation": "closure-snap",
+   "variant": "snap",
+   "instructionKey": "fb.ge.deaffrication",
+   "child": "Oprește o clipă, apoi ge!",
+   "adultKey": "adult.ge.deaffrication",
+   "adult": "Lipsește oprirea din GE."
+  },
+  {
+   "sound": "ge",
+   "kind": "devoicing",
+   "animation": "voicing-wave",
+   "variant": null,
+   "instructionKey": "fb.ge.devoicing",
+   "child": "Pornește vocea: ge!",
+   "adultKey": "adult.ge.devoicing",
+   "adult": "GE iese fără voce."
+  },
+  {
+   "sound": "ge",
+   "kind": "affricatePlace",
+   "animation": "swap-glide",
+   "variant": null,
+   "instructionKey": "fb.ge.affricatePlace",
+   "child": "Buzele pâlnie: ge!",
+   "adultKey": "adult.ge.affricatePlace",
+   "adult": "GE seamănă cu Z."
+  },
+  {
+   "sound": "ge",
+   "kind": "lateral",
+   "animation": "air-to-centre",
+   "variant": null,
+   "instructionKey": "fb.ge.lateral",
+   "child": "Suflă pe mijloc: ge!",
+   "adultKey": "adult.ge.lateral",
+   "adult": "GE sună lateral."
+  },
+  {
+   "sound": "ge",
+   "kind": "interdental",
+   "animation": "tongue-behind-teeth",
+   "variant": null,
+   "instructionKey": "fb.ge.interdental",
+   "child": "Limba înăuntru, buzele pâlnie.",
+   "adultKey": "adult.ge.interdental",
+   "adult": "Limba pare să iasă între dinți; verificați în oglindă."
+  },
+  {
+   "sound": "r",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.r.omission",
+   "child": "Nu uita de R!",
+   "adultKey": "adult.r.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "r",
+   "kind": "rToL",
+   "animation": "swap-glide",
+   "variant": "trill-ripple",
+   "instructionKey": "fb.r.rToL",
+   "child": "Lasă vârful limbii să bată sus.",
+   "adultKey": "adult.r.rToL",
+   "adult": "R-ul sună ca L."
+  },
+  {
+   "sound": "r",
+   "kind": "rToGlide",
+   "animation": "swap-glide",
+   "variant": "trill-ripple",
+   "instructionKey": "fb.r.rToGlide",
+   "child": "Ridică vârful limbii după dinți.",
+   "adultKey": "adult.r.rToGlide",
+   "adult": "R-ul sună ca I."
+  },
+  {
+   "sound": "r",
+   "kind": "rToVowel",
+   "animation": "trill-ripple",
+   "variant": null,
+   "instructionKey": "fb.r.rToVowel",
+   "child": "Vârful limbii sus: rrr!",
+   "adultKey": "adult.r.rToVowel",
+   "adult": "În loc de R se aude o vocală."
+  },
+  {
+   "sound": "r",
+   "kind": "rUvular",
+   "animation": "trill-ripple",
+   "variant": "from-back",
+   "instructionKey": "fb.r.rUvular",
+   "child": "Vârful limbii lucrează, nu gâtul.",
+   "adultKey": "adult.r.rUvular",
+   "adult": "R-ul se face în gât. Arătați-i logopedului."
+  },
+  {
+   "sound": "l",
+   "kind": "omission",
+   "animation": "slot-drop",
+   "variant": null,
+   "instructionKey": "fb.l.omission",
+   "child": "Nu uita de L!",
+   "adultKey": "adult.l.omission",
+   "adult": "Sunetul lipsește din cuvânt."
+  },
+  {
+   "sound": "l",
+   "kind": "lToGlide",
+   "animation": "swap-glide",
+   "variant": "press",
+   "instructionKey": "fb.l.lToGlide",
+   "child": "Lipește vârful limbii sus, după dinți.",
+   "adultKey": "adult.l.lToGlide",
+   "adult": "L-ul sună ca I sau U."
+  },
+  {
+   "sound": "l",
+   "kind": "lToR",
+   "animation": "swap-glide",
+   "variant": "press",
+   "instructionKey": "fb.l.lToR",
+   "child": "Ține limba lipită, nu o bate.",
+   "adultKey": "adult.l.lToR",
+   "adult": "L-ul sună ca R."
+  }
+ ],
+ "verdicts": {
+  "correct": {
+   "animation": "jump-settle",
+   "instructionKey": "fb.correct",
+   "child": "Bravo!"
+  },
+  "almost": {
+   "animation": "tilt-half-fill",
+   "instructionKey": "fb.almost",
+   "child": "Aproape!"
+  },
+  "unsure": {
+   "animation": "hand-tremble",
+   "instructionKey": "fb.unsure",
+   "child": "Hai să mai încercăm.",
+   "adultKey": "adult.unsure",
+   "adult": "Telefonul nu e sigur. Cum vi s-a părut?"
+  }
+ },
+ "retake": {
+  "clipped": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.clipped",
+   "child": "Ține telefonul puțin mai departe.",
+   "adultKey": "adult.retake.clipped",
+   "adult": "Sunetul a fost prea tare pentru microfon."
+  },
+  "tooQuiet": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.tooQuiet",
+   "child": "Mai aproape și mai tare, te rog.",
+   "adultKey": "adult.retake.tooQuiet",
+   "adult": "Telefonul a auzit prea încet."
+  },
+  "tooShort": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.tooShort",
+   "child": "Mai spune o dată, rar.",
+   "adultKey": "adult.retake.tooShort",
+   "adult": "Încercarea a fost prea scurtă."
+  },
+  "noSpeech": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.noSpeech",
+   "child": "Mai spune o dată.",
+   "adultKey": "adult.retake.noSpeech",
+   "adult": "Telefonul nu a auzit vorbire."
+  },
+  "noisy": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.noisy",
+   "child": "E gălăgie. Mai spune o dată.",
+   "adultKey": "adult.retake.noisy",
+   "adult": "Zgomotul acoperă sunetul. Un loc mai liniștit ajută."
+  },
+  "dropped": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.dropped",
+   "child": "Mai spune o dată.",
+   "adultKey": "adult.retake.dropped",
+   "adult": "S-au pierdut bucăți din înregistrare."
+  },
+  "adultVoice": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.adultVoice",
+   "child": "Acum tu!",
+   "adultKey": "adult.retake.adultVoice",
+   "adult": "Pare vocea unui adult; lăsați copilul să spună."
+  },
+  "otherWord": {
+   "animation": "tremble",
+   "instructionKey": "fb.retake.otherWord",
+   "child": "Mai spune o dată cuvântul.",
+   "adultKey": "adult.retake.otherWord",
+   "adult": "Pare alt cuvânt decât cel cerut."
+  }
+ }
+}

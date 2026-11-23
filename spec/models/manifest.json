@@ -1,0 +1,23 @@
+{
+ "schema": 1,
+ "note": "Models shipped inside the APK (plan 02 §6). The build copies each file from the PC cache (~/.gradle/fonia-models/<cache>) into generated assets after checking size and SHA-256, and fails if it is missing; the app downloads nothing and has no INTERNET permission. Attribution for every entry goes in the app's NOTICE (spec/models/NOTICE).",
+ "models": [
+  {
+   "id": "zipa",
+   "name": "ZIPA-small CR-CTC, 500k steps, int8",
+   "version": "dfe87c976626",
+   "runtime": "onnxruntime-android 1.31.1",
+   "asset": "models/zipa-small-crctc-500k/model.int8.onnx",
+   "cache": "zipa-small-crctc-500k/model.int8.onnx",
+   "bytes": 70677672,
+   "sha256": "d0e28b68164e8b1fbd6105100c01798828aa0855000ce9bbbd1a2cec233adf13",
+   "source": "https://huggingface.co/anyspeech/zipa-small-crctc-500k/resolve/dfe87c97662606fa6db90ad06f627d4363314744/model.int8.onnx",
+   "license": "CC-BY-4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+   "licenseCheck": "Model card at the pinned commit declares license: cc-by-4.0; the authors' README table (lingjzhu/zipa @21e9e8aa) gives CC BY 4.0 for zipa-small-crctc-500k (checked at the source 2026-11-06, phones/MODELS.md). The download carries no separate licence file: the model card is the licence statement. Do NOT swap in the *-ns-* models (CC BY-NC-SA).",
+   "attribution": "ZIPA-small CR-CTC (500k), (c) the ZIPA authors (Jian Zhu et al.), licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Source: https://huggingface.co/anyspeech/zipa-small-crctc-500k. Used unmodified (int8 export by the authors). Paper: Zhu et al., \"ZIPA: A family of efficient models for multilingual phone recognition\", ACL 2025.",
+   "warm": "LESSON",
+   "thread": "ml-zipa"
+  }
+ ]
+}

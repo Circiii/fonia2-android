@@ -1,0 +1,3 @@
+# Exact bytes: MANIFEST.sha256 and export_allo.py --check compare them (core.autocrlf would break both).
+*.json -text
+MANIFEST.sha256 -text

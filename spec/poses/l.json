@@ -1,0 +1,43 @@
+{
+  "sound": "l",
+  "version": 1,
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "about": "Front-view lip target and camera checks (docs/v2/04 §1, §4, §8; logopedic convention, Ș/J/CE/GE with rounded lips). Units: aperture = inner lip gap ÷ W0, width = mouth width ÷ W0, round/spread 0…1 relative to rest. [Propunere], to be confirmed by the speech therapist.",
+  "lips": {
+    "class": "halfOpenSmile",
+    "wide": 1.04,
+    "open": 0.22,
+    "round": 0.0,
+    "tol": {
+      "open": 0.35,
+      "wide": 0.08,
+      "round": 0.25
+    }
+  },
+  "cameraChecks": [
+    {
+      "feature": "aperture",
+      "min": 0.13,
+      "soft": 0.12,
+      "belowMin": "mouth.openMore"
+    },
+    {
+      "feature": "round",
+      "max": 0.35,
+      "soft": 0.25,
+      "aboveMax": "lips.lessRound"
+    }
+  ],
+  "visible": {
+    "lips": true,
+    "jaw": true,
+    "teeth": false,
+    "tongue": false,
+    "note": "Contactul vârfului la alveole nu se vede în cuvinte; se vede doar cu gura mare, în exercițiu (H10). Camera vede buzele rotunjite greșit (L→U)."
+  },
+  "role": "chooseAdvice; confirms LtoGlide with rounded lips"
+}

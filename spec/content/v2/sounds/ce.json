@@ -1,0 +1,2199 @@
+{
+ "schema": 2,
+ "contentVersion": "2.0.0-m1",
+ "sound": "ce",
+ "slug": "ce",
+ "letter": "CE",
+ "graphemes": [
+  "ce",
+  "ci"
+ ],
+ "hero": {
+  "name": "Cici",
+  "who": "stropitoarea",
+  "emoji": "💧",
+  "says": "ci-ci-ci",
+  "saysVoice": "human-needed",
+  "line": "Stropitoarea Cici udă florile: ci-ci-ci! Stropește și tu, scurt, ca ea.",
+  "lineVoice": "human-needed",
+  "chapters": {
+   "listen": {
+    "key": "open.ce.listen",
+    "text": "Ascultă bine! Stropitoarea Cici încurcă uneori cuvintele. O prinzi?",
+    "voice": "open.ce.listen"
+   },
+   "warmup": {
+    "key": "open.ce.warmup",
+    "text": "Înainte de joacă, trezim gura împreună cu Cici.",
+    "voice": "open.ce.warmup"
+   },
+   "isolated": {
+    "key": "open.ce.isolated",
+    "text": "Cici stropește florile, scurt și repede. Stropește și tu!",
+    "voice": "open.ce.isolated"
+   },
+   "syllables": {
+    "key": "open.ce.syllables",
+    "text": "Cici pune sunetul lângă vocale. Urcă în trenul de silabe!",
+    "voice": "open.ce.syllables"
+   },
+   "back": {
+    "key": "open.ce.back",
+    "text": "Acum sunetul vine la urmă. Cici te așteaptă la capăt.",
+    "voice": "open.ce.back"
+   },
+   "wordsInitial": {
+    "key": "open.ce.wordsInitial",
+    "text": "Cici a pierdut cuvintele care încep cu CE. Le căutăm?",
+    "voice": "open.ce.wordsInitial"
+   },
+   "wordsMedial": {
+    "key": "open.ce.wordsMedial",
+    "text": "Unele cuvinte ascund CE la mijloc. Le găsim împreună?",
+    "voice": "open.ce.wordsMedial"
+   },
+   "wordsFinal": {
+    "key": "open.ce.wordsFinal",
+    "text": "Acum CE stă la final. Ține-l până la capăt!",
+    "voice": "open.ce.wordsFinal"
+   },
+   "clusters": {
+    "key": "open.ce.clusters",
+    "text": "CE are vecini noi, alte consoane. Hai să-i cunoaștem!",
+    "voice": "open.ce.clusters"
+   },
+   "pairs": {
+    "key": "open.ce.pairs",
+    "text": "Două cuvinte seamănă mult. Cici le încurcă. Ajuți?",
+    "voice": "open.ce.pairs"
+   },
+   "sentences": {
+    "key": "open.ce.sentences",
+    "text": "Cici spune povești scurte. Spune-le și tu, cuvânt cu cuvânt.",
+    "voice": "open.ce.sentences"
+   },
+   "twister": {
+    "key": "open.ce.twister",
+    "text": "O frământare! Întâi rar, ca melcul. Apoi puțin mai repede.",
+    "voice": "open.ce.twister"
+   },
+   "retell": {
+    "key": "open.ce.retell",
+    "text": "Uite trei poze cu Cici. Ce s-a întâmplat?",
+    "voice": "open.ce.retell"
+   },
+   "everyday": {
+    "key": "open.ce.everyday",
+    "text": "Azi CE vine cu tine acasă. Ai o misiune!",
+    "voice": "open.ce.everyday"
+   }
+  }
+ },
+ "voiced": false,
+ "holdMode": "burst",
+ "typicalByAge": 5,
+ "confusions": [
+  "ț",
+  "ș",
+  "ge"
+ ],
+ "howParent": [
+  "Buzele rotunde, ca la Ș.",
+  "Limba atinge o clipă cerul gurii, apoi se desprinde.",
+  "Aerul iese scurt și cald."
+ ],
+ "warmups": [
+  "pupic",
+  "zambet-pupic",
+  "calul",
+  "burta-balon"
+ ],
+ "rungs": [
+  "listen",
+  "warmup",
+  "isolated",
+  "syllables",
+  "back",
+  "wordsInitial",
+  "wordsMedial",
+  "wordsFinal",
+  "clusters",
+  "pairs",
+  "sentences",
+  "twister",
+  "retell",
+  "everyday"
+ ],
+ "plan": {
+  "wordsInitial": 14,
+  "wordsMedial": 12,
+  "wordsFinal": 14,
+  "clusters": 9
+ },
+ "errors": [
+  {
+   "kind": "omission",
+   "instructionKey": "fb.ce.omission",
+   "adultKey": "adult.ce.omission"
+  },
+  {
+   "kind": "stopping",
+   "instructionKey": "fb.ce.stopping",
+   "adultKey": "adult.ce.stopping"
+  },
+  {
+   "kind": "weakOrShort",
+   "instructionKey": "fb.ce.weakOrShort",
+   "adultKey": "adult.ce.weakOrShort"
+  },
+  {
+   "kind": "deaffrication",
+   "instructionKey": "fb.ce.deaffrication",
+   "adultKey": "adult.ce.deaffrication"
+  },
+  {
+   "kind": "affricatePlace",
+   "instructionKey": "fb.ce.affricatePlace",
+   "adultKey": "adult.ce.affricatePlace"
+  },
+  {
+   "kind": "lateral",
+   "instructionKey": "fb.ce.lateral",
+   "adultKey": "adult.ce.lateral"
+  },
+  {
+   "kind": "interdental",
+   "instructionKey": "fb.ce.interdental",
+   "adultKey": "adult.ce.interdental"
+  }
+ ],
+ "items": [
+  {
+   "id": "ce.l.1",
+   "type": "listen",
+   "rung": "listen",
+   "text": "ceas",
+   "foil": "țeas",
+   "mimics": "affricatePlace",
+   "emoji": "⌚",
+   "icon": "ceas",
+   "voice": "w.ceas",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.2",
+   "type": "listen",
+   "rung": "listen",
+   "text": "ceai",
+   "foil": "țai",
+   "mimics": "affricatePlace",
+   "emoji": "🍵",
+   "icon": "ceai",
+   "voice": "w.ceai",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.3",
+   "type": "listen",
+   "rung": "listen",
+   "text": "cinci",
+   "foil": "șinși",
+   "mimics": "deaffrication",
+   "emoji": "5️⃣",
+   "icon": "cinci",
+   "voice": "w.cinci",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.4",
+   "type": "listen",
+   "rung": "listen",
+   "text": "ciocan",
+   "foil": "țocan",
+   "mimics": "affricatePlace",
+   "emoji": "🔨",
+   "icon": "ciocan",
+   "voice": "w.ciocan",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.5",
+   "type": "listen",
+   "rung": "listen",
+   "text": "nuci",
+   "foil": "nuți",
+   "mimics": "affricatePlace",
+   "emoji": "🌰",
+   "icon": "nuci",
+   "voice": "w.nuci",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.6",
+   "type": "listen",
+   "rung": "listen",
+   "text": "zece",
+   "foil": "zețe",
+   "mimics": "affricatePlace",
+   "emoji": "🔟",
+   "icon": "zece",
+   "voice": "w.zece",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.7",
+   "type": "listen",
+   "rung": "listen",
+   "text": "papuci",
+   "foil": "papuși",
+   "mimics": "deaffrication",
+   "emoji": "🥿",
+   "icon": "papuci",
+   "voice": "w.papuci",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.l.8",
+   "type": "listen",
+   "rung": "listen",
+   "text": "vaci",
+   "foil": "vati",
+   "mimics": "stopping",
+   "emoji": "🐄",
+   "icon": "vaci",
+   "voice": "w.vaci",
+   "foilVoice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.h.1",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "ci-ci-ci",
+   "mode": "burst",
+   "prompt": "Scurt, ca stropitoarea Cici!",
+   "promptVoice": "ce.h.1.prompt",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.h.2",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "ci-ci-ci",
+   "mode": "burst",
+   "prompt": "Buze rotunde, apoi un strop scurt!",
+   "promptVoice": "ce.h.2.prompt",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.h.3",
+   "type": "hold",
+   "rung": "isolated",
+   "text": "ci-ci-ci",
+   "mode": "burst",
+   "prompt": "Trei stropi mici, unul după altul!",
+   "promptVoice": "ce.h.3.prompt",
+   "voice": "human-needed",
+   "difficulty": 3,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.cv.cea",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "cea",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.cv.cio",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "cio",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.cv.ciu",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "ciu",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.cv.ce",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "ce",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.cv.ci",
+   "type": "syllable",
+   "rung": "syllables",
+   "text": "ci",
+   "shape": "CV",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vc.aci",
+   "type": "syllable",
+   "rung": "back",
+   "text": "aci",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vc.oci",
+   "type": "syllable",
+   "rung": "back",
+   "text": "oci",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vc.uci",
+   "type": "syllable",
+   "rung": "back",
+   "text": "uci",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vc.eci",
+   "type": "syllable",
+   "rung": "back",
+   "text": "eci",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vc.ici",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ici",
+   "shape": "VC",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vcv.ace",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ace",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vcv.oce",
+   "type": "syllable",
+   "rung": "back",
+   "text": "oce",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vcv.uce",
+   "type": "syllable",
+   "rung": "back",
+   "text": "uce",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vcv.ece",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ece",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.y.vcv.ice",
+   "type": "syllable",
+   "rung": "back",
+   "text": "ice",
+   "shape": "VCV",
+   "voice": "human-needed",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ceai",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ceai",
+   "pos": "initial",
+   "emoji": "🍵",
+   "icon": "ceai",
+   "voice": "w.ceai",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ceapae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ceapă",
+   "pos": "initial",
+   "emoji": "🧅",
+   "icon": "ceapae",
+   "voice": "w.ceapae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cioc",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cioc",
+   "pos": "initial",
+   "emoji": null,
+   "icon": "cioc",
+   "voice": "w.cioc",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cinae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cină",
+   "pos": "initial",
+   "emoji": "🍽️",
+   "icon": "cinae",
+   "voice": "w.cinae",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ciocan",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ciocan",
+   "pos": "initial",
+   "emoji": "🔨",
+   "icon": "ciocan",
+   "voice": "w.ciocan",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ceas",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ceas",
+   "pos": "initial",
+   "emoji": "⌚",
+   "icon": "ceas",
+   "voice": "w.ceas",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "s"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cinci",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cinci",
+   "pos": "initial",
+   "emoji": "5️⃣",
+   "icon": "cinci",
+   "voice": "w.cinci",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cerc",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cerc",
+   "pos": "initial",
+   "emoji": "⭕",
+   "icon": "cerc",
+   "voice": "w.cerc",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cerb",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cerb",
+   "pos": "initial",
+   "emoji": "🦌",
+   "icon": "cerb",
+   "voice": "w.cerb",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ciorap",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ciorap",
+   "pos": "initial",
+   "emoji": "🧦",
+   "icon": "ciorap",
+   "voice": "w.ciorap",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ciorbae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ciorbă",
+   "pos": "initial",
+   "emoji": "🍲",
+   "icon": "ciorbae",
+   "voice": "w.ciorbae",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.cizme",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "cizme",
+   "pos": "initial",
+   "emoji": "👢",
+   "icon": "cizme",
+   "voice": "w.cizme",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "z"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ciupercae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ciupercă",
+   "pos": "initial",
+   "emoji": "🍄",
+   "icon": "ciupercae",
+   "voice": "w.ciupercae",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wi.ciocolatae",
+   "type": "word",
+   "rung": "wordsInitial",
+   "text": "ciocolată",
+   "pos": "initial",
+   "emoji": "🍫",
+   "icon": "ciocolatae",
+   "voice": "w.ciocolatae",
+   "syllables": 4,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.ace",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "ace",
+   "pos": "medial",
+   "emoji": "🪡",
+   "icon": "ace",
+   "voice": "w.ace",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.cocean",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "cocean",
+   "pos": "medial",
+   "emoji": "🌽",
+   "icon": "cocean",
+   "voice": "w.cocean",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.vecin",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "vecin",
+   "pos": "medial",
+   "emoji": null,
+   "icon": "vecin",
+   "voice": "w.vecin",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": true,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.zece",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "zece",
+   "pos": "medial",
+   "emoji": "🔟",
+   "icon": "zece",
+   "voice": "w.zece",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "z"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.craeciun",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "Crăciun",
+   "pos": "medial",
+   "emoji": "🎅",
+   "icon": "craeciun",
+   "voice": "w.craeciun",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.caeciulae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "căciulă",
+   "pos": "medial",
+   "emoji": null,
+   "icon": "caeciulae",
+   "voice": "w.caeciulae",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.berbece",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "berbece",
+   "pos": "medial",
+   "emoji": "🐏",
+   "icon": "berbece",
+   "voice": "w.berbece",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.foarfece",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "foarfece",
+   "pos": "medial",
+   "emoji": "✂️",
+   "icon": "foarfece",
+   "voice": "w.foarfece",
+   "syllables": 3,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.picior",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "picior",
+   "pos": "medial",
+   "emoji": "🦶",
+   "icon": "picior",
+   "voice": "w.picior",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.bicicletae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "bicicletă",
+   "pos": "medial",
+   "emoji": "🚲",
+   "icon": "bicicletae",
+   "voice": "w.bicicletae",
+   "syllables": 4,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.felicitare",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "felicitare",
+   "pos": "medial",
+   "emoji": "💌",
+   "icon": "felicitare",
+   "voice": "w.felicitare",
+   "syllables": 5,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "r",
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wm.motocicletae",
+   "type": "word",
+   "rung": "wordsMedial",
+   "text": "motocicletă",
+   "pos": "medial",
+   "emoji": "🏍️",
+   "icon": "motocicletae",
+   "voice": "w.motocicletae",
+   "syllables": 5,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.nuci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "nuci",
+   "pos": "final",
+   "emoji": "🌰",
+   "icon": "nuci",
+   "voice": "w.nuci",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.vaci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "vaci",
+   "pos": "final",
+   "emoji": "🐄",
+   "icon": "vaci",
+   "voice": "w.vaci",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.maci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "maci",
+   "pos": "final",
+   "emoji": "🌺",
+   "icon": "maci",
+   "voice": "w.maci",
+   "syllables": 1,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.papuci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "papuci",
+   "pos": "final",
+   "emoji": "🥿",
+   "icon": "papuci",
+   "voice": "w.papuci",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.copaci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "copaci",
+   "pos": "final",
+   "emoji": "🌳",
+   "icon": "copaci",
+   "voice": "w.copaci",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.bunici",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "bunici",
+   "pos": "final",
+   "emoji": "👴",
+   "icon": "bunici",
+   "voice": "w.bunici",
+   "syllables": 2,
+   "difficulty": 1,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.saci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "saci",
+   "pos": "final",
+   "emoji": null,
+   "icon": "saci",
+   "voice": "w.saci",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "s"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.cinci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "cinci",
+   "pos": "final",
+   "emoji": "5️⃣",
+   "icon": "cinci",
+   "voice": "w.cinci",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.raci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "raci",
+   "pos": "final",
+   "emoji": "🦞",
+   "icon": "raci",
+   "voice": "w.raci",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.arici",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "arici",
+   "pos": "final",
+   "emoji": "🦔",
+   "icon": "arici",
+   "voice": "w.arici",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.colaci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "colaci",
+   "pos": "final",
+   "emoji": "🥯",
+   "icon": "colaci",
+   "voice": "w.colaci",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.furnici",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "furnici",
+   "pos": "final",
+   "emoji": "🐜",
+   "icon": "furnici",
+   "voice": "w.furnici",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": false,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.melci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "melci",
+   "pos": "final",
+   "emoji": "🐌",
+   "icon": "melci",
+   "voice": "w.melci",
+   "syllables": 1,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wf.porci",
+   "type": "word",
+   "rung": "wordsFinal",
+   "text": "porci",
+   "pos": "final",
+   "emoji": "🐖",
+   "icon": "porci",
+   "voice": "w.porci",
+   "syllables": 1,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.cinci",
+   "type": "word",
+   "rung": "clusters",
+   "text": "cinci",
+   "pos": "cluster",
+   "emoji": "5️⃣",
+   "icon": "cinci",
+   "voice": "w.cinci",
+   "syllables": 1,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.bocanci",
+   "type": "word",
+   "rung": "clusters",
+   "text": "bocanci",
+   "pos": "cluster",
+   "emoji": "🥾",
+   "icon": "bocanci",
+   "voice": "w.bocanci",
+   "syllables": 2,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "otherSounds": [],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.melci",
+   "type": "word",
+   "rung": "clusters",
+   "text": "melci",
+   "pos": "cluster",
+   "emoji": "🐌",
+   "icon": "melci",
+   "voice": "w.melci",
+   "syllables": 1,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.porci",
+   "type": "word",
+   "rung": "clusters",
+   "text": "porci",
+   "pos": "cluster",
+   "emoji": "🐖",
+   "icon": "porci",
+   "voice": "w.porci",
+   "syllables": 1,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.purcel",
+   "type": "word",
+   "rung": "clusters",
+   "text": "purcel",
+   "pos": "cluster",
+   "emoji": "🐷",
+   "icon": "purcel",
+   "voice": "w.purcel",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "r",
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.urcior",
+   "type": "word",
+   "rung": "clusters",
+   "text": "urcior",
+   "pos": "cluster",
+   "emoji": "🏺",
+   "icon": "urcior",
+   "voice": "w.urcior",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "4+",
+   "otherSounds": [
+    "r"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.salcie",
+   "type": "word",
+   "rung": "clusters",
+   "text": "salcie",
+   "pos": "cluster",
+   "emoji": null,
+   "icon": "salcie",
+   "voice": "w.salcie",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "s",
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.dulciuri",
+   "type": "word",
+   "rung": "clusters",
+   "text": "dulciuri",
+   "pos": "cluster",
+   "emoji": "🍬",
+   "icon": "dulciuri",
+   "voice": "w.dulciuri",
+   "syllables": 2,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "r",
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.wc.dulceatzae",
+   "type": "word",
+   "rung": "clusters",
+   "text": "dulceață",
+   "pos": "cluster",
+   "emoji": "🍯",
+   "icon": "dulceatzae",
+   "voice": "w.dulceatzae",
+   "syllables": 3,
+   "difficulty": 3,
+   "ageBand": "6+",
+   "otherSounds": [
+    "ț",
+    "l"
+   ],
+   "cluster": true,
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.p.ace-atze",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "ace / ațe",
+   "a": "ace",
+   "b": "ațe",
+   "contrast": "ț",
+   "emojiA": "🪡",
+   "emojiB": "🧵",
+   "voiceA": "w.ace",
+   "voiceB": "w.atze",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.p.cinae-shinae",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "cină / șină",
+   "a": "cină",
+   "b": "șină",
+   "contrast": "ș",
+   "emojiA": "🍽️",
+   "emojiB": "🛤️",
+   "voiceA": "w.cinae",
+   "voiceB": "w.shinae",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.p.cine-tine",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "cine / tine",
+   "a": "cine",
+   "b": "tine",
+   "contrast": "t",
+   "emojiA": "❓",
+   "emojiB": "🫵",
+   "voiceA": "w.cine",
+   "voiceB": "w.tine",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.p.cer-ger",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "cer / ger",
+   "a": "cer",
+   "b": "ger",
+   "contrast": "ge",
+   "emojiA": "🌌",
+   "emojiB": "🥶",
+   "voiceA": "w.cer",
+   "voiceB": "w.ger",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.p.reci-regi",
+   "type": "pair",
+   "rung": "pairs",
+   "text": "reci / regi",
+   "a": "reci",
+   "b": "regi",
+   "contrast": "ge",
+   "emojiA": "🧊",
+   "emojiB": "🤴",
+   "voiceA": "w.reci",
+   "voiceB": "w.regi",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.1",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Ce faci, vecine?",
+   "words": 3,
+   "voice": "ce.n.1",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.2",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Cici bea ceai cu nuci.",
+   "words": 5,
+   "voice": "ce.n.2",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.3",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Bunicii au cinci vaci.",
+   "words": 4,
+   "voice": "ce.n.3",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.4",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Cici ține un ciocan.",
+   "words": 4,
+   "voice": "ce.n.4",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.5",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "La cină avem ceapă.",
+   "words": 4,
+   "voice": "ce.n.5",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.6",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Am zece ace și cinci nuci.",
+   "words": 6,
+   "voice": "ce.n.6",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.n.7",
+   "type": "sentence",
+   "rung": "sentences",
+   "text": "Cinci nuci cad pe ceas.",
+   "words": 5,
+   "voice": "ce.n.7",
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.r.1",
+   "type": "story",
+   "rung": "retell",
+   "text": "Ariciul iese la plimbare. Ariciul găsește nuci. Duce nucile sub copaci.",
+   "pictures": [
+    "🦔",
+    "🌰",
+    "🌳"
+   ],
+   "lines": [
+    "Ariciul iese la plimbare.",
+    "Ariciul găsește nuci.",
+    "Duce nucile sub copaci."
+   ],
+   "lineVoices": [
+    "ce.r.1.1",
+    "ce.r.1.2",
+    "ce.r.1.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.r.2",
+   "type": "story",
+   "rung": "retell",
+   "text": "Ceasul sună: e seară. Toți stau la cină. La final, bem un ceai.",
+   "pictures": [
+    "⌚",
+    "🍽️",
+    "🍵"
+   ],
+   "lines": [
+    "Ceasul sună: e seară.",
+    "Toți stau la cină.",
+    "La final, bem un ceai."
+   ],
+   "lineVoices": [
+    "ce.r.2.1",
+    "ce.r.2.2",
+    "ce.r.2.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.r.3",
+   "type": "story",
+   "rung": "retell",
+   "text": "Bunicii au o fermă. Pe fermă sunt cinci vaci. Bunicul repară gardul cu un ciocan.",
+   "pictures": [
+    "👴",
+    "🐄",
+    "🔨"
+   ],
+   "lines": [
+    "Bunicii au o fermă.",
+    "Pe fermă sunt cinci vaci.",
+    "Bunicul repară gardul cu un ciocan."
+   ],
+   "lineVoices": [
+    "ce.r.3.1",
+    "ce.r.3.2",
+    "ce.r.3.3"
+   ],
+   "voice": null,
+   "difficulty": 2,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.m.1",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Întreabă pe cineva: ce faci?",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.m.2",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Numără treptele până la cinci.",
+   "voice": "ce.m.2",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.m.3",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Seara: îmi citești ceva?",
+   "voice": "ce.m.3",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.m.4",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "La masă: ce bun e!",
+   "voice": "human-needed",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  },
+  {
+   "id": "ce.m.5",
+   "type": "mission",
+   "rung": "everyday",
+   "text": "Arată cinci degete și spune: cinci!",
+   "voice": "ce.m.5",
+   "difficulty": 1,
+   "ageBand": "4+",
+   "needsTherapistCheck": false,
+   "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+   },
+   "source": "original"
+  }
+ ]
+}

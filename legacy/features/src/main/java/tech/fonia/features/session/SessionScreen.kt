@@ -1,0 +1,492 @@
+package tech.fonia.features.session
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import tech.fonia.designsystem.motion.FoniaOverlayHost
+import tech.fonia.designsystem.motion.staggeredEntrance
+import tech.fonia.design.CTALabel
+import tech.fonia.design.FoniButtonStyle
+import tech.fonia.design.Foni
+import tech.fonia.design.FoniMood
+import tech.fonia.design.FoniaIcon
+import tech.fonia.design.FoniaIconView
+import tech.fonia.design.FoniaText
+import tech.fonia.design.LocalReduceMotion
+import tech.fonia.design.Palette
+import tech.fonia.design.RisingPanel
+import tech.fonia.design.SceneBackdrop
+import tech.fonia.design.SceneName
+import tech.fonia.design.SessionBar
+import tech.fonia.design.StyledButton
+import tech.fonia.design.ToolButtonStyle
+import tech.fonia.design.WordPicture
+import tech.fonia.design.fBodyStrong
+import tech.fonia.design.fHeadline
+import tech.fonia.design.fPrompt
+import tech.fonia.design.scene
+import tech.fonia.design.swiftSpring
+import tech.fonia.domain.AttemptsSummary
+import tech.fonia.domain.Plural
+import tech.fonia.domain.Session
+import tech.fonia.features.app.ActionRole
+import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.DialogAction
+import tech.fonia.features.app.FoniaConfirmationDialog
+import tech.fonia.features.app.SessionTicket
+import tech.fonia.features.app.ViewTask
+import tech.fonia.features.app.capitalizedFirstLetter
+import tech.fonia.features.app.isChild
+import tech.fonia.features.home.StatTile
+import tech.fonia.store.Profile
+import java.time.Duration
+import java.time.Instant
+import kotlin.coroutines.cancellation.CancellationException
+
+/**
+ * The session as a whole: one field, one bar at the top, one thing to do. `FoniaRoot` shows it as a full-screen cover
+ * while `app.ticket` is set; [onDone] clears the ticket.
+ */
+@Composable
+fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone: () -> Unit) {
+    var run by remember { mutableStateOf<SessionRun?>(null) }
+    var confirmLeaving by remember { mutableStateOf(false) }
+
+    /** What came before on this focus, for the builder: finished sessions, this week's attempts, the last items. */
+    suspend fun history(): AttemptsSummary {
+        val sessions = orNull { app.repository.sessions(profile.id) } ?: emptyList()
+        val same = sessions.filter { it.focus == ticket.focus.key && it.endedAt != null }
+        val weekAgo = Instant.now().minus(Duration.ofSeconds(7 * 86_400L))
+        val thisWeek = same.filter { it.startedAt.isAfter(weekAgo) }.fold(0) { sum, session -> sum + session.attempts }
+        var recent = emptySet<String>()
+        val last = same.maxByOrNull { it.startedAt }
+        if (last != null) {
+            val attempts = orNull { app.repository.attempts(last.id) } ?: emptyList()
+            recent = attempts.mapNotNull { it.target }.toSet()
+        }
+        return AttemptsSummary(sessionsCompleted = same.size, attemptsThisWeek = thisWeek, recentItems = recent)
+    }
+
+    fun leave(current: SessionRun) {
+        app.scope.launch {
+            current.leaveEarly()
+            onDone()
+        }
+    }
+
+    fun finish() {
+        app.scope.launch {
+            app.audio.shutDown()
+            onDone()
+        }
+    }
+
+    ViewTask(Unit) {
+        if (run != null) return@ViewTask
+        val progress = orNull { app.repository.soundProgress(profile.id) }?.firstOrNull { it.sound == ticket.sound?.rawValue }
+        val made = SessionRun(ticket, profile, app, progress, history())
+        made.start()
+        run = made
+    }
+
+    // The Android back gesture is the X, or the one button at the end.
+    BackHandler {
+        val current = run
+        when {
+            current == null -> finish()
+            current.phase == SessionRun.Phase.Finished -> finish()
+            current.attempts == 0 -> leave(current)
+            else -> confirmLeaving = true
+        }
+    }
+
+    val current = run
+    if (current == null) {
+        // `Color.clear` inside a cover, which iOS shows on the system background.
+        Box(Modifier.fillMaxSize().background(Palette.sheet))
+        return
+    }
+    // The motion kit reads its own reduce-motion flag: it follows his. The overlay host draws the letters' bursts and
+    // the stars above every card, unclipped.
+    CompositionLocalProvider(tech.fonia.designsystem.theme.LocalReduceMotion provides LocalReduceMotion.current) {
+    FoniaOverlayHost(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
+        if (current.phase != SessionRun.Phase.Finished) SceneBackdrop(current.field.scene)
+        if (current.phase == SessionRun.Phase.Finished) {
+            EndScreen(current, app, onDone = { finish() })
+        } else {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars)
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                TopBar(current) {
+                    if (current.attempts == 0) leave(current) else confirmLeaving = true
+                }
+                val note = current.blockNote
+                AnimatedVisibility(note != null, enter = fadeIn(swiftSpring(0.28, 0.0)), exit = fadeOut(swiftSpring(0.28, 0.0))) {
+                    var shown by remember { mutableStateOf(note ?: "") }
+                    if (note != null) shown = note
+                    FoniaText(shown, Modifier.fillMaxWidth(), style = fHeadline, color = current.field.foreground, textAlign = TextAlign.Center)
+                }
+                if (note != null) {
+                    LaunchedEffect(note) {
+                        delay(2400)
+                        current.clearBlockNote()
+                    }
+                }
+                val chapter = current.chapter
+                val chapterSound = current.ticket.sound
+                if (current.isTellingChapter && chapter != null && chapterSound != null) {
+                    Box(Modifier.weight(1f)) {
+                        ChapterBeat(app.content.sound(chapterSound).hero, chapter, current.field, app) { current.finishChapter() }
+                    }
+                } else {
+                    Exercises(current, app, Modifier.weight(1f))
+                }
+            }
+        }
+        // Debug builds only, behind a developer switch: shadow mode's agreement, over the scene, taking no touches.
+        ShadowBadge(
+            app,
+            Modifier
+                .align(Alignment.TopEnd)
+                .windowInsetsPadding(WindowInsets.systemBars)
+                .padding(top = 64.dp, end = 12.dp),
+        )
+    }
+    }
+    }
+
+    FoniaConfirmationDialog(
+        isPresented = confirmLeaving,
+        onDismiss = { confirmLeaving = false },
+        title = "Te oprești aici?",
+        message = if (current.attempts > 0) "Ce ai lucrat până acum se păstrează." else null,
+        actions = listOf(
+            DialogAction("Mă opresc", ActionRole.Destructive) { leave(current) },
+            DialogAction("Mai rămân", ActionRole.Cancel),
+        ),
+    )
+}
+
+/** Swift's `try?` on a read. */
+private suspend fun <T> orNull(read: suspend () -> T): T? = try {
+    read()
+} catch (cancelled: CancellationException) {
+    throw cancelled
+} catch (_: Exception) {
+    null
+}
+
+@Composable
+private fun TopBar(run: SessionRun, onClose: () -> Unit) {
+    Row(Modifier.padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        StyledButton(onClick = onClose, style = ToolButtonStyle(field = run.field), modifier = Modifier.semantics { contentDescription = "Mă opresc" }) {
+            FoniaIconView(FoniaIcon.close, size = 18f)
+        }
+        SessionBar(run.progressValue, color = Palette.accent, track = Palette.sheet, modifier = Modifier.weight(1f), height = 12.dp)
+    }
+}
+
+/** The exercise of the moment, which gives way to the next with a short slide. */
+@Composable
+private fun Exercises(run: SessionRun, app: AppModel, modifier: Modifier) {
+    // `.id("\(run.index)-\(run.retryToken)")`: a new trial, or the same one again, is a new view with a new task.
+    val identity = ExerciseIdentity(run.index, run.retryToken)
+    val reduceMotion = LocalReduceMotion.current
+    // Set this large, a task can be taller than the screen. It scrolls instead of pushing the bar away. Android's font
+    // scale stands in for the accessibility sizes, which start at about 1.6 times the normal text on iOS.
+    val isAccessibilitySize = LocalDensity.current.fontScale >= 1.5f
+    AnimatedContent(
+        targetState = identity,
+        modifier = modifier.fillMaxWidth(),
+        transitionSpec = {
+            // `.animation(.spring(duration: 0.28, bounce: 0), value: run.index)`: only a new trial slides; a retry of
+            // the same trial changes no index, so it swaps at once.
+            if (targetState.index == initialState.index) {
+                // A retake: the same card settles again in place.
+                val settle = spring<Float>(dampingRatio = 0.6f, stiffness = 500f)
+                (if (reduceMotion) EnterTransition.None else fadeIn(settle, 0.4f) + scaleIn(settle, 0.97f)) togetherWith
+                    ExitTransition.None using SizeTransform(clip = false)
+            } else if (reduceMotion) {
+                fadeIn(tween(160)) togetherWith fadeOut(tween(120)) using SizeTransform(clip = false)
+            } else {
+                // The next card comes in from the right with a little overshoot, the done one leaves to the left.
+                val slideIn = spring<IntOffset>(dampingRatio = 0.72f, stiffness = 380f)
+                val slideOut = spring<IntOffset>(dampingRatio = 1f, stiffness = 700f)
+                val enter = fadeIn(tween(180)) + slideInHorizontally(slideIn) { it / 3 } + scaleIn(spring(0.7f, 380f), 0.94f)
+                val exit = fadeOut(tween(140)) + slideOutHorizontally(slideOut) { -it / 4 } + scaleOut(tween(160), 0.96f)
+                enter togetherWith exit using SizeTransform(clip = false)
+            }
+        },
+        contentKey = { it },
+        label = "exercise",
+    ) { shown ->
+        val trial = run.session.trials.getOrNull(shown.index) ?: return@AnimatedContent
+        val leaving = transition.targetState == EnterExitState.PostExit
+        CompositionLocalProvider(LocalExerciseActive provides !leaving) {
+            if (isAccessibilitySize) {
+                BoxWithConstraints(Modifier.fillMaxSize()) {
+                    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = maxHeight)) {
+                        ExerciseHost(trial, run, app)
+                    }
+                }
+            } else {
+                Box(Modifier.fillMaxSize()) { ExerciseHost(trial, run, app) }
+            }
+        }
+    }
+}
+
+private val density: androidx.compose.ui.unit.Density
+    get() = androidx.compose.ui.unit.Density(android.content.res.Resources.getSystem().displayMetrics.density)
+
+private data class ExerciseIdentity(val index: Int, val retry: Int)
+
+/**
+ * The fixed end of a session: Foni hops in a burst of sparkles, a panel rises with what was done, and there's one
+ * button. No "one more".
+ */
+@Composable
+fun EndScreen(run: SessionRun, app: AppModel, onDone: () -> Unit) {
+    val reduceMotion = LocalReduceMotion.current
+    val isChild = run.profile.isChild
+    val settled = remember { Animatable(0f) }
+    var hasSettled by remember { mutableStateOf(false) }
+    val star = remember { Animatable(if (reduceMotion) 1f else 0.5f) }
+    ViewTask(Unit) {
+        // Foni says goodbye in its own words. The device voice may say it until the clip is recorded: a goodbye heard
+        // matters more here than the sound of the voice.
+        if (isChild && run.attempts > 0) app.audio.say(Session.goodbye)
+    }
+    LaunchedEffect(Unit) {
+        // `withAnimation(.spring(duration: 0.55, bounce: 0.3).delay(0.1)) { settled = true }`.
+        hasSettled = true
+        launch {
+            if (!reduceMotion) {
+                delay(250)
+                star.animateTo(1f, swiftSpring(0.45, 0.35))
+            }
+        }
+        delay(100)
+        settled.animateTo(1f, swiftSpring(0.55, 0.3))
+    }
+    Box(Modifier.fillMaxSize()) {
+        SceneBackdrop(SceneName.lesson)
+        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
+            Spacer(Modifier.weight(1f).heightIn(min = 12.dp))
+            // `.padding(.bottom, -6)`: the panel rises over Foni's feet.
+            Box(Modifier.fillMaxWidth().overhangBelow(6.dp), contentAlignment = Alignment.Center) {
+                Foni(
+                    Modifier
+                        .height(230.dp)
+                        .graphicsLayer {
+                            val value = settled.value
+                            val scale = 0.8f + 0.2f * value
+                            scaleX = scale
+                            scaleY = scale
+                            transformOrigin = TransformOrigin(0.5f, 1f)
+                            alpha = value.coerceIn(0f, 1f)
+                        },
+                    mood = if (run.attempts == 0) FoniMood.idle else FoniMood.happy,
+                    reactsToTap = true,
+                )
+                // The end of a session: a fountain of confetti and stars from Foni (the motion kit).
+                if (run.attempts > 0) {
+                    tech.fonia.designsystem.motion.CelebrationBurst(
+                        trigger = if (hasSettled) run.sessionID else null,
+                        modifier = Modifier.fillMaxWidth().height(340.dp),
+                        style = tech.fonia.designsystem.motion.BurstStyle.Confetti,
+                        origin = androidx.compose.ui.geometry.Offset(0.5f, 0.55f),
+                        power = 1.2f,
+                    )
+                }
+            }
+            RisingPanel(color = Palette.sheet) {
+                Column(
+                    Modifier
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 24.dp, bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    val title = if (run.attempts == 0) "Ne vedem mâine" else if (isChild) "Ai exersat până la capăt!" else "Ai terminat"
+                    if (run.attempts > 0 && isChild) {
+                        EndPraise(title)
+                    } else {
+                        WaveTitle(title, fPrompt, Palette.ink)
+                    }
+                    if (run.attempts > 0) {
+                        Row(
+                            Modifier
+                                .graphicsLayer {
+                                    val value = star.value
+                                    val scale = if (reduceMotion) 1f else value
+                                    scaleX = scale
+                                    scaleY = scale
+                                    alpha = if (reduceMotion) 1f else ((value - 0.5f) / 0.5f).coerceIn(0f, 1f)
+                                }
+                                .clearAndSetSemantics { contentDescription = "O stea nouă" },
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            WordPicture("icon-star", Modifier.size(26.dp))
+                            FoniaText("O stea nouă", style = fHeadline, color = Palette.accentText)
+                        }
+                        // A child's end counts the trying, never what came out right: no numbers in tiles.
+                        if (isChild) {
+                            effortLine(run.attempts, onlyListening = run.identified > 0 && run.attempts == run.identified)?.let {
+                                FoniaText(it, Modifier.staggeredEntrance(1), style = fBodyStrong, color = Palette.ink, textAlign = TextAlign.Center)
+                            }
+                        } else Row(Modifier.fillMaxWidth().staggeredEntrance(1), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            if (run.identified > 0 && run.attempts == run.identified) {
+                                StatTile(FoniaIcon.ear, Palette.accent, "${run.identifiedRight} din ${run.identified}", "Recunoscute", Modifier.weight(1f))
+                            } else {
+                                StatTile(
+                                    FoniaIcon.target,
+                                    Palette.accent,
+                                    "${run.attempts}",
+                                    Plural.word(run.attempts, Plural.Noun.Incercare).capitalizedFirstLetter,
+                                    Modifier.weight(1f),
+                                )
+                            }
+                            StatTile(
+                                FoniaIcon.hourglass,
+                                Palette.accent,
+                                "${run.minutes}",
+                                Plural.word(run.minutes, Plural.Noun.Minut).capitalizedFirstLetter,
+                                Modifier.weight(1f),
+                            )
+                        }
+                    }
+                    StyledButton(onClick = onDone, style = FoniButtonStyle(), modifier = Modifier.padding(top = 4.dp).staggeredEntrance(2)) {
+                        CTALabel(run.session.endButton)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** SwiftUI's negative bottom padding: the view takes [amount] less room below, and its content runs over what follows. */
+private fun Modifier.overhangBelow(amount: Dp): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    val shift = amount.roundToPx()
+    layout(placeable.width, (placeable.height - shift).coerceAtLeast(0)) { placeable.place(0, 0) }
+}
+
+/** "Bravo, ai reușit!" as a sticker in his green that drops in, squashes and settles, then breathes once. */
+@Composable
+private fun EndPraise(title: String) {
+    val reduce = LocalReduceMotion.current
+    val p = remember { Animatable(if (reduce) 1f else 0f) }
+    LaunchedEffect(Unit) {
+        if (reduce) return@LaunchedEffect
+        delay(350)
+        p.animateTo(1f, spring(dampingRatio = 0.4f, stiffness = 260f))
+    }
+    // A long praise ("Ai exersat până la capăt!") ran off both edges of the panel (QA 2026-11-21): it breaks into two
+    // sticker lines at the space nearest its middle, and each line shrinks to the panel's width if it still has to.
+    val lines = stickerLines(title)
+    Column(
+        Modifier
+            .semantics(mergeDescendants = true) { heading() }
+            .graphicsLayer {
+                val v = p.value
+                alpha = (v * 2f).coerceIn(0f, 1f)
+                translationY = (1f - v) * -120f
+                scaleX = 0.6f + 0.4f * v
+                scaleY = 0.6f + 0.4f * v
+                rotationZ = (1f - v) * 8f
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        for (line in lines) {
+            ShrinkToFit {
+                tech.fonia.designsystem.letter.StickerText(
+                    line,
+                    tech.fonia.designsystem.tokens.FoniaClassicSticker.Good,
+                    fontSize = 30.sp,
+                    weight = 900f,
+                )
+            }
+        }
+    }
+}
+
+/** One line up to 16 letters; longer, two lines split at the space closest to the middle. */
+internal fun stickerLines(title: String): List<String> {
+    if (title.length <= 16 || ' ' !in title) return listOf(title)
+    val mid = title.length / 2
+    val cut = title.indices.filter { title[it] == ' ' }.minByOrNull { kotlin.math.abs(it - mid) } ?: return listOf(title)
+    return listOf(title.substring(0, cut), title.substring(cut + 1))
+}
+
+/** The child's end screen counts effort, never what came out right (iOS `SessionVoice.effort`). */
+internal fun effortLine(attempts: Int, onlyListening: Boolean): String? {
+    if (attempts <= 0) return null
+    val verb = if (onlyListening) "Ai ascultat" else "Ai încercat"
+    if (attempts == 1) return "$verb o dată."
+    return "$verb de ${Plural.format(attempts, Plural.Noun.Oara)}."
+}

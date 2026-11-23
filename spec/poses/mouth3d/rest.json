@@ -1,0 +1,35 @@
+{
+  "sound": "rest",
+  "version": 1,
+  "about": "Pose of the stylised 3D mouth (docs/v2/04 §8, package H7). Logopedic convention, [Propunere] until a speech therapist signs \"review\". Channels: PoseChannel in :core:mouth3d.",
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "insideApproved": false,
+  "captionKey": "mouth3d.caption.rest",
+  "caption": "Gura stă liniștită.",
+  "description": "Gura stă liniștită, buzele sunt închise, limba se odihnește jos.",
+  "therapistNote": "Repaus: buze închise relaxat, dinții ușor depărtați, limba culcată pe planșeu cu vârful în spatele incisivilor de jos, vălul palatin coborât (respirație pe nas), fără aer și fără voce. Verificați că nimic nu sugerează un sunet. Secțiunea se arată copiilor doar după aprobare: dacă e corect, puneți \"insideApproved\": true și completați \"review\" (status, by, date).",
+  "params": {
+    "jawOpen": 0.06,
+    "tongueTip": -0.1
+  },
+  "animation": null,
+  "flutter": null,
+  "air": null,
+  "voiced": false,
+  "camera": {
+    "front": {
+      "yawDeg": 0,
+      "pitchDeg": 6,
+      "zoom": 1.0
+    },
+    "inside": {
+      "yawDeg": 90,
+      "pitchDeg": 0,
+      "zoom": 1.0
+    }
+  }
+}

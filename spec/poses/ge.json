@@ -1,0 +1,51 @@
+{
+  "sound": "ge",
+  "version": 1,
+  "review": {
+    "status": "draft",
+    "by": null,
+    "date": null
+  },
+  "about": "Front-view lip target and camera checks (docs/v2/04 §1, §4, §8; logopedic convention, Ș/J/CE/GE with rounded lips). Units: aperture = inner lip gap ÷ W0, width = mouth width ÷ W0, round/spread 0…1 relative to rest. [Propunere], to be confirmed by the speech therapist.",
+  "lips": {
+    "class": "funnelLight",
+    "wide": 0.88,
+    "open": 0.12,
+    "round": 0.45,
+    "tol": {
+      "open": 0.35,
+      "wide": 0.08,
+      "round": 0.25
+    }
+  },
+  "cameraChecks": [
+    {
+      "feature": "round",
+      "min": 0.2,
+      "soft": 0.25,
+      "belowMin": "lips.round"
+    },
+    {
+      "feature": "width",
+      "max": 0.99,
+      "soft": 0.1,
+      "aboveMax": "lips.round"
+    },
+    {
+      "feature": "aperture",
+      "min": 0.02,
+      "max": 0.35,
+      "soft": 0.08,
+      "belowMin": "lips.part",
+      "aboveMax": "mouth.openLess"
+    }
+  ],
+  "visible": {
+    "lips": true,
+    "jaw": true,
+    "teeth": false,
+    "tongue": false,
+    "note": "Închiderea și sonoritatea nu se văd; rotunjirea e ușoară și scurtă."
+  },
+  "role": "chooseAdvice; same lips as CE"
+}
