@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "version": "2026-11-21.v0",
+ "version": "2026-11-23.v1",
  "source": "hand-set v0, not trained: capture values from DSPThresholds v1 and plan 03 §8, word and measurement values from plan 03 §3-§4 [P]",
  "capture": {
   "maxDropped": 0,
@@ -8,7 +8,7 @@
   "noisyRmsDb": -35,
   "bandSnrLowHz": 4000,
   "bandSnrHighHz": 8000,
-  "adultVoiceRatio": 0.7,
+  "adultVoiceRatio": 0,
   "childF0Hz": 260,
   "fullBandwidthHz": 16000,
   "placeBandwidthHz": 11000,

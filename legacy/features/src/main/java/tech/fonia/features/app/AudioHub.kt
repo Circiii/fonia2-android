@@ -13,11 +13,11 @@ import tech.fonia.audio.ClipLocation
 import tech.fonia.audio.FixtureMode
 import tech.fonia.audio.HopProcessor
 import tech.fonia.audio.LiveLevels
-import tech.fonia.audio.SpeechFallback
 import tech.fonia.audio.SpeechGate
 import tech.fonia.audio.TakeEnd
 import tech.fonia.design.FoniaSfx
 import tech.fonia.design.SfxCue
+import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.domain.Language
 import tech.fonia.domain.Voice
 import tech.fonia.domain.VoiceIndex
@@ -26,6 +26,47 @@ import tech.fonia.dsp.LiveAnalyzer
 import tech.fonia.dsp.LiveFrame
 import tech.fonia.dsp.TalkerCalibration
 import tech.fonia.dsp.VoiceGroup
+import tech.fonia.judge.TalkerVoice
+
+/**
+ * What one take has heard so far, written by the capture thread and read by the screens (the "Nu te aud" cue) and by
+ * the talker tracker (the median pitch of the voiced hops). One instance per take.
+ */
+class TakeStats(val sampleRate: Double, val source: String) {
+    /** Loudest sample of the take so far, linear 0…1. */
+    @Volatile var peak: Float = 0f
+        internal set
+
+    @Volatile var samples: Long = 0
+        internal set
+
+    private val pitches = FloatArray(MAX_PITCHES)
+
+    @Volatile private var pitchCount = 0
+
+    /** Seconds of audio delivered since the microphone opened. */
+    val seconds: Double get() = if (sampleRate > 0) samples / sampleRate else 0.0
+
+    val peakDb: Float get() = 20f * kotlin.math.log10(peak + 1e-9f)
+
+    internal fun addPitch(hz: Float) {
+        val n = pitchCount
+        if (hz > 0f && n < MAX_PITCHES) {
+            pitches[n] = hz
+            pitchCount = n + 1
+        }
+    }
+
+    /** Median pitch of the voiced hops, NaN when the take had less than ~0.25 s of voice (a hiss, silence, a beep). */
+    fun pitchMedian(): Float = TalkerVoice.medianVoiced(pitches, pitchCount, minVoiced = MIN_VOICED_HOPS)
+
+    private companion object {
+        const val MAX_PITCHES = 4096
+
+        /** About 0.25 s of 10.7 ms hops. */
+        const val MIN_VOICED_HOPS = 24
+    }
+}
 
 /** Feeds the DSP from the capture thread. One instance per take, so nothing is shared across threads. */
 private class AnalyzerProcessor(
@@ -34,14 +75,34 @@ private class AnalyzerProcessor(
     calibration: TalkerCalibration?,
     thresholds: DSPThresholds,
     private val gate: SpeechGate,
+    private val stats: TakeStats,
 ) : HopProcessor {
     private val analyzer = LiveAnalyzer(sampleRate, group, calibration, thresholds)
 
     /** The `into` overload of `process`, so a hop allocates nothing, as on iOS. */
     private val frame: LiveFrame = LiveFrame.silent
+    private var lastPitch = Float.NaN
+    private var logged = false
 
     override fun process(samples: FloatArray, offset: Int, count: Int, levels: LiveLevels) {
+        var peak = stats.peak
+        for (i in offset until offset + count) {
+            val a = kotlin.math.abs(samples[i])
+            if (a > peak) peak = a
+        }
+        stats.peak = peak
+        stats.samples += count
         val frame = analyzer.process(samples, offset, count, frame)
+        // A new analysis hop (the analyzer returns its last reading between hops): one pitch per hop.
+        if (frame.pitchHz > 0f && frame.pitchHz != lastPitch) stats.addPitch(frame.pitchHz)
+        lastPitch = frame.pitchHz
+        if (!logged && stats.seconds >= 3.0) {
+            logged = true
+            AudioHub.log(
+                "mic 3 s: source=${stats.source} rate=${stats.sampleRate.toInt()} peak=${"%.1f".format(stats.peakDb)} dBFS " +
+                    "floor=${"%.0f".format(frame.floorDb)} dB",
+            )
+        }
         gate.update(isSpeaking = frame.speaking)
         levels.publish(
             level = frame.level,
@@ -71,9 +132,33 @@ class AudioHub(
     val usesFixtures: Boolean,
     private val assets: AssetManager? = null,
     private val microphone: MicrophonePermission? = null,
+    /**
+     * Debug only (`foniaMicFile`): every take reads this WAV in real time instead of the microphone, then digital
+     * silence, through exactly the same live path (levels, end of take, judge, screens).
+     */
+    val micFile: java.io.File? = null,
 ) {
     val levels = LiveLevels()
     val gate = SpeechGate()
+
+    /** What the take running now (or the last one) has heard; null before the first take. */
+    @Volatile
+    var take: TakeStats? = null
+        private set
+
+    /**
+     * The microphone has been open [SILENT_AFTER_SECONDS] and delivered nothing near a voice: digital silence (an
+     * emulator without the host microphone, a privacy switch) or far below speech. The screens show "Nu te aud".
+     */
+    val micSeemsSilent: Boolean
+        get() = capture != null && lastTakeWasSilent
+
+    /** The last take had a dead microphone (same rule), also after it ended. */
+    val lastTakeWasSilent: Boolean
+        get() {
+            val t = take ?: return false
+            return t.seconds >= SILENT_AFTER_SECONDS && t.peakDb < SILENT_PEAK_DB
+        }
 
     private var capture: CaptureEnginePort? = null
     private var isSessionReady = false
@@ -96,7 +181,7 @@ class AudioHub(
     suspend fun prepare() {
         if (isSessionReady) return
         try {
-            backend.session.configure(playbackOnly = usesFixtures)
+            backend.session.configure(playbackOnly = usesFixtures || micFile != null)
             backend.session.activate()
             isSessionReady = true
         } catch (cancelled: CancellationException) {
@@ -107,7 +192,7 @@ class AudioHub(
     }
 
     suspend fun requestMicrophone(): Boolean {
-        if (usesFixtures) return true
+        if (usesFixtures || micFile != null) return true
         return backend.session.requestMicrophone(prompt = { microphone?.request() ?: false })
     }
 
@@ -138,27 +223,23 @@ class AudioHub(
     }
 
     /**
-     * Says a text: the recorded clip when there is one, the device's voice otherwise.
-     * Foni's mouth follows either one through `levels.talk`.
+     * Says a text with its recorded clip; Foni's mouth follows it through `levels.talk`.
+     * A text with no clip stays silent and is only shown on screen: never the phone's synthetic voice (owner's
+     * decision, 2026-11-21; iOS still falls back to `AVSpeechSynthesizer`). What still has no clip is listed in
+     * domain/src/test/resources/missing-clips.txt and tools/voice/REPORT.md.
      */
     suspend fun say(text: String, language: Language = Language.Ro, voice: Voice? = null) {
         prepare()
-        // Whatever was being spoken stops here: two voices at once would hide the very sound being taught.
-        backend.fallback.stop()
         if (!currentCoroutineContext().isActive) return
         val url = clipURL(text, language, voice)
         if (url != null && backend.playback.play(url, levels)) return
-        if (!currentCoroutineContext().isActive) return
-        try {
-            backend.fallback.speak(
-                text,
-                if (language == Language.Ro) SpeechFallback.Language.Romanian else SpeechFallback.Language.English,
-                levels,
-            )
-        } catch (cancelled: CancellationException) {
-            backend.fallback.stop()
-            throw cancelled
-        }
+        logMissingClip(text, language, voice)
+    }
+
+    private fun logMissingClip(text: String, language: Language, voice: Voice?) {
+        if (!IS_DEBUG_BUILD) return
+        // runCatching: android.util.Log is a stub that throws in the JVM unit tests.
+        runCatching { android.util.Log.w("FoniaVoice", "no clip: ${language.rawValue}|${voice?.rawValue ?: "-"}|$text") }
     }
 
     /** The same clip at 0.6 speed: the pitch stays, the word opens up. Only for hearing how it's built. */
@@ -192,7 +273,6 @@ class AudioHub(
     }
 
     suspend fun stopSpeaking() {
-        backend.fallback.stop()
         backend.playback.stop()
     }
 
@@ -210,6 +290,7 @@ class AudioHub(
         val fixture = fixtureText?.let { clipURL(it, fixtureLanguage) }
         val fallbackFixture = clipURL(FixtureMode.FALLBACK_TEXT, Language.Ro)
         val source: TakeSource = when {
+            micFile != null -> TakeSource.Fixture(ClipLocation.File(micFile), thenSilence = true)
             usesFixtures && fixture != null -> TakeSource.Fixture(fixture)
             usesFixtures && fallbackFixture != null -> TakeSource.Fixture(fallbackFixture)
             else -> TakeSource.Microphone
@@ -228,19 +309,35 @@ class AudioHub(
         capture = engine
         val gate = gate
         analysisThresholds = DSPThresholds.v1
+        val sourceName = when (source) {
+            is TakeSource.Fixture -> if (micFile != null) "micFile:${micFile.name}" else "fixture:${source.clip.name}"
+            TakeSource.Microphone -> "microphone"
+        }
         try {
             engine.start(levels) { rate ->
                 // The processor is made once the stream runs, so the stream's real rate and device are known here.
                 val thresholds = if (sibilantsOff(engine.captureInfo, rate)) withoutSibilants else DSPThresholds.v1
                 analysisThresholds = thresholds
-                AnalyzerProcessor(rate, group, calibration, thresholds, gate)
+                val info = engine.captureInfo
+                val stats = TakeStats(rate, sourceName)
+                take = stats
+                log(
+                    "take start: source=$sourceName preset=${info?.inputPreset ?: "-"} requested=${info?.requestedPreset ?: "-"} " +
+                        "rate=${rate.toInt()} device=${info?.deviceType ?: "-"} narrowBand=${info?.isNarrowBand ?: "-"} " +
+                        "effectsOff=${info?.platformEffectsSwitchedOff ?: "-"} group=${group.rawValue}",
+                )
+                AnalyzerProcessor(rate, group, calibration, live(thresholds), gate, stats)
             }
         } catch (e: Exception) {
             capture = null
             captureClosed()
+            log("take start failed: $e")
             throw e
         }
     }
+
+    /** Median pitch of the voiced hops of the last take (NaN: no voice), for the talker tracker. */
+    fun lastTakePitch(): Float = take?.pitchMedian() ?: Float.NaN
 
     private fun captureClosed() {
         if (!FoniaSfx.gate.isCapturing) return
@@ -257,6 +354,9 @@ class AudioHub(
             captureClosed()
         }
         levels.publish()
+        take?.let {
+            log("take end: ${"%.1f".format(it.seconds)} s peak=${"%.1f".format(it.peakDb)} dBFS f0=${"%.0f".format(it.pitchMedian())} Hz")
+        }
         return clip
     }
 
@@ -291,6 +391,33 @@ class AudioHub(
     ) = gate.waitForTakeEnd(silence, startTimeout, maximum)
 
     companion object {
+        /** "Nu te aud": the microphone has been open this long ... */
+        const val SILENT_AFTER_SECONDS = 2.0
+
+        /** ... and nothing in it reached this peak (-66 dBFS: under any room's noise on a working phone microphone). */
+        const val SILENT_PEAK_DB = -66f
+
+        /**
+         * The live analysis' noise floor, for the letter and the end of the take only (the judge reads the clip with
+         * [analysisThresholds]): v1 lets the floor climb 30 dB/s for the first 1.2 s, so a "sss" started right after the
+         * beep became the floor within a second and the held bar stopped (a man's held S, 2026-11-23: 108 of 362 hiss
+         * hops heard). The floor now starts at -55 dB and learns fast only 0.5 s at 12 dB/s, and a voice is 9 dB above
+         * it: an immediate hiss stays heard (362 of 362), a -45 dB room is still learnt as the floor.
+         */
+        fun live(thresholds: DSPThresholds): DSPThresholds = thresholds.copy(
+            live = thresholds.live.copy(
+                initialFloorDb = -55f,
+                floorLearnSeconds = 0.5f,
+                floorLearnRiseDbPerSecond = 12f,
+                vadMarginDb = 9f,
+            ),
+        )
+
+        internal fun log(message: String) {
+            // runCatching: android.util.Log is a stub that throws in the JVM unit tests.
+            runCatching { android.util.Log.i("FoniaMic", message) }
+        }
+
         /**
          * S/Ș can't be told apart under 32 kHz (the analysers already know that from the rate, as on iOS) or from a
          * Bluetooth headset microphone, whose band stops near 8 kHz even when the stream says 48 kHz. Android names

@@ -40,6 +40,14 @@ object Paths {
     /** iOS `tools/missing-clips.txt`. fonia-content does not carry it yet, so the test resources hold a verbatim copy. */
     fun missingClipsText(): String =
         Paths::class.java.getResourceAsStream("/missing-clips.txt")!!.use { it.readBytes().decodeToString() }
+
+    /**
+     * Android `tools/voice/human-needed.txt`: texts ElevenLabs could not say right, so they have no clip and wait for a
+     * person to record them. Android never speaks a text with the phone's voice, so every other child-facing text needs
+     * its clip. Lines: `group | language voice | text | file`.
+     */
+    fun humanNeededText(): String =
+        Paths::class.java.getResourceAsStream("/human-needed.txt")!!.use { it.readBytes().decodeToString() }
 }
 
 /** Spelling rules for Romanian, kept apart from the JSON so tests can check the JSON against them. */

@@ -142,7 +142,8 @@ class ParityGuardTests {
         assertEquals("GE sau CE?", catalog.unit(Fixture.content.sound(SoundID.Ge)).lessons.first { it.id == "ge-pairs" }.title)
 
         assertEquals(
-            listOf("stress", "schwa", "ship-sheep", "th", "bad-bed", "pin-bin", "work-walk", "bed-bet", "w-v").map { "en-$it" },
+            // full-fool and cut-cat came in with their ElevenLabs recordings (fonia-content voice-elevenlabs, 2026-11-21).
+            listOf("stress", "schwa", "ship-sheep", "full-fool", "th", "bad-bed", "cut-cat", "pin-bin", "work-walk", "bed-bet", "w-v").map { "en-$it" },
             catalog.contrastUnits.map { it.id },
         )
         val schwa = catalog.contrastUnits.first { it.id == "en-schwa" }
@@ -158,7 +159,7 @@ class ParityGuardTests {
             listOf("d-pace", "d-pauses", "d-shadow", "d-warmup", "d-finalWords", "d-twisters", "d-volumeLadder", "d-glide", "d-statementOrQuestion", "d-emotion", "d-candles", "d-longSound"),
             catalog.dictionUnits.flatMap { unit -> unit.lessons.map { it.id } },
         )
-        assertEquals(12 + 10 + 5, catalog.allUnits(SoundID.defaultOrder).size)
+        assertEquals(12 + 12 + 5, catalog.allUnits(SoundID.defaultOrder).size)
         assertEquals(listOf("warmup", "voicing", "stories"), catalog.playUnits.map { it.id })
     }
 }

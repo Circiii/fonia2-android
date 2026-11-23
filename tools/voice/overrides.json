@@ -1,0 +1,422 @@
+{
+ "ro/ro/cd95e218e7f90a.mp3": {
+  "say": "Seara, spune-le alor tăi: „Somn dulce!”",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/c0c2f0bda0d62f.mp3": {
+  "say": "Fă ca mine: gi-gi-gi.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/4f28fc37216c27.mp3": {
+  "say": "Te-am auzit",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/1d3257a3932100.mp3": {
+  "say": "Auzi lll?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/7c1cf956268d36.mp3": {
+  "say": "sss sau zzz?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/29a4ceec223646.mp3": {
+  "say": "Auzi jjj?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/7917c1871c4230.mp3": {
+  "say": "jjj sau șșș?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/9e0f9ba6bb5a67.mp3": {
+  "say": "ț sau sss?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/75cb8dc2351985.mp3": {
+  "say": "Ține ce cât poți",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/99dd2fe439ad04.mp3": {
+  "say": "Auzi ge?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/632d528e068f3d.mp3": {
+  "say": "fugi",
+  "model": "eleven_v3"
+ },
+ "en/en3/6885858486f310.mp3": {
+  "say": "bug.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en3/b14615a7fdef95.mp3": {
+  "say": "bun.",
+  "model": "eleven_v3"
+ },
+ "en/en/e16dd5cf451abc.mp3": {
+  "say": "shooed.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/724ba863dc5d76.mp3": {
+  "say": "Apropie dinții.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/8b517b44c73178.mp3": {
+  "say": "Fă ca mine: ț-ț-ț.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/d62856d98ed4be.mp3": {
+  "say": "Spune scurt, de trei ori: ț-ț-ț.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/341365589ad7a3.mp3": {
+  "say": "Dă drumul cu voce: gi!",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/1ff5a4c8fca177.mp3": {
+  "say": "[warmly] Fă ca mine: rr, rr, rr.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/281f03b4a47fb7.mp3": {
+  "say": "[warmly] Fă vântul cu voce: jjjjj.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/4a79ee6becd25e.mp3": {
+  "say": "[warmly] Atinge scurt dealul: rr, rr, rr.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/7151832c8871f1.mp3": {
+  "say": "Ține sss cât poți",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/3b20c9304f5be6.mp3": {
+  "say": "zzz sau jjj?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/42e6ba1d2c9512.mp3": {
+  "say": "șșș sau sss?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/1746d5048132b1.mp3": {
+  "say": "Ține jjj cât poți",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/35cba1031f1b80.mp3": {
+  "say": "Auzi ț?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/5708ffcf2163bc.mp3": {
+  "say": "ț sau ce?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/06e05a7e37ffcc.mp3": {
+  "say": "ce sau ț?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/0b4d2e578dcac9.mp3": {
+  "say": "Ține ge cât poți",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/6a4251ed043fb6.mp3": {
+  "say": "Ține rrr cât poți",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/b7e988ec727445.mp3": {
+  "say": "căsuță",
+  "model": "eleven_v3"
+ },
+ "ro/ro/12e6599812b827.mp3": {
+  "say": "Rața îl alungă cu o aripă.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/07ba83db86423b.mp3": {
+  "say": "Ariciul îi dă una.",
+  "model": "eleven_v3"
+ },
+ "en/en3/00020d3566aefa.mp3": {
+  "say": "hut.",
+  "model": "eleven_v3"
+ },
+ "en/en3/2580d49ff40608.mp3": {
+  "say": "ban.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en/276b70b45aff89.mp3": {
+  "say": "soot.",
+  "model": "eleven_v3"
+ },
+ "en/en/f94ca0279cf742.mp3": {
+  "say": "wooed.",
+  "model": "eleven_v3"
+ },
+ "en/en/30813358e366fa.mp3": {
+  "say": "who'd.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en4/1be7a30854a28e.mp3": {
+  "say": "vow.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/63a85665281cf4.mp3": {
+  "say": "Fă ca mine: șșșș.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/6e84755d59699e.mp3": {
+  "say": "[warmly] Când aștepți, fă ca ceasul: ț! ț! ț!",
+  "model": "eleven_v3"
+ },
+ "ro/ro/039923ba24f9ee.mp3": {
+  "say": "Suflă ușor peste limbă: thhh.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/d68203dca51e00.mp3": {
+  "say": "Suflă cu voce: vvvv.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/08053a16606353.mp3": {
+  "say": "lll sau rrr?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/a1793b5b50198c.mp3": {
+  "say": "șșș sau jjj?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/ee90c289739016.mp3": {
+  "say": "jjj sau zzz?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/340ee6c7397f05.mp3": {
+  "say": "ce sau ge?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/3d1ce3e20792a3.mp3": {
+  "say": "ge sau ce?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/0881bfb8ce84e1.mp3": {
+  "say": "rrr sau lll?",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/3bb5f5b0991797.mp3": {
+  "say": "suc",
+  "model": "eleven_v3"
+ },
+ "ro/ro/a0de45fb98d186.mp3": {
+  "say": "Acum se joacă de-a v-ați ascunselea: aj, ej, ij. Sunetul fuge la coadă.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/c14069b0694a60.mp3": {
+  "say": "ațe",
+  "model": "eleven_v3"
+ },
+ "ro/ro/34699f8954a223.mp3": {
+  "say": "vaci.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/eb84f2b10805e0.mp3": {
+  "say": "geacă",
+  "model": "eleven_v3"
+ },
+ "en/en3/10e5866050d20a.mp3": {
+  "say": "hat.",
+  "model": "eleven_v3"
+ },
+ "en/en3/cee609b48cd2c5.mp3": {
+  "say": "fur.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en/a1a271df01e01d.mp3": {
+  "say": "cooed.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/a8b9324a27c32c.mp3": {
+  "say": "Sâsâilă alunecă prin iarbă: sssss. Hai, sâsâie și tu cu el!",
+  "model": "eleven_v3"
+ },
+ "ro/ro/eff6ba08eaccd7.mp3": {
+  "say": "Prima stație e aproape: șa, șe, și. Spune-le, ca să oprim acolo.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/9257c6b329134a.mp3": {
+  "say": "Eu am strigat „cucu!” și ceasul tot nu merge. Tu fă scurt: ț-ț-ț!",
+  "model": "eleven_v3"
+ },
+ "ro/ro/5716f10f231707.mp3": {
+  "say": "ață",
+  "model": "eleven_v3"
+ },
+ "ro/ro/ec76b935e6b1fa.mp3": {
+  "say": "Motorașul Gigel pornește: gi-gi-gi! Pune palma pe gât și pornește-l și tu.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/49443cd5bfc1f1.mp3": {
+  "say": "Rața merge la râu.",
+  "model": "eleven_v3"
+ },
+ "en/en4/cee609b48cd2c5.mp3": {
+  "say": "fur.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/276b70b45aff89.mp3": {
+  "say": "soot.",
+  "model": "eleven_v3"
+ },
+ "en/en2/338ad11a14ea55.mp3": {
+  "say": "suit.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/f94ca0279cf742.mp3": {
+  "say": "wooed.",
+  "model": "eleven_v3"
+ },
+ "en/en2/a1a271df01e01d.mp3": {
+  "say": "cooed.",
+  "model": "eleven_v3"
+ },
+ "en/en/1be7a30854a28e.mp3": {
+  "say": "vow.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/1ac79ed9fdb156.mp3": {
+  "say": "Acum sss-ul stă la mijloc, ca Sâsâilă încolăcit în iarbă. Îl găsești?",
+  "model": "eleven_v3"
+ },
+ "ro/ro/37146c8512fd53.mp3": {
+  "say": "Sara sare sus, Sanda sare sus, sus sar surorile.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/3db885b0417192.mp3": {
+  "say": "Vâjâilă se joacă afară cu toată lumea. Ia și tu jjj-ul la joacă.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/00ca38356a4e6b.mp3": {
+  "say": "Vâjâilă își face bagajul de drum. Cuvintele de azi se termină cu jjj.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/f3887064da321f.mp3": {
+  "say": "ojă.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/7b545ac3e4bb74.mp3": {
+  "say": "Gigel iese cu spatele din garaj: agi, egi, igi.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/887bbce7d0f0ab.mp3": {
+  "say": "Gigel se uită pe geam.",
+  "model": "eleven_v3"
+ },
+ "en/en/00020d3566aefa.mp3": {
+  "say": "hut.",
+  "model": "eleven_v3"
+ },
+ "en/en/10e5866050d20a.mp3": {
+  "say": "hat.",
+  "model": "eleven_v3"
+ },
+ "en/en/b14615a7fdef95.mp3": {
+  "say": "bun.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en/2580d49ff40608.mp3": {
+  "say": "ban.",
+  "model": "eleven_v3"
+ },
+ "en/en3/52e6d8ab88471a.mp3": {
+  "say": "full.",
+  "model": "eleven_v3"
+ },
+ "en/en3/c872d5564551da.mp3": {
+  "say": "pull.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en3/51a4b13bc79072.mp3": {
+  "say": "pool.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en3/276b70b45aff89.mp3": {
+  "say": "soot.",
+  "model": "eleven_v3"
+ },
+ "en/en3/338ad11a14ea55.mp3": {
+  "say": "suit.",
+  "model": "eleven_v3"
+ },
+ "en/en3/f94ca0279cf742.mp3": {
+  "say": "wooed.",
+  "model": "eleven_v3"
+ },
+ "en/en3/1006ba32aa9047.mp3": {
+  "say": "hood.",
+  "model": "eleven_multilingual_v2"
+ },
+ "ro/ro/70265cfd0aa7f5.mp3": {
+  "say": "Sanda are o sanie.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/2c6a756fe9766c.mp3": {
+  "say": "Bâzâitul lui Zuzu se întoarce încet, de la coadă: az, ez, iz.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/1123bfb74c53ce.mp3": {
+  "say": "ț! ț! ț!",
+  "model": "eleven_v3"
+ },
+ "ro/ro/dec32de5505513.mp3": {
+  "say": "Un țânțar țipă lângă pătuț.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/4c7c3b42526b73.mp3": {
+  "say": "ger",
+  "model": "eleven_v3"
+ },
+ "ro/ro/f62077524d7428.mp3": {
+  "say": "geam.",
+  "model": "eleven_v3"
+ },
+ "ro/ro/08100344c3a0f1.mp3": {
+  "say": "Rața și racul râd.",
+  "model": "eleven_v3"
+ },
+ "en/en2/6885858486f310.mp3": {
+  "say": "bug.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/00020d3566aefa.mp3": {
+  "say": "hut.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/2899441143e28a.mp3": {
+  "say": "fan.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/2580d49ff40608.mp3": {
+  "say": "ban.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en2/cee609b48cd2c5.mp3": {
+  "say": "fur.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en4/c872d5564551da.mp3": {
+  "say": "pull.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en4/276b70b45aff89.mp3": {
+  "say": "soot.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en4/338ad11a14ea55.mp3": {
+  "say": "suit.",
+  "model": "eleven_multilingual_v2"
+ },
+ "en/en4/f94ca0279cf742.mp3": {
+  "say": "wooed.",
+  "model": "eleven_v3"
+ },
+ "en/en4/a1a271df01e01d.mp3": {
+  "say": "cooed.",
+  "model": "eleven_v3"
+ },
+ "en/en3/1be7a30854a28e.mp3": {
+  "say": "vow.",
+  "model": "eleven_v3"
+ }
+}

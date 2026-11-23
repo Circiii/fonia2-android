@@ -54,9 +54,9 @@ class TakeJudgeTests {
     }
 
     @Test
-    fun aLowVoiceOnAChildTargetIsAnAdult() {
+    fun aLowVoiceOnAChildProfileIsJudgedNotRejected() {
         val r = judge.judge(word(SoundId.S, "asa", talker = TalkerGroup.Child), clip(vcv(sHiss(0.15), f0 = 110f)))
-        assertEquals(RetakeReason.AdultVoice, r.retakeReason)
+        assertTrue(r.retakeReason != RetakeReason.AdultVoice, "${r.retakeReason}")
     }
 
     @Test

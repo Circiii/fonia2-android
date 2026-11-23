@@ -1,0 +1,29 @@
+# Texts ElevenLabs could not say right after 3 takes (two models), checked by ASR. No clip: the app
+# stays silent for them. A person should record them. Format: group | language voice | text | file
+A | ro ro | ojă | ro/ro/f3887064da321f.mp3
+A | ro ro | Ariciul îi dă una. | ro/ro/07ba83db86423b.mp3
+A | ro ro | geam | ro/ro/f62077524d7428.mp3
+A | en en | shooed | en/en/e16dd5cf451abc.mp3
+A | en en3 | vow | en/en3/1be7a30854a28e.mp3
+B | ro ro | Fă vântul cu voce: jjjj. | ro/ro/281f03b4a47fb7.mp3
+C | ro ro | Auzi L? | ro/ro/1d3257a3932100.mp3
+C | ro ro | L sau R? | ro/ro/08053a16606353.mp3
+C | ro ro | Ține S cât poți | ro/ro/7151832c8871f1.mp3
+C | ro ro | S sau Z? | ro/ro/7c1cf956268d36.mp3
+C | ro ro | Z sau J? | ro/ro/3b20c9304f5be6.mp3
+C | ro ro | Ș sau S? | ro/ro/42e6ba1d2c9512.mp3
+C | ro ro | Ș sau J? | ro/ro/a1793b5b50198c.mp3
+C | ro ro | Auzi J? | ro/ro/29a4ceec223646.mp3
+C | ro ro | J sau Z? | ro/ro/ee90c289739016.mp3
+C | ro ro | J sau Ș? | ro/ro/7917c1871c4230.mp3
+C | ro ro | Auzi Ț? | ro/ro/35cba1031f1b80.mp3
+C | ro ro | Ț sau S? | ro/ro/9e0f9ba6bb5a67.mp3
+C | ro ro | Ț sau CE? | ro/ro/5708ffcf2163bc.mp3
+C | ro ro | Ține CE cât poți | ro/ro/75cb8dc2351985.mp3
+C | ro ro | CE sau Ț? | ro/ro/06e05a7e37ffcc.mp3
+C | ro ro | CE sau GE? | ro/ro/340ee6c7397f05.mp3
+C | ro ro | Auzi GE? | ro/ro/99dd2fe439ad04.mp3
+C | ro ro | Ține GE cât poți | ro/ro/0b4d2e578dcac9.mp3
+C | ro ro | GE sau CE? | ro/ro/3d1ce3e20792a3.mp3
+C | ro ro | Ține R cât poți | ro/ro/6a4251ed043fb6.mp3
+C | ro ro | R sau L? | ro/ro/0881bfb8ce84e1.mp3

@@ -30,6 +30,8 @@ import tech.fonia.judge.Position
 import tech.fonia.judge.RuntimeContext
 import tech.fonia.judge.TakeResult
 import tech.fonia.judge.TalkerGroup
+import tech.fonia.judge.TalkerTracker
+import tech.fonia.judge.measureForVoice
 import tech.fonia.live.Clip
 import tech.fonia.ml.ZipaHost
 import tech.fonia.model.ErrorKind
@@ -88,11 +90,20 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
     }
 
     /** Null when this take is not one the new judge decides (no target sound, English, a voice task...). */
-    suspend fun judge(request: JudgeRequest, sound: SoundDef, take: CapturedClip, runtime: RuntimeContext = RuntimeContext()): Judged? {
+    suspend fun judge(
+        request: JudgeRequest,
+        sound: SoundDef,
+        take: CapturedClip,
+        runtime: RuntimeContext = RuntimeContext(),
+        /** The speaker's voice so far: the take is judged with the group heard in it, and moves the tracker. */
+        talker: TalkerTracker? = null,
+    ): Judged? {
         val judge = ready.await() ?: return null
         val clip = Clip(take.samples, take.sampleRate, take.dropped)
+        var used = request.talker
         val result: TakeResult = withContext(Dispatchers.Default) {
-            val measured = judge.measure(request, clip)
+            val measured = if (talker != null) synchronized(talker) { judge.measureForVoice(request, clip, talker) } else judge.measure(request, clip)
+            used = measured.request.talker
             val fast = judge.decide(measured, runtime = runtime)
             val host = zipa
             if (fast.head == Head.Gate || fast.fastFinal || host == null || zipaOff) {
@@ -109,7 +120,8 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
             }
         }
         val judged = map(result, sound)
-        Log.i(TAG, "take '${request.text}' ${request.sound.raw}/${request.level.raw}: ${judged.trace} -> ${judged.cue} \"${judged.verdict.title}\"")
+        val f0 = result.evidence.features[tech.fonia.judge.Features.F0]
+        Log.i(TAG, "take '${request.text}' ${request.sound.raw}/${request.level.raw} talker=${used.raw} f0=${f0?.let { "%.0f".format(it) } ?: "-"}: ${judged.trace} -> ${judged.cue} \"${judged.verdict.title}\"")
         return judged
     }
 
@@ -208,6 +220,9 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
             SoundID.R, SoundID.L -> "S"
         }
 
+        /** A trial kind this likely is shown as an instruction (see [map]). */
+        const val TRIAL_INSTRUCT_AT = 0.9f
+
         /** "Mai spune o dată": not an attempt, said again at once, with no question for anyone. */
         val retake = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Mai spune o dată", keepsTake = false)
 
@@ -240,7 +255,21 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
                         Cue.Instruct, kind = v.kind, heard = v.heardAs?.letter, trace = trace,
                     )
                 }
-                Verdict.Unsure, Verdict.Retake -> Judged(retake, Cue.Retake, trace = trace)
+                Verdict.Unsure -> {
+                    // A kind still "în probă" (spec/unlock.json) that the phone is sure of: no adult is asked any more,
+                    // so the letter shows what to do (its instruction animation) under a kind "almost", without naming
+                    // what was heard. Anything less sure is said again.
+                    val note = result.adultNote
+                    if (note != null && note.inTrial && note.probability >= TRIAL_INSTRUCT_AT) {
+                        Judged(
+                            TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Almost, title = "Aproape. Uite cum", pose = sound.viseme),
+                            Cue.Instruct, kind = note.kind, heard = null, trace = "$trace trial=${note.kind.raw}",
+                        )
+                    } else {
+                        Judged(retake, Cue.Retake, trace = trace)
+                    }
+                }
+                Verdict.Retake -> Judged(retake, Cue.Retake, trace = trace)
             }
         }
     }

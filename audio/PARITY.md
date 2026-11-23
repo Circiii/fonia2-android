@@ -9,7 +9,7 @@ one Kotlin file per Swift file, plus `src/main/cpp` for everything that runs on 
 | `FoniaAudioRT.h/.m`: `FNARing`, `FNAMakeSinkNode` | `cpp/FoniaAudioRT.h/.cpp`: the same ring statement for statement (C++ atomics, same memory orders), `FNADeliver`; `cpp/FoniaCapture.*`: the Oboe input stream that replaces the sink node; `cpp/FoniaJni.cpp` |
 | `AudioState`, `AudioGraphEvents`, `AudioSessionController` | same names; `SharedAudioSession` stands in for `AVAudioSession.sharedInstance()` |
 | `CaptureRing`, `CaptureSource`, `CaptureEngine`, `FixtureSource`, `MicrophoneSource` | same names |
-| `LiveLevels`, `LoudnessEnvelope`, `PlaybackEngine`, `SoundEffects`, `SpeechFallback`, `RecordingWriter`, `AudioDecoding` | same names |
+| `LiveLevels`, `LoudnessEnvelope`, `PlaybackEngine`, `SoundEffects`, `RecordingWriter`, `AudioDecoding` | same names. `SpeechFallback` (device TTS) was removed on 2026-11-21: Android never speaks with a synthetic voice; a text with no clip stays silent |
 | `FoniaFeatures/App/AudioHub.swift`: `SpeechGate`, `waitForTakeEnd`; `AppModel`/`AudioHub`: the recorded-take choice | `SpeechGate.kt` (`SpeechGate`, `TakeEnd`), `FixtureMode` in `FixtureSource.kt`: moved down so `:features` and its tests share one copy |
 
 Libraries added in `audio/build.gradle.kts`: `com.google.oboe:oboe:1.11.0` (prefab, `ANDROID_STL=c++_shared`), NDK

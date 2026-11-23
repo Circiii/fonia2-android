@@ -3,11 +3,4 @@
 
     <!-- MicrophoneSource opens the microphone, only while a take runs. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <queries>
-        <!-- SpeechFallback binds the system text-to-speech engine (package visibility, API 30+). -->
-        <intent>
-            <action android:name="android.intent.action.TTS_SERVICE" />
-        </intent>
-    </queries>
 </manifest>

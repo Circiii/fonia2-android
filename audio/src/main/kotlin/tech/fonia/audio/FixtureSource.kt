@@ -12,7 +12,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 /** Feeds a WAV or MP3 file into the ring, standing in for the microphone in tests and in the recorded-take mode. */
-class FixtureSource(private val url: ClipLocation, private val pacing: Pacing = Pacing.RealTime) : CaptureSource {
+class FixtureSource(
+    private val url: ClipLocation,
+    private val pacing: Pacing = Pacing.RealTime,
+    /**
+     * After the file, keep delivering digital silence in real time, as a microphone in a quiet room would, so the end
+     * of the take is found by the same rule as with a voice (the debug `foniaMicFile` source). Off: the ring just stops.
+     */
+    private val thenSilence: Boolean = false,
+) : CaptureSource {
     enum class Pacing {
         /** Delivers samples as a microphone would, so the take lasts as long as the file. */
         RealTime,
@@ -73,6 +81,19 @@ class FixtureSource(private val url: ClipLocation, private val pacing: Pacing = 
                 written += count
             }
             if (written < total) delay(FEED_INTERVAL_MS)
+        }
+        if (!thenSilence || pacing != Pacing.RealTime) return
+        val zeros = FloatArray(4096)
+        var silent = 0L
+        val silenceStarted = System.nanoTime()
+        while (isActive) {
+            delay(FEED_INTERVAL_MS)
+            val due = ((System.nanoTime() - silenceStarted) / 1e9 * audio.sampleRate).toLong()
+            val count = min(min(due - silent, zeros.size.toLong()).toInt(), ring.free)
+            if (count > 0) {
+                ring.write(zeros, 0, count)
+                silent += count
+            }
         }
     }
 }

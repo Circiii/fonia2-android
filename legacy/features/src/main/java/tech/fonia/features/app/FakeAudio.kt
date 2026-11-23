@@ -8,7 +8,6 @@ import tech.fonia.audio.CapturedClip
 import tech.fonia.audio.ClipLocation
 import tech.fonia.audio.HopProcessor
 import tech.fonia.audio.LiveLevels
-import tech.fonia.audio.SpeechFallback
 
 // The stand-in for the :audio engines, for the JVM tests (`SessionRunTests`, `PathModelTests`), where there is no
 // Android audio: the microphone permission is asked as the real session asks it, nothing plays and no take can start,
@@ -33,12 +32,6 @@ private class QuietEffects : SoundEffectsPort {
     override var isMuted: Boolean = false
 
     override fun play(effect: SoundEffect) = Unit
-}
-
-private object SilentFallback : SpeechFallbackPort {
-    override suspend fun speak(text: String, language: SpeechFallback.Language, levels: LiveLevels?) = Unit
-
-    override fun stop() = Unit
 }
 
 /** A capture that can't start. */
@@ -67,8 +60,6 @@ class NoAudioBackend(context: Context?) : AudioBackend {
         override suspend fun stop() = Unit
         override suspend fun release() = Unit
     }
-
-    override val fallback: SpeechFallbackPort = SilentFallback
 
     override val effects: SoundEffectsPort = QuietEffects()
 

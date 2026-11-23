@@ -1,0 +1,28 @@
+﻿grup,limba,voce,viteza,text,de_citit,fisier,unde
+A,ro,ro,0.92,ojă,,ro/ro/f3887064da321f.mp3,"sound j, words medial"
+A,ro,ro,0.92,Ariciul îi dă una.,,ro/ro/07ba83db86423b.mp3,"sound ce, retell"
+A,ro,ro,0.92,geam,,ro/ro/f62077524d7428.mp3,"sound ge, words initial"
+A,en,en,0.92,shooed,,en/en/e16dd5cf451abc.mp3,english full-fool
+A,en,en3,0.92,vow,,en/en3/1be7a30854a28e.mp3,english w-v
+B,ro,ro,0.92,Fă vântul cu voce: jjjj.,,ro/ro/281f03b4a47fb7.mp3,"cum spui J, Sunetul"
+C,ro,ro,0.92,Auzi L?,Auzi lll?,ro/ro/1d3257a3932100.mp3,sunetul L
+C,ro,ro,0.92,L sau R?,lll sau rrr?,ro/ro/08053a16606353.mp3,sunetul L
+C,ro,ro,0.92,Ține S cât poți,Ține sss cât poți,ro/ro/7151832c8871f1.mp3,sunetul S
+C,ro,ro,0.92,S sau Z?,sss sau zzz?,ro/ro/7c1cf956268d36.mp3,sunetul S
+C,ro,ro,0.92,Z sau J?,zzz sau jjj?,ro/ro/3b20c9304f5be6.mp3,sunetul Z
+C,ro,ro,0.92,Ș sau S?,șșș sau sss?,ro/ro/42e6ba1d2c9512.mp3,sunetul Ș
+C,ro,ro,0.92,Ș sau J?,șșș sau jjj?,ro/ro/a1793b5b50198c.mp3,sunetul Ș
+C,ro,ro,0.92,Auzi J?,Auzi jjj?,ro/ro/29a4ceec223646.mp3,sunetul J
+C,ro,ro,0.92,J sau Z?,jjj sau zzz?,ro/ro/ee90c289739016.mp3,sunetul J
+C,ro,ro,0.92,J sau Ș?,jjj sau șșș?,ro/ro/7917c1871c4230.mp3,sunetul J
+C,ro,ro,0.92,Auzi Ț?,Auzi ț?,ro/ro/35cba1031f1b80.mp3,sunetul Ț
+C,ro,ro,0.92,Ț sau S?,ț sau sss?,ro/ro/9e0f9ba6bb5a67.mp3,sunetul Ț
+C,ro,ro,0.92,Ț sau CE?,ț sau ce?,ro/ro/5708ffcf2163bc.mp3,sunetul Ț
+C,ro,ro,0.92,Ține CE cât poți,Ține ce cât poți,ro/ro/75cb8dc2351985.mp3,sunetul CE
+C,ro,ro,0.92,CE sau Ț?,ce sau ț?,ro/ro/06e05a7e37ffcc.mp3,sunetul CE
+C,ro,ro,0.92,CE sau GE?,ce sau ge?,ro/ro/340ee6c7397f05.mp3,sunetul CE
+C,ro,ro,0.92,Auzi GE?,Auzi ge?,ro/ro/99dd2fe439ad04.mp3,sunetul GE
+C,ro,ro,0.92,Ține GE cât poți,Ține ge cât poți,ro/ro/0b4d2e578dcac9.mp3,sunetul GE
+C,ro,ro,0.92,GE sau CE?,ge sau ce?,ro/ro/3d1ce3e20792a3.mp3,sunetul GE
+C,ro,ro,0.92,Ține R cât poți,Ține rrr cât poți,ro/ro/6a4251ed043fb6.mp3,sunetul R
+C,ro,ro,0.92,R sau L?,rrr sau lll?,ro/ro/0881bfb8ce84e1.mp3,sunetul R

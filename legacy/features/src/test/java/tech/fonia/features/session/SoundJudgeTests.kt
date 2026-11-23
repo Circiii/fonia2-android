@@ -76,6 +76,20 @@ class SoundJudgeTests {
     }
 
     @Test
+    fun aSureTrialKindShowsTheInstructionNotARetake() {
+        val trial = result(Verdict.Unsure).copy(adultNote = tech.fonia.judge.AdultNote(ErrorKind.PlaceSwap, 0.97f, SoundId.Sh, inTrial = true))
+        val judged = SoundJudge.map(trial, content.sound(SoundID.S))
+        assertEquals(SoundJudge.Cue.Instruct, judged.cue)
+        assertEquals(ErrorKind.PlaceSwap, judged.kind)
+        assertEquals(Rating.nearly, judged.verdict.rating)
+        assertFalse(judged.verdict.title.contains("Ș"))
+        checkLine(judged.verdict.title)
+        // an unsure one is still said again
+        val unsure = result(Verdict.Unsure).copy(adultNote = tech.fonia.judge.AdultNote(ErrorKind.PlaceSwap, 0.6f, SoundId.Sh, inTrial = true))
+        assertEquals(SoundJudge.Cue.Retake, SoundJudge.map(unsure, content.sound(SoundID.S)).cue)
+    }
+
+    @Test
     fun everyLineIsShortAndKind() {
         for (sound in SoundID.entries) for (kind in ErrorKind.entries) {
             checkLine(SoundJudge.map(result(Verdict.NamedError(kind)), content.sound(sound)).verdict.title)

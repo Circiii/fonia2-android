@@ -7,7 +7,6 @@ import tech.fonia.audio.FixtureSource
 import tech.fonia.audio.HopProcessor
 import tech.fonia.audio.LiveLevels
 import tech.fonia.audio.SoundEffects
-import tech.fonia.audio.SpeechFallback
 
 // What AudioHub drives. The data types are :audio's own (`LiveLevels`, `CapturedClip`, `HopProcessor`,
 // `ClipLocation`, `SpeechGate`, `TakeEnd`); the engines sit behind small interfaces shaped like the :audio classes,
@@ -15,7 +14,6 @@ import tech.fonia.audio.SpeechFallback
 //
 //   AudioSessionPort    = AudioSessionController(context)     configure, activate, deactivate, requestMicrophone(prompt)
 //   PlaybackPort        = PlaybackEngine(context)             preload, play(url), play(clip), playRange, setSpeed, stop, release
-//   SpeechFallbackPort  = SpeechFallback(context)             speak(text, Language.Romanian, levels), stop
 //   SoundEffectsPort    = SoundEffects(directory)             isMuted, play(Effect)
 //   CaptureEnginePort   = CaptureEngine(source)               start(levels) { rate -> HopProcessor }, stop(), discard()
 //   TakeSource          = MicrophoneSource(context) or FixtureSource(ClipLocation, Pacing), as FixtureMode.captureSource picks
@@ -60,14 +58,6 @@ interface PlaybackPort {
     suspend fun release()
 }
 
-/** `SpeechFallback`: the device's own voice, for a text with no recorded clip. */
-interface SpeechFallbackPort {
-    /** Returns when the text has been said; cancelling the caller stops it. */
-    suspend fun speak(text: String, language: SpeechFallback.Language, levels: LiveLevels? = null)
-
-    fun stop()
-}
-
 /** `SoundEffects`: short game sounds from `voice/sfx`, silent while muted. */
 interface SoundEffectsPort {
     var isMuted: Boolean
@@ -79,7 +69,12 @@ interface SoundEffectsPort {
 sealed interface TakeSource {
     data object Microphone : TakeSource
 
-    data class Fixture(val clip: ClipLocation, val pacing: FixtureSource.Pacing = FixtureSource.Pacing.RealTime) : TakeSource
+    data class Fixture(
+        val clip: ClipLocation,
+        val pacing: FixtureSource.Pacing = FixtureSource.Pacing.RealTime,
+        /** Digital silence after the clip, as a quiet microphone (the debug `foniaMicFile` source). */
+        val thenSilence: Boolean = false,
+    ) : TakeSource
 }
 
 /** `CaptureEngine`: one take. */
@@ -103,7 +98,6 @@ interface CaptureEnginePort {
 interface AudioBackend {
     val session: AudioSessionPort
     val playback: PlaybackPort
-    val fallback: SpeechFallbackPort
 
     /** Null when there is no folder of effects: AudioHub then treats them as muted, as iOS does. */
     val effects: SoundEffectsPort?

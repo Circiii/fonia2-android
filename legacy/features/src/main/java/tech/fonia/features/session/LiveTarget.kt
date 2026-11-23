@@ -67,23 +67,43 @@ fun stickerFor(field: Field): StickerSet = when (field) {
 /**
  * Feeds [link]'s drive from his live levels once per frame while [listening] (the child's voice) or [modelVoice] (the
  * model's voice, which makes the letter beat along, gently). Reads only volatile fields: no recomposition.
+ *
+ * While listening every sound shows at once (owner, 2026-11-23: "nu se întâmplă nimic"): the letter swells with the
+ * loudness envelope over the measured room floor ([HearRules.letterInflation], on within ~30 ms), wobbles with voicing,
+ * sharpens for S / rounds for Ș on a hiss, ripples for R, leans away when blown. [baseInflation] is its resting size
+ * (the held share in the sustain exercise). [heard] receives the envelope each frame, for the "Te aud" ring.
  */
 @Composable
-fun FeedLetter(link: LetterLink, levels: LiveLevels, listening: Boolean, modelVoice: Boolean, holdSeconds: () -> Float = { 0f }) {
+fun FeedLetter(
+    link: LetterLink,
+    levels: LiveLevels,
+    listening: Boolean,
+    modelVoice: Boolean,
+    holdSeconds: () -> Float = { 0f },
+    baseInflation: () -> Float = { REST_INFLATION },
+    heard: ((Float) -> Unit)? = null,
+) {
     LaunchedEffect(link, listening, modelVoice) {
         val d = link.drive
         d.listening = listening
         if (!listening && !modelVoice) {
             d.quiet()
+            d.inflation = baseInflation()
+            heard?.invoke(0f)
             return@LaunchedEffect
         }
+        var envelope = 0f
+        var last = 0L
         while (isActive) {
-            withFrameNanos { }
+            val now = withFrameNanos { it }
+            val dt = if (last == 0L) 0.016f else ((now - last) / 1e9f)
+            last = now
             if (listening) {
-                val level = levels.level
+                envelope = HearRules.envelope(envelope, levels.level, dt)
+                val hears = HearRules.hears(envelope) || levels.isFricative
                 d.feed(
-                    level = level,
-                    speaking = level > 0.08f,
+                    level = (envelope * 1.6f).coerceAtMost(1f),
+                    speaking = hears,
                     sNess = if (levels.isFricative) levels.sNess else Float.NaN,
                     fricative = levels.fricativeStrength,
                     voicing = levels.clarity,
@@ -91,13 +111,21 @@ fun FeedLetter(link: LetterLink, levels: LiveLevels, listening: Boolean, modelVo
                     blow = levels.blowStrength,
                     holdSeconds = holdSeconds(),
                 )
+                d.inflation = HearRules.letterInflation(baseInflation(), envelope)
+                d.trembling = HearRules.letterWobble(envelope, levels.clarity)
+                heard?.invoke(envelope)
             } else {
                 val talk = levels.talk
                 d.feed(level = talk * 0.6f, speaking = talk > 0.12f)
+                d.inflation = baseInflation()
+                d.trembling = 0f
             }
         }
     }
 }
+
+/** The letter's size at rest (the drive's own default). */
+const val REST_INFLATION = 0.55f
 
 /** Where the cap centre of a hero letter sits in its box, and the em of the box (see design/README "Hero layout"). */
 private const val HERO_EM = 0.54f

@@ -1,0 +1,24 @@
+{
+ "accept": {
+  "ro/ro/8b517b44c73178.mp3": "t0",
+  "ro/ro/d62856d98ed4be.mp3": "t0",
+  "ro/ro/039923ba24f9ee.mp3": "t0",
+  "ro/ro/c0c2f0bda0d62f.mp3": "t1",
+  "ro/ro/a8b9324a27c32c.mp3": "t1",
+  "ro/ro/12e6599812b827.mp3": "t1",
+  "ro/ro/6e84755d59699e.mp3": "t2",
+  "en/en/a1a271df01e01d.mp3": "t2",
+  "en/en2/a1a271df01e01d.mp3": "t2",
+  "en/en4/a1a271df01e01d.mp3": "t2"
+ },
+ "notes": {
+  "ro/ro/8b517b44c73178.mp3": "Fă ca mine: ț-ț-ț. — Scribe wrote the bursts as 'Tss, tss, tss' (that is ț)",
+  "ro/ro/d62856d98ed4be.mp3": "Spune scurt, de trei ori: ț-ț-ț. — heard 'țțț'",
+  "ro/ro/039923ba24f9ee.mp3": "Suflă ușor peste limbă: thhh. — the soft th is not transcribed; v2 take said ș instead",
+  "ro/ro/c0c2f0bda0d62f.mp3": "Fă ca mine: gi-gi-gi. — heard 'Gigi Gigi'",
+  "ro/ro/a8b9324a27c32c.mp3": "Sâsâilă ... sssss — v3 take has S (heard 'Sss'), the v2 take said 'Șșș'",
+  "ro/ro/12e6599812b827.mp3": "Rața îl alungă cu o aripă. — heard 'Rață la lungă', same sounds",
+  "ro/ro/6e84755d59699e.mp3": "ceasul: ț-ț-ț! — heard 'Ts, ts, ts'",
+  "en/*/a1a271df01e01d.mp3": "cooed — heard 'Cood', the same sound"
+ }
+}

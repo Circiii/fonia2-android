@@ -126,8 +126,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     var capsuleLine by remember { mutableStateOf<String?>(null) }
     /** What the new judge said about the last take (null: his judge decided). */
     var judged by remember { mutableStateOf<SoundJudge.Judged?>(null) }
+    /** 3, 2, 1 in the capsule before it opens again after "Mai spune o dată". */
+    var countdown by remember { mutableStateOf<Int?>(null) }
     val haptics = rememberFoniaHaptics()
     val letter = rememberLetterLink()
+    val heard = remember { HeardLevel() }
+    val profile = run.profile
 
     val exercise = trial.exercise
     val field = run.field
@@ -212,15 +216,41 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         // The sound of the outcome is his `app.audio.effect(...)` in showResult (now the new set, through the gate).
     }
 
-    /** The phone could not judge the take: the letter shows its retake mark, the capsule says so, the trial starts again. */
+    /**
+     * The phone could not judge the take. Never a silent reset (owner, 2026-11-23): a dead microphone says "Nu te aud"
+     * and what to do; otherwise the letter shows its retake mark, the capsule says "Mai spune o dată" and counts 3-2-1
+     * before it opens again; after [MAX_AUTO_RETAKES] it is a kind "almost" and the session moves on by itself.
+     */
     suspend fun retakeByItself(): Boolean {
-        if (run.autoRetakes >= MAX_AUTO_RETAKES) return false
-        letter.retake()
-        FoniaSfx.play(SfxCue.Retake)
-        capsuleLine = SoundJudge.retake.title
-        app.audio.sayIfRecorded(SoundJudge.retake.title)
-        delay(1100)
-        run.retakeSameTrial()
+        when (HearRules.afterUnjudged(run.autoRetakes, MAX_AUTO_RETAKES, app.audio.lastTakeWasSilent)) {
+            HearRules.Unjudged.NoMicrophone -> {
+                letter.rest()
+                verdict = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Nu te aud", tip = noMicHint(), keepsTake = false)
+                phase = SpeakPhase.Result
+                waitingForChoice = true
+            }
+            HearRules.Unjudged.Retake -> {
+                letter.retake()
+                FoniaSfx.play(SfxCue.Retake)
+                capsuleLine = SoundJudge.retake.title
+                app.audio.sayIfRecorded(SoundJudge.retake.title)
+                for (n in HearRules.retakeCountdown) {
+                    countdown = n
+                    delay(450)
+                }
+                run.retakeSameTrial()
+            }
+            HearRules.Unjudged.AlmostAndMoveOn -> {
+                val kind = TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Unclear, title = "Aproape! Mergem mai departe", keepsTake = false)
+                verdict = kind
+                letter.almost()
+                app.audio.effect(SoundEffect.Almost)
+                phase = SpeakPhase.Result
+                delay(1500)
+                if (adult != null || waitingForChoice) return true
+                run.finishAttempt(exercise, machine = kind.outcome, adult = null, take = take)
+            }
+        }
         return true
     }
 
@@ -277,16 +307,23 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         val clip = app.audio.stopListening() ?: return
         take = clip
         phase = SpeakPhase.Thinking
+        // The talker heard so far (a man on a child profile is judged as a man), moved by this take's own voice.
+        val group = app.talkers.group(profile)
         val judge = TakeJudge(
             content = app.content,
-            group = run.profile.dspGroup,
-            calibration = run.profile.calibration,
+            group = group,
+            calibration = profile.calibration,
             transcriber = app.speech.transcriber,
             thresholds = app.audio.analysisThresholds,
         )
         // The new judge (speech/JUDGE.md, ZIPA as second head) decides Romanian sound takes; his judge the rest.
-        val request = SoundJudge.request(exercise, run.ticket.focus, run.profile.dspGroup, run.profile.calibration)
-        val fresh = if (request != null && sound != null) app.judge?.judge(request, sound, clip, runtimeFor(run)) else null
+        val request = SoundJudge.request(exercise, run.ticket.focus, group, profile.calibration)
+        val fresh = if (request != null && sound != null) {
+            app.judge?.judge(request, sound, clip, runtimeFor(run), talker = app.talkers.tracker(profile))?.also { app.talkers.remember(profile) }
+        } else {
+            null
+        }
+        if (fresh == null) app.talkers.observe(profile, app.audio.lastTakePitch())
         judged = fresh
         if (fresh?.cue == SoundJudge.Cue.Retake && retakeByItself()) return
         var result = when {
@@ -318,7 +355,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         // "Your turn" BEFORE the microphone: startListening waits until it has ended + 150 ms (the quiet rule).
         FoniaSfx.play(SfxCue.TakeStart)
         try {
-            app.audio.startListening(run.profile.dspGroup, run.profile.calibration, fixtureText, fixtureLanguage)
+            app.audio.startListening(app.talkers.group(profile), profile.calibration, fixtureText, fixtureLanguage)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (_: Exception) {
@@ -407,7 +444,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         val shown = verdict ?: return@LaunchedEffect
         if (shown.rating == Rating.yes) haptics.success() else haptics.tap()
     }
-    FeedLetter(letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model)
+    FeedLetter(letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it })
 
     val showsPanel = phase == SpeakPhase.Result && verdict != null
     val spring = swiftSpring<Float>(0.34, 0.14)
@@ -459,6 +496,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                         showsHeardColour = showsLiveAir,
                         app = app,
                         line = capsuleLine,
+                        countdown = countdown,
+                        heard = heard,
                         onStop = { app.audio.gate.requestStop() },
                     )
                 }
@@ -505,11 +544,21 @@ internal fun runtimeFor(run: SessionRun): RuntimeContext =
 
 /** The waiting state under the prompt: Foni in the rings of the voice, and one line that always says whose turn it is. */
 @Composable
-private fun ListeningBar(phase: SpeakPhase, field: Field, showsHeardColour: Boolean, app: AppModel, line: String?, onStop: () -> Unit) {
+private fun ListeningBar(
+    phase: SpeakPhase,
+    field: Field,
+    showsHeardColour: Boolean,
+    app: AppModel,
+    line: String?,
+    countdown: Int?,
+    heard: HeardLevel,
+    onStop: () -> Unit,
+) {
     val levels = app.audio.levels
     val still = LocalStillMeters.current
     val level: () -> Float = if (phase == SpeakPhase.Model) ({ levels.talk }) else ({ levels.level })
     Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        NoMicCue(app, field, listening = phase == SpeakPhase.Listening)
         // The rings are wider than the row: they spread over the sheet above and the capsule below, under both.
         Box(Modifier.fillMaxWidth().height(124.dp), contentAlignment = Alignment.Center) {
             VoiceRings(
@@ -534,14 +583,19 @@ private fun ListeningBar(phase: SpeakPhase, field: Field, showsHeardColour: Bool
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    FoniaIconView(FoniaIcon.microphone, size = 22f, tint = field.deep)
-                    FoniaText("Acum tu", style = fButton, color = Palette.ink, maxLines = 1)
+                    HearMic(heard, field.deep)
+                    HearLabel(heard)
                     VoiceBars(isLive = !still, color = field.deep, level = { levels.level }, modifier = Modifier.weight(1f).height(28.dp))
                 }
                 SpeakPhase.Thinking -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     if (line != null) {
-                        FoniaIconView(FoniaIcon.speaker, size = 22f, tint = field.deep)
+                        FoniaIconView(FoniaIcon.retry, size = 22f, tint = field.deep)
                         FoniaText(line, style = fButton, color = Palette.ink)
+                        if (countdown != null) {
+                            AnimatedContent(targetState = countdown, label = "countdown") { n ->
+                                FoniaText("$n", style = fButton, color = field.deep)
+                            }
+                        }
                     } else {
                         ActivityIndicator()
                         FoniaText("Ascult", style = fButton, color = Palette.ink)

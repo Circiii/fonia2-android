@@ -3,6 +3,7 @@ package tech.fonia.features.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -48,7 +49,6 @@ import tech.fonia.domain.SustainTarget
 import tech.fonia.domain.Trial
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.LocalStillMeters
-import tech.fonia.features.app.dspGroup
 import tech.fonia.features.app.calibration
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.shortLetter
@@ -73,26 +73,32 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
     var flameOut by remember { mutableStateOf(false) }
     val held = remember { HeldTime() }
     var micOff by remember { mutableStateOf(false) }
+    /** The take ended with a dead microphone: "Nu te aud" and what to do, instead of an empty bar. */
+    var micSilent by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
     val still = LocalStillMeters.current
     val letter = rememberLetterLink()
+    val heard = remember { HeardLevel() }
 
     val sound: SoundDef? = (target as? SustainTarget.Sound)?.let { app.content.sound(it.id) }
     val title = if (sound != null) "Ține ${sound.shortLetter} cât poți" else "Suflă în lumânare"
     val field = run.field
     val levels = app.audio.levels
 
-    /** A sibilant counts only as itself: "aaa", or Ș on an S screen, doesn't fill the bar. */
-    fun isHolding(levels: LiveLevels): Boolean {
-        val def = sound ?: return false
-        return when (def.detector) {
-            SoundDetector.Sibilant -> {
-                if (!levels.isFricative) return false
-                if (def.id.family == SoundFamily.WarmAir) levels.sNess < 0.5f else levels.sNess >= 0.5f
-            }
-            SoundDetector.Rhotic -> levels.trillStrength > 0.3f
-            SoundDetector.None -> levels.level > 0.3f
-        }
+    /**
+     * How fast the bar fills now ([HearRules.holdCredit]): the sound itself at full speed, a close one slowly, a hiss of
+     * the other place barely ("aaa", or Ș on an S screen, can never fill it), so something moves for every try.
+     */
+    fun holdCredit(levels: LiveLevels): Float {
+        val def = sound ?: return 0f
+        return HearRules.holdCredit(
+            detector = def.detector,
+            warmTarget = def.id.family == SoundFamily.WarmAir,
+            isFricative = levels.isFricative,
+            sNess = levels.sNess,
+            trill = levels.trillStrength,
+            level = levels.level,
+        )
     }
 
     fun skip() {
@@ -106,7 +112,11 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
     LaunchedEffect(isDone) { if (isDone) haptics.performHapticFeedback(HapticFeedbackType.Confirm) }
 
     // The held letter breathes with the voice: it grows while the sound lasts and sharpens for S, rounds for Ș.
-    FeedLetter(letter, levels, listening = isListening, modelVoice = false, holdSeconds = { held.value.toFloat() })
+    FeedLetter(
+        letter, levels, listening = isListening, modelVoice = false, holdSeconds = { held.value.toFloat() },
+        baseInflation = { (0.4 + 0.6 * (held.value / seconds)).toFloat().coerceIn(0.4f, 1f) },
+        heard = { heard.value = it },
+    )
 
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         WaveTitle(title, fDisplay, field.foreground, Modifier.padding(top = 8.dp), letter = sound?.shortLetter, field = field)
@@ -131,6 +141,17 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         }
         Spacer(Modifier.weight(1f))
         HoldMeter(seconds = seconds, isLive = isListening && !still, color = field.deep, track = field.track, progress = { held.value / seconds })
+        if (isListening) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                HearMic(heard, field.deep)
+                HearLabel(heard, field.foreground)
+            }
+        }
+        NoMicCue(app, field, listening = isListening)
+        if (micSilent) {
+            NoMicBox(field)
+            StyledButton(onClick = { run.advance() }, style = FoniButtonStyle(field = field)) { CTALabel("Mai departe") }
+        }
         if (micOff) {
             FoniaText("Microfonul e oprit. Pornește-l din Setări, la Fonia.", style = fBodyStrong, color = field.foreground, textAlign = TextAlign.Center)
             StyledButton(onClick = { run.advance() }, style = FoniButtonStyle(field = field)) { CTALabel("Mai departe") }
@@ -149,7 +170,9 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         }
         FoniaSfx.play(SfxCue.TakeStart) // before the microphone: startListening waits for it to end + 150 ms
         try {
-            app.audio.startListening(group = run.profile.dspGroup, calibration = run.profile.calibration, fixtureText = sound?.hero?.says)
+            // The group heard in his voice so far; before any voiced take, the one most favourable to the target (a hiss
+            // alone cannot tell a man's S from a child's Ș).
+            app.audio.startListening(group = app.talkers.holdGroup(run.profile, sound), calibration = run.profile.calibration, fixtureText = sound?.hero?.says)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (_: Exception) {
@@ -161,11 +184,15 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         val isBreath = sound == null
         val started = System.nanoTime()
         var machine: Rating? = null
+        var tick = System.nanoTime()
         while (isActive) {
             delay(40)
-            val active = if (isBreath) levels.blowStrength > 0.25f else isHolding(levels)
-            if (active) held.value += 0.04
-            letter.drive.inflation = (0.4 + 0.6 * (held.value / goal)).toFloat().coerceIn(0.4f, 1f)
+            // Real elapsed time: a busy phone (or emulator) wakes later than 40 ms, and the bar must not run slow.
+            val now = System.nanoTime()
+            val dt = ((now - tick) / 1e9).coerceIn(0.0, 0.2)
+            tick = now
+            val credit = if (isBreath) (if (levels.blowStrength > 0.25f) 1f else 0f) else holdCredit(levels)
+            held.value = (held.value + dt * credit).coerceAtMost(goal)
             if (held.value >= goal) {
                 machine = Rating.yes
                 break
@@ -176,6 +203,16 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         if (!isActive) return@ExerciseTask
         app.audio.cancelListening()
         isListening = false
+        app.talkers.observe(run.profile, app.audio.lastTakePitch())
+        runCatching {
+            android.util.Log.i("FoniaHold", "held ${"%.2f".format(held.value)} of ${"%.1f".format(goal)} s, ${if (machine == Rating.yes) "full" else "partial"}, role=$role")
+        }
+        if (machine == null && held.value / goal <= 0.1 && app.audio.lastTakeWasSilent) {
+            // A dead microphone is not a failed try: say so, and let them go on.
+            letter.rest()
+            micSilent = true
+            return@ExerciseTask
+        }
         flameOut = machine == Rating.yes && isBreath
         isDone = machine == Rating.yes
         if (machine == Rating.yes) {

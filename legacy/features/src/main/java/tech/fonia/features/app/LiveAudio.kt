@@ -12,11 +12,10 @@ import tech.fonia.audio.LiveLevels
 import tech.fonia.audio.MicrophoneSource
 import tech.fonia.audio.PlaybackEngine
 import tech.fonia.audio.SoundEffects
-import tech.fonia.audio.SpeechFallback
 
 /**
  * The real engines of :audio behind [AudioBackend], as `AudioHub.init` makes them on iOS: one session controller,
- * one playback engine, the device voice, the effects of `voice/sfx`, and a new `CaptureEngine` for every take, over
+ * one playback engine, the effects of `voice/sfx`, and a new `CaptureEngine` for every take, over
  * the microphone or, in the recorded-take mode (`foniaFixtures`), over a `FixtureSource` that plays the clip in real
  * time. Everything after the source is the same chain: 10 ms hops, the live analysis, the end of the take, the judge.
  */
@@ -25,8 +24,6 @@ class LiveAudioBackend(context: Context, effectsDirectory: ClipLocation?) : Audi
     private val controller = AudioSessionController(appContext)
     private val engine = PlaybackEngine(appContext)
 
-    // `TextToSpeech` starts its engine when it is made; it waits for the first text that has no clip.
-    private val voice by lazy { SpeechFallback(appContext) }
     private val sounds = effectsDirectory?.let { SoundEffects(it) }
 
     override val session: AudioSessionPort = object : AudioSessionPort {
@@ -55,16 +52,6 @@ class LiveAudioBackend(context: Context, effectsDirectory: ClipLocation?) : Audi
         override suspend fun release() = engine.release()
     }
 
-    override val fallback: SpeechFallbackPort = object : SpeechFallbackPort {
-        // Never the phone's synthetic voice (owner's order, 2026-11-21): a text with no recorded clip stays silent and is
-        // only shown on screen. Missing clips are listed in domain/src/test/resources/missing-clips.txt.
-        override suspend fun speak(text: String, language: SpeechFallback.Language, levels: LiveLevels?) {
-            if (tech.fonia.features.IS_DEBUG_BUILD) android.util.Log.w("FoniaVoice", "no clip for: $text")
-        }
-
-        override fun stop() = Unit
-    }
-
     override val effects: SoundEffectsPort? = sounds?.let { effects ->
         object : SoundEffectsPort {
             override var isMuted: Boolean
@@ -82,7 +69,7 @@ class LiveAudioBackend(context: Context, effectsDirectory: ClipLocation?) : Audi
             val microphone = MicrophoneSource(appContext)
             Take(CaptureEngine(microphone)) { microphone.captureInfo }
         }
-        is TakeSource.Fixture -> Take(CaptureEngine(FixtureSource(source.clip, source.pacing))) { null }
+        is TakeSource.Fixture -> Take(CaptureEngine(FixtureSource(source.clip, source.pacing, source.thenSilence))) { null }
     }
 
     private class Take(private val engine: CaptureEngine, private val info: () -> CaptureInfo?) : CaptureEnginePort {

@@ -589,23 +589,44 @@ class ClipReportTests {
     fun recordedPracticeTextsKeepTheirClips() {
         val index = Fixture.voiceIndex
         // iOS wraps the sentence, twister and hero checks in `withKnownIssue("rewritten practice texts wait for their
-        // recordings")` since fonia-content f3215a1. Here the known issue is pinned down: every such text without a
-        // clip must be one the clip report lists for recording, and at least one is (Swift fails a known issue that
-        // stops happening, so the wrapper is taken out once the recordings land).
-        val listed = Paths.missingClipsText().lines().filter { it.startsWith("ro ") }.map { nfc(it.split(" | ")[1]) }.toSet()
-        var waiting = 0
+        // recordings")` since fonia-content f3215a1. On Android the ElevenLabs clips of 2026-11-21 (tools/voice) recorded
+        // them all, so the check is strict again: no rewritten text may lose its clip.
         for (sound in content.sounds) {
             for (text in sound.sentences + sound.twisters.map { it.text } + listOf(sound.hero.says, sound.hero.story)) {
-                if (index.hasClip(text, Language.Ro, Voice.Ro)) continue
-                waiting += 1
-                assertTrue(nfc(text) in listed, "no clip and not in missing-clips.txt: $text")
+                assertTrue(index.hasClip(text, Language.Ro, Voice.Ro), "no clip: $text")
             }
         }
-        assertTrue(waiting > 0, "every rewritten text has its clip now: drop the known issue, as on iOS")
         for (sound in content.sounds) {
             for (text in sound.syllables.direct + sound.syllables.inverse + sound.syllables.between + sound.syllables.repeated) {
                 assertTrue(index.hasClip(text, Language.Ro, Voice.Ro), text)
             }
+        }
+    }
+
+    @Test
+    fun childFacingRomanianTextsHaveClipsOrWaitForAPerson() {
+        // Android has no device voice (no TextToSpeech): a Romanian text with no clip is silent. So every practice text
+        // and every instruction a child hears needs its clip, unless ElevenLabs could not say it right and it waits on
+        // human-needed.txt for a person to record it. An entry that has a clip by now must leave the list.
+        val index = Fixture.voiceIndex
+        val waiting = Paths.humanNeededText().lines().filter { it.isNotBlank() && !it.startsWith("#") }
+            .map { it.split(" | ") }.filter { it[1] == "ro ro" }.map { nfc(it[2]) }.toSet()
+        val instructions = mutableListOf<String>()
+        val usedWarmups = mutableSetOf<String>()
+        for (sound in content.sounds) {
+            instructions += sound.how + sound.fixes.map { it.tip } + sound.missions.map { it.text } +
+                sound.retell.map { it.prompt } + sound.describe.map { it.prompt }
+            usedWarmups += sound.warmups
+        }
+        instructions += content.warmups.filter { it.id in usedWarmups }.map { it.say }
+        instructions += content.coachPlans.flatMap { plan -> plan.steps.map { it.say } }
+        val practice = modelTexts().filter { it.language == Language.Ro }.map { it.text }
+        val silent = (practice + instructions).distinct().filter { !index.hasClip(it, Language.Ro, Voice.Ro) }
+        for (text in silent) {
+            assertTrue(nfc(text) in waiting, "no clip and not in human-needed.txt: $text")
+        }
+        for (text in waiting) {
+            assertFalse(index.hasClip(text, Language.Ro, Voice.Ro), "has a clip now, take it off human-needed.txt: $text")
         }
     }
 

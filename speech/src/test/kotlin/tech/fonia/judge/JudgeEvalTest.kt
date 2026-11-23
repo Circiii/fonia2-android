@@ -366,8 +366,8 @@ class JudgeEvalTest {
         // Background noise at about 0 dB SNR in 4–8 kHz.
         val level = rmsOf(pcm, 0, n)
         run(source, group, talker, FloatArray(n) { pcm[it] + (g.unit() * 2 - 1) * level * 1.2f }, rate, w, sound, Level.Word, pos, "retake|unsure", "noise ~0 dB")
-        // The same adult voice, judged as a child's take.
-        run(source, group, TalkerGroup.Child, pcm, rate, w, sound, Level.Word, pos, if (group == "man") "retake:adultVoice" else "info:childGroup", "talker=child")
+        // The same adult voice, judged as a child's take: no adult-voice gate any more (2026-11-23), only the priors move.
+        run(source, group, TalkerGroup.Child, pcm, rate, w, sound, Level.Word, pos, "info:childGroup", "talker=child")
     }
 
     @Test

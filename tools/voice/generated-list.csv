@@ -1,0 +1,548 @@
+﻿grup,limba,voce,viteza,text,de_citit,fisier,unde
+A,ro,ro,0.95,Leul Lalalu cântă cu limba sus: la-la-la! Cântă și tu cu el.,,ro/ro/781954103c9546.mp3,"sound l, hero; sound l, retell"
+A,ro,ro,0.92,"Acum cântecul merge de-a-ndoaselea: al, el, il. Leul râde și cântă cu tine.",,ro/ro/ae614f0c915610.mp3,"sound l, chapter back"
+A,ro,ro,0.92,"Urmează cuvinte cu L lipit de alte sunete, ca „melc” și „bluză”.",,ro/ro/512cd200513373.mp3,"sound l, chapter clusters"
+A,ro,ro,0.92,"Lalalu cântă acum la lac, în fiecare seară. Cântă și tu: la baie, la plimbare.",,ro/ro/8395ee6b3f426e.mp3,"sound l, chapter everyday"
+A,ro,ro,0.92,"Din tot cântecul, Lalalu mai știe doar atât: llll. Cântă-l cu el!",,ro/ro/6fd6e15a8ebab4.mp3,"sound l, chapter isolated"
+A,ro,ro,0.92,"Leul Lalalu vrea să cânte diseară, la lac. Dar a uitat cântecul!",,ro/ro/312a53e59d3432.mp3,"sound l, chapter meet"
+A,ro,ro,0.92,Eu am cântat „rac” în loc de „lac” și au fugit peștii! Ascultă bine.,,ro/ro/5a643c52f0a1b0.mp3,"sound l, chapter pairs"
+A,ro,ro,0.92,Diseară e concertul! Spune-mi tu povestea leului. Eu o încurc mereu.,,ro/ro/47bff3031dc7a6.mp3,"sound l, chapter retell"
+A,ro,ro,0.92,Cântecul e aproape gata. Îi lipsesc versurile: propoziții întregi cu L.,,ro/ro/fae5e2a01c1942.mp3,"sound l, chapter sentences"
+A,ro,ro,0.85,"Eu am cântat „mia-mia”, ca o pisică! Arată-mi cum cântă leul: la, le, li.",,ro/ro/d1f500f7178c12.mp3,"sound l, chapter syllables"
+A,ro,ro,0.92,"Cântăreții își încălzesc gura înainte de concert. Facem și noi, ca Lalalu.",,ro/ro/d1d6a4831891eb.mp3,"sound l, chapter warmup"
+A,ro,ro,0.92,Un cântec are nevoie de un final. Caută L-ul la capătul cuvintelor.,,ro/ro/da39f4179bff7d.mp3,"sound l, chapter wordsFinal"
+A,ro,ro,0.92,"Lalalu adună cuvinte pentru cântec. Toate încep cu L, ca numele lui.",,ro/ro/39fae78b69df87.mp3,"sound l, chapter wordsInitial"
+A,ro,ro,0.92,Unele cuvinte țin L-ul ascuns la mijloc. Ajută-l pe leu să-l găsească.,,ro/ro/fdce2505dacad4.mp3,"sound l, chapter wordsMedial"
+A,ro,ro,0.92,val,,ro/ro/39f69c278f4616.mp3,"sound l, words final"
+A,ro,ro,0.92,Balonul zboară la lună.,,ro/ro/ef403e9fb2df84.mp3,"sound l, retell"
+A,ro,ro,0.92,Leul cântă: la-la-la!,,ro/ro/03d037733638cb.mp3,"sound l, retell"
+A,ro,ro,0.95,"Sâsâilă alunecă prin iarbă: sssss. Hai, sâsâie și tu cu el!",,ro/ro/a8b9324a27c32c.mp3,"sound s, hero; sound s, retell"
+A,ro,ro,0.92,"Acum sss-ul se ascunde la coadă: as, es, is. Ca vârful cozii lui Sâsâilă!",,ro/ro/4d1eb01ca2f50f.mp3,"sound s, chapter back"
+A,ro,ro,0.92,"Unele cuvinte lipesc sss-ul de alte sunete: stea, scaun. Sâsâilă le spune rar.",,ro/ro/1a66b0294162ba.mp3,"sound s, chapter clusters"
+A,ro,ro,0.92,"Am învățat și eu: ssss! Azi, sss-ul vine cu tine la masă și la somn.",,ro/ro/8e77f869786df3.mp3,"sound s, chapter everyday"
+A,ro,ro,0.92,Eu am încercat și am fluierat: fiuuu! Arată-mi tu cum sună: ssss.,,ro/ro/59f918c4dc51f6.mp3,"sound s, chapter isolated"
+A,ro,ro,0.92,"Sâsâilă vrea să mă învețe să sâsâi, dar eu sunt papagal! Ascultă-l tu întâi.",,ro/ro/39c07cc5fd92ae.mp3,"sound s, chapter meet"
+A,ro,ro,0.92,Eu încurc sss cu șșș și sun ca un tren! Ascultă perechile cu Sâsâilă.,,ro/ro/bded17ffbea615.mp3,"sound s, chapter pairs"
+A,ro,ro,0.92,"Sâsâilă vrea să audă povestea lui, spusă de tine. Eu sigur o încurc.",,ro/ro/c9ffa812dbfa3d.mp3,"sound s, chapter retell"
+A,ro,ro,0.92,"Acum Sâsâilă spune propoziții întregi, fără să se oprească. Spune-le și tu!",,ro/ro/b42117b153f233.mp3,"sound s, chapter sentences"
+A,ro,ro,0.85,"Sâsâilă pune sss-ul lângă alte sunete: sa, se, si. Spune-le cu el.",,ro/ro/c1726c65fbb48e.mp3,"sound s, chapter syllables"
+A,ro,ro,0.92,Sâsâilă zice că sss-ul pornește de la un zâmbet. Hai să încălzim gura!,,ro/ro/f30e7ca9ecf6fb.mp3,"sound s, chapter warmup"
+A,ro,ro,0.92,"La capătul cuvântului, sss-ul e scurt, ca o codiță. Nas, os, ananas!",,ro/ro/edbff979cab33a.mp3,"sound s, chapter wordsFinal"
+A,ro,ro,0.92,"Sâsâilă îmi arată cuvinte care pornesc cu sss. Tu le spui, eu ascult.",,ro/ro/ec494c3fe39fd0.mp3,"sound s, chapter wordsInitial"
+A,ro,ro,0.92,"Acum sss-ul stă la mijloc, ca Sâsâilă încolăcit în iarbă. Îl găsești?",,ro/ro/1ac79ed9fdb156.mp3,"sound s, chapter wordsMedial"
+A,ro,ro,0.92,supă,,ro/ro/654ca82e6ac2a1.mp3,"sound s, words initial"
+A,ro,ro,0.92,suc,,ro/ro/3bb5f5b0991797.mp3,"sound s, words initial"
+A,ro,ro,0.92,stea,,ro/ro/91f313dc5c0995.mp3,"sound s, words clusters"
+A,ro,ro,0.92,scaun,,ro/ro/91663729ed598c.mp3,"sound s, words clusters"
+A,ro,ro,0.92,sută,,ro/ro/d44b742b56bd9a.mp3,"sound s, pair sută/șută; sound ș, pair șută/sută"
+A,ro,ro,0.92,șută,,ro/ro/2791d493bd6885.mp3,"sound s, pair sută/șută; sound ș, pair șută/sută"
+A,ro,ro,0.92,Supa e sărată.,,ro/ro/51527272aff90c.mp3,"sound s, sentence"
+A,ro,ro,0.92,"Sara sare sus, Sanda sare sus, sus sar surorile.",,ro/ro/37146c8512fd53.mp3,"sound s, twister"
+A,ro,ro,0.92,Sanda are o sanie.,,ro/ro/70265cfd0aa7f5.mp3,"sound s, retell"
+A,ro,ro,0.92,Pisica sare pe sanie.,,ro/ro/61bf2890bf065c.mp3,"sound s, retell"
+A,ro,ro,0.92,Sania se oprește lângă casă.,,ro/ro/f12e57aba7cd39.mp3,"sound s, retell"
+A,ro,ro,0.95,Albinuța Zuzu zboară din floare în floare: zzzz! Pune palma pe gât și bâzâie cu ea.,,ro/ro/e84b4490a1b3e0.mp3,"sound z, hero; sound z, retell"
+A,ro,ro,0.92,"Bâzâitul lui Zuzu se întoarce încet, de la coadă: az, ez, iz.",,ro/ro/2c6a756fe9766c.mp3,"sound z, chapter back"
+A,ro,ro,0.92,"Acum Zuzu zboară printre cuvinte mai grele: zmeu, cizme, zebră. Bâzâie pe rând.",,ro/ro/907c60c515bf6c.mp3,"sound z, chapter clusters"
+A,ro,ro,0.92,"Zuzu e bine și zboară prin grădină. Când vezi o floare, bâzâie și tu.",,ro/ro/e92694a4eabb8c.mp3,"sound z, chapter everyday"
+A,ro,ro,0.92,Pune palma pe gât și bâzâie: zzzz. Zuzu ascultă cum gâdilă.,,ro/ro/d6cf35cbc83701.mp3,"sound z, chapter isolated"
+A,ro,ro,0.92,"Albinuța Zuzu e răcită. Bâzâitul ei a ajuns mic, mic de tot.",,ro/ro/276486a1cb7253.mp3,"sound z, chapter meet"
+A,ro,ro,0.92,"Când Zuzu e răcită, „zar” se aude „sar”. Ascultă perechile și pornește vocea.",,ro/ro/917cb969addaf5.mp3,"sound z, chapter pairs"
+A,ro,ro,0.92,"Zuzu le povestește florilor ce a pățit. Povestește și tu, cu vorbele tale.",,ro/ro/e07ed3a71be2df.mp3,"sound z, chapter retell"
+A,ro,ro,0.92,"Zuzu bâzâie iar tare! Spune cu ea propoziții întregi, cu zzz.",,ro/ro/e44883d9d57c98.mp3,"sound z, chapter sentences"
+A,ro,ro,0.85,"Eu am bâzâit „bzz” și am zburat drept în geam! Arată-i lui Zuzu: za, ze, zi.",,ro/ro/d24186db152c02.mp3,"sound z, chapter syllables"
+A,ro,ro,0.92,"Zuzu se încălzește pe o floare. Noi încălzim gura, ca să-i dăm vocea noastră.",,ro/ro/6a2d84cfe3224e.mp3,"sound z, chapter warmup"
+A,ro,ro,0.92,"La capătul cuvântului, Zuzu se odihnește. Bâzâie acolo: autobuz, orez!",,ro/ro/bac171d4c4bc5d.mp3,"sound z, chapter wordsFinal"
+A,ro,ro,0.92,"Zuzu zboară iar, dar jos de tot. Cuvintele care încep cu zzz o ajută să urce.",,ro/ro/a734f86b6b51ab.mp3,"sound z, chapter wordsInitial"
+A,ro,ro,0.92,"Zuzu caută zzz-ul ascuns în mijlocul cuvintelor, ca polenul în floare.",,ro/ro/45367137160801.mp3,"sound z, chapter wordsMedial"
+A,ro,ro,0.92,buză,,ro/ro/d4747f6eab4434.mp3,"sound z, words medial"
+A,ro,ro,0.92,gaz,,ro/ro/47a126d932fff5.mp3,"sound z, words final"
+A,ro,ro,0.92,Zâna are un zmeu.,,ro/ro/daf4fccd50a7ab.mp3,"sound z, retell"
+A,ro,ro,0.92,Zmeul zboară prin zăpadă.,,ro/ro/a14a3e60de83f8.mp3,"sound z, retell"
+A,ro,ro,0.95,"Trenulețul Șușu pleacă la drum: șșșș! Suflă și tu, ca trenul.",,ro/ro/bd890dfdacbb6b.mp3,"sound ș, hero; sound ș, retell"
+A,ro,ro,0.92,"Acum trenul merge cu spatele: aș, eș, iș. Șușu chicotește.",,ro/ro/9d5cfc166e7895.mp3,"sound ș, chapter back"
+A,ro,ro,0.92,"Urmează un pod îngust. Aici sunetele stau înghesuite: pește, șapcă.",,ro/ro/0125bd044ed9fa.mp3,"sound ș, chapter clusters"
+A,ro,ro,0.92,"Șușu doarme în gară. Ia șșș-ul cu tine. La ușă, în mașină, la culcare.",,ro/ro/289488605b5c26.mp3,"sound ș, chapter everyday"
+A,ro,ro,0.92,"Șușu pornește cu aer cald: șșșș. Fă și tu aburul, ca el!",,ro/ro/1e9fb2542a7b5a.mp3,"sound ș, chapter isolated"
+A,ro,ro,0.92,"Trenulețul Șușu pleacă la drum! Eu sunt conductorul, dar mi-am uitat chipiul.",,ro/ro/430e4a8d8162bc.mp3,"sound ș, chapter meet"
+A,ro,ro,0.92,Eu am strigat „cos” în loc de „coș”. Am oprit la croitor! Ascultă bine.,,ro/ro/283a59dde27e33.mp3,"sound ș, chapter pairs"
+A,ro,ro,0.92,Am ajuns! Spune-le tuturor ce am văzut pe drum.,,ro/ro/13a258e935b5d9.mp3,"sound ș, chapter retell"
+A,ro,ro,0.92,"Acum Șușu merge repede, cu propoziții întregi. Ține-te bine!",,ro/ro/7b30ad5feed0b9.mp3,"sound ș, chapter sentences"
+A,ro,ro,0.85,"Prima stație e aproape: șa, șe, și. Spune-le, ca să oprim acolo.",,ro/ro/eff6ba08eaccd7.mp3,"sound ș, chapter syllables"
+A,ro,ro,0.92,"Înainte de plecare, Șușu își unge roțile. Noi încălzim buzele.",,ro/ro/be89615eb5634a.mp3,"sound ș, chapter warmup"
+A,ro,ro,0.92,"Ultimul vagon duce cuvinte cu șșș la capăt: coș, cocoș.",,ro/ro/c8245216ce8786.mp3,"sound ș, chapter wordsFinal"
+A,ro,ro,0.92,La fiecare stație urcă un cuvânt nou. Toate pornesc cu șșș.,,ro/ro/7e64c19f7b3aa5.mp3,"sound ș, chapter wordsInitial"
+A,ro,ro,0.92,"Unele cuvinte stau în mijlocul trenului, ca „mașină” și „ușă”. Spune-le pe nume.",,ro/ro/2cf6fe052bd25c.mp3,"sound ș, chapter wordsMedial"
+A,ro,ro,0.92,Șoricelul doarme în coș.,,ro/ro/1d6f246d0bae75.mp3,"sound ș, sentence"
+A,ro,ro,0.92,"Șoricelul și-a pus șapca, șosetele și cămașa.",,ro/ro/e784e07eb2fa92.mp3,"sound ș, twister"
+A,ro,ro,0.92,Mașina are o ușă mică.,,ro/ro/f0a6b6f61e2ee7.mp3,"sound ș, retell"
+A,ro,ro,0.92,Un șoricel iese pe ușă.,,ro/ro/b6e53445f5e7be.mp3,"sound ș, retell"
+A,ro,ro,0.92,Cocoșul îl vede și cântă.,,ro/ro/ade3428ca4df77.mp3,"sound ș, retell"
+A,ro,ro,0.95,Vântul Vâjâilă suflă printre frunze: jjjj! Pune palma pe gât și suflă cu el.,,ro/ro/7c202e5d7b386f.mp3,"sound j, hero; sound j, retell"
+A,ro,ro,0.92,"Acum se joacă de-a v-ați ascunselea: aj, ej, ij. Sunetul fuge la coadă.",,ro/ro/a0de45fb98d186.mp3,"sound j, chapter back"
+A,ro,ro,0.92,"Pe plajă, vântul găsește cuvinte mai grele: plajă, vrăjitoare. Spune-le rar.",,ro/ro/30e90039a75fff.mp3,"sound j, chapter clusters"
+A,ro,ro,0.92,Vâjâilă se joacă afară cu toată lumea. Ia și tu jjj-ul la joacă.,,ro/ro/3db885b0417192.mp3,"sound j, chapter everyday"
+A,ro,ro,0.92,Eu am suflat „ffff” și mi-au zburat penele! Arată-i lui Vâjâilă: jjjj.,,ro/ro/eb3b2fdfbe0152.mp3,"sound j, chapter isolated"
+A,ro,ro,0.92,Vântul Vâjâilă vrea să se joace cu noi. Dar suflă atât de încet!,,ro/ro/7c2db0a6bc8520.mp3,"sound j, chapter meet"
+A,ro,ro,0.92,Eu am zis „șoc” în loc de „joc”. Nu s-a mai jucat nimeni! Ascultă diferența.,,ro/ro/e39319a4fb02fa.mp3,"sound j, chapter pairs"
+A,ro,ro,0.92,Toți copiii vor să afle cum s-a jucat vântul. Povestește-le tu.,,ro/ro/69fb8928f0034a.mp3,"sound j, chapter retell"
+A,ro,ro,0.92,Vâjâilă suflă acum cu voce! Spune cu el propoziții întregi.,,ro/ro/0e4fd214f01eed.mp3,"sound j, chapter sentences"
+A,ro,ro,0.85,"Vâjâilă prinde curaj: ja, je, ji. Spune cu el, cu palma pe gât.",,ro/ro/78bc6cd408cdd5.mp3,"sound j, chapter syllables"
+A,ro,ro,0.92,"Ca să sufle mai tare, Vâjâilă face gimnastică. Facem și noi, cu buzele.",,ro/ro/493b1beab070b4.mp3,"sound j, chapter warmup"
+A,ro,ro,0.92,Vâjâilă își face bagajul de drum. Cuvintele de azi se termină cu jjj.,,ro/ro/00ca38356a4e6b.mp3,"sound j, chapter wordsFinal"
+A,ro,ro,0.92,"Vâjâilă a găsit cuvinte care încep cu jjj. Spune-le, să le ducem la joacă.",,ro/ro/233a4c2822a0eb.mp3,"sound j, chapter wordsInitial"
+A,ro,ro,0.92,Unele cuvinte țin jjj-ul strâns la mijloc. Vâjâilă suflă să-l scoată.,,ro/ro/4b03aed389aa32.mp3,"sound j, chapter wordsMedial"
+A,ro,ro,0.92,jos,,ro/ro/30446d562301c3.mp3,"sound j, words initial"
+A,ro,ro,0.92,ojă,,ro/ro/f3887064da321f.mp3,"sound j, words medial"
+A,ro,ro,0.92,cojoc,,ro/ro/6d8af342b64b46.mp3,"sound j, words medial"
+A,ro,ro,0.92,pijama,,ro/ro/dcba4edcb224ec.mp3,"sound j, words medial"
+A,ro,ro,0.92,garaj,,ro/ro/fccddfc2324446.mp3,"sound j, words final"
+A,ro,ro,0.92,Ne jucăm pe plajă.,,ro/ro/c39a1a1a5caff4.mp3,"sound j, sentence"
+A,ro,ro,0.92,Mă joc cu jucăriile mele.,,ro/ro/735ba1b365da1f.mp3,"sound j, sentence"
+A,ro,ro,0.92,"Jumătate de jeleu e jos, jos e jumătate de jeleu.",,ro/ro/057c74df096534.mp3,"sound j, twister"
+A,ro,ro,0.92,"Jeni se joacă jos cu jucăriile, lângă garaj.",,ro/ro/b8a1f172600367.mp3,"sound j, twister"
+A,ro,ro,0.92,Jaguarul are o jucărie.,,ro/ro/57960df69e9df2.mp3,"sound j, retell"
+A,ro,ro,0.92,Jucăria e pe plajă.,,ro/ro/a9be20455a2674.mp3,"sound j, retell"
+A,ro,ro,0.92,Jaguarul aleargă și o ia de jos.,,ro/ro/21f6110010e095.mp3,"sound j, retell"
+A,ro,ro,0.95,"Șoricelul Țuțu e mic și iute: ț-ț-ț! Fă și tu ca el, scurt și repede.",,ro/ro/294d5cb3d25e9b.mp3,"sound ț, hero; sound ț, retell"
+A,ro,ro,0.92,"Acum rotițele se învârt invers: aț, eț, iț. Țuțu le ascultă.",,ro/ro/7f49b82ef651fe.mp3,"sound ț, chapter back"
+A,ro,ro,0.92,"Acum vin cuvinte mai grele: lanț, munți.",,ro/ro/d4eb07d2fbe716.mp3,"sound ț, chapter clusters"
+A,ro,ro,0.92,"Ceasul bate acum singur. Ascultă ț-ul peste zi: puțin, mulțumesc, dinți.",,ro/ro/2383e85d9f47fa.mp3,"sound ț, chapter everyday"
+A,ro,ro,0.92,Eu am strigat „cucu!” și ceasul tot nu merge. Tu fă scurt: ț-ț-ț!,,ro/ro/9257c6b329134a.mp3,"sound ț, chapter isolated"
+A,ro,ro,0.92,"Țuțu locuiește într-un ceas mare. Azi-noapte, ceasul s-a oprit!",,ro/ro/62545ecf8e0c07.mp3,"sound ț, chapter meet"
+A,ro,ro,0.92,Eu am zis „sap” în loc de „țap” și țapul s-a mirat! Ascultă perechile.,,ro/ro/b9c8fa36cdb913.mp3,"sound ț, chapter pairs"
+A,ro,ro,0.92,Vecinii întreabă cine a pornit ceasul. Povestește-le tu ce s-a întâmplat.,,ro/ro/0b01ea938715a8.mp3,"sound ț, chapter retell"
+A,ro,ro,0.92,Ceasul merge iar: ț-ț-ț! Spune cu Țuțu propoziții întregi.,,ro/ro/eece1a04085080.mp3,"sound ț, chapter sentences"
+A,ro,ro,0.85,"Ceasul tresare când aude: ța, țe, ți. Spune-le cu Țuțu.",,ro/ro/ebd8c404a98f83.mp3,"sound ț, chapter syllables"
+A,ro,ro,0.92,"Ca să urce în ceas, Țuțu se încălzește. Încălzim și noi gura.",,ro/ro/e6b0a6ce98ca03.mp3,"sound ț, chapter warmup"
+A,ro,ro,0.92,"Unele cuvinte se termină cu un ț mic și iute: pătuț, căluț.",,ro/ro/9800df5af3410b.mp3,"sound ț, chapter wordsFinal"
+A,ro,ro,0.92,Ceasul pornește încet. Fiecare cuvânt cu ț la început e o bătaie.,,ro/ro/ec62c2fc8d707a.mp3,"sound ț, chapter wordsInitial"
+A,ro,ro,0.92,"Țuțu caută ț-ul ascuns în mijlocul cuvintelor, printre rotițe.",,ro/ro/59a5459f414f37.mp3,"sound ț, chapter wordsMedial"
+A,ro,ro,0.92,ț-ț-ț,,ro/ro/1123bfb74c53ce.mp3,"sound ț, bursts"
+A,ro,ro,0.92,țară,,ro/ro/14a796d1ff3eb4.mp3,"sound ț, words initial"
+A,ro,ro,0.92,ață,,ro/ro/5716f10f231707.mp3,"sound ț, words medial"
+A,ro,ro,0.92,cuțit,,ro/ro/7f60d7f43c289c.mp3,"sound ț, words medial"
+A,ro,ro,0.92,fetiță,,ro/ro/3d4ddca3b7420a.mp3,"sound ț, words medial"
+A,ro,ro,0.92,căsuță,,ro/ro/b7e988ec727445.mp3,"sound ț, words medial"
+A,ro,ro,0.92,dinți,,ro/ro/1cc84fbcad51a6.mp3,"sound ț, words clusters"
+A,ro,ro,0.92,prinț,,ro/ro/ddf2c979b0020c.mp3,"sound ț, words clusters"
+A,ro,ro,0.92,țeapă,,ro/ro/fd0ed8542de000.mp3,"sound ț, pair țeapă/ceapă; sound ce, pair ceapă/țeapă"
+A,ro,ro,0.92,ațe,,ro/ro/c14069b0694a60.mp3,"sound ț, pair ațe/ace; sound ce, pair ace/ațe"
+A,ro,ro,0.92,ace,,ro/ro/d86caede0264d4.mp3,"sound ț, pair ațe/ace; sound ce, pair ace/ațe"
+A,ro,ro,0.92,Fetița are un ursuleț.,,ro/ro/8398a47178989b.mp3,"sound ț, sentence"
+A,ro,ro,0.92,Mai vreau puțin.,,ro/ro/59fcdec6e49b3f.mp3,"sound ț, sentence"
+A,ro,ro,0.92,"Țânțarul țipă, țapul țopăie, țestoasa tace.",,ro/ro/7d117022430aa0.mp3,"sound ț, twister"
+A,ro,ro,0.92,"Fetița are un ursuleț, un căluț și un pătuț.",,ro/ro/7d09ca30435f79.mp3,"sound ț, twister"
+A,ro,ro,0.92,Rața are un pătuț mic.,,ro/ro/14c52c11cb6134.mp3,"sound ț, retell"
+A,ro,ro,0.92,Un țânțar țipă lângă pătuț.,,ro/ro/dec32de5505513.mp3,"sound ț, retell"
+A,ro,ro,0.92,Rața îl alungă cu o aripă.,,ro/ro/12e6599812b827.mp3,"sound ț, retell"
+A,ro,ro,0.95,"Stropitoarea Cici udă florile: ci-ci-ci! Stropește și tu, scurt, ca ea.",,ro/ro/cc9d321c6668f7.mp3,"sound ce, hero; sound ce, retell"
+A,ro,ro,0.92,"Acum apa curge pe frunze, până jos: aci, eci, ici.",,ro/ro/1886ba92c1c023.mp3,"sound ce, chapter back"
+A,ro,ro,0.92,"Vin cuvinte mai grele: melci, porci, ciupercă. Cici le stropește pe rând.",,ro/ro/f8c4e95f352428.mp3,"sound ce, chapter clusters"
+A,ro,ro,0.92,"Cici se odihnește lângă cireș. Tu caută ci peste zi. Cinci, ceai, „ce faci?”",,ro/ro/5677f8556a79b0.mp3,"sound ce, chapter everyday"
+A,ro,ro,0.92,"Eu am încercat și a ieșit „pleosc!”, ca o găleată. Tu stropește scurt: ci-ci-ci!",,ro/ro/dcc5b0a9bdc22c.mp3,"sound ce, chapter isolated"
+A,ro,ro,0.92,Stropitoarea Cici are grijă de un cireș mic. Azi e tare însetat.,,ro/ro/b1f078f87cd9b3.mp3,"sound ce, chapter meet"
+A,ro,ro,0.92,"Eu am cerut „țeapă” la salată, nu „ceapă”! Ascultă bine perechile.",,ro/ro/26fb82695634d1.mp3,"sound ce, chapter pairs"
+A,ro,ro,0.92,Cireșul are cireșe! Povestește-le prietenilor cum a crescut.,,ro/ro/ccdeade6fe791f.mp3,"sound ce, chapter retell"
+A,ro,ro,0.92,Cireșul a înflorit! Spune cu Cici propoziții pline de ci.,,ro/ro/d551f083276b4e.mp3,"sound ce, chapter sentences"
+A,ro,ro,0.85,"Cireșul bea apă: cea, ce, ci. Mai stropește o dată cu Cici.",,ro/ro/743ae718d91971.mp3,"sound ce, chapter syllables"
+A,ro,ro,0.92,Cici își face încălzirea înainte de udat. Facem și noi gimnastica gurii.,,ro/ro/ca99e14f43dcc6.mp3,"sound ce, chapter warmup"
+A,ro,ro,0.92,"Sub cireș au venit musafiri: un arici, niște nuci. Cuvinte cu ci la capăt!",,ro/ro/c097feb70fb6b8.mp3,"sound ce, chapter wordsFinal"
+A,ro,ro,0.92,Pe cireș apar muguri. Fiecare cuvânt care începe cu ci e un mugur nou.,,ro/ro/0e0aa50236c47f.mp3,"sound ce, chapter wordsInitial"
+A,ro,ro,0.92,"Cici caută cuvintele cu ci ascuns la mijloc, ca apa în pământ.",,ro/ro/99b33064ff2789.mp3,"sound ce, chapter wordsMedial"
+A,ro,ro,0.92,fericit,,ro/ro/f604cdb5c1f697.mp3,"sound ce, words medial"
+A,ro,ro,0.92,vaci,,ro/ro/34699f8954a223.mp3,"sound ce, words final"
+A,ro,ro,0.92,raci,,ro/ro/7a66d3faabe481.mp3,"sound ce, words final"
+A,ro,ro,0.92,cer,,ro/ro/e4c06a3566523d.mp3,"sound ce, pair cer/ger; sound ge, pair ger/cer"
+A,ro,ro,0.92,ger,,ro/ro/4c7c3b42526b73.mp3,"sound ce, pair cer/ger; sound ge, words initial; sound ge, pair ger/cer"
+A,ro,ro,0.92,Vreau un ceai cald.,,ro/ro/3381ac6545eb4f.mp3,"sound ce, sentence"
+A,ro,ro,0.92,"Ariciul culege cireșe, cinci câte cinci.",,ro/ro/2ae64b1ad0764a.mp3,"sound ce, twister"
+A,ro,ro,0.92,Ariciul are cinci cireșe.,,ro/ro/dc3f20da063d99.mp3,"sound ce, retell"
+A,ro,ro,0.92,Un melc cere o cireașă.,,ro/ro/45125cc36754b8.mp3,"sound ce, retell"
+A,ro,ro,0.92,Ariciul îi dă una.,,ro/ro/07ba83db86423b.mp3,"sound ce, retell"
+A,ro,ro,0.95,Motorașul Gigel pornește: gi-gi-gi! Pune palma pe gât și pornește-l și tu.,,ro/ro/ec76b935e6b1fa.mp3,"sound ge, hero; sound ge, retell"
+A,ro,ro,0.92,"Gigel iese cu spatele din garaj: agi, egi, igi.",,ro/ro/7b545ac3e4bb74.mp3,"sound ge, chapter back"
+A,ro,ro,0.92,"Acum vin cuvinte mai grele: înger, fulgere, geantă. Gigel merge încet.",,ro/ro/b8cfc66fbbc8a6.mp3,"sound ge, chapter clusters"
+A,ro,ro,0.92,"Gigel se odihnește în garaj. Tu ia gi-ul cu tine. La geam, cu geanta, la gem.",,ro/ro/68ef9b53858888.mp3,"sound ge, chapter everyday"
+A,ro,ro,0.92,"Eu am făcut „tic-tic” și motorul a tușit. Tu fă scurt, cu voce: gi-gi-gi!",,ro/ro/3b62405be444e1.mp3,"sound ge, chapter isolated"
+A,ro,ro,0.92,Motorașul Gigel duce covrigi prin oraș. Azi nu vrea să pornească!,,ro/ro/e49208db17788d.mp3,"sound ge, chapter meet"
+A,ro,ro,0.92,Eu am zis „e cer” în loc de „e ger”. Am uitat fularul! Ascultă perechea.,,ro/ro/176df912c1f52b.mp3,"sound ge, chapter pairs"
+A,ro,ro,0.92,Toată lumea are covrigi! Povestește tu drumul lui Gigel.,,ro/ro/a93a16e589322e.mp3,"sound ge, chapter retell"
+A,ro,ro,0.92,Motorul merge ca uns. Spune cu Gigel propoziții întregi.,,ro/ro/aff09a2ad39768.mp3,"sound ge, chapter sentences"
+A,ro,ro,0.85,"Motorul prinde viteză: gea, ge, gi. Spune-le cu Gigel.",,ro/ro/23be20063c1490.mp3,"sound ge, chapter syllables"
+A,ro,ro,0.92,"Noi încălzim gura, Gigel își încălzește motorul. Gata de drum?",,ro/ro/79470486b4da80.mp3,"sound ge, chapter warmup"
+A,ro,ro,0.92,"Pe drum, Gigel își vede colegii. Cuvintele se termină cu gi: covrigi, fulgi.",,ro/ro/33caa60c5da7cd.mp3,"sound ge, chapter wordsFinal"
+A,ro,ro,0.92,Primul client e o girafă! Cuvintele de azi încep cu gi.,,ro/ro/3b90b171905563.mp3,"sound ge, chapter wordsInitial"
+A,ro,ro,0.92,Gigel oprește la castel. Regina vrea cuvinte cu gi la mijloc.,,ro/ro/879ebf5f9e811b.mp3,"sound ge, chapter wordsMedial"
+A,ro,ro,0.92,geam,,ro/ro/f62077524d7428.mp3,"sound ge, words initial"
+A,ro,ro,0.92,geacă,,ro/ro/eb84f2b10805e0.mp3,"sound ge, words initial"
+A,ro,ro,0.92,regină,,ro/ro/6f387584f125d7.mp3,"sound ge, words medial"
+A,ro,ro,0.92,magie,,ro/ro/af3d1ff1dc999b.mp3,"sound ge, words medial"
+A,ro,ro,0.92,magician,,ro/ro/182f3dc468346b.mp3,"sound ge, words medial"
+A,ro,ro,0.92,fugi,,ro/ro/632d528e068f3d.mp3,"sound ge, words final"
+A,ro,ro,0.92,colegi,,ro/ro/ec6e79a8d11b79.mp3,"sound ge, words final"
+A,ro,ro,0.92,Gigel se uită pe geam.,,ro/ro/887bbce7d0f0ab.mp3,"sound ge, sentence"
+A,ro,ro,0.92,Gigel și Gina se uită pe geam: e ger!,,ro/ro/32d5b7f24dfa2b.mp3,"sound ge, twister"
+A,ro,ro,0.92,În geantă sunt covrigi și gem.,,ro/ro/7485c9f9f40dab.mp3,"sound ge, retell"
+A,ro,ro,0.92,Girafa mănâncă în fugă.,,ro/ro/f36d60a7005da9.mp3,"sound ge, retell"
+A,ro,ro,0.95,"Tigrul Rică mârâie când se joacă: rrr! Mârâie și tu, ca un tigru.",,ro/ro/bd46199295ed04.mp3,"sound r, hero; sound r, retell"
+A,ro,ro,0.92,"O bucată s-a ascuns la coadă: ar, er, ir. Rică dă din coadă!",,ro/ro/898e5c3ec19f57.mp3,"sound r, chapter back"
+A,ro,ro,0.92,"Acum vin cuvinte cu r lipit de alte sunete: tractor, frunză. Mergi încet.",,ro/ro/6c85ceee96a359.mp3,"sound r, chapter clusters"
+A,ro,ro,0.92,"Rică mârâie acum prin junglă. Tu ia r-ul cu tine. În parc, la masă, în mașină.",,ro/ro/b100ddeb487182.mp3,"sound r, chapter everyday"
+A,ro,ro,0.92,"Eu am încercat și mi-a ieșit „miau”! Arată-i tu lui Rică: r, r, r.",,ro/ro/8eda0d489130e5.mp3,"sound r, chapter isolated"
+A,ro,ro,0.92,Tigrul Rică și-a pierdut mârâitul! Hai să-l căutăm împreună.,,ro/ro/d79243d56212eb.mp3,"sound r, chapter meet"
+A,ro,ro,0.92,"Eu am zis „lac” în loc de „rac”, și racul s-a mirat! Ascultă perechile.",,ro/ro/e55a437c6255d0.mp3,"sound r, chapter pairs"
+A,ro,ro,0.92,Rică vrea să le spună tuturor cum și-a găsit mârâitul. Spune-o tu.,,ro/ro/3989633c36d298.mp3,"sound r, chapter retell"
+A,ro,ro,0.92,"Rică mârâie iar: rrr! Spune cu el propoziții. Apoi, frământări de limbă.",,ro/ro/6f7894bc64207b.mp3,"sound r, chapter sentences"
+A,ro,ro,0.85,"Mârâitul se întoarce în bucățele: ra, re, ri. Spune-le cu Rică.",,ro/ro/89794f63e36e60.mp3,"sound r, chapter syllables"
+A,ro,ro,0.92,"Ca să mârâie, tigrii își încălzesc limba. Facem și noi, ca Rică.",,ro/ro/9d49214771d7ef.mp3,"sound r, chapter warmup"
+A,ro,ro,0.92,"Unele cuvinte își țin r-ul la capăt: măr, nor. Rică îl prinde de coadă.",,ro/ro/11cab1c68353a0.mp3,"sound r, chapter wordsFinal"
+A,ro,ro,0.92,"Rică își găsește r-ul la începutul cuvintelor. Ajută-l: rac, roată, rață!",,ro/ro/6671a087fa4fad.mp3,"sound r, chapter wordsInitial"
+A,ro,ro,0.92,"Altă bucată stă la mijloc, ca dungile tigrului. Caută r-ul în cuvinte.",,ro/ro/bdc44f1662adb6.mp3,"sound r, chapter wordsMedial"
+A,ro,ro,0.92,Rică ridică roșii rotunde de pe raft.,,ro/ro/7bea32e27c0df4.mp3,"sound r, twister"
+A,ro,ro,0.92,Rața merge la râu.,,ro/ro/49443cd5bfc1f1.mp3,"sound r, retell"
+A,ro,ro,0.92,Un rac iese din apă.,,ro/ro/6d675791f8ccd2.mp3,"sound r, retell"
+A,ro,ro,0.92,Rața și racul râd.,,ro/ro/08100344c3a0f1.mp3,"sound r, retell"
+A,en,en,0.92,COMfortable,,en/en/2b867d9270e055.mp3,english stress
+A,en,en,0.92,My family lives near the hospital.,,en/en/5171608e527997.mp3,"english stress, sentence; english schwa, sentence"
+A,en,en,0.92,That's an interesting problem.,,en/en/947b077a907a77.mp3,"english stress, sentence; english schwa, sentence"
+A,en,en,0.92,Feel free to fill it in.,,en/en/1c900c9e9e9820.mp3,"english ship-sheep, sentence; english melody, Toate la un loc"
+A,en,en,0.92,I left my bag on the bed.,,en/en/cb8296f05497b3.mp3,"english bad-bed, sentence"
+A,en,en,0.92,Let's check the plan again.,,en/en/bea37a7eda7ed8.mp3,"english bad-bed, sentence"
+A,en,en,0.92,cup,,en/en/ad00c690d667f9.mp3,english cut-cat
+A,en,en2,0.92,cup,,en/en2/ad00c690d667f9.mp3,english cut-cat
+A,en,en3,0.92,cup,,en/en3/ad00c690d667f9.mp3,english cut-cat
+A,en,en4,0.92,cup,,en/en4/ad00c690d667f9.mp3,english cut-cat
+A,en,en,0.92,cap,,en/en/ac4be5ac63e1ea.mp3,english cut-cat
+A,en,en2,0.92,cap,,en/en2/ac4be5ac63e1ea.mp3,english cut-cat
+A,en,en3,0.92,cap,,en/en3/ac4be5ac63e1ea.mp3,english cut-cat
+A,en,en4,0.92,cap,,en/en4/ac4be5ac63e1ea.mp3,english cut-cat
+A,en,en,0.92,cut,,en/en/06e45e384318b6.mp3,english cut-cat
+A,en,en2,0.92,cut,,en/en2/06e45e384318b6.mp3,english cut-cat
+A,en,en3,0.92,cut,,en/en3/06e45e384318b6.mp3,english cut-cat
+A,en,en4,0.92,cut,,en/en4/06e45e384318b6.mp3,english cut-cat
+A,en,en,0.92,cat,,en/en/9d989e8d27dc9e.mp3,english cut-cat
+A,en,en2,0.92,cat,,en/en2/9d989e8d27dc9e.mp3,english cut-cat
+A,en,en3,0.92,cat,,en/en3/9d989e8d27dc9e.mp3,english cut-cat
+A,en,en4,0.92,cat,,en/en4/9d989e8d27dc9e.mp3,english cut-cat
+A,en,en,0.92,bug,,en/en/6885858486f310.mp3,english cut-cat
+A,en,en2,0.92,bug,,en/en2/6885858486f310.mp3,english cut-cat
+A,en,en3,0.92,bug,,en/en3/6885858486f310.mp3,english cut-cat
+A,en,en4,0.92,bug,,en/en4/6885858486f310.mp3,english cut-cat
+A,en,en,0.92,hut,,en/en/00020d3566aefa.mp3,english cut-cat
+A,en,en2,0.92,hut,,en/en2/00020d3566aefa.mp3,english cut-cat
+A,en,en3,0.92,hut,,en/en3/00020d3566aefa.mp3,english cut-cat
+A,en,en4,0.92,hut,,en/en4/00020d3566aefa.mp3,english cut-cat
+A,en,en,0.92,hat,,en/en/10e5866050d20a.mp3,english cut-cat
+A,en,en2,0.92,hat,,en/en2/10e5866050d20a.mp3,english cut-cat
+A,en,en3,0.92,hat,,en/en3/10e5866050d20a.mp3,english cut-cat
+A,en,en4,0.92,hat,,en/en4/10e5866050d20a.mp3,english cut-cat
+A,en,en,0.92,run,,en/en/df6ad19037c979.mp3,english cut-cat
+A,en,en2,0.92,run,,en/en2/df6ad19037c979.mp3,english cut-cat
+A,en,en3,0.92,run,,en/en3/df6ad19037c979.mp3,english cut-cat
+A,en,en4,0.92,run,,en/en4/df6ad19037c979.mp3,english cut-cat
+A,en,en,0.92,ran,,en/en/24765b4c90fc2e.mp3,english cut-cat
+A,en,en2,0.92,ran,,en/en2/24765b4c90fc2e.mp3,english cut-cat
+A,en,en3,0.92,ran,,en/en3/24765b4c90fc2e.mp3,english cut-cat
+A,en,en4,0.92,ran,,en/en4/24765b4c90fc2e.mp3,english cut-cat
+A,en,en,0.92,fun,,en/en/c84c50d5a767a2.mp3,english cut-cat
+A,en,en2,0.92,fun,,en/en2/c84c50d5a767a2.mp3,english cut-cat
+A,en,en3,0.92,fun,,en/en3/c84c50d5a767a2.mp3,english cut-cat
+A,en,en4,0.92,fun,,en/en4/c84c50d5a767a2.mp3,english cut-cat
+A,en,en,0.92,fan,,en/en/2899441143e28a.mp3,english cut-cat
+A,en,en2,0.92,fan,,en/en2/2899441143e28a.mp3,english cut-cat
+A,en,en3,0.92,fan,,en/en3/2899441143e28a.mp3,english cut-cat
+A,en,en4,0.92,fan,,en/en4/2899441143e28a.mp3,english cut-cat
+A,en,en,0.92,mud,,en/en/589539e9dc2b6a.mp3,english cut-cat
+A,en,en2,0.92,mud,,en/en2/589539e9dc2b6a.mp3,english cut-cat
+A,en,en3,0.92,mud,,en/en3/589539e9dc2b6a.mp3,english cut-cat
+A,en,en4,0.92,mud,,en/en4/589539e9dc2b6a.mp3,english cut-cat
+A,en,en,0.92,mad,,en/en/1b3cccda27f8c7.mp3,english cut-cat
+A,en,en2,0.92,mad,,en/en2/1b3cccda27f8c7.mp3,english cut-cat
+A,en,en3,0.92,mad,,en/en3/1b3cccda27f8c7.mp3,english cut-cat
+A,en,en4,0.92,mad,,en/en4/1b3cccda27f8c7.mp3,english cut-cat
+A,en,en,0.92,bun,,en/en/b14615a7fdef95.mp3,english cut-cat
+A,en,en2,0.92,bun,,en/en2/b14615a7fdef95.mp3,english cut-cat
+A,en,en3,0.92,bun,,en/en3/b14615a7fdef95.mp3,english cut-cat
+A,en,en4,0.92,bun,,en/en4/b14615a7fdef95.mp3,english cut-cat
+A,en,en,0.92,ban,,en/en/2580d49ff40608.mp3,english cut-cat
+A,en,en2,0.92,ban,,en/en2/2580d49ff40608.mp3,english cut-cat
+A,en,en3,0.92,ban,,en/en3/2580d49ff40608.mp3,english cut-cat
+A,en,en4,0.92,ban,,en/en4/2580d49ff40608.mp3,english cut-cat
+A,en,en,0.92,fur,,en/en/cee609b48cd2c5.mp3,english work-walk
+A,en,en2,0.92,fur,,en/en2/cee609b48cd2c5.mp3,english work-walk
+A,en,en3,0.92,fur,,en/en3/cee609b48cd2c5.mp3,english work-walk
+A,en,en4,0.92,fur,,en/en4/cee609b48cd2c5.mp3,english work-walk
+A,en,en,0.92,four,,en/en/9f8f7eec5dea5a.mp3,english work-walk
+A,en,en2,0.92,four,,en/en2/9f8f7eec5dea5a.mp3,english work-walk
+A,en,en3,0.92,four,,en/en3/9f8f7eec5dea5a.mp3,english work-walk
+A,en,en4,0.92,four,,en/en4/9f8f7eec5dea5a.mp3,english work-walk
+A,en,en,0.92,My shirt is too short.,,en/en/8ea55cb7d933bc.mp3,"english work-walk, sentence; english melody, Toate la un loc"
+A,en,en,0.92,Can I pay by card?,,en/en/61a68acf5c082b.mp3,"english pin-bin, sentence"
+A,en,en,0.92,full,,en/en/52e6d8ab88471a.mp3,english full-fool
+A,en,en2,0.92,full,,en/en2/52e6d8ab88471a.mp3,english full-fool
+A,en,en3,0.92,full,,en/en3/52e6d8ab88471a.mp3,english full-fool
+A,en,en4,0.92,full,,en/en4/52e6d8ab88471a.mp3,english full-fool
+A,en,en,0.92,fool,,en/en/33655e63cafac6.mp3,english full-fool
+A,en,en2,0.92,fool,,en/en2/33655e63cafac6.mp3,english full-fool
+A,en,en3,0.92,fool,,en/en3/33655e63cafac6.mp3,english full-fool
+A,en,en4,0.92,fool,,en/en4/33655e63cafac6.mp3,english full-fool
+A,en,en,0.92,pull,,en/en/c872d5564551da.mp3,english full-fool
+A,en,en2,0.92,pull,,en/en2/c872d5564551da.mp3,english full-fool
+A,en,en3,0.92,pull,,en/en3/c872d5564551da.mp3,english full-fool
+A,en,en4,0.92,pull,,en/en4/c872d5564551da.mp3,english full-fool
+A,en,en,0.92,pool,,en/en/51a4b13bc79072.mp3,english full-fool
+A,en,en2,0.92,pool,,en/en2/51a4b13bc79072.mp3,english full-fool
+A,en,en3,0.92,pool,,en/en3/51a4b13bc79072.mp3,english full-fool
+A,en,en4,0.92,pool,,en/en4/51a4b13bc79072.mp3,english full-fool
+A,en,en,0.92,look,,en/en/e09315fa02d775.mp3,english full-fool
+A,en,en2,0.92,look,,en/en2/e09315fa02d775.mp3,english full-fool
+A,en,en3,0.92,look,,en/en3/e09315fa02d775.mp3,english full-fool
+A,en,en4,0.92,look,,en/en4/e09315fa02d775.mp3,english full-fool
+A,en,en,0.92,Luke,,en/en/6b3799be4300e4.mp3,english full-fool
+A,en,en2,0.92,Luke,,en/en2/6b3799be4300e4.mp3,english full-fool
+A,en,en3,0.92,Luke,,en/en3/6b3799be4300e4.mp3,english full-fool
+A,en,en4,0.92,Luke,,en/en4/6b3799be4300e4.mp3,english full-fool
+A,en,en,0.92,soot,,en/en/276b70b45aff89.mp3,english full-fool
+A,en,en2,0.92,soot,,en/en2/276b70b45aff89.mp3,english full-fool
+A,en,en3,0.92,soot,,en/en3/276b70b45aff89.mp3,english full-fool
+A,en,en4,0.92,soot,,en/en4/276b70b45aff89.mp3,english full-fool
+A,en,en,0.92,suit,,en/en/338ad11a14ea55.mp3,english full-fool
+A,en,en2,0.92,suit,,en/en2/338ad11a14ea55.mp3,english full-fool
+A,en,en3,0.92,suit,,en/en3/338ad11a14ea55.mp3,english full-fool
+A,en,en4,0.92,suit,,en/en4/338ad11a14ea55.mp3,english full-fool
+A,en,en,0.92,wood,,en/en/e8002c169040af.mp3,english full-fool
+A,en,en2,0.92,wood,,en/en2/e8002c169040af.mp3,english full-fool
+A,en,en3,0.92,wood,,en/en3/e8002c169040af.mp3,english full-fool
+A,en,en4,0.92,wood,,en/en4/e8002c169040af.mp3,english full-fool
+A,en,en,0.92,wooed,,en/en/f94ca0279cf742.mp3,english full-fool
+A,en,en2,0.92,wooed,,en/en2/f94ca0279cf742.mp3,english full-fool
+A,en,en3,0.92,wooed,,en/en3/f94ca0279cf742.mp3,english full-fool
+A,en,en4,0.92,wooed,,en/en4/f94ca0279cf742.mp3,english full-fool
+A,en,en,0.92,should,,en/en/c6dc9bc9f77b48.mp3,english full-fool
+A,en,en2,0.92,should,,en/en2/c6dc9bc9f77b48.mp3,english full-fool
+A,en,en3,0.92,should,,en/en3/c6dc9bc9f77b48.mp3,english full-fool
+A,en,en4,0.92,should,,en/en4/c6dc9bc9f77b48.mp3,english full-fool
+A,en,en,0.92,shooed,,en/en/e16dd5cf451abc.mp3,english full-fool
+A,en,en2,0.92,shooed,,en/en2/e16dd5cf451abc.mp3,english full-fool
+A,en,en3,0.92,shooed,,en/en3/e16dd5cf451abc.mp3,english full-fool
+A,en,en4,0.92,shooed,,en/en4/e16dd5cf451abc.mp3,english full-fool
+A,en,en,0.92,could,,en/en/e30de8fdbd3f25.mp3,english full-fool
+A,en,en2,0.92,could,,en/en2/e30de8fdbd3f25.mp3,english full-fool
+A,en,en3,0.92,could,,en/en3/e30de8fdbd3f25.mp3,english full-fool
+A,en,en4,0.92,could,,en/en4/e30de8fdbd3f25.mp3,english full-fool
+A,en,en,0.92,cooed,,en/en/a1a271df01e01d.mp3,english full-fool
+A,en,en2,0.92,cooed,,en/en2/a1a271df01e01d.mp3,english full-fool
+A,en,en3,0.92,cooed,,en/en3/a1a271df01e01d.mp3,english full-fool
+A,en,en4,0.92,cooed,,en/en4/a1a271df01e01d.mp3,english full-fool
+A,en,en,0.92,hood,,en/en/1006ba32aa9047.mp3,english full-fool
+A,en,en2,0.92,hood,,en/en2/1006ba32aa9047.mp3,english full-fool
+A,en,en3,0.92,hood,,en/en3/1006ba32aa9047.mp3,english full-fool
+A,en,en4,0.92,hood,,en/en4/1006ba32aa9047.mp3,english full-fool
+A,en,en,0.92,who'd,,en/en/30813358e366fa.mp3,english full-fool
+A,en,en2,0.92,who'd,,en/en2/30813358e366fa.mp3,english full-fool
+A,en,en3,0.92,who'd,,en/en3/30813358e366fa.mp3,english full-fool
+A,en,en4,0.92,who'd,,en/en4/30813358e366fa.mp3,english full-fool
+A,en,en,0.92,"The price is fine, but it's the wrong size.",,en/en/94dc24e066386c.mp3,"english bed-bet, sentence"
+A,en,en,0.92,wow,,en/en/5bae372e69f529.mp3,english w-v
+A,en,en2,0.92,wow,,en/en2/5bae372e69f529.mp3,english w-v
+A,en,en3,0.92,wow,,en/en3/5bae372e69f529.mp3,english w-v
+A,en,en4,0.92,wow,,en/en4/5bae372e69f529.mp3,english w-v
+A,en,en,0.92,vow,,en/en/1be7a30854a28e.mp3,english w-v
+A,en,en2,0.92,vow,,en/en2/1be7a30854a28e.mp3,english w-v
+A,en,en3,0.92,vow,,en/en3/1be7a30854a28e.mp3,english w-v
+A,en,en4,0.92,vow,,en/en4/1be7a30854a28e.mp3,english w-v
+A,en,en,0.92,We visit them every weekend.,,en/en/4a8abde2de2c56.mp3,"english w-v, sentence"
+A,en,en,0.92,I think it's on the third floor.,,en/en/e8523ead8975db.mp3,"english th, sentence; english melody, Toate la un loc"
+A,en,en,0.92,Thank you for everything.,,en/en/5715d52930b687.mp3,"english th, sentence"
+A,en,en,0.92,"I said Tuesday, not Thursday.",,en/en/aecf9543e84f66.mp3,"english melody, Cuvântul important"
+A,ro,ro,1.0,Mulțumesc că ați venit. Astăzi vă spun trei lucruri simple.,,ro/ro/1c3b4dad2fc6fb.mp3,"diction, pace"
+A,ro,ro,1.0,"Azi avem trei vești. Prima e bună, a doua e mai bună, iar a treia vă surprinde.",,ro/ro/a1658c038e896d.mp3,"diction, pauses"
+A,ro,ro,1.0,"Am o singură rugăminte: ascultați până la capăt, apoi decideți.",,ro/ro/559d4e69e3aeff.mp3,"diction, pauses"
+A,ro,ro,0.92,Mi-a plăcut să exersăm împreună. Pa-pa!,,ro/ro/567d4681bed026.mp3,"end of session, goodbye"
+B,ro,ro,0.92,Fă ca mine: la-la-la.,,ro/ro/99b5c64b4e7b90.mp3,"sunetul L, cum se face"
+B,ro,ro,0.92,"Lipește vârful limbii sus, după dinți.",,ro/ro/06a90b0a7abe55.mp3,"sunetul L, cum se face; cum spui L, Limba sus"
+B,ro,ro,0.92,Cântă: llla!,,ro/ro/4b59368f88fec5.mp3,"sunetul L, cum se face"
+B,ro,ro,0.92,"Limba sare jos, ca o minge.",,ro/ro/563965ad210689.mp3,"sunetul L, cum se face"
+B,ro,ro,0.92,Urcă vârful limbii sus. Apoi cântă.,,ro/ro/1d82d68530e7ad.mp3,"sunetul L, sfat"
+B,ro,ro,0.92,Ascunde limba în gură. Lipește-o după dinți.,,ro/ro/11d203b0a4ef61.mp3,"sunetul L, sfat"
+B,ro,ro,0.92,"Dimineața, cere: „Vreau lapte, te rog!”",,ro/ro/a27b018b9dc5d4.mp3,"sunetul L, misiune"
+B,ro,ro,0.92,"Când pleci, spune tare: „La revedere!”",,ro/ro/107fb661384cc1.mp3,"sunetul L, misiune"
+B,ro,ro,0.92,"Seara, căutați luna pe cer.",,ro/ro/d1fb6e8ce641aa.mp3,"sunetul L, misiune"
+B,ro,ro,0.92,Spune și tu povestea.,,ro/ro/87653bd2d2cae9.mp3,"sunetul L, repovestire; sunetul S, repovestire; sunetul Z, repovestire; sunetul Ș, repovestire; sunetul J, repovestire; sunetul Ț, repovestire; sunetul CE/CI, repovestire; sunetul GE/GI, repovestire; sunetul R, repovestire"
+B,ro,ro,0.92,Spune o propoziție cu ce vezi.,,ro/ro/06cab57d835cd7.mp3,"sunetul L, descriere; sunetul S, descriere; sunetul Z, descriere; sunetul Ș, descriere; sunetul J, descriere; sunetul Ț, descriere; sunetul CE/CI, descriere; sunetul GE/GI, descriere; sunetul R, descriere"
+B,ro,ro,0.92,Fă ca mine: ssss.,,ro/ro/5f5e261b48d300.mp3,"sunetul S, cum se face"
+B,ro,ro,0.92,"Zâmbește larg, ca la poză.",,ro/ro/066c9d438abd8d.mp3,"sunetul S, cum se face; cum spui S, Zâmbet; cum spui Z, Zâmbet"
+B,ro,ro,0.92,Apropie dinții.,,ro/ro/724ba863dc5d76.mp3,"sunetul S, cum se face; sunetul Ș, cum se face"
+B,ro,ro,0.92,"Culcă limba jos, după dinți.",,ro/ro/0e595fa249e75d.mp3,"sunetul S, cum se face"
+B,ro,ro,0.92,Suflă aer rece: ssss.,,ro/ro/3b7181987f5a5e.mp3,"sunetul S, cum se face"
+B,ro,ro,0.92,Zâmbește mai larg. Buzele stau pe loc. Suflă rece.,,ro/ro/d34317e88859a7.mp3,"sunetul S, sfat"
+B,ro,ro,0.92,Ascunde limba după dinți. Apropie dinții.,,ro/ro/5452f4e0be72d8.mp3,"sunetul S, sfat"
+B,ro,ro,0.92,"Ține limba la mijloc. Suflă drept, ca printr-un pai.",,ro/ro/f07761fa8a934c.mp3,"sunetul S, sfat"
+B,ro,ro,0.92,"La magazin, caută sucul și sarea.",,ro/ro/8bb164cda7b7c0.mp3,"sunetul S, misiune"
+B,ro,ro,0.92,"În parc, sari și strigă: „Sus, sus!”",,ro/ro/acc256005bd809.mp3,"sunetul S, misiune"
+B,ro,ro,0.92,"Seara, spune-le alor tăi: „Somn dulce!”",,ro/ro/cd95e218e7f90a.mp3,"sunetul S, misiune"
+B,ro,ro,0.92,Fă ca mine: zzzz.,,ro/ro/2cd97138b8123e.mp3,"sunetul Z, cum se face"
+B,ro,ro,0.92,Zâmbește și apropie dinții.,,ro/ro/2ce4a864b0ae3d.mp3,"sunetul Z, cum se face; sunetul Ț, cum se face; cum spui Ț, Dinții aproape"
+B,ro,ro,0.92,Culcă limba jos.,,ro/ro/0126020fb9ac84.mp3,"sunetul Z, cum se face"
+B,ro,ro,0.92,Pune palma pe gât.,,ro/ro/9f4cc6813be190.mp3,"sunetul Z, cum se face; sunetul J, cum se face; sunetul GE/GI, cum se face"
+B,ro,ro,0.92,Bâzâie ca albina: zzzz!,,ro/ro/3e342041b82ff0.mp3,"sunetul Z, cum se face"
+B,ro,ro,0.92,"Pune palma pe gât. Bâzâie, să te gâdile!",,ro/ro/851fa2f7880301.mp3,"sunetul Z, sfat"
+B,ro,ro,0.92,Zâmbește mai larg. Buzele stau pe loc.,,ro/ro/fa9fc3007ce996.mp3,"sunetul Z, sfat; sunetul Ț, sfat"
+B,ro,ro,0.92,"Pe stradă, găsiți o trecere de zebră.",,ro/ro/6311729bfe819b.mp3,"sunetul Z, misiune"
+B,ro,ro,0.92,Vezi o albină? Bâzâie ca ea: zzz!,,ro/ro/7a29253836f9b3.mp3,"sunetul Z, misiune"
+B,ro,ro,0.92,"La prânz, spune-i cuiva: „Bună ziua!”",,ro/ro/2784397ab66692.mp3,"sunetul Z, misiune"
+B,ro,ro,0.92,Fă ca mine: șșșș.,,ro/ro/63a85665281cf4.mp3,"sunetul Ș, cum se face"
+B,ro,ro,0.92,Fă buzele ca pentru un pupic.,,ro/ro/96f67f58d575a4.mp3,"sunetul Ș, cum se face; cum spui Ș, Pupic; cum spui J, Pupic"
+B,ro,ro,0.92,"Ridică limba, ca o ceșcuță.",,ro/ro/0d031d1a25fcc2.mp3,"sunetul Ș, cum se face; sunetul J, cum se face; cum spui Ș, Limba ceșcuță; cum spui J, Limba ceșcuță"
+B,ro,ro,0.92,Suflă aer cald: șșșș.,,ro/ro/24e0055303b7c0.mp3,"sunetul Ș, cum se face; cum spui Ș, Sunetul"
+B,ro,ro,0.92,"Fă buze de pupic. Suflă cald, ca pe mâini reci.",,ro/ro/64bf2970a971f8.mp3,"sunetul Ș, sfat"
+B,ro,ro,0.92,Fă limba ceșcuță. Suflă pe mijloc.,,ro/ro/7e1cc76d14a5e8.mp3,"sunetul Ș, sfat"
+B,ro,ro,0.92,"În mașină, numărați mașinile roșii.",,ro/ro/e4fdb8342680e7.mp3,"sunetul Ș, misiune"
+B,ro,ro,0.92,"Când te încalți, spune: „Întâi șosetele!”",,ro/ro/3e1961763aef5d.mp3,"sunetul Ș, misiune"
+B,ro,ro,0.92,"La culcare, șoptește-i păpușii: „Șșș, doarme!”",,ro/ro/32967efef1419e.mp3,"sunetul Ș, misiune"
+B,ro,ro,0.92,Fă ca mine: jjjj.,,ro/ro/c2145497bf4d54.mp3,"sunetul J, cum se face"
+B,ro,ro,0.92,Fă buze de pupic.,,ro/ro/c950e7448674ed.mp3,"sunetul J, cum se face"
+B,ro,ro,0.92,Suflă cu voce: jjjj!,,ro/ro/efb056097cebae.mp3,"sunetul J, cum se face"
+B,ro,ro,0.92,"Pune palma pe gât. Suflă cu voce, să bâzâie.",,ro/ro/18daa76e52d889.mp3,"sunetul J, sfat"
+B,ro,ro,0.92,Fă buze de pupic. Apoi suflă.,,ro/ro/2de0748fd47916.mp3,"sunetul J, sfat"
+B,ro,ro,0.92,"Când cade o jucărie, spune: „E jos!”",,ro/ro/b219d1bd051149.mp3,"sunetul J, misiune"
+B,ro,ro,0.92,"Când strângi jucăriile, spune: „Gata joaca!”",,ro/ro/d9b798b5e1e79d.mp3,"sunetul J, misiune"
+B,ro,ro,0.92,"Cere ajutor: „Mă ajuți, te rog?”",,ro/ro/26cf75aee9e8b6.mp3,"sunetul J, misiune"
+B,ro,ro,0.92,Fă ca mine: ț-ț-ț.,,ro/ro/8b517b44c73178.mp3,"sunetul Ț, cum se face"
+B,ro,ro,0.92,Atinge sus cu vârful limbii.,,ro/ro/f82f717b0a7cf5.mp3,"sunetul Ț, cum se face"
+B,ro,ro,0.92,Dă drumul repede: ț!,,ro/ro/8845c1df44d1af.mp3,"sunetul Ț, cum se face"
+B,ro,ro,0.92,"Spune scurt, de trei ori: ț-ț-ț.",,ro/ro/d62856d98ed4be.mp3,"sunetul Ț, cum se face"
+B,ro,ro,0.92,Atinge sus cu limba. Apoi dă drumul: ț!,,ro/ro/e09ef4216664bd.mp3,"sunetul Ț, sfat"
+B,ro,ro,0.92,"Când primești ceva, spune: „Mulțumesc!”",,ro/ro/d02dcd0f5667e1.mp3,"sunetul Ț, misiune"
+B,ro,ro,0.92,"La spălatul pe dinți, spune: „Dinți curați!”",,ro/ro/6539549aa5f6d8.mp3,"sunetul Ț, misiune"
+B,ro,ro,0.92,"Când aștepți, fă ca ceasul: ț-ț-ț!",,ro/ro/6e84755d59699e.mp3,"sunetul Ț, misiune"
+B,ro,ro,0.92,Fă ca mine: ci-ci-ci.,,ro/ro/85f4a265a78719.mp3,"sunetul CE/CI, cum se face"
+B,ro,ro,0.92,Împinge puțin buzele în față.,,ro/ro/6f3bf56c25cac2.mp3,"sunetul CE/CI, cum se face; sunetul GE/GI, cum se face; cum spui CE/CI, Buze în față; cum spui GE/GI, Buze în față"
+B,ro,ro,0.92,Lipește limba sus.,,ro/ro/3681406502ed3f.mp3,"sunetul CE/CI, cum se face; sunetul GE/GI, cum se face; cum spui CE/CI, Limba lipită; cum spui GE/GI, Limba lipită"
+B,ro,ro,0.92,Dă-i drumul repede: ci!,,ro/ro/346866820e3627.mp3,"sunetul CE/CI, cum se face"
+B,ro,ro,0.92,Împinge buzele în față. Ridică limba mai sus.,,ro/ro/bff6f83aaaacd9.mp3,"sunetul CE/CI, sfat"
+B,ro,ro,0.92,Lipește limba o clipă. Apoi dă drumul: ci!,,ro/ro/d87b3261ecd31e.mp3,"sunetul CE/CI, sfat"
+B,ro,ro,0.92,Întreabă pe cineva: „Ce faci?”,,ro/ro/a0edadf19304a6.mp3,"sunetul CE/CI, misiune"
+B,ro,ro,0.92,"Pe scări, numărați treptele până la cinci.",,ro/ro/697ad76456c33b.mp3,"sunetul CE/CI, misiune"
+B,ro,ro,0.92,"Seara, cere: „Îmi citești o poveste?”",,ro/ro/98e837fb37df85.mp3,"sunetul CE/CI, misiune"
+B,ro,ro,0.92,Fă ca mine: gi-gi-gi.,,ro/ro/c0c2f0bda0d62f.mp3,"sunetul GE/GI, cum se face"
+B,ro,ro,0.92,Dă drumul cu voce: gi!,,ro/ro/341365589ad7a3.mp3,"sunetul GE/GI, cum se face"
+B,ro,ro,0.92,"Pune palma pe gât. Spune gi, să bâzâie.",,ro/ro/a64fb30333dac7.mp3,"sunetul GE/GI, sfat"
+B,ro,ro,0.92,Lipește limba o clipă. Apoi dă drumul: gi!,,ro/ro/10fb2f145be111.mp3,"sunetul GE/GI, sfat"
+B,ro,ro,0.92,Uită-te pe geam și spune ce vezi.,,ro/ro/aa544dc37ca561.mp3,"sunetul GE/GI, misiune"
+B,ro,ro,0.92,"La micul dejun, cere: „Pâine cu gem!”",,ro/ro/24791ed92ee718.mp3,"sunetul GE/GI, misiune"
+B,ro,ro,0.92,"Înainte să pleci, spune: „Îmi iau geanta!”",,ro/ro/300af4909b1393.mp3,"sunetul GE/GI, misiune"
+B,ro,ro,0.92,"Fă ca mine: r, r, r.",,ro/ro/1ff5a4c8fca177.mp3,"sunetul R, cum se face"
+B,ro,ro,0.92,Deschide puțin gura.,,ro/ro/38ecffcd5d72f4.mp3,"sunetul R, cum se face"
+B,ro,ro,0.92,Urcă limba pe dealul de după dinți.,,ro/ro/019e5334a34b77.mp3,"sunetul R, cum se face; cum spui R, Limba sus"
+B,ro,ro,0.92,Atinge scurt dealul: r!,,ro/ro/7ec825d194049a.mp3,"sunetul R, cum se face"
+B,ro,ro,0.92,"Nu iese? Zi repede: t-r, t-r.",,ro/ro/f22f2c26047831.mp3,"sunetul R, cum se face"
+B,ro,ro,0.92,Nu lipi limba. Atinge dealul scurt și dă-i drumul.,,ro/ro/34ba35db677d38.mp3,"sunetul R, sfat"
+B,ro,ro,0.92,Sunetul e în gât? Ridică vârful limbii. Zi t-r.,,ro/ro/71bff7b81b24e4.mp3,"sunetul R, sfat"
+B,ro,ro,0.92,Urcă vârful limbii după dinți. Suflă mai tare.,,ro/ro/08f61c34a011fe.mp3,"sunetul R, sfat"
+B,ro,ro,0.92,"La gustare, cere: „Un măr, te rog!”",,ro/ro/ca86e577c4975b.mp3,"sunetul R, misiune"
+B,ro,ro,0.92,Spune-i cuiva drag: „Mersi frumos!”,,ro/ro/73f395fb9cf091.mp3,"sunetul R, misiune"
+B,ro,ro,0.92,"În parc, căutați trei lucruri roșii.",,ro/ro/f13a4508fa9c0d.mp3,"sunetul R, misiune"
+B,ro,ro,0.92,Zâmbește cât poți de larg!,,ro/ro/d7b199169a7dfb.mp3,"încălzire, Zâmbetul de crocodil"
+B,ro,ro,0.92,Fă gura ca pentru un pupic!,,ro/ro/33a435ec02f7ff.mp3,"încălzire, Pupicul"
+B,ro,ro,0.92,Zâmbește și apropie dinții ușor.,,ro/ro/d92976f9a05cfb.mp3,"încălzire, Dinții prieteni"
+B,ro,ro,0.92,Fă un pupic și urcă-l spre nas!,,ro/ro/63c5766778ca98.mp3,"încălzire, Buzele spre nas"
+B,ro,ro,0.92,Scoate limba și bag-o la loc!,,ro/ro/163d4a2ce6be18.mp3,"încălzire, Cățelușul bea apă"
+B,ro,ro,0.92,Mută limba dintr-un colț în altul!,,ro/ro/0af4896f1d6749.mp3,"încălzire, Bate ceasul tic-tac"
+B,ro,ro,0.92,Deschide gura. Urcă limba după dinții de sus.,,ro/ro/4951dcd3c45075.mp3,"încălzire, Limba urcă pe deal"
+B,ro,ro,0.92,"Culcă limba jos, după dinți. Numărăm până la trei.",,ro/ro/70dfd3a820301a.mp3,"încălzire, Limba la culcare"
+B,ro,ro,0.92,Fă din limbă o ceșcuță. Ține-o sus.,,ro/ro/0144a42e246c11.mp3,"încălzire, Ceșcuța"
+B,ro,ro,0.92,"Plescăie cu limba: clop, clop, clop!",,ro/ro/86d1d29fb4f450.mp3,"încălzire, Mersul căluțului"
+B,ro,ro,0.92,"Spune repede: t-t-t-t-t, ca un ceas!",,ro/ro/7849a7800a513e.mp3,"încălzire, Tic-tac cu limba"
+B,ro,ro,0.92,Pune palma pe gât. Spune lung: mmmm.,,ro/ro/654f0706bb91d4.mp3,"încălzire, Gâtul care bâzâie"
+B,ro,ro,0.92,Suflă tare în morișcă!,,ro/ro/af8c5a65b78f3b.mp3,"încălzire, Morișca"
+B,ro,ro,0.92,"Apropie dinții, fără să-i strângi.",,ro/ro/5f02276df20a45.mp3,"cum spui S, Dinții aproape; cum spui Z, Dinții aproape"
+B,ro,ro,0.92,"Vârful limbii stă jos, după dinți.",,ro/ro/254b29fc8df6d7.mp3,"cum spui S, Limba jos"
+B,ro,ro,0.92,Suflă aer rece printre dinți: ssss.,,ro/ro/949d02480eb6c9.mp3,"cum spui S, Sunetul"
+B,ro,ro,0.92,"Apropie dinții, buzele rămân rotunde.",,ro/ro/93f31a627add40.mp3,"cum spui Ș, Dinții aproape"
+B,ro,ro,0.92,Palma pe gât. Spune lung: mmmm.,,ro/ro/0fd262de235384.mp3,"cum spui Z, Vocea; cum spui J, Vocea"
+B,ro,ro,0.92,Bâzâie ca albina: zzzz.,,ro/ro/38df4bb63a6a8d.mp3,"cum spui Z, Sunetul"
+B,ro,ro,0.92,Fă vântul cu voce: jjjj.,,ro/ro/281f03b4a47fb7.mp3,"cum spui J, Sunetul"
+B,ro,ro,0.92,"Vârful limbii atinge sus, după dinți.",,ro/ro/88d8cf0f86f2c8.mp3,"cum spui Ț, Limba sus"
+B,ro,ro,0.92,"Spune scurt, de trei ori: ț! ț! ț!",,ro/ro/4b169069552829.mp3,"cum spui Ț, Sunetul"
+B,ro,ro,0.92,"Spune scurt, de trei ori: ci! ci! ci!",,ro/ro/97138969f2f356.mp3,"cum spui CE/CI, Sunetul"
+B,ro,ro,0.92,"Spune cu voce, de trei ori: gi! gi! gi!",,ro/ro/ff36307c21ba74.mp3,"cum spui GE/GI, Sunetul"
+B,ro,ro,0.92,"Deschide puțin gura, cât un deget.",,ro/ro/d22c08cd578b97.mp3,"cum spui R, Gura deschisă; cum spui L, Gura deschisă"
+B,ro,ro,0.92,"Atinge scurt dealul: r, r, r.",,ro/ro/4a79ee6becd25e.mp3,"cum spui R, Atingerea"
+B,ro,ro,0.92,Hai la un joc! Suflă să tremure limba: rrrr.,,ro/ro/9eb2f1d4d4c4d6.mp3,"cum spui R, Vibrația"
+B,ro,ro,0.92,Cântă cu limba sus: lllaaa.,,ro/ro/99ddb3deece452.mp3,"cum spui L, Sunetul"
+B,ro,ro,0.92,Scoate puțin vârful limbii între dinți.,,ro/ro/c1329159d3ec46.mp3,"cum spui TH, Limba afară"
+B,ro,ro,0.92,Suflă ușor peste limbă: thhh.,,ro/ro/039923ba24f9ee.mp3,"cum spui TH, Aerul"
+B,ro,ro,0.92,"Rotunjește buzele, ca la „u”.",,ro/ro/a7e2097397d91c.mp3,"cum spui W, Buze rotunde"
+B,ro,ro,0.92,Pune dinții de sus ușor pe buza de jos.,,ro/ro/32ded516fd6437.mp3,"cum spui V, Dinți pe buză"
+B,ro,ro,0.92,Suflă cu voce: vvvv.,,ro/ro/d68203dca51e00.mp3,"cum spui V, Vocea"
+B,ro,ro,0.92,"Zâmbește larg, ca la „iii”.",,ro/ro/aee54549f5e682.mp3,"cum spui EE, Zâmbet"
+B,ro,ro,0.92,Spune un „iiii” lung.,,ro/ro/a6e072d203a56a.mp3,"cum spui EE, Lung"
+B,ro,ro,0.92,"Relaxează buzele, fără zâmbet.",,ro/ro/f6a69fa03ca383.mp3,"cum spui I, Buze relaxate"
+B,ro,ro,0.92,"Deschide gura mult, ca la „a”.",,ro/ro/68618fe4486b2d.mp3,"cum spui AE, Gura mare"
+C,ro,ro,0.92,Ce ai auzit?,,ro/ro/80c8ee34dbae85.mp3,întrebare
+C,ro,ro,0.92,Ce e în poză?,,ro/ro/b4f1548af778e4.mp3,întrebare
+C,ro,ro,0.92,Suflă în lumânare,,ro/ro/fd2a7979560fec.mp3,întrebare
+C,ro,ro,0.92,Te-ai străduit. Bravo!,,ro/ro/5738451b3c6776.mp3,laudă
+C,ro,ro,0.92,Ai lucrat cu atenție. Bravo!,,ro/ro/7c7215fa102c4a.mp3,laudă
+C,ro,ro,0.92,Ai spus până la capăt. Bravo!,,ro/ro/5a5a05c8f999c1.mp3,laudă
+C,ro,ro,0.92,Ai mai încercat o dată. Așa!,,ro/ro/40d7eaa94dbf56.mp3,laudă
+C,ro,ro,0.92,Ai încercat din nou și a ieșit!,,ro/ro/70d1506f32667c.mp3,laudă
+C,ro,ro,0.92,Ai avut răbdare. Bravo!,,ro/ro/04afba43a3e7d9.mp3,laudă
+C,ro,ro,0.92,Ai ridicat limba sus. Bravo!,,ro/ro/5183766350eab9.mp3,laudă
+C,ro,ro,0.92,Ai suflat aer rece. Bravo!,,ro/ro/c9df985078e916.mp3,laudă
+C,ro,ro,0.92,Ai suflat aer cald. Bravo!,,ro/ro/2ba0af22547f90.mp3,laudă
+C,ro,ro,0.92,Bravo! Limba a vibrat.,,ro/ro/c73bd628a7705c.mp3,laudă
+C,ro,ro,0.92,Am înțeles fiecare cuvânt,,ro/ro/dcd845479025f7.mp3,laudă
+C,ro,ro,0.92,Hai să mai încercăm,,ro/ro/e7524140b8228a.mp3,reacție
+C,ro,ro,0.92,Nu te-am auzit,,ro/ro/75eed47ec63078.mp3,reacție
+C,ro,ro,0.92,E zgomot în jur,,ro/ro/67ef18233706cf.mp3,reacție
+C,ro,ro,0.92,A fost prea scurt,,ro/ro/fda791af7c73d8.mp3,reacție
+C,ro,ro,0.92,A sunat prea tare,,ro/ro/f99ebe6d27b1cc.mp3,reacție
+C,ro,ro,0.92,Nu știu sigur,,ro/ro/6a58f295fd3533.mp3,reacție
+C,ro,ro,0.92,Te-am auzit,,ro/ro/4f28fc37216c27.mp3,reacție
+C,ro,ro,0.92,Ascultă și tu,,ro/ro/ddd3f29e8ff50e.mp3,reacție
+C,ro,ro,0.92,Nu aud bine sunetul,,ro/ro/13e80e13ae2e41.mp3,reacție
+C,ro,ro,0.92,Mai încercăm o dată,,ro/ro/565a4fe8878e04.mp3,reacție
+C,ro,ro,0.92,Nu am putut asculta,,ro/ro/64da1dbfa83d86.mp3,reacție
+C,ro,ro,0.92,Vorbește mai aproape de telefon.,,ro/ro/0e2e28f20a4d9a.mp3,sfat scurt
+C,ro,ro,0.92,Mergi într-un loc mai liniștit și mai încearcă.,,ro/ro/0ff7cfa5f78054.mp3,sfat scurt
+C,ro,ro,0.92,"Mai spune o dată, rar.",,ro/ro/ac305cfeb96874.mp3,sfat scurt
+C,ro,ro,0.92,Ține telefonul puțin mai departe.,,ro/ro/3e0133a64cfd9f.mp3,sfat scurt
+C,ro,ro,0.92,Mai încearcă o dată.,,ro/ro/bc3e30b6edb00d.mp3,sfat scurt
+C,ro,ro,0.92,"Spune propoziția rar, cuvânt cu cuvânt.",,ro/ro/298f59874643f6.mp3,sfat scurt
+C,ro,ro,0.92,"Dacă ai căști, scoate-le: cu microfonul telefonului aud mai bine.",,ro/ro/14bdfc5be62078.mp3,sfat scurt
+C,ro,ro,0.92,Auzi L?,Auzi lll?,ro/ro/1d3257a3932100.mp3,sunetul L
+C,ro,ro,0.92,Ține L cât poți,Ține lll cât poți,ro/ro/d75ee2a5f9468d.mp3,sunetul L
+C,ro,ro,0.92,L sau R?,lll sau rrr?,ro/ro/08053a16606353.mp3,sunetul L
+C,ro,ro,0.92,Auzi S?,Auzi sss?,ro/ro/30c9930c787626.mp3,sunetul S
+C,ro,ro,0.92,Ține S cât poți,Ține sss cât poți,ro/ro/7151832c8871f1.mp3,sunetul S
+C,ro,ro,0.92,S sau Ș?,sss sau șșș?,ro/ro/5ec956764a0c12.mp3,sunetul S
+C,ro,ro,0.92,S sau Z?,sss sau zzz?,ro/ro/7c1cf956268d36.mp3,sunetul S
+C,ro,ro,0.92,Auzi Z?,Auzi zzz?,ro/ro/57d297f6ee0338.mp3,sunetul Z
+C,ro,ro,0.92,Ține Z cât poți,Ține zzz cât poți,ro/ro/ce94f8385184cb.mp3,sunetul Z
+C,ro,ro,0.92,Z sau S?,zzz sau sss?,ro/ro/d192c82026c608.mp3,sunetul Z
+C,ro,ro,0.92,Z sau J?,zzz sau jjj?,ro/ro/3b20c9304f5be6.mp3,sunetul Z
+C,ro,ro,0.92,Auzi Ș?,Auzi șșș?,ro/ro/d43b2e3f2f3d03.mp3,sunetul Ș
+C,ro,ro,0.92,Ține Ș cât poți,Ține șșș cât poți,ro/ro/87852bf983097d.mp3,sunetul Ș
+C,ro,ro,0.92,Ș sau S?,șșș sau sss?,ro/ro/42e6ba1d2c9512.mp3,sunetul Ș
+C,ro,ro,0.92,Ș sau J?,șșș sau jjj?,ro/ro/a1793b5b50198c.mp3,sunetul Ș
+C,ro,ro,0.92,Auzi J?,Auzi jjj?,ro/ro/29a4ceec223646.mp3,sunetul J
+C,ro,ro,0.92,Ține J cât poți,Ține jjj cât poți,ro/ro/1746d5048132b1.mp3,sunetul J
+C,ro,ro,0.92,J sau Z?,jjj sau zzz?,ro/ro/ee90c289739016.mp3,sunetul J
+C,ro,ro,0.92,J sau Ș?,jjj sau șșș?,ro/ro/7917c1871c4230.mp3,sunetul J
+C,ro,ro,0.92,Auzi Ț?,Auzi ț?,ro/ro/35cba1031f1b80.mp3,sunetul Ț
+C,ro,ro,0.92,Ține Ț cât poți,Ține ț cât poți,ro/ro/06161dbf2c460a.mp3,sunetul Ț
+C,ro,ro,0.92,Ț sau S?,ț sau sss?,ro/ro/9e0f9ba6bb5a67.mp3,sunetul Ț
+C,ro,ro,0.92,Ț sau CE?,ț sau ce?,ro/ro/5708ffcf2163bc.mp3,sunetul Ț
+C,ro,ro,0.92,Auzi CE?,Auzi ce?,ro/ro/895ef5821a5f84.mp3,sunetul CE
+C,ro,ro,0.92,Ține CE cât poți,Ține ce cât poți,ro/ro/75cb8dc2351985.mp3,sunetul CE
+C,ro,ro,0.92,CE sau Ț?,ce sau ț?,ro/ro/06e05a7e37ffcc.mp3,sunetul CE
+C,ro,ro,0.92,CE sau GE?,ce sau ge?,ro/ro/340ee6c7397f05.mp3,sunetul CE
+C,ro,ro,0.92,Auzi GE?,Auzi ge?,ro/ro/99dd2fe439ad04.mp3,sunetul GE
+C,ro,ro,0.92,Ține GE cât poți,Ține ge cât poți,ro/ro/0b4d2e578dcac9.mp3,sunetul GE
+C,ro,ro,0.92,GE sau CE?,ge sau ce?,ro/ro/3d1ce3e20792a3.mp3,sunetul GE
+C,ro,ro,0.92,Auzi R?,Auzi rrr?,ro/ro/39adf16d2067f9.mp3,sunetul R
+C,ro,ro,0.92,Ține R cât poți,Ține rrr cât poți,ro/ro/6a4251ed043fb6.mp3,sunetul R
+C,ro,ro,0.92,R sau L?,rrr sau lll?,ro/ro/0881bfb8ce84e1.mp3,sunetul R

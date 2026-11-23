@@ -35,7 +35,6 @@ import tech.fonia.audio.CapturedClip
 import tech.fonia.audio.ClipLocation
 import tech.fonia.audio.HopProcessor
 import tech.fonia.audio.LiveLevels
-import tech.fonia.audio.SpeechFallback
 import tech.fonia.design.FoniaTheme
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.domain.ContentSource
@@ -49,7 +48,6 @@ import tech.fonia.features.app.CaptureEnginePort
 import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.PlaybackPort
 import tech.fonia.features.app.SoundEffectsPort
-import tech.fonia.features.app.SpeechFallbackPort
 import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.SpeechModelPort
 import tech.fonia.features.app.TakeSource
@@ -112,11 +110,6 @@ class SpeakingMlTest {
             override suspend fun setSpeed(value: Float) = Unit
             override suspend fun stop() = Unit
             override suspend fun release() = Unit
-        }
-
-        override val fallback = object : SpeechFallbackPort {
-            override suspend fun speak(text: String, language: SpeechFallback.Language, levels: LiveLevels?) = Unit
-            override fun stop() = Unit
         }
 
         override val effects: SoundEffectsPort? = null

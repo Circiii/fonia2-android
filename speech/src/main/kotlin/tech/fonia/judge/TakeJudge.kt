@@ -45,8 +45,8 @@ class TakeJudge(
         val cap = spec.population.capture
         val notes = ArrayList<String>()
         val blocked = HashSet<ErrorKind>()
-        fun gated(reason: RetakeReason, report: CaptureReport?) =
-            Measured(request, reason, report, emptyList(), emptyMap(), null, blocked, notes, micros)
+        fun gated(reason: RetakeReason, report: CaptureReport?, global: Map<String, Float> = emptyMap()) =
+            Measured(request, reason, report, emptyList(), global, null, blocked, notes, micros)
 
         if (clip.isEmpty || clip.sampleRate <= 0) return gated(RetakeReason.NoSpeech, null)
         if (clip.dropped > cap.maxDropped) {
@@ -71,8 +71,12 @@ class TakeJudge(
         }
         if (captureGate != null) return gated(captureGate, baseReport)
         val f0 = summary.pitch.medianHz
-        if (request.talker == TalkerGroup.Child && f0 > 0f && f0 < cap.adultVoiceRatio * (request.childF0Hz ?: cap.childF0Hz)) {
-            return gated(RetakeReason.AdultVoice, baseReport)
+        // The adult-voice gate is off in the app (`adultVoiceRatio` 0 in population.json, owner 2026-11-23): whoever
+        // speaks is judged on their own voice, with the talker group heard from it (TalkerVoice, measureForVoice).
+        if (cap.adultVoiceRatio > 0f && request.talker == TalkerGroup.Child && f0 > 0f &&
+            f0 < cap.adultVoiceRatio * (request.childF0Hz ?: cap.childF0Hz)
+        ) {
+            return gated(RetakeReason.AdultVoice, baseReport, mapOf(Features.F0 to f0))
         }
         // P1 (DSP part): at the word level the speech must last 0.5×–2.5× what the word needs.
         if (request.level == Level.Word) {
@@ -81,7 +85,7 @@ class TakeJudge(
             val spoken = summary.speechEnd - summary.speechStart
             if (spoken < w.minRatio * expected || spoken > w.maxRatio * expected) {
                 notes.add("duration ${"%.2f".format(spoken)} s for ${"%.2f".format(expected)} s")
-                return gated(RetakeReason.OtherWord, baseReport)
+                return gated(RetakeReason.OtherWord, baseReport, mapOf(Features.F0 to f0))
             }
         }
         // P2–P3.
@@ -198,10 +202,12 @@ class TakeJudge(
         val (features, probs) = scored.minBy { it.second.correct }
         var decision = DecisionPolicy.decide(probs, which, request.sound, unlock, runtime, blocked, measured.capture)
         // Safety net from the parity-locked judge (plan 03 §1, head v0): a lateral hint on an S-family target never
-        // passes as correct without the phoneme model; it goes to the adult.
+        // passes as correct without the phoneme model. There is no adult to ask any more, so it is "almost" (the take
+        // counts and something kind happens) instead of a silent retake.
         val lateralHint = measured.outcome == SoundOutcome.LateralHint && traits(request.sound).place == SibilantPlace.S
         if (lateralHint && !useFull && decision.verdict == Verdict.Correct) {
-            decision = decision.copy(verdict = Verdict.Unsure)
+            decision = decision.copy(verdict = Verdict.Almost)
+            notes += "lateralHintAlmost"
         }
         micros["decide"] = (System.nanoTime() - t0) / 1000
         if (phones != null && phones.micros > 0) micros["phones"] = phones.micros

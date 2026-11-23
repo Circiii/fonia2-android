@@ -122,6 +122,7 @@ data class SessionTicket(
  * | | `foniaFakeSpeech` (boolean) | a speech model that downloads in two seconds and answers canned results |
  * | | `foniaReduceMotion` (boolean) | Reduce Motion on whatever the system says, and the voice meters still, for the UI tests (Compose tests wait for idle, and Foni, the sky and a live meter never are) |
  * | | `foniaFace` (string) | the face the mouth coach sees, held still, as `name=value` pairs of `FaceFrame` (`smile=0.8,jawOpen=0.1`) |
+ * | | `foniaMicFile` (string) | a WAV on the device read in real time in place of the microphone, then silence, through the same live path (levels, judge, screens) |
  *
  * The same switches can also come as iOS-style strings in a string-array extra `arguments`
  * (`["-foniaResetData", "-foniaStart", "s:wordsInitial"]`), as `ProcessInfo.arguments` has them.
@@ -140,6 +141,8 @@ data class LaunchArguments(
     val reduceMotion: Boolean = false,
     /** Android only: the mouth coach sees this face, held still, instead of the camera (`smile=0.8,jawOpen=0.1`). */
     val face: String? = null,
+    /** Android only, debug: every take reads this WAV (a path on the device) instead of the microphone. */
+    val micFile: String? = null,
 ) {
     companion object {
         val none = LaunchArguments()
@@ -162,6 +165,7 @@ data class LaunchArguments(
                 fakeSpeech = debug && flag("foniaFakeSpeech"),
                 reduceMotion = debug && flag("foniaReduceMotion"),
                 face = if (debug) value("foniaFace") else null,
+                micFile = if (debug) value("foniaMicFile") else null,
             )
         }
     }
@@ -219,6 +223,8 @@ class AppModel(
     val adaptive: AdaptiveStore? = null,
     /** The new take judge (speech/JUDGE.md) with ZIPA as its second head; null in the JVM tests (his judge decides). */
     val judge: tech.fonia.features.session.SoundJudge? = null,
+    /** Who really speaks for each profile, heard from the voice (a man on a child profile is judged as a man). */
+    val talkers: tech.fonia.features.session.TalkerMemory = tech.fonia.features.session.TalkerMemory.inMemory(),
 ) {
     var profiles: List<Profile> by mutableStateOf(emptyList())
         private set
@@ -364,7 +370,9 @@ class AppModel(
             // A phone whose audio can't be set up still opens; its takes then can't start, which every screen handles.
             val backend = runCatching { platform.audio(AudioEnvironment(context.applicationContext, fixtures, effects)) }
                 .getOrElse { NoAudioBackend(context.applicationContext) }
-            val audio = AudioHub(voices, backend, fixtures, assets = assets, microphone = microphone)
+            // A bare name is looked up in the app's own external folder (adb push … /sdcard/Android/data/<app>/files/).
+            val micFile = arguments.micFile?.let { if (it.startsWith("/")) File(it) else File(context.getExternalFilesDir(null), it) }
+            val audio = AudioHub(voices, backend, fixtures, assets = assets, microphone = microphone, micFile = micFile)
             val speech = SpeechHub(runCatching { platform.speechModel(context.applicationContext, arguments) }.getOrNull(), scope)
             // The new ML is optional: a phone where its files can't be opened runs the app as before.
             val pilot = runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull()
@@ -384,6 +392,7 @@ class AppModel(
                 reading = ReadingStore(File(context.noBackupFilesDir, "Fonia/Reading")),
                 adaptive = AdaptiveStore(File(context.noBackupFilesDir, "Fonia/Adaptive")),
                 judge = runCatching { tech.fonia.features.session.SoundJudge.live(context, scope) }.getOrNull(),
+                talkers = tech.fonia.features.session.TalkerMemory.preferences(context),
             )
         }
     }
