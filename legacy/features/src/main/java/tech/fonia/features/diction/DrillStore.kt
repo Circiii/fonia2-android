@@ -19,6 +19,9 @@ interface DrillStore {
     suspend fun best(profileID: UUID, sound: SoundID): Map<Int, Double>
 
     suspend fun record(profileID: UUID, sound: SoundID, index: Int, share: Double)
+
+    /** Forgets every profile not in [profileIDs] (a deleted profile, or "Șterge tot"). */
+    suspend fun keepOnly(profileIDs: Set<UUID>) {}
 }
 
 class MemoryDrillStore : DrillStore {
@@ -29,6 +32,10 @@ class MemoryDrillStore : DrillStore {
     override suspend fun record(profileID: UUID, sound: SoundID, index: Int, share: Double) {
         val now = best(profileID, sound)
         all[profileID to sound] = now + (index to maxOf(share, now[index] ?: 0.0))
+    }
+
+    override suspend fun keepOnly(profileIDs: Set<UUID>) {
+        all.keys.retainAll { it.first in profileIDs }
     }
 }
 
@@ -47,6 +54,14 @@ class FileDrillStore(private val directory: File) : DrillStore {
     }.getOrDefault(emptyMap())
 
     override suspend fun best(profileID: UUID, sound: SoundID): Map<Int, Double> = locked { read(profileID)[sound.rawValue] ?: emptyMap() }
+
+    override suspend fun keepOnly(profileIDs: Set<UUID>) = locked {
+        directory.listFiles()?.forEach { file ->
+            val id = runCatching { UUID.fromString(file.name.removeSuffix(".tmp").removeSuffix(".json")) }.getOrNull()
+            if (id != null && id !in profileIDs) file.delete()
+        }
+        Unit
+    }
 
     override suspend fun record(profileID: UUID, sound: SoundID, index: Int, share: Double) = locked {
         val all = read(profileID).toMutableMap()

@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tech.fonia.audio.ClipLocation
 import tech.fonia.domain.ContentSource
 import tech.fonia.domain.CourseUnit
@@ -267,6 +268,8 @@ class AppModel(
     val drills: tech.fonia.features.diction.DrillStore = tech.fonia.features.diction.MemoryDrillStore(),
     /** Whether a word picture exists, by name. */
     val hasPicture: (String) -> Boolean = { true },
+    /** The folders and settings files "Șterge tot" empties besides the stores above; null in the JVM tests. */
+    val localData: LocalData? = null,
 ) {
     /** The drills of a sound's training ladder (empty without the v2 texts). */
     fun drills(sound: SoundID): List<tech.fonia.features.diction.Drill> {
@@ -372,6 +375,8 @@ class AppModel(
             // And its voice: his own reference, the dots of his takes, the talker heard ("Șterge tot" empties the list).
             val voiceIds = list.map { it.id }.toSet()
             scope.launch(Dispatchers.IO) { ignoringFailure { voice.keepOnly(voiceIds); talkers.keepOnly(voiceIds) } }
+            // And the best result of each diction drill.
+            scope.launch { ignoringFailure { drills.keepOnly(voiceIds) } }
             jumpIfAsked()
         }
     }
@@ -405,6 +410,51 @@ class AppModel(
                 if (sound != null && rung != null) ticket = SessionTicket(focus = SessionFocus.Sound(sound, rung), title = parts[1], sound = sound)
             }
         }
+    }
+
+    /**
+     * "Șterge tot": the profiles and attempts, the pilot log, each profile's voice reference, quick checks, drills,
+     * reading probes and adaptive state, the files made for sharing, the settings, and the downloaded phoneme model.
+     * Every part is tried; the names of those that stayed come back (empty: the phone holds nothing of anyone).
+     * Whisper's model stays: it holds nothing about anyone, and without internet the app can't fetch it again.
+     */
+    suspend fun wipeEverything(): List<String> {
+        ticket = null
+        val local = localData
+        val left = FullWipe.run(
+            listOf(
+                FullWipe.Part("profilurile și încercările") { repository.wipeAll() },
+                FullWipe.Part("jurnalul de exersare") {
+                    val log = pilot
+                    if (log != null) log.wipe() else local?.let { withContext(Dispatchers.IO) { FullWipe.deleteFolder(it.pilotFolder) } }
+                },
+                FullWipe.Part("vocea, verificările și exercițiile") {
+                    withContext(Dispatchers.IO) {
+                        voice.keepOnly(emptySet())
+                        talkers.keepOnly(emptySet())
+                    }
+                    checks.keepOnly(emptySet())
+                    drills.keepOnly(emptySet())
+                    reading?.keepOnly(emptySet())
+                    adaptive?.keepOnly(emptySet())
+                    local?.let { withContext(Dispatchers.IO) { it.profileFolders.forEach(FullWipe::deleteFolder) } }
+                },
+                FullWipe.Part("fișierele pentru logoped") {
+                    local?.let { withContext(Dispatchers.IO) { it.exportFolders.forEach(FullWipe::deleteFolder) } }
+                },
+                FullWipe.Part("alegerile din Setări") {
+                    if (local != null && !withContext(Dispatchers.IO) { local.clearSettings() }) throw java.io.IOException("settings")
+                },
+                FullWipe.Part("pachetul de sunete descărcat") {
+                    ml?.models?.let { hub -> if (hub.state(tech.fonia.features.ml.ModelCatalog.ZIPA) != tech.fonia.features.ml.ModelsHub.State.Absent) hub.clear(tech.fonia.features.ml.ModelCatalog.ZIPA) }
+                },
+            ),
+        )
+        // The switches kept in memory go back to their defaults with the settings file.
+        audio.effectsMuted = false
+        offerCheck = false
+        activeProfileID = null
+        return left
     }
 
     suspend fun save(profile: Profile) {
@@ -511,6 +561,15 @@ class AppModel(
                 lessonContent = v2,
                 drills = tech.fonia.features.diction.FileDrillStore(File(context.noBackupFilesDir, "Fonia/Diction")),
                 hasPicture = { name -> name in pictures },
+                localData = LocalData(
+                    profileFolders = listOf("Voice", "Check", "Diction", "Reading", "Adaptive").map { File(context.noBackupFilesDir, "Fonia/$it") },
+                    exportFolders = listOf(File(context.cacheDir, "export")),
+                    pilotFolder = PilotLog.defaultFolder(context),
+                    clearSettings = {
+                        val app = context.applicationContext
+                        listOf("fonia", "fonia_talker").all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }
+                    },
+                ),
             )
         }
     }

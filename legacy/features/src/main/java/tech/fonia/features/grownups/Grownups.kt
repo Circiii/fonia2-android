@@ -40,7 +40,9 @@ import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.Destination
 import tech.fonia.features.app.DialogAction
+import tech.fonia.features.app.FoniaAlert
 import tech.fonia.features.app.FoniaConfirmationDialog
+import tech.fonia.features.app.FullWipe
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.InsetGroupedList
 import tech.fonia.features.app.LocalDismiss
@@ -86,6 +88,22 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
     var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
     var addingChild by remember { mutableStateOf(false) }
     var confirmWipe by remember { mutableStateOf(false) }
+    /** What stayed on the phone after "Șterge tot" (null: no failure to show). */
+    var wipeLeft by remember { mutableStateOf<List<String>?>(null) }
+    var isWiping by remember { mutableStateOf(false) }
+    /** Everything goes, or the adult hears what didn't. Once it worked the app is back at its first run. */
+    fun wipe() {
+        if (isWiping) return
+        isWiping = true
+        app.scope.launch {
+            val left = try {
+                app.wipeEverything()
+            } finally {
+                isWiping = false
+            }
+            if (left.isEmpty()) onDone() else wipeLeft = left
+        }
+    }
     var showLegal by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(Palette.paper)) {
         SystemNavigationBar("Setări", onDone = onDone)
@@ -123,25 +141,21 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
         isPresented = confirmWipe,
         onDismiss = { confirmWipe = false },
         title = "Ștergi tot?",
-        message = "Profilurile, încercările și înregistrările dispar de pe telefon. Nu se pot recupera.",
+        message = "Profilurile, încercările, înregistrările, jurnalul și alegerile din Setări dispar de pe telefon. Nu se pot recupera.",
         actions = listOf(
-            DialogAction("Șterge tot", ActionRole.Destructive) {
-                app.scope.launch {
-                    try {
-                        app.repository.wipeAll()
-                    } catch (cancelled: CancellationException) {
-                        throw cancelled
-                    } catch (_: Exception) {
-                    }
-                    // The pilot log goes with everything else.
-                    try {
-                        app.pilot?.wipe()
-                    } catch (cancelled: CancellationException) {
-                        throw cancelled
-                    } catch (_: Exception) {
-                    }
-                    onDone()
-                }
+            DialogAction("Șterge tot", ActionRole.Destructive) { wipe() },
+            DialogAction("Anulează", ActionRole.Cancel),
+        ),
+    )
+    FoniaAlert(
+        isPresented = wipeLeft != null,
+        onDismiss = { wipeLeft = null },
+        title = "Nu am putut șterge tot",
+        message = wipeLeft?.let { FullWipe.leftLine(it) },
+        actions = listOf(
+            DialogAction("Încearcă din nou") {
+                wipeLeft = null
+                wipe()
             },
             DialogAction("Anulează", ActionRole.Cancel),
         ),

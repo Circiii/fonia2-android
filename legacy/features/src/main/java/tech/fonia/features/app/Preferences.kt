@@ -33,6 +33,9 @@ class FoniaPreferences(context: Context) {
         preferences.edit().putInt(key, value).apply()
     }
 
+    /** "Șterge tot": every switch back to its default. False when the file could not be written. */
+    fun clear(): Boolean = preferences.edit().clear().commit()
+
     internal fun observe(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
         preferences.registerOnSharedPreferenceChangeListener(listener)
 

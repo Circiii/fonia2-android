@@ -79,6 +79,13 @@ class ModelsHub(
         }
     }
 
+    /** "Șterge tot": the model goes now, and a failure is thrown so the adult hears that it stayed. */
+    suspend fun clear(entry: ModelEntry) {
+        states[entry.id] = State.Absent
+        beforeDelete(entry)
+        withContext(Dispatchers.IO) { manager.delete(entry) }
+    }
+
     fun remove(entry: ModelEntry) {
         if (state(entry) is State.Downloading) return
         states[entry.id] = State.Absent
