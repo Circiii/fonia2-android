@@ -333,21 +333,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         }
     }
 
-    suspend fun finishTake() {
-        val clip = app.audio.stopListening() ?: return
-        take = clip
-        phase = SpeakPhase.Thinking
-        // The talker heard so far (a man on a child profile is judged as a man), moved by this take's own voice.
-        val group = app.talkers.group(profile)
-        val judge = TakeJudge(
-            content = app.content,
-            group = group,
-            calibration = profile.calibration,
-            transcriber = app.speech.transcriber,
-            thresholds = app.audio.analysisThresholds,
-        )
-        // The new judge (speech/JUDGE.md, ZIPA as second head) decides Romanian sound takes; his judge the rest.
-        val request = SoundJudge.request(exercise, run.ticket.focus, group, profile.calibration)
+    /** The judging of one take, apart from the screen, so it can run under [JudgeTimeout]. */
+    suspend fun judgeTake(
+        request: tech.fonia.judge.JudgeRequest?,
+        clip: CapturedClip,
+        judge: TakeJudge,
+    ): Pair<SoundJudge.Judged?, TakeVerdict> {
         val fresh = if (request != null && sound != null) {
             app.judge?.judge(
                 request, sound, clip, runtimeFor(run),
@@ -366,12 +357,9 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             null
         }
         if (fresh == null) app.talkers.observe(profile, app.audio.lastTakePitch())
-        // When the judge could not place the hiss (no frication found where the target was expected), the strip still
-        // shows where the live meter heard it: what he did is always seen.
-        judged = fresh?.let { j -> j.copy(visual = TakeFeedbackRules.withLivePlace(j.visual, sound?.id, app.audio.lastTakeHiss())) }
-        run.noteJudged(fresh?.certainty)
-        if (fresh?.cue == SoundJudge.Cue.Retake && retakeByItself()) return
-        var result = when {
+        // A take the new judge sends back is decided by the screen ("Mai spune o dată"), not by his judge.
+        if (fresh?.cue == SoundJudge.Cue.Retake) return fresh to fresh.verdict
+        val result = when {
             fresh != null -> fresh.verdict.also { app.shadowSessionTake(run, trial, clip, it) }
             exercise is Exercise.Shadow -> {
                 // No recording to follow means nothing to compare with: a take can't be judged against itself.
@@ -381,6 +369,61 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             // His verdict as it is; the same take also goes to the ZIPA scorer of shadow mode, which never waits.
             else -> judge.judgeShadowed(app, run, trial, clip)
         }
+        return fresh to result
+    }
+
+    /**
+     * No take, or no verdict in time: said plainly, with the retry. The quick check is never blocked by it: the line
+     * shows, then the next word comes.
+     */
+    suspend fun showTrouble(trouble: TakeVerdict) {
+        letter.rest()
+        verdict = trouble
+        phase = SpeakPhase.Result
+        if (run.isCheck) {
+            delay(2600)
+            if (adult == null && !waitingForChoice) run.finishAttempt(exercise, machine = Attempt.Outcome.Unclear, adult = null, take = take)
+        } else {
+            waitingForChoice = true
+        }
+    }
+
+    suspend fun finishTake() {
+        val clip = app.audio.stopListening()
+        if (clip == null) {
+            // No take came back. Say so and offer the retry, rather than leave the microphone looking open.
+            showTrouble(VerdictWriter.listenFailed)
+            return
+        }
+        take = clip
+        phase = SpeakPhase.Thinking
+        // The talker heard so far (a man on a child profile is judged as a man), moved by this take's own voice.
+        val group = app.talkers.group(profile)
+        val judge = TakeJudge(
+            content = app.content,
+            group = group,
+            calibration = profile.calibration,
+            transcriber = app.speech.transcriber,
+            thresholds = app.audio.analysisThresholds,
+        )
+        // The new judge (speech/JUDGE.md, ZIPA as second head) decides Romanian sound takes; his judge the rest.
+        val request = SoundJudge.request(exercise, run.ticket.focus, group, profile.calibration)
+        // A hung Whisper or ZIPA call must not freeze the lesson: past the limit the take is asked for again.
+        val within = JudgeTimeout.firstWithin(JudgeTimeout.limitMs(maximumSeconds), app.scope) {
+            judgeTake(request, clip, judge)
+        }
+        if (!currentCoroutineContext().isActive) return
+        if (within == null) {
+            showTrouble(VerdictWriter.judgeTimedOut)
+            return
+        }
+        val (fresh, judgedResult) = within.value
+        // When the judge could not place the hiss (no frication found where the target was expected), the strip still
+        // shows where the live meter heard it: what he did is always seen.
+        judged = fresh?.let { j -> j.copy(visual = TakeFeedbackRules.withLivePlace(j.visual, sound?.id, app.audio.lastTakeHiss())) }
+        run.noteJudged(fresh?.certainty)
+        if (fresh?.cue == SoundJudge.Cue.Retake && retakeByItself()) return
+        var result = judgedResult
         // A take nobody heard is said again by itself, as the new judge's retakes are.
         if (!result.keepsTake && result.rating == null && retakeByItself()) return
         if (run.profile.isChild) result = result.softenedForChild

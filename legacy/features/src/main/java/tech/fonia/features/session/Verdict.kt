@@ -98,6 +98,12 @@ object VerdictWriter {
 
     val notHeard = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Nu te-am auzit", tip = "Vorbește mai aproape de telefon.", keepsTake = false)
 
+    /** The microphone gave nothing back, so there is no take to judge. Said plainly, with the one thing to do. */
+    val listenFailed = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Nu am putut asculta", tip = "Mai încearcă o dată.", keepsTake = false)
+
+    /** The take was recorded but judging it took too long. Nothing is wrong with the take; ask for it again. */
+    val judgeTimedOut = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Nu știu sigur", tip = "Mai spune o dată, rar.", keepsTake = false)
+
     fun capture(outcome: SoundOutcome): TakeVerdict? = when (outcome) {
         SoundOutcome.NotHeard -> notHeard
         SoundOutcome.TooShort -> TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "A fost prea scurt", tip = "Mai spune o dată, rar.", keepsTake = false)
