@@ -611,6 +611,8 @@ class AppModel(
             val speech = SpeechHub(runCatching { platform.speechModel(context.applicationContext, arguments) }.getOrNull(), scope)
             // The new ML is optional: a phone where its files can't be opened runs the app as before.
             val preferences = FoniaPreferences(context.applicationContext)
+            // A force stop takes the app's alarms with it: the daily reminder comes back when the app opens.
+            runCatching { PracticeReminder.restore(context.applicationContext) }
             val openPilot = { runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull() }
             // Off until an adult switches it on: a family that never opens Setări keeps no log.
             val pilotSlot = PilotSlot(if (preferences.bool(PilotSwitch.KEY, PilotSwitch.DEFAULT)) openPilot() else null)
