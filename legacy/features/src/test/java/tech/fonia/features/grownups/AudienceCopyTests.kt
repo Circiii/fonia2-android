@@ -20,6 +20,14 @@ class AudienceCopyTests {
     }
 
     @Test
+    fun theStageLineUnderASound() {
+        assertEquals(
+            listOf("Etapa: Emitere.", "Etapa: Consolidare.", "Etapa: Consolidare.", "Etapa: Diferențiere.", "Etapa: Automatizare.", "Etapa: Automatizare."),
+            listOf(tech.fonia.domain.Rung.Isolated, tech.fonia.domain.Rung.Syllables, tech.fonia.domain.Rung.Clusters, tech.fonia.domain.Rung.Pairs, tech.fonia.domain.Rung.Sentences, tech.fonia.domain.Rung.Everyday).map(StageNames::line),
+        )
+    }
+
+    @Test
     fun theCreditsNameTheLibrariesTheScanAndTheRealSoundSource() {
         val text = Credits.lines.joinToString(" ")
         for (name in listOf("MediaPipe", "LiteRT", "CameraX", "Oboe", "Media3", "Lee Perry-Smith", "CC BY 3.0", "MakeHuman", "CC0", "ElevenLabs")) {
