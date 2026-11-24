@@ -185,7 +185,8 @@ fun AdultGateBody(gate: AdultGate, onPass: () -> Unit, modifier: Modifier = Modi
                         },
                     contentAlignment = Alignment.Center,
                 ) {
-                    FoniaText("3", style = ui(34, UIWeight.black, TextRole.largeTitle).monospacedDigit(), color = Palette.accentText)
+                    // The ring's own label says it; the drawn 3 isn't read a second time.
+                    FoniaText("3", Modifier.clearAndSetSemantics {}, style = ui(34, UIWeight.black, TextRole.largeTitle).monospacedDigit(), color = Palette.accentText)
                 }
                 FoniaText("Ține apăsat 3 secunde", style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
             } else {

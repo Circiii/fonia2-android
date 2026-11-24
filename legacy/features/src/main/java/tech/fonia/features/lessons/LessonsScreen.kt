@@ -342,7 +342,7 @@ private fun LessonMenu(lessons: List<Lesson>, chosen: Lesson?, onPick: (Lesson) 
                                     onPick(item)
                                     open = false
                                 }
-                                .heightIn(min = 46.dp)
+                                .heightIn(min = ChildTarget)
                                 .padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -540,7 +540,7 @@ private fun Trailing(state: LessonState, canOpen: Boolean, ownDots: Int = 0) {
         // Opened by his own success: one dot per good plain sound, of five.
         LessonState.locked -> androidx.compose.foundation.layout.Row(
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(3.dp),
-            modifier = Modifier.semantics { stateDescription = "$ownDots din ${tech.fonia.features.session.OwnSuccess.TARGET}" },
+            modifier = Modifier.semantics { stateDescription = tech.fonia.features.session.OwnSuccess.spokenDots(ownDots) },
         ) {
             repeat(tech.fonia.features.session.OwnSuccess.TARGET) { i ->
                 Box(Modifier.size(8.dp).background(if (i < ownDots) Palette.progress else Palette.progressTrack, CircleShape))

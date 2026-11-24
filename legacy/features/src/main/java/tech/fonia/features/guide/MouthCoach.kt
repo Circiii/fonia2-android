@@ -489,7 +489,7 @@ private fun TopMouthPane(
 @Composable
 private fun MouthControl(label: String, onClick: () -> Unit) {
     Box(
-        Modifier.heightIn(min = 48.dp).clickable(role = Role.Button, onClick = onClick)
+        Modifier.heightIn(min = 56.dp).clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {

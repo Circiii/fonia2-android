@@ -196,7 +196,7 @@ private fun GuidedMouth(sound: SoundId, steps: List<PoseStep>, insideAvailable: 
             RoundIcon(
                 description = "Încă o dată",
                 enabled = true,
-                modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
+                modifier = Modifier.align(Alignment.TopEnd),
                 onClick = { jump = null; run += 1 },
             ) { FoniaIconView(FoniaIcon.retry, size = 16f, tint = Palette.ink) }
             // The cut-away's place: shown, but off until a speech therapist approves the pose (`insideAvailable`).
@@ -204,7 +204,7 @@ private fun GuidedMouth(sound: SoundId, steps: List<PoseStep>, insideAvailable: 
                 description = "Vezi în interior",
                 enabled = insideAvailable,
                 selected = inside,
-                modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
+                modifier = Modifier.align(Alignment.TopStart),
                 onClick = { inside = !inside },
             ) { Glyph("inside", Palette.ink, 18.dp) }
         }
@@ -242,15 +242,22 @@ private fun RoundIcon(
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    // A child's finger gets 56 dp; the drawn circle stays 34 so it doesn't cover the mouth.
     Box(
         modifier
-            .size(34.dp)
-            .graphicsLayer { alpha = if (enabled) 1f else 0.35f }
-            .background(if (selected) Palette.accentSoft else Palette.sheet.copy(alpha = 0.9f), CircleShape)
+            .size(56.dp)
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
-    ) { content() }
+    ) {
+        Box(
+            Modifier
+                .size(34.dp)
+                .graphicsLayer { alpha = if (enabled) 1f else 0.35f }
+                .background(if (selected) Palette.accentSoft else Palette.sheet.copy(alpha = 0.9f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) { content() }
+    }
 }
 
 /** The small line icons of the chips: lips, teeth, tongue, air, and the cut-away's half head. */

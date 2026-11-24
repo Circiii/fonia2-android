@@ -231,7 +231,7 @@ private fun RecordingsCard(recordings: List<Recording>, app: AppModel) {
                     Modifier
                         .fillMaxWidth()
                         .clickable(role = Role.Button) { app.play(recording) }
-                        .heightIn(min = 48.dp),
+                        .heightIn(min = 56.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

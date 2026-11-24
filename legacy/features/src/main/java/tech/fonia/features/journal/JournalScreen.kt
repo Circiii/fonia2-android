@@ -225,7 +225,7 @@ fun JournalScreen(path: PathModel, app: AppModel) {
 private fun MonthStep(icon: FoniaIcon, label: String, enabled: Boolean, onClick: () -> Unit) {
     Box(
         Modifier
-            .size(44.dp)
+            .size(56.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -247,7 +247,7 @@ private fun DayCell(day: JournalDay, isToday: Boolean, hasPractice: Boolean, onC
     Box(
         Modifier
             .fillMaxWidth()
-            .heightIn(min = 44.dp)
+            .heightIn(min = 56.dp)
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick)
             .clearAndSetSemantics {
                 role = Role.Button

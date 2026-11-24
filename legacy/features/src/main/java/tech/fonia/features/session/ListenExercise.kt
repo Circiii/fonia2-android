@@ -1,6 +1,11 @@
 package tech.fonia.features.session
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -203,25 +208,39 @@ private fun AnswerButton(option: Option, reveal: Boolean, enabled: Boolean, modi
     val spring = swiftSpring<Color>(0.2, 0.1)
     val face by animateColorAsState(if (reveal && option.isRight) Palette.rightSoft else Palette.sheet, spring, label = "face")
     val border by animateColorAsState(if (reveal && option.isRight) Palette.right else Palette.right.copy(alpha = 0f), spring, label = "border")
+    // The right tile also gets a check mark, so colour isn't the only sign of which one it was.
     val opacity by animateFloatAsState(if (reveal && !option.isRight) 0.5f else 1f, swiftSpring(0.2, 0.1), label = "opacity")
-    StyledButton(onClick = onPick, style = TileButtonStyle(face = face, border = border), modifier = modifier, enabled = enabled) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = if (option.picture == null) 104.dp else 164.dp)
-                .padding(horizontal = 8.dp)
-                .alpha(opacity),
-            verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            option.picture?.let { WordPicture(it, Modifier.height(96.dp)) }
-            FoniaText(
-                option.title,
-                style = if (option.usesPracticeFont) practice(28, PracticeWeight.bold, TextRole.title) else ui(28, UIWeight.black, TextRole.title),
-                color = Palette.ink,
-                maxLines = 1,
-                minimumScaleFactor = 0.6f,
-            )
+    StyledButton(
+        onClick = onPick,
+        style = TileButtonStyle(face = face, border = border),
+        modifier = modifier.semantics { if (reveal && option.isRight) stateDescription = "Răspunsul bun" },
+        enabled = enabled,
+    ) {
+        Box {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = if (option.picture == null) 104.dp else 164.dp)
+                    .padding(horizontal = 8.dp)
+                    .alpha(opacity),
+                verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                option.picture?.let { WordPicture(it, Modifier.height(96.dp)) }
+                FoniaText(
+                    option.title,
+                    style = if (option.usesPracticeFont) practice(28, PracticeWeight.bold, TextRole.title) else ui(28, UIWeight.black, TextRole.title),
+                    color = Palette.ink,
+                    maxLines = 1,
+                    minimumScaleFactor = 0.6f,
+                )
+            }
+            if (reveal && option.isRight) {
+                Box(
+                    Modifier.align(Alignment.TopEnd).padding(8.dp).size(26.dp).background(Palette.right, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) { FoniaIconView(FoniaIcon.tick, size = 13f, tint = Color.White) }
+            }
         }
     }
 }

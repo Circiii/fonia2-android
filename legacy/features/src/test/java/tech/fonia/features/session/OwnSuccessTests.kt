@@ -92,4 +92,13 @@ class OwnSuccessTests {
         val state = ProgressionState(rung = Rung.Isolated, establishCorrect = 4)
         assertEquals(ProgressionStep.Stay, OwnSuccess.afterBlock(correct = 3, attempted = 3, state = state).step)
     }
+
+    @Test
+    fun talkBackReadsTheDotsInWordsNotCounts() {
+        assertEquals(
+            listOf("Abia începem", "Mai puțin de jumătate", "Mai puțin de jumătate", "Peste jumătate", "Peste jumătate", "Gata", "Gata"),
+            (0..6).map(OwnSuccess::spokenDots),
+        )
+        assertFalse((0..6).any { Regex("\\d").containsMatchIn(OwnSuccess.spokenDots(it)) })
+    }
 }

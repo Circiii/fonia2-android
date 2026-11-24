@@ -25,6 +25,17 @@ object OwnSuccess {
     /** The dots: how many of [TARGET] are done. */
     fun dots(establishCorrect: Int): Int = establishCorrect.coerceIn(0, TARGET)
 
+    /**
+     * What TalkBack says for the dots: words, never "N din 5", since a child is shown no counts (the same words as
+     * the lesson bar on iOS).
+     */
+    fun spokenDots(establishCorrect: Int): String = when (dots(establishCorrect)) {
+        0 -> "Abia începem"
+        TARGET -> "Gata"
+        in 1 until (TARGET + 1) / 2 -> "Mai puțin de jumătate"
+        else -> "Peste jumătate"
+    }
+
     /** The lock is on and no adult has listened yet (nor opened the whole path). */
     fun waitsForAdult(state: ProgressionState): Boolean =
         state.lockEnabled && !state.openedByParent && !state.adultConfirmed
