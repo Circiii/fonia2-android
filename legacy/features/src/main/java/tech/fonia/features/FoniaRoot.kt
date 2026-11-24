@@ -29,6 +29,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
@@ -153,6 +155,9 @@ private fun CannotStart() {
 @Composable
 private fun AppContent(app: AppModel) {
     var showGrownups by remember { mutableStateOf(false) }
+    // Three minutes away from the app close the adult check again.
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { app.gate.onBackground() }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { app.gate.onForeground() }
     val ticket = app.ticket
     val profile = app.activeProfile
     // The cover keeps showing the session it had while it slides away.

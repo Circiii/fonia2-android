@@ -57,7 +57,9 @@ import tech.fonia.domain.Plural
 import tech.fonia.domain.Progression
 import tech.fonia.domain.Rung
 import tech.fonia.domain.SoundDef
+import tech.fonia.features.app.AdultGateBody
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.Destination
 import tech.fonia.features.app.DetailRow
@@ -105,7 +107,12 @@ import java.util.UUID
 fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, onShowGrownups: (Boolean) -> Unit) {
     // No grown-ups' door any more (v2-flow, owner 2026-11-24): the one who practises opens his own settings.
     HeaderPage("Setări", closes = true) {
-        Rooms(profile, app, path, onShowGrownups)
+        // With a child on the phone, the settings are the adult's (iOS AdultGate): the check comes first.
+        if (app.needsAdultGate) {
+            AdultGateBody(app.gate, onPass = {}, Modifier.weight(1f))
+        } else {
+            Rooms(profile, app, path, onShowGrownups)
+        }
     }
 }
 

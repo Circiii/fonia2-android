@@ -347,6 +347,7 @@ private fun ReportSheet(
     onDone: () -> Unit,
 ) {
     val context = LocalContext.current
+    val guard = tech.fonia.features.app.rememberAdultGate(app)
     var pseudonym by rememberSaveable { mutableStateOf(data.report.pseudonym.ifBlank { "Elevul A" }) }
     var age by rememberSaveable { mutableStateOf(data.report.age) }
     var grade by rememberSaveable { mutableStateOf(data.report.grade?.rawValue) }
@@ -414,7 +415,7 @@ private fun ReportSheet(
                 ListSection(header = "Cum arată", clear = true) {
                     row {
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            StyledButton(onClick = { ReadingReportPdf.share(context, ready.first) }, style = FoniButtonStyle()) { CTALabel("Trimite PDF-ul") }
+                            StyledButton(onClick = { guard { ReadingReportPdf.share(context, ready.first) } }, style = FoniButtonStyle()) { CTALabel("Trimite PDF-ul") }
                             ready.second.forEachIndexed { index, page ->
                                 Image(
                                     page.asImageBitmap(),

@@ -178,6 +178,8 @@ data class LaunchArguments(
     val face: String? = null,
     /** Android only, debug: every take reads this WAV (a path on the device) instead of the microphone. */
     val micFile: String? = null,
+    /** Debug only (iOS `-foniaGate`): the adult check always asks this number, so a test can pass it. */
+    val gateNumber: Int? = null,
 ) {
     companion object {
         val none = LaunchArguments()
@@ -201,6 +203,7 @@ data class LaunchArguments(
                 reduceMotion = debug && flag("foniaReduceMotion"),
                 face = if (debug) value("foniaFace") else null,
                 micFile = if (debug) value("foniaMicFile") else null,
+                gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
             )
         }
     }
@@ -278,6 +281,9 @@ class AppModel(
     val localData: LocalData? = null,
 ) {
     private val slot: PilotSlot = pilotSlot ?: PilotSlot(pilot)
+
+    /** The adult check before the settings, the files that leave the phone, links out and a child's notes. */
+    val gate: AdultGate = AdultGate(fixed = arguments.gateNumber)
 
     /**
      * The pilot's event log (docs/PLAN.md §6), its own file beside FoniaStore's. Null while the log is switched off
@@ -471,6 +477,8 @@ class AppModel(
      */
     suspend fun wipeEverything(): List<String> {
         ticket = null
+        // The next person doesn't find the settings open, whatever fails below.
+        gate.close()
         val local = localData
         val left = FullWipe.run(
             listOf(

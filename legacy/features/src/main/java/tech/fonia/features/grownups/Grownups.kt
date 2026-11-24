@@ -40,6 +40,8 @@ import tech.fonia.design.fHeadline
 import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.adaptive.AdaptiveStore
 import tech.fonia.features.app.ActionRole
+import tech.fonia.features.app.AdultGateScreen
+import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.Destination
@@ -76,6 +78,11 @@ import java.util.UUID
  */
 @Composable
 fun GrownupsHome(app: AppModel, onDone: () -> Unit) {
+    // With a child on the phone, the settings are the adult's (iOS AdultGate): the check comes first.
+    if (app.needsAdultGate) {
+        AdultGateScreen(app.gate, onPass = {}, onClose = onDone)
+        return
+    }
     val stack = remember { NavStack() }
     NavigationHost(stack) { destination ->
         if (destination == Destination.Root) {

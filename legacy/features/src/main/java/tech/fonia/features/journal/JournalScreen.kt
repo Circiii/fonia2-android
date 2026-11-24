@@ -62,6 +62,7 @@ import tech.fonia.design.monospacedDigit
 import tech.fonia.design.ui
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.rememberAdultGate
 import tech.fonia.features.app.Destination
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaAlert
@@ -105,6 +106,7 @@ fun JournalScreen(path: PathModel, app: AppModel) {
     var openedDay by remember { mutableStateOf<JournalDay?>(null) }
     var shownDay by remember { mutableStateOf<JournalDay?>(null) }
     val push = rememberPushDestination()
+    val guard = rememberAdultGate(app)
     val zone = ZoneId.systemDefault()
     val practised = path.sessions.filter { it.endedAt != null || it.attempts > 0 }.map { it.localDay }.toSet()
     val today = LocalDate.now(zone)
@@ -186,7 +188,8 @@ fun JournalScreen(path: PathModel, app: AppModel) {
             ) {
                 MonthStep(FoniaIcon.back, "Luna trecută", enabled = true) { month = month.minusMonths(1) }
                 StyledButton(
-                    onClick = { push(Destination.Notes(path.profile.id)) },
+                    // A child's notes are for the logoped: the adult writes them.
+                    onClick = { if (path.profile.isChild) guard { push(Destination.Notes(path.profile.id)) } else push(Destination.Notes(path.profile.id)) },
                     style = PlusButtonStyle(),
                     modifier = Modifier.semantics { contentDescription = "Adaugă o notiță pentru logoped" },
                 ) {
