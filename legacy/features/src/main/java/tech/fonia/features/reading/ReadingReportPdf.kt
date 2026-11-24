@@ -29,19 +29,20 @@ import kotlin.math.max
  * the parent shares it through the system's share sheet.
  */
 object ReadingReportPdf {
-    private const val WIDTH = 595
-    private const val HEIGHT = 842
-    private const val LEFT = 44f
-    private const val RIGHT = WIDTH - 44f
-    private const val TOP = 46f
-    private const val BOTTOM = HEIGHT - 74f
-    private const val CONTENT = RIGHT - LEFT
+    // The page and the colours are shared with the practice report (PracticeReportPdf), so the two look alike.
+    internal const val WIDTH = 595
+    internal const val HEIGHT = 842
+    internal const val LEFT = 44f
+    internal const val RIGHT = WIDTH - 44f
+    internal const val TOP = 46f
+    internal const val BOTTOM = HEIGHT - 74f
+    internal const val CONTENT = RIGHT - LEFT
 
-    private val ink = Color.rgb(0x10, 0x2E, 0x52)
-    private val inkSoft = Color.rgb(0x54, 0x65, 0x77)
-    private val accent = Color.rgb(0x00, 0x82, 0x40)
-    private val line = Color.rgb(0xDD, 0xE3, 0xDC)
-    private val cloud = Color.rgb(0xEB, 0xF2, 0xEB)
+    internal val ink = Color.rgb(0x10, 0x2E, 0x52)
+    internal val inkSoft = Color.rgb(0x54, 0x65, 0x77)
+    internal val accent = Color.rgb(0x00, 0x82, 0x40)
+    internal val line = Color.rgb(0xDD, 0xE3, 0xDC)
+    internal val cloud = Color.rgb(0xEB, 0xF2, 0xEB)
     private val sheet = Color.WHITE
 
     /** The folder the share sheet reads from, inside the cache folder that `fonia_export_paths.xml` opens. */

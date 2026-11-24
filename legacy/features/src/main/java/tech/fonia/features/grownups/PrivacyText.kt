@@ -102,8 +102,8 @@ object PrivacyText {
         // summary goes along only while the journal is on.
         Section(
             "Fișierul pentru logoped",
-            "Îl faci tu, din Setări, și îl trimiți cui vrei. Conține profilul, progresul la fiecare sunet, lecțiile, încercările, notițele, textul recunoscut din discursuri și, dacă jurnalul e pornit, un rezumat al lui. Nu conține vocea și nici numele. Fonia nu îl trimite singură." +
-                if (withReading) " La fel e și cu raportul de citire." else "",
+            "Îl faci tu, din Setări, și îl trimiți cui vrei. Conține profilul, progresul la fiecare sunet, lecțiile, încercările, notițele, textul recunoscut din discursuri și, dacă jurnalul e pornit, un rezumat al lui. Nu conține vocea și nici numele. Fonia nu îl trimite singură. La fel e și cu raportul PDF pentru logoped" +
+                if (withReading) " și cu raportul de citire." else ".",
         ),
         // AppModel.wipeEverything.
         Section(

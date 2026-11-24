@@ -25,6 +25,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import tech.fonia.features.app.RowLabel
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -178,6 +180,29 @@ fun ListSectionScope.profileActivityRows(profile: Profile, app: AppModel, contex
             onClick = { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive) } },
             chevron = false,
         )
+    }
+    if (profile.isChild) row { PracticeReportRow(profile, app, context) }
+}
+
+/**
+ * The PDF the logoped can read in a minute (iOS `reportRow`). It leaves the phone, so it sits behind the adult check
+ * with the rest of this page; with nothing practised yet the row only says so.
+ */
+@Composable
+private fun PracticeReportRow(profile: Profile, app: AppModel, context: Context) {
+    var hasPractice by remember(profile.id) { mutableStateOf(false) }
+    LaunchedEffect(profile.id) { hasPractice = runCatching { PracticeReportPdf.hasPractice(app.repository, profile.id) }.getOrDefault(false) }
+    if (hasPractice) {
+        DetailRow(
+            "Raportul pentru logoped",
+            "Un PDF scurt, fără numele copilului și fără voce.",
+            onClick = { app.scope.launch { PracticeReportPdf.share(context, app.repository, app.content, profile.id) } },
+            chevron = false,
+        )
+    } else {
+        ListRow(Modifier.alpha(0.6f)) {
+            RowLabel("Raportul pentru logoped", "Încă nu e nimic de arătat. Raportul apare după prima zi de exersare.", Modifier.weight(1f))
+        }
     }
 }
 
