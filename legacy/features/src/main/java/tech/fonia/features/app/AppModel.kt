@@ -157,6 +157,7 @@ data class CustomRun(
  * | | `foniaFakeSpeech` (boolean) | a speech model that downloads in two seconds and answers canned results |
  * | | `foniaReduceMotion` (boolean) | Reduce Motion on whatever the system says, and the voice meters still, for the UI tests (Compose tests wait for idle, and Foni, the sky and a live meter never are) |
  * | | `foniaFace` (string) | the face the mouth coach sees, held still, as `name=value` pairs of `FaceFrame` (`smile=0.8,jawOpen=0.1`) |
+ * | `-foniaNoAdultCards` | `foniaNoAdultCards` (boolean) | no first-time card for the adult before a lesson or the mirror |
  * | | `foniaMicFile` (string) | a WAV on the device read in real time in place of the microphone, then silence, through the same live path (levels, judge, screens) |
  *
  * The same switches can also come as iOS-style strings in a string-array extra `arguments`
@@ -180,6 +181,8 @@ data class LaunchArguments(
     val micFile: String? = null,
     /** Debug only (iOS `-foniaGate`): the adult check always asks this number, so a test can pass it. */
     val gateNumber: Int? = null,
+    /** Debug only (iOS `-foniaNoAdultCards`): the first-time cards for the adult stay out of the way of a UI test. */
+    val hidesAdultCards: Boolean = false,
     /**
      * The drafts (Bac, "Cuvântul important", the reading probes, the diction training): shown in debug builds, or
      * with `foniaDrafts`; a release build without the flag doesn't show them (iOS `LaunchFlags.showsDrafts`).
@@ -209,6 +212,7 @@ data class LaunchArguments(
                 face = if (debug) value("foniaFace") else null,
                 micFile = if (debug) value("foniaMicFile") else null,
                 gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
+                hidesAdultCards = debug && flag("foniaNoAdultCards"),
                 drafts = debug || flag("foniaDrafts"),
             )
         }

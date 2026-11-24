@@ -62,6 +62,7 @@ import tech.fonia.features.app.SystemNavigationBar
 import tech.fonia.features.app.ToggleRow
 import tech.fonia.features.app.ValueRow
 import tech.fonia.features.app.rememberStoredBoolean
+import tech.fonia.features.guide.AdultCardsSeen
 import tech.fonia.features.home.DestinationScreen
 import tech.fonia.features.home.displayName
 import tech.fonia.features.home.rememberPushDestination
@@ -227,6 +228,7 @@ fun ProfileDetail(profileID: UUID, app: AppModel) {
                         throw cancelled
                     } catch (_: Exception) {
                     }
+                    AdultCardsSeen.forget(profileID, app.preferences)
                     // And every row of the pilot log about this profile.
                     try {
                         app.pilot?.deleteProfile(profileID)

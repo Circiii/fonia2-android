@@ -71,6 +71,9 @@ import tech.fonia.features.grownups.ParentsScreen
 import tech.fonia.features.grownups.ProfileDetail
 import tech.fonia.features.grownups.SoundChoiceScreen
 import tech.fonia.features.grownups.WhoScreen
+import tech.fonia.features.app.LocalDismiss
+import tech.fonia.features.guide.AdultCardGate
+import tech.fonia.features.guide.FirstTimeCard
 import tech.fonia.features.guide.MouthCoach
 import tech.fonia.features.guide.SoundGuide
 import tech.fonia.features.journal.JournalScreen
@@ -313,6 +316,9 @@ fun DestinationScreen(destination: Destination, app: AppModel, path: PathModel?,
         is Destination.Adaptive -> AdaptiveScreen(destination.profileID, app)
         Destination.Licences -> tech.fonia.features.grownups.LicencesScreen()
         is Destination.LicenceText -> tech.fonia.features.grownups.LicenceTextScreen(destination.id)
+        Destination.AdultCards -> tech.fonia.features.guide.AdultCardsScreen()
+        is Destination.AdultCard -> tech.fonia.features.guide.AdultCardKind.fromRawValue(destination.kind)
+            ?.let { tech.fonia.features.guide.AdultCardPage(tech.fonia.features.guide.AdultCards.card(it)) } ?: EmptyPage()
     }
 }
 
@@ -320,7 +326,13 @@ fun DestinationScreen(destination: Destination, app: AppModel, path: PathModel?,
 private fun RouteScreen(route: AppRoute, app: AppModel, path: PathModel, onShowGrownups: (Boolean) -> Unit) {
     when (route) {
         is AppRoute.Guide -> SoundGuide(app.content.sound(route.sound), app)
-        is AppRoute.Mirror -> app.content.coachPlan(route.sound.rawValue)?.let { MouthCoach(it, path.profile, app) } ?: EmptyPage()
+        is AppRoute.Mirror -> app.content.coachPlan(route.sound.rawValue)?.let { plan ->
+            // A child's first time at the mirror opens with the card for the adult beside them.
+            val dismiss = LocalDismiss.current
+            AdultCardGate(path.profile, FirstTimeCard.mirror(path.profile, app), app, closes = false, onClose = dismiss) {
+                MouthCoach(plan, path.profile, app)
+            }
+        } ?: EmptyPage()
         is AppRoute.Coach -> app.content.coachPlan(route.key)?.let { MouthCoach(it, path.profile, app) } ?: EmptyPage()
         is AppRoute.Unit -> path.unit(route.id)?.let { UnitScreen(it, path, app) } ?: EmptyPage()
         AppRoute.AllSounds -> SoundsScreen(path)

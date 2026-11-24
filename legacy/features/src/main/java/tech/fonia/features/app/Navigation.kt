@@ -75,6 +75,11 @@ sealed interface Destination {
     data object Licences : Destination
 
     data class LicenceText(val id: String) : Destination
+
+    /** The cards for the adult (iOS `AdultCardsScreen`), and one of them read again. */
+    data object AdultCards : Destination
+
+    data class AdultCard(val kind: String) : Destination
 }
 
 /** One `NavigationStack` path. The root is always there; [push] and [pop] change what's on top. */

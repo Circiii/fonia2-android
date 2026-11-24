@@ -27,7 +27,8 @@ import org.junit.Rule
  * Every journey starts from nothing (`foniaResetData`), takes come from the recorded clips (`foniaFixtures`, always
  * on in the iOS simulator), and `foniaReduceMotion` stills what never stops moving (Foni, the sky, the voice meters),
  * because a Compose test waits for the screen to be idle. `foniaGate` fixes the number the adult check asks
- * ([GATE_NUMBER]), so a journey can pass it the way an adult does.
+ * ([GATE_NUMBER]), so a journey can pass it the way an adult does. `foniaNoAdultCards` keeps the card for the adult
+ * out of the way of the lessons; the cards have their own tests.
  */
 abstract class Journeys {
     @get:Rule
@@ -42,6 +43,7 @@ abstract class Journeys {
             .putExtra("foniaFixtures", true)
             .putExtra("foniaReduceMotion", true)
             .putExtra("foniaGate", GATE_NUMBER)
+            .putExtra("foniaNoAdultCards", true)
             .apply(extras)
         scenario = ActivityScenario.launch(intent)
     }

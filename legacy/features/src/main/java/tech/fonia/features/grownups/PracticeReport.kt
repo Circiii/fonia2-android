@@ -12,6 +12,7 @@ import tech.fonia.features.app.lowercasedFirstLetterForSentence
 import tech.fonia.features.app.orderedSounds
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
+import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.reading.ReadingReport
 import tech.fonia.store.Attempt
 import tech.fonia.store.PracticeData
@@ -74,6 +75,8 @@ data class PracticeReport(
         /** The course's name for the lesson on that rung, and its line. */
         val lesson: String,
         val lessonDetail: String,
+        /** The stage name of that rung ([StageNames]): where the lesson sits in the course, not a grade. */
+        val stage: String,
         val confirmedByAdult: Boolean,
         val attempts: Int,
         val days: Int,
@@ -93,6 +96,9 @@ data class PracticeReport(
                 val detail = if (lessonDetail.isEmpty()) "" else " ($shown)"
                 return "Treapta $rung din $rungs: „$lesson”$detail."
             }
+
+        /** "Etapa: Consolidare." */
+        val stageLine: String get() = AdultCards.stageLine(stage)
 
         val confirmed: String? get() = if (confirmedByAdult) "Adultul a ascultat $letter singur și a spus că e bine." else null
 
@@ -171,7 +177,7 @@ data class PracticeReport(
             lines += facts.map { "${it.first}: ${it.second}" }
             lines += listOf(summary, HOW_TO_READ_TITLE) + HOW_TO_READ + SOUNDS_TITLE
             for (sound in sounds) {
-                lines += listOf(sound.title, sound.ladder)
+                lines += listOf(sound.title, sound.ladder, sound.stageLine)
                 sound.confirmed?.let { lines += it }
                 lines += sound.tries
                 lines += sound.rows.map { it.joinToString(" | ") }
@@ -202,6 +208,7 @@ data class PracticeReport(
             "„Adultul” arată ce a ales adultul care a ascultat. „Fără răspuns”: telefonul nu a auzit destul de clar sau adultul nu a ales nimic.",
             "Fonia doar numără încercările, nu trage concluzii. Raportul e pentru logoped, nu e o notă.",
             "Numele copilului nu apare. În notițe, numele e înlocuit cu [nume].",
+            AdultCards.STAGE_REPORT_NOTE,
         )
 
         const val SOUNDS_TITLE = "Sunetele exersate"
@@ -274,6 +281,7 @@ data class PracticeReport(
                     rungs = Rung.entries.size,
                     lesson = lesson?.title ?: rung.title(letter),
                     lessonDetail = lesson?.detail ?: "",
+                    stage = AdultCards.stageName(rung),
                     confirmedByAdult = id in data.profile.confirmedSounds,
                     attempts = tries.size,
                     days = tries.map { it.localDay }.toSet().size,

@@ -80,6 +80,7 @@ import tech.fonia.features.app.field
 import tech.fonia.features.app.index
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.orderedSounds
+import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.app.progressionState
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
@@ -210,6 +211,7 @@ private fun PracticeReportRow(profile: Profile, app: AppModel, context: Context)
 fun ListSectionScope.profileSetupRows(profile: Profile, push: (Destination) -> Unit) {
     if (profile.isChild) {
         row { NavigationRow("Ce sunete exersează", onClick = { push(Destination.SoundChoice(profile.id)) }) }
+        row { DetailRow(AdultCards.SCREEN_TITLE, AdultCards.SCREEN_DETAIL, onClick = { push(Destination.AdultCards) }) }
         // The adaptive pilot (docs/PLAN.md §7.4): off until an adult switches it on.
         row { NavigationRow("Mod adaptiv (pilot)", onClick = { push(Destination.Adaptive(profile.id)) }) }
     }

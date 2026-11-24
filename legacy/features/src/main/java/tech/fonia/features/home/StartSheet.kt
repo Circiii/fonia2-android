@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
+import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
 import tech.fonia.design.SceneBackdrop
 import tech.fonia.design.SceneName
@@ -48,16 +50,23 @@ import tech.fonia.design.ui
 import tech.fonia.domain.Plural
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.HelpButton
+import tech.fonia.features.app.LocalDismiss
 import tech.fonia.features.app.SheetDetent
 import tech.fonia.features.app.domainAge
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.minutes
 import tech.fonia.features.app.shortLetter
+import tech.fonia.features.guide.AdultCard
+import tech.fonia.features.guide.AdultCardPage
+import tech.fonia.features.guide.AdultCards
 
 /** What the big button opens: what comes next and how long it takes. Nothing happens until it's tapped. */
 @Composable
 fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit) {
     var showHelp by remember { mutableStateOf(false) }
+    var readingCard by remember { mutableStateOf<AdultCard?>(null) }
+    // Kept apart from the card so the sheet still has its text while it slides away.
+    var readsCard by remember { mutableStateOf(false) }
     val step = path.continuing
     val isChild = path.profile.isChild
     val intro = run {
@@ -67,6 +76,8 @@ fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit)
         "Urmează „${step.lesson.title}”. Durează cam ${Plural.format(minutes, Plural.Noun.Minut)}."
     }
     val parentBrief: String? = null
+    // The card for the kind of lesson the big button opens, read again. Never for an adult practising alone.
+    val nextCard = step?.lesson?.focus?.let(AdultCards::kind)?.let { AdultCards.card(it, isChild) }
 
     Box(Modifier.fillMaxSize()) {
         SceneBackdrop(SceneName.start)
@@ -120,6 +131,11 @@ fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit)
                 if (parentBrief != null) {
                     FoniaText(parentBrief, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
                 }
+                if (nextCard != null) {
+                    StyledButton(onClick = { readingCard = nextCard; readsCard = true }, style = MiniPillStyle(), modifier = Modifier.heightIn(min = 48.dp)) {
+                        FoniaText(AdultCards.START_SHEET_BUTTON)
+                    }
+                }
                 StyledButton(onClick = { step?.let(onPick) }, style = FoniButtonStyle(), enabled = step != null) {
                     FoniaText(if (path.hasStarted) "Continui" else "Încep")
                 }
@@ -142,6 +158,13 @@ fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit)
             FoniaText("Cum începi", Modifier.semantics { heading() }, style = fTitle, color = Palette.ink)
             FoniaText("„Mă încălzesc” înseamnă câteva mișcări de gură și limbă, ca să-ți iasă mai ușor.", style = fBody, color = Palette.ink)
             FoniaText("„${if (path.hasStarted) "Continui" else "Încep"}” te duce direct la lecția următoare.", style = fBody, color = Palette.ink)
+        }
+    }
+    FoniaSheet(isPresented = readsCard, onDismiss = { readsCard = false }, detents = listOf(SheetDetent.large), showsDragIndicator = true) {
+        readingCard?.let { card ->
+            CompositionLocalProvider(LocalDismiss provides { readsCard = false }) {
+                AdultCardPage(card, closes = true)
+            }
         }
     }
 }

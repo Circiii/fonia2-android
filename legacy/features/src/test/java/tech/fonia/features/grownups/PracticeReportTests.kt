@@ -9,6 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import tech.fonia.domain.ContentSource
 import tech.fonia.domain.FoniaContent
+import tech.fonia.features.guide.AdultCards
 import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
@@ -139,6 +140,8 @@ class PracticeReportTests {
         assertEquals(4, s.rung)
         assertEquals(10, s.rungs)
         assertEquals("Treapta 4 din 10: „În mijlocul cuvântului” (cuvinte cu S la mijloc).", s.ladder)
+        // The words in the middle are still Consolidare; the stage is a place in the course, not a grade.
+        assertEquals("Etapa: Consolidare.", s.stageLine)
         assertTrue(s.confirmed != null)
         assertEquals("6 încercări în 2 zile.", s.tries)
         assertEquals(PracticeReport.Tally(good = 3, almost = 1, notYet = 1, none = 1), s.phone)
@@ -153,6 +156,10 @@ class PracticeReportTests {
         val r = report.sounds.last()
         assertNull(r.confirmed)
         assertTrue(r.ladder, r.ladder.startsWith("Treapta 1 din 10: „Doar sunetul” ("))
+        assertEquals("Etapa: Emitere.", r.stageLine)
+        // The text has the stage under the ladder, and the box that says how to read it explains the names.
+        assertTrue(report.text.contains("${s.ladder}\n${s.stageLine}"))
+        assertTrue(report.text.contains(AdultCards.STAGE_REPORT_NOTE))
         assertEquals("La singura încercare la care au răspuns amândoi, telefonul și adultul au spus același lucru.", r.agreement)
     }
 

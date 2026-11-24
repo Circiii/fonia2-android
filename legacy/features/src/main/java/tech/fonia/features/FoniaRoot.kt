@@ -54,6 +54,8 @@ import tech.fonia.features.app.MicrophonePermission
 import tech.fonia.features.app.SessionTicket
 import tech.fonia.features.grownups.GrownupsHome
 import tech.fonia.features.grownups.ProfileExport
+import tech.fonia.features.guide.AdultCardGate
+import tech.fonia.features.guide.FirstTimeCard
 import tech.fonia.features.home.MainTabs
 import tech.fonia.features.home.WhoView
 import tech.fonia.features.session.SessionScreen
@@ -181,7 +183,10 @@ private fun AppContent(app: AppModel) {
             val shown = ticket ?: lastTicket
             if (shown != null && profile != null) {
                 key(shown.id) {
-                    SessionScreen(ticket = shown, profile = profile, app = app, onDone = { app.ticket = null })
+                    // A child's first lesson of each kind opens with a card for the adult beside them.
+                    AdultCardGate(profile, FirstTimeCard.lesson(shown.focus, profile, app), app, onClose = { app.ticket = null }) {
+                        SessionScreen(ticket = shown, profile = profile, app = app, onDone = { app.ticket = null })
+                    }
                 }
             }
         }

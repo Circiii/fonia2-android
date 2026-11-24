@@ -33,6 +33,10 @@ class FoniaPreferences(context: Context) {
         preferences.edit().putInt(key, value).apply()
     }
 
+    fun remove(key: String) {
+        preferences.edit().remove(key).apply()
+    }
+
     /** "Șterge tot": every switch back to its default. False when the file could not be written. */
     fun clear(): Boolean = preferences.edit().clear().commit()
 
