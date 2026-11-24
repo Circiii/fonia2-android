@@ -199,7 +199,8 @@ class ReadingProbeTest {
                 }
             }
         }
-        tap(button("Sunt adult"))
+        // The settings ask for an adult while a child is on the phone; the number is the one the check shows.
+        rule.runOnIdle { app.gate.check(app.gate.number.toString()) }
         waitFor(button("Citire"))
         screenshot("00-grownups-row")
         tap(button("Citire"))

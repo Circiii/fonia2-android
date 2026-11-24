@@ -175,4 +175,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
+    // Compose's test rule idles through Espresso; the 3.5 it brings looks for InputManager.getInstance, gone on API 35+.
+    androidTestImplementation(libs.androidx.test.espresso)
 }

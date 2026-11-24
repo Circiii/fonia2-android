@@ -147,12 +147,11 @@ class ShadowSessionTests : Journeys() {
         tap(end)
         assertTrue(waitFor(button("Acasă"), 10))
 
-        // The dose counter, behind the adults' door: today's takes of S, and the first of its five intensive days.
+        // The dose counter, behind the adult check: today's takes of S, and the first of its five intensive days.
         tap(button("Progres"))
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
-        assertTrue(waitFor(button("Sunt adult")))
-        tap(button("Sunt adult"))
+        passAdultCheck()
         assertTrue(waitFor(buttonStartingWith("Cum merge")))
         tap(buttonStartingWith("Cum merge"))
         assertTrue(waitFor(staticText("Încercări pe zi și pe săptămână")))

@@ -305,6 +305,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
+    // Compose's test rule idles through Espresso; the 3.5 it brings looks for InputManager.getInstance, gone on API 35+.
+    androidTestImplementation(libs.androidx.test.espresso)
     // The instrumented check of shadow mode installs ZIPA through the model manager and reads the pilot log.
     androidTestImplementation(project(":engine:phones"))
     androidTestImplementation(project(":engine:judge"))
