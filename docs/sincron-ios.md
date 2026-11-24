@@ -27,6 +27,25 @@ Aplicația livrată (`:legacy:app` → `:legacy:features`) a fost adusă la star
   - Efectele sonore sunt descrise așa cum spune `tools/sfx`: generate cu ElevenLabs și sintetizate. Rândul vechi „UI SFX (CC0)” nu mai era adevărat.
 - **„Cum merge”.** Sub fiecare sunet apare „Etapa: …”: Emitere, Consolidare, Diferențiere sau Automatizare.
 
+### A doua tură (24 noiembrie 2026)
+
+- **Testele instrumentate pentru verificarea adultului.** Trec verificarea cu `foniaGate`, ca aplicația de acum.
+- **Licențele.** Pagina „Licențe” din Setări are textul fiecărei biblioteci și al fiecărui font.
+- **Accesibilitate.** TalkBack citește în cuvinte punctele lecțiilor. Țintele pentru copil au cel puțin 56 dp.
+- **Raportul pentru logoped, ca PDF.** Se face pe telefon, fără numele copilului, și se trimite din Setări, după verificarea adultului. Fiecare sunet are treapta, etapa, încercările telefonului și ale adultului și un grafic pe săptămâni.
+- **Fișa pentru adult.** Înaintea primei lecții de fiecare fel, adultul unui copil vede o fișă scurtă: ținta, cum arată o încercare bună, ce face dacă nu iese. Fișele se recitesc în Setări, la „Ce faci la fiecare activitate”, și din ecranul de start („Ce faci, pe scurt”). Pentru teste există flagul `foniaNoAdultCards`.
+- **Vorbit în public, pentru adulți.**
+  - „Compară”: telefonul spune exemplul, face o pauză, apoi pune înregistrarea ta și pune o singură întrebare.
+  - Subiectele zilnice sunt o scară de 7 pași, de la cel mai personal la cel mai public. „Un pas înapoi” te duce la pasul de dinainte.
+  - „Doar începutul” repetă primul minut al prezentării tale.
+  - „Ai emoții?” apare întreg la primele două discursuri, apoi la o atingere.
+  - „Ăă”-urile se compară doar cu discursurile tale de dinainte (mediana ultimelor 5 cu cel puțin 30 de secunde de vorbire), niciodată cu o normă.
+- **Amintirea zilnică.** O notificare locală pe zi, la ora aleasă (implicit 19:30). E oprită până o pornește adultul din Setări, după verificare.
+  - Android cere permisiunea de notificări abia atunci.
+  - Dacă notificările sunt oprite, rândul spune asta și are „Deschide Setările”.
+  - Alarma e inexactă (fereastră de 10 minute), deci nu cere permisiunea de alarme exacte. Revine după repornirea telefonului, după schimbarea orei și la deschiderea aplicației după o oprire forțată.
+  - „Șterge tot” oprește alarma și notificarea afișată.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.
@@ -37,6 +56,9 @@ Aplicația livrată (`:legacy:app` → `:legacy:features`) a fost adusă la star
 
 ## Ce nu s-a făcut
 
-- Pagina de licențe și oprirea descărcării unui model (lista B). Oprirea nu are sens fără internet.
-- Testele instrumentate vechi (`FoniaUITests`) încă așteaptă ușa „Sunt adult”.
+- Oprirea descărcării unui model. Nu are sens fără internet.
 - Modelele Whisper copiate din APK nu se șterg la „Șterge tot”, pentru că fac parte din aplicație.
+- Conturul intonației din „Compară” (iOS bd3be47). Cere mult cod nou de analiză și desen. „Compară” pune exemplul și înregistrarea una după alta.
+- Anunțul vocal „gata” de la finalul unui discurs. Android nu are `SessionVoice`.
+- Butonul „Pentru adult” din ghidul sunetului (`SoundGuide`). Ghidul de pe Android nu are secțiunea aceea. Fișele se găsesc în Setări și în ecranul de start.
+- Alegerea momentului zilei („După cină” etc.) la primul start. Ora se alege din Setări. Momentele există în cod (`PracticeMoment`).
