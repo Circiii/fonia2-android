@@ -191,7 +191,7 @@ fun JournalScreen(path: PathModel, app: AppModel) {
                     // A child's notes are for the logoped: the adult writes them.
                     onClick = { if (path.profile.isChild) guard { push(Destination.Notes(path.profile.id)) } else push(Destination.Notes(path.profile.id)) },
                     style = PlusButtonStyle(),
-                    modifier = Modifier.semantics { contentDescription = "Adaugă o notiță pentru logoped" },
+                    modifier = Modifier.semantics { contentDescription = tech.fonia.features.grownups.AudienceCopy.addNoteLabel(path.profile.isChild) },
                 ) {
                     FoniaIconView(FoniaIcon.plus, size = 24f)
                 }

@@ -170,11 +170,11 @@ fun ListSectionScope.profileActivityRows(profile: Profile, app: AppModel, contex
         row { DetailRow("Cum merge", "Sunete, încercări, ce a auzit telefonul", onClick = { push(Destination.HowItGoes(profile.id)) }) }
         if (app.arguments.drafts) row { DetailRow("Citire", "Un minut de citit cu voce tare. Tu atingi cuvintele, telefonul măsoară timpul.", onClick = { push(Destination.Reading(profile.id)) }) }
     }
-    row { NavigationRow("Notițe pentru logoped", onClick = { push(Destination.Notes(profile.id)) }) }
+    row { NavigationRow(AudienceCopy.notesTitle(profile.isChild), onClick = { push(Destination.Notes(profile.id)) }) }
     row {
         DetailRow(
-            "Trimite fișierul la logoped",
-            "Are încercările și notițele, fără înregistrări. Îl trimiți tu, cui vrei.",
+            AudienceCopy.exportTitle(profile.isChild),
+            AudienceCopy.exportDetail(profile.isChild),
             onClick = { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive) } },
             chevron = false,
         )
@@ -192,7 +192,7 @@ fun ListSectionScope.profileSetupRows(profile: Profile, push: (Destination) -> U
         row {
             DetailRow(
                 "Reglează S și Ș pentru vocea asta",
-                "Zece sunete, cu un adult lângă. Fiecare voce are S-ul și Ș-ul ei, iar telefonul învață doar din cele pe care spui că sunt bune.",
+                AudienceCopy.calibrationDetail(profile.isChild),
                 onClick = { push(Destination.Calibration(profile.id)) },
             )
         }
@@ -376,7 +376,8 @@ fun NotesScreen(profileID: UUID, app: AppModel) {
     var notes by remember { mutableStateOf<List<MoodlessNote>>(emptyList()) }
     var newNote by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(Unit) { notes = orEmpty { app.repository.notes(profileID) } }
-    AdultPage("Notițe pentru logoped") {
+    val isChild = app.profiles.firstOrNull { it.id == profileID }?.isChild ?: true
+    AdultPage(AudienceCopy.notesTitle(isChild)) {
         ListSection {
             row {
                 Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 15.dp)) {

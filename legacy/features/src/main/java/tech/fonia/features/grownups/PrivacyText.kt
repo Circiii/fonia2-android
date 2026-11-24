@@ -120,3 +120,20 @@ object PrivacyText {
     val contact: String
         get() = "${LegalInfo.OPERATOR_NAME}, ${LegalInfo.CONTACT_EMAIL}. Politica completă: ${LegalInfo.PRIVACY_URL}."
 }
+
+/** "Mulțumiri", at the end of the privacy text: what the app is built from, with the licences that ask to be named. */
+object Credits {
+    val lines: List<String> = listOf(
+        // The libraries are the Android ones: WhisperKit and GRDB are not in this app.
+        "Fonturi: Baloo 2 (Ek Type, OFL) și Allo (OFL). Imagini: Fluent Emoji (Microsoft, MIT) și Noto Emoji (Google, OFL și Apache 2.0). Iconițe: Phosphor (MIT).",
+        // tools/sfx/REPORT.md: ElevenLabs generations and sounds rendered from earshot's bank.
+        "Efecte sonore: generate cu ElevenLabs și sintetizate pentru Fonia.",
+        // facecamera: LiteRT runs MediaPipe's Face Landmarker models (the Tasks library is not used); audio: Oboe.
+        "Camera: CameraX (Apache 2.0). Fața: modelele Face Landmarker din MediaPipe (Google, Apache 2.0), rulate cu LiteRT (Google, Apache 2.0). Sunetul: Oboe (Google, Apache 2.0) și Media3 (Apache 2.0).",
+        // mouth3d/src/main/resources/fonia/perioral/CREDITS.txt: CC BY 3.0 asks for the author, the licence and the changes.
+        "Gura 3D: scanarea „Infinite” de Lee Perry-Smith / Infinite-Realities (CC BY 3.0, triplegangers.com). Fonia a păstrat partea de jos a feței, a refăcut interiorul gurii și a pregătit buzele și bărbia pentru vorbire. Dinții: după MakeHuman (CC0).",
+        "Recunoaștere vocală: Whisper și whisper.cpp (MIT). Date: SQLite (domeniu public) și AndroidX SQLite (Apache 2.0).",
+        // CC BY 4.0 asks for the authors, the licence, the source and whether it was changed (phones/MODELS.md).
+        "Ascultare pe sunete: ZIPA-small CR-CTC (© autorii ZIPA, Jian Zhu și alții, CC BY 4.0, huggingface.co/anyspeech/zipa-small-crctc-500k, folosit nemodificat) și ONNX Runtime (Microsoft, MIT).",
+    )
+}

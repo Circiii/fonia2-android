@@ -346,18 +346,9 @@ internal fun PrivacyNote(onDone: () -> Unit, withReading: Boolean, onOpenLink: (
             ) { FoniaText("Politica de confidențialitate", style = fBodyStrong) }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 FoniaText("Mulțumiri", Modifier.semantics { heading() }, style = fHeadline, color = Palette.ink)
-                // The libraries named at the end are the Android ones: WhisperKit and GRDB are not in this app.
-                FoniaText(
-                    "Fonturi: Baloo 2 (Ek Type, OFL) și Allo (OFL). Imagini: Fluent Emoji (Microsoft, MIT) și Noto Emoji (Google, OFL și Apache 2.0). Iconițe: Phosphor (MIT). Sunete: UI SFX (CC0). Recunoaștere vocală: Whisper și whisper.cpp (MIT). Date: SQLite (domeniu public) și AndroidX SQLite (Apache 2.0).",
-                    style = fCaption,
-                    color = Palette.inkSoft,
-                )
-                // CC BY 4.0 asks for the authors, the licence, the source and whether it was changed (phones/MODELS.md).
-                FoniaText(
-                    "Ascultare pe sunete: ZIPA-small CR-CTC (© autorii ZIPA, Jian Zhu și alții, CC BY 4.0, huggingface.co/anyspeech/zipa-small-crctc-500k, folosit nemodificat) și ONNX Runtime (Microsoft, MIT).",
-                    style = fCaption,
-                    color = Palette.inkSoft,
-                )
+                for (line in Credits.lines) {
+                    FoniaText(line, style = fCaption, color = Palette.inkSoft)
+                }
             }
         }
     }

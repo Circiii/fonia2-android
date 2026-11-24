@@ -188,9 +188,12 @@ fun ProgressPill(done: Int, total: Int, modifier: Modifier = Modifier) {
     }
 }
 
-/** A count at the top of the home page: an icon and a number that only ever goes up. */
+/**
+ * A count at the top of the home page: an icon and a number that only ever goes up, with the word after it when
+ * [unit] is given ("3 zile").
+ */
 @Composable
-fun CountPill(icon: FoniaIcon, tint: Color, value: Int, label: String, modifier: Modifier = Modifier) {
+fun CountPill(icon: FoniaIcon, tint: Color, value: Int, label: String, modifier: Modifier = Modifier, unit: String? = null) {
     Row(
         modifier
             .softShadow(Capsule)
@@ -203,6 +206,7 @@ fun CountPill(icon: FoniaIcon, tint: Color, value: Int, label: String, modifier:
     ) {
         FoniaIconView(icon, size = 21f, relativeTo = TextRole.subheadline, tint = tint)
         NumericText(value, ui(15, UIWeight.bold, TextRole.subheadline).monospacedDigit(), Palette.ink)
+        if (unit != null) FoniaText(unit, style = ui(15, UIWeight.bold, TextRole.subheadline), color = Palette.ink, maxLines = 1)
     }
 }
 

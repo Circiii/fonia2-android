@@ -206,7 +206,11 @@ private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, scrolled: 
                 .arrives(hasArrived, 0),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CountPill(FoniaIcon.fire, Palette.today, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " cu exerciții")
+            // As on iOS: a check and "N zile", no flame; a day missed breaks nothing.
+            CountPill(
+                FoniaIcon.check, Palette.accentText, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " în care ai exersat",
+                unit = Plural.form(path.totalDays, Plural.Noun.Zi),
+            )
             Spacer(Modifier.weight(1f))
             CountPill(FoniaIcon.star, Palette.starTint, path.totalLessons, Plural.format(path.totalLessons, Plural.Noun.Stea))
         }
