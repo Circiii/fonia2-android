@@ -65,13 +65,16 @@ val repoRoot: String = rootDir.absolutePath
 val previewDir: String = providers.gradleProperty("mouth3d.previewDir").getOrElse("")
 val previewOnly: String = providers.gradleProperty("mouth3d.only").getOrElse("")
 val previewClip: String = providers.gradleProperty("mouth3d.clip").getOrElse("")
+val previewMesh: String = providers.gradleProperty("mouth3d.mesh").getOrElse("")
 android.testOptions.unitTests.all {
     it.systemProperty("fonia.root", repoRoot)
     it.systemProperty("mouth3d.previewDir", previewDir)
     it.systemProperty("mouth3d.only", previewOnly)
     it.systemProperty("mouth3d.clip", previewClip)
+    it.systemProperty("mouth3d.mesh", previewMesh)
     it.inputs.property("previewOnly", previewOnly)
     it.inputs.property("previewClip", previewClip)
+    it.inputs.property("previewMesh", previewMesh)
     it.inputs.dir(File(repoRoot, "spec/poses/mouth3d"))
     it.inputs.property("previewDir", previewDir)
 }

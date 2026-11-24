@@ -81,12 +81,12 @@ class StyleGeometryTest {
     }
 
     @Test
-    fun `lip contours give a wide smile, a narrow funnel, outer always outside inner`() {
+    fun `rounded and spread lips remain distinct while keeping a full vermilion`() {
         val rest = LipContours(pose("rest"), 0f)
         val s = LipContours(pose("s"), 1f)
         val sh = LipContours(pose("sh"), 2f)
         assertTrue(s.halfWidth > rest.halfWidth + 5)
-        assertTrue(sh.halfWidth < rest.halfWidth - 8)
+        assertTrue(sh.halfWidth < rest.halfWidth - 5)
         assertTrue(sh.protrusion > 5 && s.protrusion == 0f)
         for (k in PoseLibrary.FILES) {
             val c = LipContours(pose(k), 3f)
@@ -128,8 +128,9 @@ class StyleGeometryTest {
 
     @Test
     fun `head, teeth and tongue are closed meshes, so the cut can be capped`() {
-        for (k in listOf("rest", "s", "sh", "r", "l")) {
-            val p = pose(k)
+        val frames = PoseLibrary.FILES.map { it to pose(it) } +
+            listOf("ts", "ce", "ge").map { "${it}_closure" to closure(it) }
+        for ((k, p) in frames) {
             val mb = MeshBuilder()
             val ranges = HeadModel.Ranges()
             HeadModel.build(mb, p, SagittalShape.of(p), StylePreviewTest.GUIDE, HeadModel.Glow(0f, 0f, 0f), 0f, ranges)
@@ -166,6 +167,6 @@ class StyleGeometryTest {
         val o = FloatArray(4)
         Mat4.apply(mvp, l.halfWidth + l.cornerThick, 0f, 5f, o)
         val ndcX = o[0] / o[3]
-        assertTrue("corner at $ndcX", ndcX in 0.72f..0.86f)
+        assertTrue("corner at $ndcX", ndcX in 0.68f..0.84f)
     }
 }

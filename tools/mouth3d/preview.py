@@ -4,7 +4,7 @@ The mouth the app draws is rendered by the module's JVM preview, a software copy
 (cut plane, stencil parity, stencil-tested caps): mouth3d/src/test/.../StylePreview.kt, kept identical to
 render/StyleGl.kt. This script runs it:
 
-    python -I tools/mouth3d/preview.py style OUT_DIR [--only s,sh] [--clip rotate|front]
+    python -I tools/mouth3d/preview.py style OUT_DIR [--only s,sh] [--clip rotate|front] [--mesh]
 
 writes OUT_DIR/sheet.png (every pose: front, 45 degrees, profile, cut-away), one PNG per view, closer looks (closures,
 highlights, other angles), OUT_DIR/timing.txt and, with --clip, OUT_DIR/clip_<kind>.mp4 (needs ffmpeg). JAVA_HOME must
@@ -24,7 +24,8 @@ def style(argv):
     clip = argv[argv.index('--clip') + 1] if '--clip' in argv else ''
     gradlew = REPO / ('gradlew.bat' if os.name == 'nt' else 'gradlew')
     cmd = [str(gradlew), ':core:mouth3d:testDebugUnitTest', '--tests', '*StylePreviewTest*', '--console=plain', '-q',
-           f'-Pmouth3d.previewDir={out.as_posix()}', f'-Pmouth3d.only={only}', f'-Pmouth3d.clip={clip}']
+           f'-Pmouth3d.previewDir={out.as_posix()}', f'-Pmouth3d.only={only}', f'-Pmouth3d.clip={clip}',
+           f'-Pmouth3d.mesh={"true" if "--mesh" in argv else ""}']
     subprocess.run(cmd, cwd=REPO, check=True)
     if clip:
         subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-framerate', '30', '-i', str(out / f'clip_{clip}' / 'f%04d.png'),

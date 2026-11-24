@@ -38,6 +38,16 @@ data class Mouth3DColors(
 
     companion object {
         val Default = Mouth3DColors()
+        val Natural = Mouth3DColors(
+            patch = Color(0xFFE6B59C),
+            lips = Color(0xFFC58078),
+            teeth = Color(0xFFF7EFDF),
+            gums = Color(0xFFBE7C75),
+            tongue = Color(0xFFD38480),
+            lining = Color(0xFF58312F),
+            section = Color(0xFFE8BAA9),
+            rim = Color(0xFFFFE5CB),
+        )
     }
 }
 

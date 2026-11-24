@@ -47,7 +47,7 @@
   "camera": {
     "front": {
       "yawDeg": 0,
-      "pitchDeg": 6,
+      "pitchDeg": 0,
       "zoom": 1.0
     },
     "inside": {

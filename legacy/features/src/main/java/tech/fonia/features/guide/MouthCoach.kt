@@ -3,7 +3,6 @@ package tech.fonia.features.guide
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.semantics.Role
@@ -75,7 +74,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import tech.fonia.design.CelebrationBurst
-import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.FacePatch
 import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.Foni
@@ -335,7 +333,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             inside = inside,
                             insideAvailable = insideAvailable,
                             onToggleInside = { insideChoice = !inside },
-                            modifier = Modifier.weight(0.42f).fillMaxWidth().padding(horizontal = 16.dp),
+                            modifier = Modifier.weight(0.54f).fillMaxWidth().padding(horizontal = 16.dp),
                         )
                         Spacer(Modifier.height(10.dp))
                         CallSelfPane(
@@ -352,7 +350,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             micState = micState,
                             onRetry = { app.scope.launch { listen() } },
                             onAdvance = { advance() },
-                            modifier = Modifier.weight(0.58f).fillMaxWidth(),
+                            modifier = Modifier.weight(0.46f).fillMaxWidth(),
                         )
                     }
                 }
@@ -395,62 +393,67 @@ private fun TopMouthPane(
 ) {
     val context = LocalContext.current
     val can3d = remember(context) { tech.fonia.mouth3d.Mouth3DSupport.canRender3D(context) }
-    Box(modifier.clip(ContinuousRoundedRectangle(24.dp)).background(Palette.sheet)) {
-        if (target != null && can3d) {
-            FacePatch(Modifier.fillMaxSize())
-            var arrived by remember(step.id) { mutableStateOf(false) }
-            // The pose plays for a few seconds when the step opens (and again on a tap), then the 3D view rests: a
-            // settled scene with reduce motion draws no frames, which leaves the CPU to the camera's face model.
-            var lively by remember(step.id) { mutableStateOf(true) }
-            var replays by remember { mutableIntStateOf(0) }
-            LaunchedEffect(step.id, replays) {
-                lively = true
-                arrived = false
-                delay(260)
-                arrived = true
-                delay(3600)
-                lively = false
+    Column(modifier.clip(RoundedCornerShape(28.dp)).background(Color(0xFFEEE8FA))) {
+        FoniaText(
+            step.say,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            style = ui(18, UIWeight.bold, TextRole.headline),
+            color = Color(0xFF322443),
+        )
+        var replays by remember(step.id) { mutableIntStateOf(0) }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            if (target != null && can3d) {
+                var arrived by remember(step.id) { mutableStateOf(false) }
+                // The pose plays for a few seconds when the step opens (and again on replay), then the 3D view rests: a
+                // settled scene with reduce motion draws no frames, which leaves the CPU to the camera's face model.
+                var lively by remember(step.id) { mutableStateOf(true) }
+                LaunchedEffect(step.id, replays) {
+                    lively = true
+                    arrived = false
+                    delay(260)
+                    arrived = true
+                    delay(3600)
+                    lively = false
+                }
+                tech.fonia.mouth3d.Mouth3D(
+                    sound = target,
+                    progress = if (arrived) 1f else 0f,
+                    inside = inside,
+                    colors = GuideMouthColors,
+                    modifier = Modifier.fillMaxSize(),
+                    playing = lively,
+                    reduceMotion = !lively || LocalReduceMotion.current,
+                    autoFallback = false,
+                    highlight = step.focus.articulator,
+                    onDoubleTap = if (insideAvailable) onToggleInside else null,
+                    onFrameStats = if (tech.fonia.features.IS_DEBUG_BUILD) { stats -> logMouthStats(stats) } else null,
+                )
+            } else {
+                MouthDiagram(step.diagram, Modifier.fillMaxSize())
             }
-            tech.fonia.mouth3d.Mouth3D(
-                sound = target,
-                progress = if (arrived) 1f else 0f,
-                inside = inside,
-                colors = GuideMouthColors,
-                modifier = Modifier.fillMaxSize().clickable(interactionSource = null, indication = null) { replays += 1 },
-                playing = lively,
-                reduceMotion = !lively || LocalReduceMotion.current,
-                autoFallback = false,
-                highlight = step.focus.articulator,
-                onDoubleTap = if (insideAvailable) onToggleInside else null,
-                onFrameStats = if (tech.fonia.features.IS_DEBUG_BUILD) { stats -> logMouthStats(stats) } else null,
-            )
-        } else {
-            MouthDiagram(step.diagram, Modifier.fillMaxSize())
         }
-        Row(
-            Modifier
-                .align(Alignment.BottomStart)
-                .padding(10.dp)
-                .background(Palette.sheet.copy(alpha = 0.92f), RoundedCornerShape(50))
-                .padding(horizontal = 12.dp, vertical = 7.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Glyph(step.focus.glyph, Palette.accentText, 22.dp)
-            FoniaText(step.focus.rawValue, style = ui(17, UIWeight.bold, TextRole.headline), color = Palette.accentText, maxLines = 1)
+        if (target != null && can3d) {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                MouthControl("Arată din nou") { replays += 1 }
+                if (insideAvailable) {
+                    MouthControl(if (inside) "Vezi din față" else "Vezi în gură", onToggleInside)
+                }
+            }
         }
-        if (insideAvailable && target != null && can3d) {
-            Box(
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(10.dp)
-                    .size(48.dp)
-                    .background(if (inside) Palette.accentSoft else Palette.sheet.copy(alpha = 0.92f), CircleShape)
-                    .clickable(role = Role.Switch, onClick = onToggleInside)
-                    .semantics { contentDescription = if (inside) "Vezi din față" else "Vezi din lateral" },
-                contentAlignment = Alignment.Center,
-            ) { Glyph(if (inside) "lips" else "inside", Palette.ink, 26.dp) }
-        }
+    }
+}
+
+@Composable
+private fun MouthControl(label: String, onClick: () -> Unit) {
+    Box(
+        Modifier.heightIn(min = 48.dp).clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        FoniaText(label, style = ui(15, UIWeight.bold, TextRole.footnote), color = Color(0xFF513879))
     }
 }
 

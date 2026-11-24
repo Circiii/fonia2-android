@@ -3,6 +3,8 @@ package tech.fonia.mouth3d
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import tech.fonia.mouth3d.style.MeshBuilder
+import tech.fonia.mouth3d.style.HeadModel
+import tech.fonia.mouth3d.style.SagittalShape
 import tech.fonia.mouth3d.style.StylePalette
 import tech.fonia.mouth3d.style.StyleScene
 import java.awt.Color
@@ -10,6 +12,7 @@ import java.awt.Font
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.DataOutputStream
 import javax.imageio.ImageIO
 
 /**
@@ -46,6 +49,10 @@ class StylePreviewTest {
             }
         }
         ImageIO.write(sheet, "png", File(dir, "sheet.png"))
+        for (k in listOf("ce", "ge").filter { it in keys }) {
+            val spec = lib.specs.getValue(k)
+            ImageIO.write(still(spec, lib.rest, View(45f, 0f), 900, 560, 1.3f, null), "png", File(dir, "${k}_45_big.png"))
+        }
         // closures, highlights and the in-between angles, for a closer look
         for (k in listOf("ts", "ce", "l")) if (k in keys) ImageIO.write(still(lib.specs.getValue(k), lib.rest, View(90f, 1f), cw, ch, 0.45f, null), "png", File(dir, "${k}_closure.png"))
         if ("s" in keys) {
@@ -123,14 +130,39 @@ class StylePreviewTest {
         File(dir, "timing.txt").writeText(sb.toString())
     }
 
+    /** A stable indexed copy of exactly the app mesh, without camera, cut, particles or highlights. */
+    @Test
+    fun exportMesh() {
+        assumeTrue(dir.isNotEmpty() && System.getProperty("mouth3d.mesh") == "true")
+        val library = TestData.library
+        val folder = File(dir, "mesh").also { it.mkdirs() }
+        fun write(name: String, pose: Pose) {
+            val mb = MeshBuilder()
+            val range = HeadModel.Ranges()
+            HeadModel.build(mb, pose, SagittalShape.of(pose), GUIDE, HeadModel.Glow(0f, 0f, 0f), 0f, range)
+            DataOutputStream(File(folder, "$name.mouth").outputStream().buffered()).use { out ->
+                out.writeInt(mb.vertexCount)
+                out.writeInt(range.head1)
+                out.writeInt(range.teeth1)
+                out.writeInt(range.tongue1)
+                for (i in 0 until mb.vertexCount * MeshBuilder.STRIDE) out.writeFloat(mb.data[i])
+                for (i in 0 until range.tongue1) out.writeInt(mb.indices[i])
+            }
+        }
+        library.specs.forEach { (name, spec) ->
+            write(name, spec.pose)
+            spec.animation?.keys?.firstOrNull()?.let { write("${name}_closure", it.pose) }
+        }
+    }
+
     data class View(val yaw: Float, val cut: Float, val pitch: Float? = null)
 
     companion object {
         val GUIDE: StylePalette = StylePalette.of(
-            0xF9D2B4, 0xDE6178, 0xFFFDF8, 0xF28C9A, 0xFA9CA8, 0x571C2E,
-            0xFFE2CF, 0xFFF1B8, 0x6EC3FF, 0xFF9A3D, 0xFFB020, 0xFFE066,
+            0xE6B59C, 0xC58078, 0xF7EFDF, 0xBE7C75, 0xD38480, 0x58312F,
+            0xE8BAA9, 0xFFE5CB, 0x6EC3FF, 0xFF9A3D, 0xFFB020, 0xFFE066,
         )
-        const val FACE = 0xF6E7DA
+        const val FACE = 0xEEE8FA
 
         fun label(spec: PoseSpec) = spec.sound?.letter ?: "Repaus"
 

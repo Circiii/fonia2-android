@@ -78,17 +78,7 @@ private val Stage = Color(0xFF3B78E7)
 private val Chip = Color(0x33FFFFFF)
 private val ChipOn = Color(0xFFFFD84D)
 private val Ink = Color(0xFF14254A)
-private val Face = Color(0xFFF8D6BA)
-
-/** The sound guide's colours (legacy/features GuideMouth3D.kt), so the demo shows what the app shows. */
-private val GuideColors = Mouth3DColors(
-    patch = Color(0xFFF9D2B4),
-    lips = Color(0xFFDE6178),
-    teeth = Color(0xFFFFFDF8),
-    gums = Color(0xFFF28C9A),
-    tongue = Color(0xFFFA9CA8),
-    lining = Color(0xFF571C2E),
-)
+private val Face = Color(0xFFEEE8FA)
 
 @Composable
 private fun Demo(
@@ -123,7 +113,7 @@ private fun Demo(
             sound = sound,
             progress = progress,
             inside = inside,
-            colors = if (face) GuideColors else Mouth3DColors.Default,
+            colors = if (face) Mouth3DColors.Natural else Mouth3DColors.Default,
             modifier = box,
             playing = play,
             autoRotate = spin,

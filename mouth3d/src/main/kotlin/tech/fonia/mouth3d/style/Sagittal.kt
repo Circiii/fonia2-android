@@ -219,7 +219,7 @@ class SagittalShape(
      * the teeth and the lips. [stop]: it waits behind a closure. [lateral]: it leaves the middle before the tip (L).
      * Also returns the arc length where a closure holds it.
      */
-    fun airPath(stop: Boolean, lateral: Boolean): Pair<List<P2>, Float> {
+    fun airPath(stop: Boolean, lateral: Boolean, dentalGate: P2? = null, exit: P2? = null): Pair<List<P2>, Float> {
         // from the back of the mouth (the throat itself lies outside the 3D model)
         val air = mutableListOf(P2(86f, 94f))
         val roof = (velum.subList(5, velum.size) + Anatomy.palate).sortedBy { it.x }
@@ -232,12 +232,12 @@ class SagittalShape(
         }
         val holdAt = Geo.length(air) + 2f
         if (lateral) air += blade.moved(4f, 9f)
-        val gate = Anatomy.UPPER_EDGE.toward(rot(Anatomy.lowerEdge), 0.5f).moved(-1f, -0.5f)
+        val gate = dentalGate ?: Anatomy.UPPER_EDGE.toward(rot(Anatomy.lowerEdge), 0.5f).moved(-1f, -0.5f)
         if (!lateral && tip.x < gate.x - 1) {
             val top = Geo.yAt(roof, tip.x + 1)
             if (top != null) air += P2(tip.x + 1.5f, min((top + tip.y) / 2, gate.y - 1))
         }
-        val lips = stomionUpper.toward(stomionLower, 0.5f)
+        val lips = exit ?: stomionUpper.toward(stomionLower, 0.5f)
         air += gate
         air += lips
         air += lips.moved(16 + protrusion * 0.6f, 1.5f)

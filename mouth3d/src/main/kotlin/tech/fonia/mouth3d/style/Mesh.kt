@@ -13,6 +13,9 @@ object Kind {
     const val SKIN = 3f
     /** The cut's cap of the head: tissue colour, the lips' red in front of the incisors. */
     const val CAP_HEAD = 4f
+    const val CAP_TONGUE = 5f
+    const val SCAN = 6f
+    const val ENAMEL = 7f
     const val VIGNETTE = 8f
 }
 

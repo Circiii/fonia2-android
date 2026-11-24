@@ -23,6 +23,7 @@ object CutOverlay {
     fun build(
         mb: MeshBuilder,
         sag: SagittalShape,
+        lips: LipContours,
         spec: PoseSpec,
         pal: StylePalette,
         highlight: Articulator?,
@@ -41,12 +42,12 @@ object CutOverlay {
         fun at(k: Float) = x + towardCamera * k
 
         // the tongue's cut edge, so its shape reads at a glance
-        line(mb, sag.tongue.subList(2 * 8, 9 * 8 + 4), at(0.1f), SlabMix.scale(pal.tongue, 0.66f), 0.5f, alpha, towardCamera)
+        line(mb, sag.tongue.subList(2 * 8, 9 * 8 + 4), at(0.1f), SlabMix.scale(pal.tongue, 0.52f), 0.75f, alpha, towardCamera)
         if (highlight == Articulator.Tongue) {
             val surf = sag.tongueSurface
             glowBand(mb, surf.subList(surf.size / 5, surf.size), at(0.2f), pal.highlight, alpha * pulse, towardCamera)
         }
-        sag.contact?.let { c -> ring(mb, c, at(0.4f), 2.4f + 0.6f * pulse, 0.55f, pal.highlight, alpha * (0.55f + 0.45f * pulse), towardCamera) }
+        sag.contact?.let { c -> ring(mb, c, at(0.4f), 2.6f + 0.5f * pulse, 0.85f, pal.highlight, alpha * (0.55f + 0.45f * pulse), towardCamera) }
         if (spec.voiced) {
             for (k in 0 until 3) {
                 val ph = ((time * 2.2f - k * 0.33f) % 1f + 1f) % 1f
@@ -70,7 +71,11 @@ object CutOverlay {
         }
         val air = spec.air
         if (air != null) {
-            val parts = particles(sag, air.stream, air.stop, time, closure, sinceRelease)
+            val a = HeadModel.jawAngle(sag.jaw)
+            val lowerIncisorY = HeadModel.jawY(-1.25f, -1f, cos(a), sin(a))
+            val gate = Anatomy.UPPER_EDGE.moved(-0.5f, -lowerIncisorY * 0.5f / Anatomy.MM)
+            val exit = Anatomy.UPPER_EDGE.moved((lips.frontZ - 0.5f) / Anatomy.MM, -lips.openingY / Anatomy.MM)
+            val parts = particles(sag, air.stream, air.stop, time, closure, sinceRelease, gate, exit)
             val col = if (air.warm) pal.airWarm else pal.airCold
             val big = if (highlight == Articulator.Air) 1.35f else 1f
             mb.kind = Kind.DISC; mb.glow = 0f
@@ -84,8 +89,8 @@ object CutOverlay {
      * The particles of the air stream at [time]: they flow along [SagittalShape.airPath]; a closure (Ț, CE, GE)
      * holds them in a little crowd behind the tongue, and the release lets them out in a quick puff.
      */
-    fun particles(sag: SagittalShape, stream: AirStream, stop: Boolean, time: Float, closure: Boolean, sinceRelease: Float): List<Particle> {
-        val (path, hold) = sag.airPath(stop, stream == AirStream.Lateral)
+    fun particles(sag: SagittalShape, stream: AirStream, stop: Boolean, time: Float, closure: Boolean, sinceRelease: Float, gate: P2? = null, exit: P2? = null): List<Particle> {
+        val (path, hold) = sag.airPath(stop, stream == AirStream.Lateral, gate, exit)
         val len = Geo.length(path)
         val wide = stream == AirStream.Wide
         val n = if (wide) 34 else 28

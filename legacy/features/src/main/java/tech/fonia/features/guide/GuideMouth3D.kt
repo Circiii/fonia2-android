@@ -58,7 +58,6 @@ import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.Palette
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
-import tech.fonia.design.hex
 import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
 import tech.fonia.designsystem.motion.rememberFoniaHaptics
@@ -313,11 +312,4 @@ private fun DrawScope.drawGlyph(name: String, tint: Color) {
 }
 
 /** `Mouth3DColors` tuned to `MouthView`'s palette, so the 3D mouth sits on `FacePatch` like the drawings do. */
-internal val GuideMouthColors = Mouth3DColors(
-    patch = Color.hex(0xF9D2B4),
-    lips = Color.hex(0xDE6178),
-    teeth = Color.hex(0xFFFDF8),
-    gums = Color.hex(0xF28C9A),
-    tongue = Color.hex(0xFA9CA8),
-    lining = Color.hex(0x571C2E),
-)
+internal val GuideMouthColors = Mouth3DColors.Natural

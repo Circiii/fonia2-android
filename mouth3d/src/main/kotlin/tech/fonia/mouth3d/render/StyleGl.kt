@@ -1,12 +1,15 @@
 package tech.fonia.mouth3d.render
 
+import android.graphics.BitmapFactory
 import android.opengl.GLES30
+import android.opengl.GLUtils
 import tech.fonia.mouth3d.Articulator
 import tech.fonia.mouth3d.PoseSpec
 import tech.fonia.mouth3d.SceneFrame
 import tech.fonia.mouth3d.style.Blend
 import tech.fonia.mouth3d.style.MeshBuilder
 import tech.fonia.mouth3d.style.Pass
+import tech.fonia.mouth3d.style.ScannedFace
 import tech.fonia.mouth3d.style.StylePalette
 import tech.fonia.mouth3d.style.StyleScene
 import java.nio.ByteBuffer
@@ -25,25 +28,34 @@ internal class StyleGl {
     private val vao = IntArray(1)
     private val vbo = IntArray(1)
     private val ibo = IntArray(1)
+    private val maps = IntArray(2)
+    private var uSection = 0
     private var vboCap = 0
     private var iboCap = 0
     private var vbuf: FloatBuffer? = null
     private var ibuf: IntBuffer? = null
     private val mb = MeshBuilder()
     private var uMV = 0; private var uP = 0; private var uLight = 0; private var uRim = 0; private var uGlow = 0; private var uVig = 0; private var uDissolve = 0
-    private var uClip = 0; private var uClipOn = 0; private var uLipZone = 0; private var uLipCol = 0
+    private var uClip = 0; private var uClipOn = 0; private var uUpperLipCut = 0; private var uLowerLipCut = 0; private var uLipCol = 0
     private val fbo = IntArray(1)
     private val rbo = IntArray(2)
     private var fboW = 0; private var fboH = 0; private var fboSamples = 0
 
     fun create() {
         program = link(VERTEX, FRAGMENT)
+        GLES30.glUseProgram(program)
+        GLES30.glGenTextures(maps.size, maps, 0)
+        map(0, "pigment.jpg", "uPigment")
+        map(1, "relief.png", "uRelief")
+        uSection = GLES30.glGetUniformLocation(program, "uSection")
         uMV = GLES30.glGetUniformLocation(program, "uMV"); uP = GLES30.glGetUniformLocation(program, "uP")
         uLight = GLES30.glGetUniformLocation(program, "uLight"); uRim = GLES30.glGetUniformLocation(program, "uRim")
         uGlow = GLES30.glGetUniformLocation(program, "uGlow"); uVig = GLES30.glGetUniformLocation(program, "uVig")
         uDissolve = GLES30.glGetUniformLocation(program, "uDissolve")
         uClip = GLES30.glGetUniformLocation(program, "uClip"); uClipOn = GLES30.glGetUniformLocation(program, "uClipOn")
-        uLipZone = GLES30.glGetUniformLocation(program, "uLipZone"); uLipCol = GLES30.glGetUniformLocation(program, "uLipCol")
+        uUpperLipCut = GLES30.glGetUniformLocation(program, "uUpperLipCut")
+        uLowerLipCut = GLES30.glGetUniformLocation(program, "uLowerLipCut")
+        uLipCol = GLES30.glGetUniformLocation(program, "uLipCol")
         GLES30.glGenVertexArrays(1, vao, 0)
         GLES30.glGenBuffers(1, vbo, 0)
         GLES30.glGenBuffers(1, ibo, 0)
@@ -53,6 +65,23 @@ internal class StyleGl {
         val s = MeshBuilder.STRIDE * 4
         attrib(0, 3, s, 0); attrib(1, 3, s, 12); attrib(2, 4, s, 24); attrib(3, 3, s, 40); attrib(4, 2, s, 52)
         GLES30.glBindVertexArray(0)
+    }
+
+    private fun map(unit: Int, filename: String, uniform: String) {
+        val bitmap = ScannedFace.resource(filename).use { requireNotNull(BitmapFactory.decodeStream(it)) }
+        try {
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE0 + unit)
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, maps[unit])
+            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE)
+            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+            GLES30.glUniform1i(GLES30.glGetUniformLocation(program, uniform), unit)
+        } finally {
+            bitmap.recycle()
+        }
     }
 
     /** [eglSamples]: the surface's own MSAA (0 = none: use the offscreen multisampled framebuffer). */
@@ -75,6 +104,7 @@ internal class StyleGl {
         GLES30.glEnable(GLES30.GL_BLEND)
         GLES30.glBlendFunc(GLES30.GL_ONE, GLES30.GL_ONE_MINUS_SRC_ALPHA)
         GLES30.glUseProgram(program)
+        GLES30.glUniform1f(uSection, frame.cutAmount)
         GLES30.glUniformMatrix4fv(uMV, 1, false, cam.mv, 0)
         GLES30.glUniformMatrix4fv(uP, 1, false, cam.proj, 0)
         GLES30.glUniform3fv(uLight, 1, cam.light, 0)
@@ -82,7 +112,8 @@ internal class StyleGl {
         GLES30.glUniform3fv(uGlow, 1, pal.highlight, 0)
         GLES30.glUniform4fv(uVig, 1, cam.vignette, 0)
         GLES30.glUniform4fv(uClip, 1, cam.clip, 0)
-        GLES30.glUniform4fv(uLipZone, 1, cam.lipZone, 0)
+        GLES30.glUniform4fv(uUpperLipCut, 1, cam.upperLipCut, 0)
+        GLES30.glUniform4fv(uLowerLipCut, 1, cam.lowerLipCut, 0)
         GLES30.glUniform3fv(uLipCol, 1, pal.lips, 0)
         GLES30.glBindVertexArray(vao[0])
         for (b in mb.batches) {
@@ -185,6 +216,7 @@ internal class StyleGl {
     }
 
     fun release() {
+        GLES30.glDeleteTextures(maps.size, maps, 0)
         releaseFbo()
         if (program != 0) GLES30.glDeleteProgram(program)
         GLES30.glDeleteBuffers(1, vbo, 0); GLES30.glDeleteBuffers(1, ibo, 0); GLES30.glDeleteVertexArrays(1, vao, 0)
@@ -258,8 +290,12 @@ uniform vec4 uVig;
 uniform float uDissolve;
 uniform vec4 uClip;
 uniform float uClipOn;
-uniform vec4 uLipZone;
+uniform vec4 uUpperLipCut;
+uniform vec4 uLowerLipCut;
 uniform vec3 uLipCol;
+uniform sampler2D uPigment;
+uniform sampler2D uRelief;
+uniform float uSection;
 in vec3 vM;
 in vec3 vN;
 in vec3 vV;
@@ -268,6 +304,9 @@ flat in float vKind;
 in vec2 vGG;
 in vec2 vUV;
 out vec4 o;
+float lipSection(vec2 p, vec4 lip) {
+  return 1.0 - smoothstep(0.67, 1.15, length((p - lip.xy) / lip.zw));
+}
 void main() {
   if (uClipOn > 0.5 && dot(vec4(vM, 1.0), uClip) < 0.0) discard;
   if (uDissolve < 0.999) {
@@ -284,27 +323,71 @@ void main() {
   vec3 c = vCol.rgb;
   float a = vCol.a * vig;
   float glow = vGG.y;
-  if (kind < 0.5 || (kind > 2.5 && kind < 3.5)) {
+  if (kind > 5.5 && kind < 6.5) {
+    vec3 n = normalize(vN);
+    vec3 v = normalize(vV);
+    if (dot(n,v) < 0.0) n = -n;
+    vec2 ux = dFdx(vUV), uy = dFdy(vUV);
+    vec3 px = dFdx(-vV), py = dFdy(-vV);
+    float det = ux.x * uy.y - uy.x * ux.y;
+    vec3 detail = texture(uRelief, vUV).xyz * 2.0 - 1.0;
+    if (abs(det) > 1e-12) {
+      vec3 tangent = normalize((px * uy.y - py * ux.y) * sign(det));
+      vec3 bitangent = normalize((py * ux.x - px * uy.x) * sign(det));
+      n = normalize(n + 0.72 * (detail.x * tangent + detail.y * bitangent));
+    }
+    float wet = vGG.x;
+    vec3 pigment = texture(uPigment, vUV).rgb * c;
+    float key = max(0.0, dot(n,uLight));
+    float wrap = max(0.0, 0.28 + 0.72 * dot(n,uLight));
+    vec3 fill = vec3(0.35,0.365,0.39);
+    vec3 radiance = fill + vec3(0.61,0.65,0.65) * key + vec3(0.19,0.115,0.075) * wrap;
+    vec3 h = normalize(uLight + v);
+    float nh = max(dot(n,h),0.0);
+    float nv = max(dot(n,v),0.0);
+    float specular = (0.036 + wet * 0.070) * pow(nh,13.0) + (0.020 + wet * 0.17) * pow(nh,74.0);
+    c = pigment * sqrt(radiance) + vec3(1.0,0.94,0.89) * specular
+      + uGlow * glow * (0.15 + 0.25 * pow(1.0-nv, 2.0));
+  } else if (kind < 0.5 || (kind > 2.5 && kind < 3.5) || kind > 6.5) {
     vec3 n = normalize(vN);
     vec3 v = normalize(vV);
     if (dot(n, v) < 0.0) n = -n;
-    bool skin = kind > 2.5;
-    float amb = skin ? 0.965 : 0.58;
+    float skin = max(max(vUV.x, 0.0), float(kind > 2.5));
+    float lip = vUV.y;
+    float amb = mix(0.48, 0.72, skin);
     float dd = dot(n, uLight) * 0.5 + 0.5;
     c *= amb + (1.0 - amb) * smoothstep(0.12, 0.95, dd);
     vec3 h = normalize(uLight + v);
     float gl = vGG.x;
-    float sp = gl * 0.65 * pow(max(dot(n, h), 0.0), 14.0 + 90.0 * gl);
+    float nh = max(dot(n, h), 0.0);
+    float sp = gl * (0.19 * pow(nh, 11.0) + 0.33 * pow(nh, 37.0));
     float nv = max(dot(n, v), 0.0);
-    float rim = pow(1.0 - nv, 3.0) * (skin ? 0.05 : 0.16);
+    float rim = pow(1.0 - nv, 3.0) * mix(0.065, 0.035, skin);
+    // Subtle vermilion furrows and fine skin variation in object space, visible only on close-ups.
+    if (skin + lip > 0.005) {
+      float grain = sin(vM.x * 9.7 + vM.y * 4.1) * sin(vM.y * 8.3 - vM.z * 5.3);
+      float wrinkle = sin(vM.x * 1.71 + vM.y * 0.86) + 0.65 * sin(vM.x * 3.08 - vM.y * 0.4);
+      float fold = sin(vM.x * 6.4 + 1.53 * wrinkle + 1.48 * sin(vM.y * 0.38 + vM.z * 0.47));
+      c *= 1.0 + skin * 0.009 * grain - lip * 0.027 * smoothstep(0.48, 0.98, fold);
+    } else if (vUV.x < 0.0) {
+      float papillae = sin(vM.x * 7.4 + vM.z * 3.0) * sin(vM.z * 8.1 - vM.y * 2.9);
+      c *= 1.0 - vUV.x * 0.025 * papillae;
+    }
     float ge = glow * (0.22 + 0.7 * pow(1.0 - nv, 2.0));
-    c += vec3(sp) + uRim * rim + uGlow * ge;
+    float depth = smoothstep(0.0, 38.0, -vM.z);
+    float corner = smoothstep(10.0, 26.0, abs(vM.x));
+    float dental = float(kind > 6.5);
+    float shade = mix(0.80 - 0.55 * depth - 0.14 * corner, 0.98 - 0.37 * depth - 0.22 * corner, dental);
+    float exposure = mix(shade, 0.97, smoothstep(0.25, 0.95, uSection));
+    c = (c + vec3(sp) + uRim * rim) * exposure + uGlow * ge;
   } else if (kind < 1.5) {
     c = mix(c, uGlow, glow * 0.16);
+  } else if (kind > 4.5) {
+    float fibre = sin(vM.y * 0.53 + 1.1 * sin(vM.z * 0.19)) * 0.018;
+    c *= 0.94 + 0.11 * smoothstep(-22.0, 20.0, vM.y) + fibre;
   } else if (kind > 3.5) {
-    // the head's cut: tissue, the lips' red in front of the teeth
-    float lip = smoothstep(uLipZone.x - 0.6, uLipZone.x + 0.6, vM.z) * smoothstep(uLipZone.y - 0.8, uLipZone.y + 0.8, vM.y) * (1.0 - smoothstep(uLipZone.z - 0.8, uLipZone.z + 0.8, vM.y));
-    c = mix(c, uLipCol, lip);
+    float lip = max(lipSection(vM.yz, uUpperLipCut), lipSection(vM.yz, uLowerLipCut));
+    c = mix(c, uLipCol, lip * 0.8);
   } else {
     a *= 1.0 - smoothstep(0.55, 1.0, length(vUV * 2.0 - 1.0));
   }
