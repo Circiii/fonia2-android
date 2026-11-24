@@ -50,6 +50,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,7 +105,7 @@ import tech.fonia.design.ui
 import tech.fonia.domain.CoachCheck
 import tech.fonia.domain.CoachDiagram
 import tech.fonia.domain.CoachFocus
-import tech.fonia.domain.CoachFaultText
+import tech.fonia.domain.CoachMicJudge
 import tech.fonia.domain.CoachPlan
 import tech.fonia.domain.CoachStep
 import tech.fonia.domain.Exercise
@@ -113,6 +114,7 @@ import tech.fonia.domain.RepeatPrompt
 import tech.fonia.domain.SoundID
 import tech.fonia.domain.Viseme
 import tech.fonia.dsp.heardSpeech
+import tech.fonia.dsp.voicedSeconds
 import tech.fonia.face.FaceCheck
 import tech.fonia.face.FaceHold
 import tech.fonia.face.FaceLevels
@@ -131,11 +133,13 @@ import tech.fonia.features.app.SoundEffect
 import tech.fonia.features.app.ViewTask
 import tech.fonia.features.app.calibration
 import tech.fonia.features.app.dspGroup
+import tech.fonia.features.app.isChild
 import tech.fonia.features.app.shape
 import tech.fonia.features.ml.shadowMirrorTake
 import tech.fonia.features.session.TakeJudge
 import tech.fonia.features.session.TakeVerdict
 import tech.fonia.features.session.VerdictWriter
+import tech.fonia.features.session.softenedForChild
 import tech.fonia.store.Profile
 
 private sealed interface MicState {
@@ -184,6 +188,9 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
     val insideAvailable = target != null && mouthData?.insideAvailable(target) == true
 
     val step: CoachStep? = plan.steps.getOrNull(index)
+    /** The one syllable try that may be running on the last page. */
+    var syllableTry by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
+    val pageScope = rememberCoroutineScope()
 
     fun advance() {
         cheers += 1
@@ -195,26 +202,34 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
         if (index + 1 < plan.steps.size) {
             index += 1
         } else {
+            // The last page listens to syllables with the same status line, so it starts empty.
+            micState = MicState.Idle
             isDone = true
             app.audio.effect(SoundEffect.Star)
         }
     }
 
-    suspend fun judge(clip: tech.fonia.audio.CapturedClip): TakeVerdict {
-        val judge = TakeJudge(app.content, profile.dspGroup, profile.calibration, transcriber = null, thresholds = app.audio.analysisThresholds)
-        val sound = SoundID.fromRawValue(plan.key)
-        if (plan.language != Language.Ro || sound == null) {
-            val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration, app.audio.analysisThresholds)
-            return VerdictWriter.personJudges(heard = heardSpeech(summary, app.audio.analysisThresholds), tip = null, pose = null)
+    /** Each microphone step is judged by its own `mic` (iOS `CoachEar`): the sound, the voice alone, or nothing. */
+    suspend fun judge(spoken: String, way: CoachEar.Way, needed: Double, clip: tech.fonia.audio.CapturedClip): TakeVerdict {
+        val thresholds = app.audio.analysisThresholds
+        return when (way) {
+            is CoachEar.Way.Sound -> {
+                val judge = TakeJudge(app.content, profile.dspGroup, profile.calibration, transcriber = null, thresholds = thresholds)
+                judge.judge(Exercise.Repeat(RepeatPrompt(text = spoken, language = Language.Ro, sound = way.sound, level = RepeatPrompt.Level.Syllable)), clip)
+            }
+            CoachEar.Way.Voice -> {
+                val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration, thresholds)
+                CoachEar.voice(heard = heardSpeech(summary, thresholds), voicedSeconds = voicedSeconds(summary, thresholds), needed = needed)
+            }
+            CoachEar.Way.Unjudged -> {
+                val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration, thresholds)
+                CoachEar.unjudged(heard = heardSpeech(summary, thresholds))
+            }
         }
-        // Every microphone step is judged as the plan's first syllable, whatever the step says.
-        val spoken = plan.syllables?.list?.firstOrNull() ?: plan.letter.lowercase()
-        return judge.judge(Exercise.Repeat(RepeatPrompt(text = spoken, language = Language.Ro, sound = sound, level = RepeatPrompt.Level.Syllable)), clip)
     }
 
-    fun fault(): CoachFaultText? = plan.faults.firstOrNull()
-
-    suspend fun listen() {
+    /** One take: listen, judge, say how it went. [movesOn] is the sound step, which a good take passes. */
+    suspend fun hear(spoken: String, mic: CoachMicJudge?, movesOn: Boolean) {
         if (!app.audio.requestMicrophone()) {
             micState = MicState.Heard("Microfonul e oprit", "Îl pornești din Setări, la Fonia.", isGood = false)
             return
@@ -230,22 +245,47 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
         micState = MicState.Listening
         app.audio.waitForTakeEnd(silence = 0.6, startTimeout = 7.0, maximum = 6.0)
         if (!currentCoroutineContext().isActive) return
-        val clip = app.audio.stopListening() ?: return
-        micState = MicState.Thinking
-        val verdict = judge(clip)
-        // Nothing goes to FoniaStore, as on iOS. The pilot log counts the take as a mirror attempt (no audio), and
-        // shadow mode scores the same syllable TakeJudge just judged; neither changes what happens next.
-        val mirrored = SoundID.fromRawValue(plan.key)
-        if (plan.language == Language.Ro && mirrored != null) {
-            app.shadowMirrorTake(profile, mirrored, plan.syllables?.list?.firstOrNull() ?: plan.letter.lowercase(), clip, verdict)
+        val clip = app.audio.stopListening()
+        if (clip == null) {
+            micState = MicState.Heard(VerdictWriter.listenFailed.title, VerdictWriter.listenFailed.tip, isGood = false)
+            return
         }
+        micState = MicState.Thinking
+        val way = CoachEar.way(mic, plan, app.content)
+        val verdict = judge(spoken, way, if (movesOn) CoachEar.heldVoice else CoachEar.SHORT_VOICE, clip)
+        if (!currentCoroutineContext().isActive) return
+        // Nothing goes to FoniaStore, as on iOS. The pilot log counts the take as a mirror attempt (no audio), and
+        // shadow mode scores the same syllable TakeJudge just judged; neither changes what happens next. A take
+        // judged by voice alone is no syllable to score.
+        if (way is CoachEar.Way.Sound) app.shadowMirrorTake(profile, way.sound, spoken, clip, verdict)
         if (verdict.rating == Rating.yes) {
             app.audio.effect(SoundEffect.Correct)
             micState = MicState.Heard(verdict.title, null, isGood = true)
+            if (!movesOn) return
             delay(900)
             advance()
         } else {
-            micState = MicState.Heard(verdict.title, fault()?.tip ?: verdict.tip, isGood = false)
+            val shown = if (profile.isChild) verdict.softenedForChild else verdict
+            micState = MicState.Heard(shown.title, CoachEar.tip(way, verdict, plan), isGood = false)
+        }
+    }
+
+    suspend fun listen(step: CoachStep) {
+        hear(plan.syllables?.list?.firstOrNull() ?: plan.letter.lowercase(), step.mic, movesOn = true)
+    }
+
+    /**
+     * On the last page each syllable is heard and judged like the sound step, one at a time (iOS ebec09a): tap, hear
+     * the model, say it, get the verdict. A good one there doesn't move anything; a new tap drops the try before it.
+     */
+    fun trySyllable(syllable: String) {
+        syllableTry?.cancel()
+        syllableTry = pageScope.launch {
+            app.audio.cancelListening()
+            micState = MicState.Idle
+            app.audio.say(syllable, plan.language)
+            if (!isActive) return@launch
+            hear(syllable, plan.syllables?.judge, movesOn = false)
         }
     }
 
@@ -297,7 +337,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
         if (!isActive) return@ViewTask
         when (current.check) {
             CoachCheck.Face -> watch(current)
-            CoachCheck.Mic -> listen()
+            CoachCheck.Mic -> listen(current)
             CoachCheck.Self -> Unit
         }
     }
@@ -319,7 +359,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                 val shown = step
                 if (done || shown == null) {
                     Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.navigationBars).padding(horizontal = 16.dp, vertical = 10.dp)) {
-                        Finished(plan, app, onDone = dismiss)
+                        Finished(plan, app, micState = micState, onTry = { trySyllable(it) }, onDone = dismiss)
                     }
                 } else {
                     // A video call: the right mouth on top, the child large below.
@@ -348,7 +388,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             cameraProblem = cameraProblem,
                             onCameraProblem = { cameraProblem = it },
                             micState = micState,
-                            onRetry = { app.scope.launch { listen() } },
+                            onRetry = { app.scope.launch { listen(shown) } },
                             onAdvance = { advance() },
                             modifier = Modifier.weight(0.46f).fillMaxWidth(),
                         )
@@ -635,7 +675,7 @@ private fun MicStatus(state: MicState, app: AppModel) {
 }
 
 @Composable
-private fun Finished(plan: CoachPlan, app: AppModel, onDone: () -> Unit) {
+private fun Finished(plan: CoachPlan, app: AppModel, micState: MicState, onTry: (String) -> Unit, onDone: () -> Unit) {
     Box(Modifier.fillMaxSize()) {
         CelebrationBurst(isActive = true, modifier = Modifier.fillMaxSize())
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -645,12 +685,17 @@ private fun Finished(plan: CoachPlan, app: AppModel, onDone: () -> Unit) {
             val syllables = plan.syllables
             val word = plan.word
             if (syllables != null) {
-                FoniaText("Acum încearcă și așa:", style = fBody, color = Palette.inkSoft)
+                FoniaText("Atinge o silabă. O auzi, apoi o spui tu.", style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     for (syllable in syllables.list) {
-                        StyledButton(onClick = { app.scope.launch { app.audio.say(syllable, plan.language) } }, style = MiniPillStyle()) { FoniaText(syllable) }
+                        StyledButton(
+                            onClick = { onTry(syllable) },
+                            style = MiniPillStyle(),
+                            onClickLabel = "O auzi, apoi o spui tu",
+                        ) { FoniaText(syllable) }
                     }
                 }
+                Box(Modifier.heightIn(min = 54.dp), contentAlignment = Alignment.Center) { MicStatus(micState, app) }
             } else if (word != null) {
                 StyledButton(onClick = { app.scope.launch { app.audio.say(word.word, plan.language) } }, style = MiniPillStyle()) { FoniaText(word.word) }
                 FoniaText(word.cue, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
