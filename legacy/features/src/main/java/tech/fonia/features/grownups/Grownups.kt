@@ -156,7 +156,7 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
     }
     AddChildSheet(app, isPresented = addingChild, onDone = { addingChild = false })
     FoniaSheet(isPresented = showLegal, onDismiss = { showLegal = false }) {
-        PrivacyNote(onDone = { showLegal = false }, withReading = true, onOpenLink = { LegalInfo.open(context, it) })
+        PrivacyNote(onDone = { showLegal = false }, withReading = app.arguments.drafts, onOpenLink = { LegalInfo.open(context, it) })
     }
     FoniaConfirmationDialog(
         isPresented = confirmWipe,

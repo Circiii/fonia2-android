@@ -309,7 +309,7 @@ fun DestinationScreen(destination: Destination, app: AppModel, path: PathModel?,
         is Destination.SoundChoice -> SoundChoiceScreen(destination.profileID, app)
         is Destination.Calibration -> CalibrationScreen(destination.profileID, app)
         Destination.Who -> WhoScreen(app)
-        is Destination.Reading -> ReadingHome(destination.profileID, app)
+        is Destination.Reading -> if (app.arguments.drafts) ReadingHome(destination.profileID, app) else EmptyPage()
         is Destination.Adaptive -> AdaptiveScreen(destination.profileID, app)
     }
 }

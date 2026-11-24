@@ -180,6 +180,11 @@ data class LaunchArguments(
     val micFile: String? = null,
     /** Debug only (iOS `-foniaGate`): the adult check always asks this number, so a test can pass it. */
     val gateNumber: Int? = null,
+    /**
+     * The drafts (Bac, "Cuvântul important", the reading probes, the diction training): shown in debug builds, or
+     * with `foniaDrafts`; a release build without the flag doesn't show them (iOS `LaunchFlags.showsDrafts`).
+     */
+    val drafts: Boolean = IS_DEBUG_BUILD,
 ) {
     companion object {
         val none = LaunchArguments()
@@ -204,6 +209,7 @@ data class LaunchArguments(
                 face = if (debug) value("foniaFace") else null,
                 micFile = if (debug) value("foniaMicFile") else null,
                 gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
+                drafts = debug || flag("foniaDrafts"),
             )
         }
     }
@@ -328,8 +334,9 @@ class AppModel(
         runCatching { open.close() }
     }
 
-    /** The drills of a sound's training ladder (empty without the v2 texts). */
+    /** The drills of a sound's training ladder (empty without the v2 texts, and while the drafts are hidden). */
     fun drills(sound: SoundID): List<tech.fonia.features.diction.Drill> {
+        if (!arguments.drafts) return emptyList()
         val v2 = lessonContent ?: return emptyList()
         return runCatching {
             tech.fonia.features.diction.DictionDrills.build(content.sound(sound), v2, { audio.hasClip(it, Language.Ro) }, hasPicture)

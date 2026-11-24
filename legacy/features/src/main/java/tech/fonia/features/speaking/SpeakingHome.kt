@@ -187,7 +187,7 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                     }
                 }
 
-                SpeakingExtraRows(extras, language)
+                if (app.arguments.drafts) SpeakingExtraRows(extras, language)
 
                 Heading("Alte subiecte")
                 for (prompt in prompts) {

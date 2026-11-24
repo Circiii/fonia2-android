@@ -142,7 +142,7 @@ fun FirstRunFlow(app: AppModel) {
     ) { shown ->
         when (shown) {
             Step.voice -> VoiceWelcome(app) { step = Step.forAdult }
-            Step.forAdult -> ForTheAdult(onBack = { step = Step.voice }, onNext = { step = Step.who })
+            Step.forAdult -> ForTheAdult(withReading = app.arguments.drafts, onBack = { step = Step.voice }, onNext = { step = Step.who })
             Step.who -> WhoIsPractising(onChild = { step = Step.child }, onAdult = { step = Step.adult })
             Step.child -> ChildSetup(app, onBack = { step = Step.who }, onDone = { finish(it) })
             Step.adult -> AdultSetup(onBack = { step = Step.who }, onDone = { finish(it) })
@@ -264,7 +264,7 @@ private fun VoiceWelcome(app: AppModel, onNext: () -> Unit) {
 
 /** What the adult should know before anything else (iOS `ForTheAdult`): three lines, and the whole text one tap away. */
 @Composable
-private fun ForTheAdult(onBack: () -> Unit, onNext: () -> Unit) {
+private fun ForTheAdult(withReading: Boolean, onBack: () -> Unit, onNext: () -> Unit) {
     var showsAll by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val icons = listOf(FoniaIcon.microphone, FoniaIcon.mirror, FoniaIcon.lock)
@@ -322,7 +322,7 @@ private fun ForTheAdult(onBack: () -> Unit, onNext: () -> Unit) {
     }
     FoniaSheet(isPresented = showsAll, onDismiss = { showsAll = false }) {
         // No profile yet, so no gate: the adult is the one setting the app up.
-        PrivacyNote(onDone = { showsAll = false }, withReading = true, onOpenLink = { LegalInfo.open(context, it) })
+        PrivacyNote(onDone = { showsAll = false }, withReading = withReading, onOpenLink = { LegalInfo.open(context, it) })
     }
 }
 
