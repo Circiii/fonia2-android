@@ -249,7 +249,7 @@ class ExportFormatTests {
                   "id" : "A1B2C3D4-E5F6-4789-8ABC-DEF012345678",
                   "localDay" : "2026-11-04",
                   "machineOutcome" : "good",
-                  "profileId" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                  "profileId" : "00000000-0000-0000-0000-000000000000",
                   "recordingId" : "C0FFEE00-1234-4ABC-9DEF-00112233AABB",
                   "sessionId" : "0A0B0C0D-0E0F-4011-8213-141516171819",
                   "sound" : "s",
@@ -262,7 +262,7 @@ class ExportFormatTests {
                 {
                   "id" : "B07E0000-0000-4000-8000-000000000002",
                   "localDay" : "2026-11-04",
-                  "profileId" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                  "profileId" : "00000000-0000-0000-0000-000000000000",
                   "text" : "Bine la S"
                 }
               ],
@@ -273,9 +273,9 @@ class ExportFormatTests {
 
                 ],
                 "createdAt" : "2026-11-01T07:00:00Z",
-                "id" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                "id" : "00000000-0000-0000-0000-000000000000",
                 "kind" : "child",
-                "name" : "Ana",
+                "label" : "Profil",
                 "openPath" : false,
                 "requireConfirmation" : true,
                 "targetSounds" : [
@@ -295,7 +295,7 @@ class ExportFormatTests {
                   "ts" : "2026-11-04T08:05:00Z"
                 }
               ],
-              "schemaVersion" : 1,
+              "schemaVersion" : 2,
               "sessions" : [
                 {
                   "attempts" : 1,
@@ -303,7 +303,7 @@ class ExportFormatTests {
                   "focus" : "sound:s",
                   "id" : "0A0B0C0D-0E0F-4011-8213-141516171819",
                   "localDay" : "2026-11-04",
-                  "profileId" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                  "profileId" : "00000000-0000-0000-0000-000000000000",
                   "seed" : -42,
                   "sound" : "s",
                   "startedAt" : "2026-11-04T08:00:00Z",
@@ -320,7 +320,7 @@ class ExportFormatTests {
                       "total" : 6
                     }
                   ],
-                  "profileId" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                  "profileId" : "00000000-0000-0000-0000-000000000000",
                   "rung" : 1,
                   "sound" : "s"
                 }
@@ -340,7 +340,7 @@ class ExportFormatTests {
                     "pitchSpread" : 2.75,
                     "wpm" : 130
                   },
-                  "profileId" : "6F2C0B1A-3D4E-4F50-8A6B-7C8D9E0F1A2B",
+                  "profileId" : "00000000-0000-0000-0000-000000000000",
                   "prompt" : "O zi bună",
                   "recordingId" : "C0FFEE00-1234-4ABC-9DEF-00112233AABB",
                   "selfRating" : 3,

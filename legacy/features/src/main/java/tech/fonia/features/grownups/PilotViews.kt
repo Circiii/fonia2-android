@@ -59,6 +59,7 @@ internal fun ModelSections(app: AppModel) {
     val state = ml.models.state(entry)
     val footer = buildString {
         append("Un al doilea fel de a asculta, tot pe telefon. Notează ce a auzit doar în jurnalul pentru logoped, fără voce. Copilul vede și aude la fel. Se descarcă doar pe Wi-Fi.")
+        if (!app.isPilotLogOn) append(" Notează doar cu jurnalul de exersare pornit.")
         if (state is ModelsHub.State.Failed && state.noNetwork) append(" Acum nu e Wi-Fi.")
     }
     ListSection(header = "Ascultare pe sunete, în probă", footer = footer) {
@@ -98,7 +99,7 @@ private val weekLetters = listOf("L", "M", "M", "J", "V", "S", "D")
 internal fun DoseSection(profile: Profile, app: AppModel) {
     val pilot = app.pilot ?: return
     var summary by remember { mutableStateOf<DoseSummary?>(null) }
-    LaunchedEffect(profile.id) {
+    LaunchedEffect(profile.id, pilot) {
         summary = try {
             pilot.dose(profile.id, order = profile.targetSounds)
         } catch (cancelled: CancellationException) {

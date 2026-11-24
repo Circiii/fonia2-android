@@ -168,7 +168,7 @@ fun ListSectionScope.profileActivityRows(profile: Profile, app: AppModel, contex
         DetailRow(
             "Trimite fișierul la logoped",
             "Are încercările și notițele, fără înregistrări. Îl trimiți tu, cui vrei.",
-            onClick = { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, profile.name, app.pilot, profile, app.adaptive) } },
+            onClick = { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive) } },
             chevron = false,
         )
     }

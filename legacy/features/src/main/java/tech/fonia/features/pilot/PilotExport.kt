@@ -46,7 +46,11 @@ data class PilotExportInput(
  */
 object PilotExport {
     const val FORMAT = "fonia-pilot-summary"
-    const val FORMAT_VERSION = 1
+    /**
+     * 2: the `phone` section (model and Android version) is gone, as on iOS. The file travels with the logoped file,
+     * and the phone model narrows down whose child it is.
+     */
+    const val FORMAT_VERSION = 2
 
     private val json = Json { prettyPrint = true }
 
@@ -80,10 +84,6 @@ object PilotExport {
                 put("version", input.install?.appVersion)
                 put("dspThresholds", input.dspThresholdsVersion)
                 put("detailDays", input.detailDays)
-            }
-            putJsonObject("phone") {
-                put("model", input.install?.phone)
-                put("androidSdk", input.install?.sdk)
             }
             putJsonObject("activation") {
                 put("loggingSince", input.install?.day)

@@ -196,17 +196,107 @@ class ExportTests {
                 root.keys,
             )
             assertEquals("fonia", root["app"].string)
-            assertEquals(1, root["schemaVersion"].int)
+            assertEquals(2, root["schemaVersion"].int)
             assertEquals("2026-11-04T10:00:00Z", root["exportedAt"].string)
 
             for (key in listOf("soundProgress", "sessions", "attempts", "recordings", "speeches", "notes")) {
                 assertEquals(1, (root[key] as? JsonArray)?.size, "$key should hold only Ana's row")
             }
             val profile = assertNotNull(root["profile"] as? JsonObject)
-            assertEquals("Ana", profile["name"].string)
-            assertEquals(ana.id.uuidString, profile["id"].string)
+            assertNull(profile["name"])
+            assertEquals("Profil", profile["label"].string)
+            assertEquals(ExportDocument.ANONYMOUS_PROFILE_ID.uuidString, profile["id"].string)
             assertEquals("6-7", profile["ageBand"].string)
         }
+    }
+
+    @Test
+    @DisplayName("by default nothing in the file names the person or the phone, and the history is all there")
+    fun pseudonymousByDefault() = runTest {
+        TestStore().use { store ->
+            val profile = Profile.fixtureChild(name = "Ana Popescu").copy(notes = "Ana Popescu, clasa a II-a. ana spune bine S.")
+            store.repository.saveProfile(profile)
+            val session = store.addSession(profile)
+            val take = store.addTake(profile)
+            store.repository.addAttempt(
+                Attempt(
+                    sessionId = session.id,
+                    profileId = profile.id,
+                    ts = bucharest(2026, 11, 4, 10, 5),
+                    exerciseKind = "repeat",
+                    sound = "s",
+                    target = "sare",
+                    machineOutcome = Attempt.Outcome.Good,
+                    detail = mapOf("heard" to JSONValue.String("sare, Ana")),
+                    recordingId = take.id,
+                    timeZone = Bucharest,
+                ),
+            )
+            store.repository.saveSpeech(
+                SpeechRecord(
+                    profileId = profile.id,
+                    ts = bucharest(2026, 11, 4, 11),
+                    lang = SpeechRecord.Language.Ro,
+                    prompt = "Prezintă-te",
+                    duration = 30.0,
+                    transcript = "Mă numesc ANA POPESCU și am opt ani. Îmi place banana.",
+                    metrics = mapOf("wpm" to JSONValue.Number(130.0)),
+                ),
+            )
+            store.repository.saveNote(MoodlessNote(profileId = profile.id, localDay = "2026-11-04", text = "Popescu a lucrat bine"))
+
+            val data = store.repository.exportJSON(profileId = profile.id, now = bucharest(2026, 11, 4, 12))
+            val text = data.decodeToString()
+            for (absent in listOf("Ana", "ANA", "Popescu", "POPESCU", profile.id.uuidString, profile.id.toString(), ".m4a")) {
+                assertFalse(text.contains(absent), "$absent is in the file")
+            }
+            // "ana" only inside other words ("banana"), never on its own.
+            assertFalse(text.contains(" ana "))
+            assertTrue(text.contains("banana"))
+            assertTrue(text.contains("[nume]"))
+
+            val root = json(data)
+            val exported = assertNotNull(root["profile"] as? JsonObject)
+            assertEquals("Profil", exported["label"].string)
+            assertNull(exported["name"])
+            assertEquals("[nume] [nume], clasa a II-a. [nume] spune bine S.", exported["notes"].string)
+            val attempts = assertNotNull(root["attempts"] as? JsonArray)
+            val attempt = attempts.single() as JsonObject
+            assertEquals(session.id.uuidString, attempt["sessionId"].string)
+            assertEquals(take.id.uuidString, attempt["recordingId"].string)
+            assertEquals("sare", attempt["target"].string)
+            assertEquals(ExportDocument.ANONYMOUS_PROFILE_ID.uuidString, attempt["profileId"].string)
+            assertEquals("sare, [nume]", (attempt["detail"] as JsonObject)["heard"].string)
+            val speech = (root["speeches"] as JsonArray).single() as JsonObject
+            assertEquals("Mă numesc [nume] [nume] și am opt ani. Îmi place banana.", speech["transcript"].string)
+            assertEquals("[nume] a lucrat bine", ((root["notes"] as JsonArray).single() as JsonObject)["text"].string)
+            // The database keeps the name.
+            assertEquals("Ana Popescu", store.repository.profile(id = profile.id)?.name)
+        }
+    }
+
+    @Test
+    @DisplayName("the name goes in only when the adult asks for it")
+    fun nameOnRequest() = runTest {
+        TestStore().use { store ->
+            val (ana, _) = addFullProfile(store, name = "Ana")
+            val root = json(store.repository.exportJSON(profileId = ana.id, includeName = true))
+            val profile = assertNotNull(root["profile"] as? JsonObject)
+            assertEquals("Ana", profile["name"].string)
+            assertEquals("Ana", profile["label"].string)
+            assertEquals(ana.id.uuidString, profile["id"].string)
+            assertEquals(2, root["schemaVersion"].int)
+        }
+    }
+
+    @Test
+    @DisplayName("the redactor matches whole words, any case, with or without diacritics")
+    fun redactor() {
+        val redactor = NameRedactor("Ștefan Ana-Maria")
+        assertEquals("[nume], [nume] și [nume]", redactor.redact("stefan, ȘTEFAN și Ștefan"))
+        assertEquals("[nume]-[nume] și [nume]", redactor.redact("Ana-Maria și Maria"))
+        assertEquals("banana, Ștefania", redactor.redact("banana, Ștefania"))
+        assertEquals("Ana", NameRedactor(null).redact("Ana"))
     }
 
     @Test

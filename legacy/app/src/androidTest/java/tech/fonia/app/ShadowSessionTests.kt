@@ -27,6 +27,7 @@ import tech.fonia.features.ml.ModelManager
 import tech.fonia.features.pilot.PilotEnvironment
 import tech.fonia.features.pilot.PilotLog
 import tech.fonia.features.pilot.PilotSnapshot
+import tech.fonia.features.pilot.PilotSwitch
 import tech.fonia.features.session.ShadowBadgeSettings
 import tech.fonia.speech.LocalFileFetcher
 import java.io.File
@@ -53,7 +54,9 @@ class ShadowSessionTests : Journeys() {
         val manager = ModelManager(MlHub.modelsFolder(context), listOf(local)) { LocalFileFetcher }
         if (!manager.isReady(local)) runBlocking { manager.download(local) }
         assertTrue(MlHub.manager(context).isReady(ModelCatalog.ZIPA))
-        context.getSharedPreferences("fonia", Context.MODE_PRIVATE).edit().putBoolean(ShadowBadgeSettings.KEY, true).commit()
+        // The pilot log is off until switched on; this test reads it.
+        context.getSharedPreferences("fonia", Context.MODE_PRIVATE).edit()
+            .putBoolean(ShadowBadgeSettings.KEY, true).putBoolean(PilotSwitch.KEY, true).commit()
     }
 
     /** Answers whatever the session asks of a person, so the run reaches its end on its own. */

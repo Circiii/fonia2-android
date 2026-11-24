@@ -331,16 +331,17 @@ class PilotLogTests {
 
         assertEquals(
             listOf(
-                "format", "formatVersion", "generatedOn", "pseudonym", "profile", "period", "app", "phone", "activation", "retention",
+                "format", "formatVersion", "generatedOn", "pseudonym", "profile", "period", "app", "activation", "retention",
                 "days", "weeks", "sounds", "phoneVsAdult", "shadow", "accessLog",
             ),
             document.keys.toList(),
         )
         assertEquals(PilotExport.FORMAT, document.getValue("format").jsonPrimitive.content)
-        assertEquals(1, document.getValue("formatVersion").jsonPrimitive.int)
+        assertEquals(2, document.getValue("formatVersion").jsonPrimitive.int)
         assertEquals("""{"kind":"child","ageBand":"6-7","targetSounds":["s","r"]}""", document.getValue("profile").toString())
         assertEquals("""{"version":"0.1.0","dspThresholds":1,"detailDays":90}""", document.getValue("app").toString())
-        assertEquals("""{"model":"Test Phone","androidSdk":35}""", document.getValue("phone").toString())
+        // No phone model: with the logoped file it narrows down whose child it is.
+        assertFalse(text.contains("Test Phone"))
         val activation = document.getValue("activation").jsonObject
         assertEquals(today.minusDays(21).toString(), activation.getValue("loggingSince").jsonPrimitive.content)
         assertEquals(today.minusDays(20).toString(), activation.getValue("setUpOn").jsonPrimitive.content)

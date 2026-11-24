@@ -275,7 +275,11 @@ class FoniaRepository(
      * A JSON file for handing one profile's data to the logoped through the share sheet.
      * Audio stays out unless [includeAudio] is true, and the sibilant calibration always stays out.
      */
-    suspend fun exportJSON(profileId: UUID, includeAudio: Boolean = false, now: Instant = Instant.now()): ByteArray {
+    /**
+     * The file for the logoped. Without [includeName] nothing in it names the person or ties it to this phone: no name,
+     * the name replaced by "[nume]" in free text, a fixed profile id (iOS 007bfcf).
+     */
+    suspend fun exportJSON(profileId: UUID, includeAudio: Boolean = false, includeName: Boolean = false, now: Instant = Instant.now()): ByteArray {
         val contents = writer.read { db ->
             val profile = Profile.fetchOne(db, listOf(profileId)) ?: throw FoniaStoreError.ProfileNotFound()
             ExportDocument.Contents(
@@ -292,8 +296,9 @@ class FoniaRepository(
                 notes = fetchNotes(db, profileId),
             )
         }
+        val exported = if (includeName) contents else contents.pseudonymous()
         return fileWork {
-            ExportDocument(contents, exportedAt = now, audio = if (includeAudio) files else null).encoded()
+            ExportDocument(exported, exportedAt = now, audio = if (includeAudio) files else null).encoded()
         }
     }
 

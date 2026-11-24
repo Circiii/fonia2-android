@@ -1,10 +1,19 @@
 package tech.fonia.store
 
+import java.text.BreakIterator
+import java.text.Normalizer
 import java.time.Instant
 import java.util.Base64
+import java.util.Locale
 import java.util.UUID
 
-/** The shape of the file handed to the logoped. */
+/**
+ * The shape of the file handed to the logoped.
+ *
+ * `schemaVersion` 2 (as iOS 007bfcf): the profile carries a `label` and only carries `name` when the adult chose to add
+ * it, and in a pseudonymous file every `id`/`profileId` of the profile is [ANONYMOUS_PROFILE_ID]. Version 1 always
+ * carried the name and the profile's real id. Nothing reads these files back.
+ */
 internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio: RecordingFiles?) {
     class Contents(
         val profile: Profile,
@@ -14,7 +23,36 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         val recordings: List<Recording>,
         val speeches: List<SpeechRecord>,
         val notes: List<MoodlessNote>,
-    )
+    ) {
+        /**
+         * The same data with nothing that names the person or ties the file to this phone: no name, the name replaced
+         * in free text, and a fixed profile id. Session, attempt and take ids are random and stay, so the rows still
+         * point at each other.
+         */
+        fun pseudonymous(): Contents {
+            val redactor = NameRedactor(profile.name)
+            val id = ANONYMOUS_PROFILE_ID
+            return Contents(
+                profile = profile.copy(id = id, name = null, notes = profile.notes?.let(redactor::redact)),
+                soundProgress = soundProgress.map { it.copy(profileId = id) },
+                sessions = sessions.map { it.copy(profileId = id) },
+                attempts = attempts.map { row ->
+                    row.copy(profileId = id, target = row.target?.let(redactor::redact), detail = row.detail?.let(redactor::redact))
+                },
+                recordings = recordings.map { it.copy(profileId = id, label = redactor.redact(it.label)) },
+                speeches = speeches.map { row ->
+                    row.copy(
+                        profileId = id,
+                        prompt = redactor.redact(row.prompt),
+                        transcript = row.transcript?.let(redactor::redact),
+                        metrics = redactor.redact(row.metrics),
+                        correctedFillers = row.correctedFillers.map(redactor::redact),
+                    )
+                },
+                notes = notes.map { it.copy(profileId = id, text = redactor.redact(it.text)) },
+            )
+        }
+    }
 
     class ExportedRecording(
         val id: UUID,
@@ -27,7 +65,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
     )
 
     val app = "fonia"
-    val schemaVersion = 1
+    val schemaVersion = 2
     val profile: Profile = contents.profile.copy(sibilantCalibration = null)
     val soundProgress: List<SoundProgress> = contents.soundProgress
     val sessions: List<SessionRecord> = contents.sessions
@@ -76,12 +114,20 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         put("notes", JArray(notes.map { it.exportNode() }))
     }
 
-    private companion object {
-        val DATES = DateEncodingStrategy.ISO8601
+    companion object {
+        private val DATES = DateEncodingStrategy.ISO8601
+
+        /** What a pseudonymous file calls its one profile. The file only ever holds one. */
+        val ANONYMOUS_PROFILE_ID = UUID(0L, 0L)
+
+        /** The profile's label when the name stays out. */
+        const val ANONYMOUS_LABEL = "Profil"
     }
 
+    /** The profile as exported: a label always, the name only on request, never the sibilant calibration. */
     private fun Profile.exportNode(): JsonNode = jsonObject {
         put("id", jsonUUID(id))
+        put("label", JText(name?.takeIf { it.isNotEmpty() } ?: ANONYMOUS_LABEL))
         putIfPresent("name", name?.let(::JText))
         put("kind", JText(kind.rawValue))
         put("ageBand", JText(ageBand.rawValue))
@@ -169,4 +215,76 @@ private inline fun jsonObject(build: MutableMap<String, JsonNode>.() -> Unit): J
 
 private fun MutableMap<String, JsonNode>.putIfPresent(key: String, node: JsonNode?) {
     if (node != null) put(key, node)
+}
+
+/**
+ * Replaces each word of a profile's name, as a whole word, in free text: whatever the case, with or without diacritics
+ * ("Ștefan", "stefan", "STEFAN"). Declined forms ("Anei") are not caught. As iOS `NameRedactor`.
+ */
+internal class NameRedactor(name: String?) {
+    /** Each name word of two letters or more, as folded characters. */
+    private val words: List<List<String>> =
+        (name ?: "").split(Regex("[^\\p{L}\\p{N}]+"))
+            .map(::characters)
+            .filter { it.size >= 2 }
+            .map { word -> word.map(::fold) }
+            .distinct()
+
+    fun redact(text: String): String {
+        if (words.isEmpty()) return text
+        val characters = characters(text)
+        val folded = characters.map(::fold)
+        val out = StringBuilder()
+        var index = 0
+        scan@ while (index < characters.size) {
+            if (index == 0 || !isWordCharacter(characters[index - 1])) {
+                for (word in words) {
+                    val end = index + word.size
+                    if (end > characters.size) continue
+                    if (folded.subList(index, end) != word) continue
+                    if (end != characters.size && isWordCharacter(characters[end])) continue
+                    out.append(PLACEHOLDER)
+                    index = end
+                    continue@scan
+                }
+            }
+            out.append(characters[index])
+            index += 1
+        }
+        return out.toString()
+    }
+
+    fun redact(value: JSONValue): JSONValue = when (value) {
+        is JSONValue.String -> JSONValue.String(redact(value.value))
+        is JSONValue.Array -> JSONValue.Array(value.value.map(::redact))
+        is JSONValue.Object -> JSONValue.Object(redact(value.value))
+        JSONValue.Null, is JSONValue.Bool, is JSONValue.Number -> value
+    }
+
+    fun redact(value: JSONObject): JSONObject = value.mapValues { redact(it.value) }
+
+    companion object {
+        const val PLACEHOLDER = "[nume]"
+
+        /** The text's user-perceived characters (Swift's `Character`). */
+        private fun characters(text: String): List<String> {
+            val breaks = BreakIterator.getCharacterInstance(Locale.ROOT)
+            breaks.setText(text)
+            val out = ArrayList<String>()
+            var start = breaks.first()
+            var end = breaks.next()
+            while (end != BreakIterator.DONE) {
+                out += text.substring(start, end)
+                start = end
+                end = breaks.next()
+            }
+            return out
+        }
+
+        /** `folding(options: [.caseInsensitive, .diacriticInsensitive])`. */
+        private fun fold(character: String): String =
+            Normalizer.normalize(character, Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "").lowercase(Locale.ROOT)
+
+        private fun isWordCharacter(character: String): Boolean = Character.isLetterOrDigit(character.codePointAt(0))
+    }
 }

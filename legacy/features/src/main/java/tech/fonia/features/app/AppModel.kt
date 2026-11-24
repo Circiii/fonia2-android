@@ -41,6 +41,8 @@ import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.adaptive.AdaptiveStore
 import tech.fonia.features.ml.MlHub
 import tech.fonia.features.pilot.PilotLog
+import tech.fonia.features.pilot.PilotSlot
+import tech.fonia.features.pilot.PilotSwitch
 import tech.fonia.features.pilot.pilotEnvironment
 import tech.fonia.features.reading.ReadingStore
 import tech.fonia.features.session.soundID
@@ -246,8 +248,12 @@ class AppModel(
      * profile, playing a recording): the app's own lifetime.
      */
     val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
-    /** The pilot's event log (docs/PLAN.md §6), its own file beside FoniaStore's; null if it can't be opened. */
-    val pilot: PilotLog? = null,
+    /** The pilot's event log (docs/PLAN.md §6), as the JVM tests hand it in; the app passes [pilotSlot]. */
+    pilot: PilotLog? = null,
+    /** Where the open log sits, shared with the shadow scorer; null builds one around [pilot]. */
+    pilotSlot: PilotSlot? = null,
+    /** Opens the log's file when an adult switches the log on; null in the JVM tests. */
+    private val openPilot: (() -> PilotLog?)? = null,
     /** Downloaded models and shadow mode (PLAN §6, §7.1 P13); null in the JVM tests. */
     val ml: MlHub? = null,
     /** The reading probes (not on iOS): a small store beside the database, so FoniaStore's schema stays as on iOS. */
@@ -271,6 +277,51 @@ class AppModel(
     /** The folders and settings files "Șterge tot" empties besides the stores above; null in the JVM tests. */
     val localData: LocalData? = null,
 ) {
+    private val slot: PilotSlot = pilotSlot ?: PilotSlot(pilot)
+
+    /**
+     * The pilot's event log (docs/PLAN.md §6), its own file beside FoniaStore's. Null while the log is switched off
+     * (iOS 007bfcf), or when its file can't be opened.
+     */
+    val pilot: PilotLog? get() = slot.log
+
+    /** "Jurnalul de exersare" in Setări: off until an adult switches it on. */
+    var isPilotLogOn: Boolean by mutableStateOf(preferences?.bool(PilotSwitch.KEY, PilotSwitch.DEFAULT) ?: (pilot != null))
+        private set
+
+    private var pilotOpening: kotlinx.coroutines.Job? = null
+
+    /** Switching the log off stops the logging and keeps what was logged; wiping it is "Șterge tot". */
+    fun setPilotLog(on: Boolean) {
+        if (on == isPilotLogOn) return
+        isPilotLogOn = on
+        preferences?.setBool(PilotSwitch.KEY, on)
+        if (on) openPilotLog() else closePilotLog()
+    }
+
+    private fun openPilotLog() {
+        if (slot.log != null || pilotOpening != null) return
+        val open = openPilot ?: return
+        pilotOpening = scope.launch {
+            val opened = withContext(Dispatchers.IO) { runCatching { open() }.getOrNull() }
+            pilotOpening = null
+            // Switched off while the file was opening: it closes again, and nothing is logged.
+            if (!isPilotLogOn || opened == null) {
+                runCatching { opened?.close() }
+                return@launch
+            }
+            slot.log = opened
+            opened.start()
+            if (hasLoadedProfiles) opened.profiles(profiles)
+        }
+    }
+
+    private fun closePilotLog() {
+        val open = slot.log ?: return
+        slot.log = null
+        runCatching { open.close() }
+    }
+
     /** The drills of a sound's training ladder (empty without the v2 texts). */
     fun drills(sound: SoundID): List<tech.fonia.features.diction.Drill> {
         val v2 = lessonContent ?: return emptyList()
@@ -451,6 +502,8 @@ class AppModel(
             ),
         )
         // The switches kept in memory go back to their defaults with the settings file.
+        isPilotLogOn = PilotSwitch.DEFAULT
+        closePilotLog()
         audio.effectsMuted = false
         offerCheck = false
         activeProfileID = null
@@ -538,8 +591,11 @@ class AppModel(
             val pictures = runCatching { assets.list("images/pictures")?.map { it.substringBeforeLast('.') }?.toSet() }.getOrNull() ?: emptySet()
             val speech = SpeechHub(runCatching { platform.speechModel(context.applicationContext, arguments) }.getOrNull(), scope)
             // The new ML is optional: a phone where its files can't be opened runs the app as before.
-            val pilot = runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull()
-            val ml = runCatching { MlHub.live(context.applicationContext, scope, pilot) }.getOrNull()
+            val preferences = FoniaPreferences(context.applicationContext)
+            val openPilot = { runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull() }
+            // Off until an adult switches it on: a family that never opens Setări keeps no log.
+            val pilotSlot = PilotSlot(if (preferences.bool(PilotSwitch.KEY, PilotSwitch.DEFAULT)) openPilot() else null)
+            val ml = runCatching { MlHub.live(context.applicationContext, scope, pilotSlot) }.getOrNull()
             return AppModel(
                 content = content,
                 repository = FoniaRepository(database),
@@ -547,10 +603,11 @@ class AppModel(
                 speech = speech,
                 arguments = arguments,
                 faces = { platform.face(context.applicationContext, arguments) },
-                preferences = FoniaPreferences(context.applicationContext),
+                preferences = preferences,
                 database = database,
                 scope = scope,
-                pilot = pilot,
+                pilotSlot = pilotSlot,
+                openPilot = openPilot,
                 ml = ml,
                 reading = ReadingStore(File(context.noBackupFilesDir, "Fonia/Reading")),
                 adaptive = AdaptiveStore(File(context.noBackupFilesDir, "Fonia/Adaptive")),

@@ -14,11 +14,13 @@ import tech.fonia.store.SessionRecord
 // What the session tells the pilot log. Each call only queues a row (PilotLog never waits), so the session's own pace
 // and saves stay as they are.
 
-/** The app version and the phone, for the install row: the model name of the phone, never anything of its owner. */
+/**
+ * The app version, for the install row. The phone's model is no longer written (iOS 2b32a40): with the summary it
+ * narrowed down whose child it was. The Android version stays on the phone only, for the log's own checks.
+ */
 fun pilotEnvironment(context: Context): PilotEnvironment {
     val version = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "?"
-    val phone = listOfNotNull(Build.MANUFACTURER, Build.MODEL).joinToString(" ").ifBlank { "?" }
-    return PilotEnvironment(appVersion = version, phone = phone, sdk = Build.VERSION.SDK_INT)
+    return PilotEnvironment(appVersion = version, phone = "", sdk = Build.VERSION.SDK_INT)
 }
 
 /** The rung a session practises, for a sound session. */

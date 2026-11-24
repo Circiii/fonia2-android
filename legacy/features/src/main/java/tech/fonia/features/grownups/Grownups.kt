@@ -126,6 +126,12 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
             ListSection(header = "Recunoașterea vorbirii", footer = "Fără ea, telefonul nu înțelege engleza și propozițiile.") {
                 row { ModelRow(app.speech) }
             }
+            ListSection(
+                header = "Pentru probă",
+                footer = "Ține minte, ca numere, câte încercări au fost în fiecare zi, pentru logoped. Fără voce. Pornit doar dacă îl pornești tu.",
+            ) {
+                row { ToggleRow("Jurnalul de exersare", app.isPilotLogOn) { app.setPilotLog(it) } }
+            }
             ModelSections(app)
             ListSection {
                 row { ButtonRow("Ce păstrăm pe telefon", onClick = { showLegal = true }) }
@@ -227,23 +233,8 @@ fun ProfileDetail(profileID: UUID, app: AppModel) {
  * since the app can't know when the receiving app has finished reading it.
  */
 internal object ProfileExport {
-    /** `fonia-<the name's letters and digits>.json`, or `fonia-profil.json`. */
-    fun fileName(name: String?): String {
-        val source = name ?: "profil"
-        val kept = StringBuilder()
-        var index = 0
-        while (index < source.length) {
-            val scalar = source.codePointAt(index)
-            // CharacterSet.alphanumerics: letters, marks and numbers.
-            val type = Character.getType(scalar)
-            val keep = Character.isLetterOrDigit(scalar) ||
-                type == Character.NON_SPACING_MARK.toInt() || type == Character.COMBINING_SPACING_MARK.toInt() ||
-                type == Character.ENCLOSING_MARK.toInt() || type == Character.LETTER_NUMBER.toInt() || type == Character.OTHER_NUMBER.toInt()
-            if (keep) kept.appendCodePoint(scalar)
-            index += Character.charCount(scalar)
-        }
-        return "fonia-${kept.ifEmpty { "profil" }}.json"
-    }
+    /** The file names no one (iOS 2b32a40): the name stays on the phone, and the file says "Profil". */
+    const val FILE_NAME = "fonia-profil.json"
 
     /**
      * With [pilot] and [profile], the pilot log's summary for the logoped (`fonia-exersare-<pseudonym>.json`, 03 §4.3)
@@ -254,7 +245,6 @@ internal object ProfileExport {
         context: Context,
         repository: FoniaRepository,
         profileID: UUID,
-        name: String?,
         pilot: PilotLog? = null,
         profile: Profile? = null,
         adaptive: AdaptiveStore? = null,
@@ -288,7 +278,7 @@ internal object ProfileExport {
             val folder = File(context.cacheDir, "export")
             folder.deleteRecursively()
             folder.mkdirs()
-            val main = File(folder, fileName(name)).also { it.writeBytes(bytes) }
+            val main = File(folder, FILE_NAME).also { it.writeBytes(bytes) }
             val extra = summary?.let { (summaryName, content) -> File(folder, summaryName).also { it.writeBytes(content) } }
             listOfNotNull(main, extra)
         }

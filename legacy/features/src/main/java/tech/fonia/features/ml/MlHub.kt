@@ -17,7 +17,7 @@ import tech.fonia.domain.SoundID
 import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.app.AudioHub
 import tech.fonia.features.pilot.PilotHooks
-import tech.fonia.features.pilot.PilotLog
+import tech.fonia.features.pilot.PilotSlot
 import tech.fonia.features.pilot.ShadowContext
 import tech.fonia.features.pilot.SoundPositions
 import tech.fonia.features.session.TakeVerdict
@@ -185,11 +185,12 @@ class MlHub(
         fun manager(context: Context): ModelManager =
             ModelManager(modelsFolder(context)) { partial -> HttpsModelFetcher(context.applicationContext, partial) }
 
-        fun live(context: Context, scope: CoroutineScope, pilot: PilotLog?): MlHub {
+        /** [pilot]: the log open at the moment a score is ready, or none (the log is switched off). */
+        fun live(context: Context, scope: CoroutineScope, pilot: PilotSlot): MlHub {
             val manager = manager(context)
             runCatching { manager.sweep() }
             val source = ZipaScoringSource(modelFile = { manager.mainFile(ModelCatalog.ZIPA) })
-            val shadow = ShadowMode(source, sink = { record -> pilot?.shadow(record) })
+            val shadow = ShadowMode(source, sink = { record -> pilot.log?.shadow(record) })
             val models = ModelsHub(manager, scope, isSupported = runsOnnxRuntime(context), beforeDelete = { shadow.unload() })
             return MlHub(models, shadow)
         }
