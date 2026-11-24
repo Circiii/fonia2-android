@@ -16,12 +16,17 @@ Totul rulează pe telefon. Aplicația nu cere acces la internet.
 ```bash
 git clone --recurse-submodules https://github.com/Circiii/fonia2-android.git
 cd fonia2-android
-./gradlew :legacy:app:assembleDebug
+./gradlew :engine:phones:test          # o dată, cu internet: aduce modelul de foneme în ~/.gradle/fonia-models
+./gradlew :legacy:app:assembleDebug    # APK-ul complet, cu modelul inclus
 ```
 
-`local.properties` trebuie să conțină `sdk.dir=` (calea către Android SDK). Conținutul (cuvinte, voci, imagini) vine din submodulul `content` (`Circiii/fonia-content`, privat: cere acces).
+- `local.properties` trebuie să conțină `sdk.dir=` (calea către Android SDK). JDK 17 (cel din Android Studio merge).
+- Conținutul (cuvinte, voci, imagini) e submodulul `content` (`Circiii/fonia-content`, privat; ramura `voice-elevenlabs` are vocile noi).
+- Fără modelul de foneme (build mai mic, verificarea rapidă a sunetului): adaugă `-Pfonia.zipa=false`.
+- Pentru emulator: adaugă `-Pfonia.abi=x86_64`. Microfonul emulatorului trebuie pornit din Extended controls › Microphone.
+- APK-ul iese în `legacy/app/build/outputs/apk/debug/`.
 
-Pentru un emulator cu spațiu puțin: `./gradlew :legacy:app:assembleDebug -Pfonia.abi=x86_64 -Pfonia.zipa=false`.
+Starea de azi, ce e slab și ce urmează: `docs/STARE.md`.
 
 ## Structură
 
