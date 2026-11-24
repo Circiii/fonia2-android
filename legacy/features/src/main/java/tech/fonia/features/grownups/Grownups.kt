@@ -68,6 +68,7 @@ import tech.fonia.features.home.displayName
 import tech.fonia.features.home.rememberPushDestination
 import tech.fonia.features.pilot.PilotLog
 import tech.fonia.features.session.Settings
+import tech.fonia.features.speaking.SpeakingMemory
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import java.io.File
@@ -229,6 +230,7 @@ fun ProfileDetail(profileID: UUID, app: AppModel) {
                     } catch (_: Exception) {
                     }
                     AdultCardsSeen.forget(profileID, app.preferences)
+                    SpeakingMemory.forget(profileID, app.preferences)
                     // And every row of the pilot log about this profile.
                     try {
                         app.pilot?.deleteProfile(profileID)

@@ -34,9 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -99,6 +102,7 @@ import tech.fonia.features.app.dspGroup
 import tech.fonia.features.app.isChild
 import tech.fonia.features.ml.judgeShadowed
 import tech.fonia.features.ml.shadowSessionTake
+import tech.fonia.features.speaking.GuidedCompare
 import tech.fonia.design.FoniaSfx
 import tech.fonia.design.SfxCue
 import tech.fonia.designsystem.motion.BurstStyle
@@ -132,6 +136,10 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     var countdown by remember { mutableStateOf<Int?>(null) }
     /** „Vezi cum”: the sound's „Cum spun?” steps over the session, at this step (null: closed). */
     var howStep by remember { mutableStateOf<Int?>(null) }
+    /** "Compară" is playing the example and then the take. */
+    var comparing by remember { mutableStateOf(false) }
+    /** The one thing to listen for, shown once both have played. */
+    var compareQuestion by remember { mutableStateOf<String?>(null) }
     val haptics = rememberFoniaHaptics()
     val letter = rememberLetterLink()
     val heard = remember { HeardLevel() }
@@ -499,6 +507,27 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         run.finishAttempt(exercise, machine = shown.outcome, adult = adult?.attemptOutcome, take = take, retry = true)
     }
 
+    /** The example, a short breath, then the take: then one question, never a verdict. */
+    fun compare() {
+        val clip = take ?: return
+        val (text, language) = modelText ?: return
+        if (comparing) return
+        waitingForChoice = true
+        comparing = true
+        compareQuestion = null
+        val question = GuidedCompare.question(exercise)
+        app.scope.launch {
+            try {
+                app.audio.say(text, language)
+                delay(GuidedCompare.GAP_MS)
+                app.audio.play(clip)
+            } finally {
+                comparing = false
+            }
+            compareQuestion = question
+        }
+    }
+
     fun replay() {
         val clip = take ?: return
         waitingForChoice = true
@@ -574,6 +603,14 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             ) { panel ->
                 val shown = verdict
                 if (panel && shown != null) {
+                    val offersCompare = GuidedCompare.offers(
+                        rating = shown.rating,
+                        keepsTake = shown.keepsTake,
+                        feedback = trial.feedback,
+                        isChild = profile.isChild,
+                        hasTake = take != null,
+                        hasRecordedModel = modelText?.let { app.audio.hasClip(it.first, it.second) } == true,
+                    )
                     ResultPanel(
                         verdict = shown,
                         judged = judged,
@@ -592,6 +629,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                         onSlow = if (modelText == null) null else ({ playModelSlowly() }),
                         onRetry = if (shown.rating == Rating.yes) null else ({ retry() }),
                         onNext = { next() },
+                        compare = if (offersCompare) CompareState(comparing, compareQuestion) else null,
+                        onCompare = { compare() },
                     )
                 } else {
                     ListeningBar(
@@ -765,6 +804,9 @@ private fun ResultPanel(
     onSlow: (() -> Unit)?,
     onRetry: (() -> Unit)?,
     onNext: () -> Unit,
+    /** Set when "Compară" is offered. */
+    compare: CompareState? = null,
+    onCompare: () -> Unit = {},
 ) {
     // Only the learner's own rating is asked (self-judge trials); never an adult.
     val asks = feedback == FeedbackLevel.SelfJudge
@@ -805,6 +847,8 @@ private fun ResultPanel(
             }
         }
 
+        if (compare != null) CompareRow(compare, onCompare, Modifier.staggeredEntrance(2))
+
         if (asks) {
             FoniaText(question, style = fBodyStrong, color = Palette.ink, textAlign = TextAlign.Center)
             RatingRow(
@@ -828,6 +872,32 @@ private fun ResultPanel(
                     modifier = Modifier.weight(1f),
                 ) { FoniaText("Mai departe") }
             }
+        }
+    }
+}
+
+/** What the "Compară" line shows: whether it is playing, and the question once it has. */
+private data class CompareState(val isPlaying: Boolean, val question: String?)
+
+/** Its own line under the listening pills: one action, then the question it leads to. */
+@Composable
+private fun CompareRow(compare: CompareState, onCompare: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        StyledButton(
+            onClick = onCompare,
+            style = PillButtonStyle(),
+            enabled = !compare.isPlaying,
+            onClickLabel = "Întâi exemplul, apoi tu",
+            modifier = Modifier.semantics { if (compare.isPlaying) stateDescription = "Se aude" },
+        ) { FoniaLabel(GuidedCompare.TITLE, FoniaIcon.ear, iconSize = 20f) }
+        compare.question?.let {
+            FoniaText(
+                it,
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                style = fBodyStrong,
+                color = Palette.ink,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }

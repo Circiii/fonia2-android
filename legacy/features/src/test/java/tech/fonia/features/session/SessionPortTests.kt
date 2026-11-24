@@ -13,24 +13,15 @@ import tech.fonia.dsp.TimeSpan
 import tech.fonia.dsp.UnclearReason
 import tech.fonia.features.app.AudioHub
 import tech.fonia.features.speaking.TalkReport
-import tech.fonia.features.speaking.todaysIndex
 import tech.fonia.store.Attempt
 import java.time.LocalDate
 
 /**
- * Port-only checks, not iOS tests: the places where the port had to reproduce a Foundation behaviour (the day of the
- * era, the Romanian number format, Swift's `stride`), the S/Ș switch for narrow-band microphones, and a few verdict
+ * Port-only checks, not iOS tests: the places where the port had to reproduce a Foundation behaviour (the Romanian
+ * number format, Swift's `stride`), the S/Ș switch for narrow-band microphones, and a few verdict
  * texts against the iOS sources.
  */
 class SessionPortTests {
-    /** iOS showed "Prezintă-te" (index 0 of 5) as the subject of the day on Thursday 5 November 2026. */
-    @Test
-    fun theSubjectOfTheDayFollowsFoundationsDayOfTheEra() {
-        assertEquals(0, todaysIndex(5, LocalDate.of(2026, 11, 5)))
-        assertEquals(1, todaysIndex(5, LocalDate.of(2026, 11, 6)))
-        assertEquals(0, todaysIndex(0, LocalDate.of(2026, 11, 6)))
-    }
-
     /** `.number.precision(.fractionLength(1)).locale(ro_RO)`: a comma, half to even on the shortest decimal. */
     @Test
     fun ratesReadTheRomanianWay() {

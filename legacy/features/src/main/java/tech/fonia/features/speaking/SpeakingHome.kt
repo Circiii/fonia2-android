@@ -37,9 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -125,7 +127,6 @@ import tech.fonia.designsystem.motion.staggeredEntrance
 import tech.fonia.store.JSONValue
 import tech.fonia.store.Profile
 import tech.fonia.store.SpeechRecord
-import java.time.LocalDate
 import java.util.Locale
 import java.util.UUID
 import kotlin.math.abs
@@ -138,13 +139,26 @@ import kotlin.math.max
 @Composable
 fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
     var language by remember { mutableStateOf(Language.Ro) }
-    var talk by remember { mutableStateOf<SpeechPrompt?>(null) }
+    var talk by remember { mutableStateOf<Talk?>(null) }
     var editingMine by remember { mutableStateOf(false) }
     var myTitle by rememberStoredString(app.preferences, "fonia.myTalk.title", "")
     var myMinutes by rememberStoredInt(app.preferences, "fonia.myTalk.minutes", 5)
+    var memory by remember(profile.id) { mutableStateOf(SpeakingMemory.load(profile.id, app.preferences)) }
     val prompts = app.content.diction.speechPrompts
-    val todaysPrompt = prompts[todaysIndex(prompts.size)]
+    // The step after the last topic finished, starting from the most private one.
+    val todaysStep = memory.todaysStep(prompts.size)
+    val todaysPrompt = prompts.getOrNull(todaysStep)
     val myTalk = SpeechPrompt(title = myTitle, prompt = "Spune-ți prezentarea așa cum ai spune-o în fața oamenilor.", seconds = myMinutes * 60)
+    val myOpening = SpeechPrompt(
+        title = myTitle,
+        prompt = "Spune doar începutul prezentării, ca în fața publicului. Te opresc după un minut.",
+        seconds = OPENING_SECONDS,
+    )
+
+    fun finished(done: Talk, fillers: FillerSample) {
+        memory = memory.finished(done.step, fillers)
+        memory.save(profile.id, app.preferences)
+    }
 
     LaunchedEffect(Unit) { if (profile.track == Profile.Track.En) language = Language.En }
     // Not on iOS: the emphasis exercise and the BAC simulation (SpeakingExtras.kt).
@@ -165,7 +179,13 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                 }
 
                 Heading("Azi")
-                TalkRow(ArtTileMark.Art("art-megaphone"), "Un minut pe zi", todaysPrompt.prompt) { talk = todaysPrompt }
+                if (todaysPrompt != null) {
+                    TalkRow(ArtTileMark.Art("art-megaphone"), "Un minut pe zi", todaysPrompt.prompt) { talk = Talk(todaysPrompt, step = todaysStep) }
+                    LadderRow(todaysStep, prompts.size) {
+                        memory = memory.stepBack(prompts.size)
+                        memory.save(profile.id, app.preferences)
+                    }
+                }
 
                 Heading("Prezentarea mea")
                 if (myTitle.isEmpty()) {
@@ -173,13 +193,25 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                         editingMine = true
                     }
                 } else {
-                    TalkRow(ArtTileMark.Art("art-start"), myTitle, "Țintă: ${Plural.format(myMinutes, Plural.Noun.Minut)}") { talk = myTalk }
-                    StyledButton(onClick = { editingMine = true }, style = MiniPillStyle()) { FoniaText("Schimbă prezentarea") }
+                    TalkRow(ArtTileMark.Art("art-start"), myTitle, "Țintă: ${Plural.format(myMinutes, Plural.Noun.Minut)}") { talk = Talk(myTalk) }
+                    WrapLayout(spacing = 10.dp, lineSpacing = 10.dp) {
+                        if (myMinutes > 1) {
+                            StyledButton(
+                                onClick = { talk = Talk(myOpening, openingOnly = true) },
+                                style = MiniPillStyle(),
+                                modifier = Modifier.heightIn(min = 48.dp),
+                                onClickLabel = "Repeți primul minut al prezentării",
+                            ) { FoniaText("Doar începutul") }
+                        }
+                        StyledButton(onClick = { editingMine = true }, style = MiniPillStyle(), modifier = Modifier.heightIn(min = 48.dp)) {
+                            FoniaText("Schimbă prezentarea")
+                        }
+                    }
                 }
 
                 Heading("Exerciții scurte")
                 for (drill in drills) {
-                    TalkRow(ArtTileMark.Art("art-target"), drill.title, drill.shortDuration) { talk = drill }
+                    TalkRow(ArtTileMark.Art("art-target"), drill.title, drill.shortDuration) { talk = Talk(drill) }
                 }
                 for (unit in path.catalog.dictionUnits.filter { it.id != "d-breath" }) {
                     for (lesson in unit.lessons) {
@@ -190,8 +222,8 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                 if (app.arguments.drafts) SpeakingExtraRows(extras, language)
 
                 Heading("Alte subiecte")
-                for (prompt in prompts) {
-                    TalkRow(ArtTileMark.Art("art-bubble"), prompt.title, prompt.shortDuration) { talk = prompt }
+                prompts.forEachIndexed { step, prompt ->
+                    TalkRow(ArtTileMark.Art("art-bubble"), prompt.title, prompt.shortDuration) { talk = Talk(prompt, step = step) }
                 }
 
                 ModelNotice(app.speech)
@@ -199,13 +231,23 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
         }
 
         // `.fullScreenCover(item: $talk)`: the cover keeps its talk while it slides away.
-        var shown by remember { mutableStateOf<SpeechPrompt?>(null) }
+        var shown by remember { mutableStateOf<Talk?>(null) }
         SideEffect { if (talk != null) shown = talk }
         FullScreenCover(isPresented = talk != null) {
-            val prompt = talk ?: shown
-            if (prompt != null) {
-                androidx.compose.runtime.key(prompt) {
-                    TalkScreen(prompt, language, profile, app, path) { talk = null }
+            val current = talk ?: shown
+            if (current != null) {
+                androidx.compose.runtime.key(current) {
+                    TalkScreen(
+                        current.prompt,
+                        language,
+                        profile,
+                        app,
+                        path,
+                        openingOnly = current.openingOnly,
+                        showsNervesTip = memory.showsNervesTip,
+                        fillerHistory = memory.fillerTalks,
+                        onFinished = { finished(current, it) },
+                    ) { talk = null }
                 }
             }
         }
@@ -221,13 +263,25 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
 }
 
 /**
- * A new subject each day, the same all day: `Calendar.current.ordinality(of: .day, in: .era, for: .now)`. Foundation
- * counts the days of the era from 1 January of year 1 in the proleptic Gregorian calendar (on 5 November 2026 it
- * gives 739 925, and iOS showed "Prezintă-te", the subject at that index modulo 5), so: the epoch day plus 719 163.
+ * A talk about to start: the subject, its place on the topic ladder if it has one, and whether only the opening is
+ * rehearsed.
  */
-internal fun todaysIndex(count: Int, today: LocalDate = LocalDate.now()): Int {
-    val day = today.toEpochDay() + 719_163
-    return (day % max(count, 1)).toInt()
+private data class Talk(val prompt: SpeechPrompt, val step: Int? = null, val openingOnly: Boolean = false)
+
+/** Where today's topic sits on the ladder, and the way back down a step. */
+@Composable
+private fun LadderRow(step: Int, count: Int, onBack: () -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(start = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        FoniaText("Pasul ${step + 1} din $count", Modifier.weight(1f), style = fCaption, color = Palette.inkSoft)
+        if (step > 0) {
+            StyledButton(
+                onClick = onBack,
+                style = MiniPillStyle(),
+                modifier = Modifier.heightIn(min = 48.dp),
+                onClickLabel = "Alege subiectul de dinainte",
+            ) { FoniaText("Un pas înapoi") }
+        }
+    }
 }
 
 private val drills = listOf(
@@ -337,8 +391,38 @@ private fun androidx.compose.foundation.layout.RowScope.StepperHalf(symbol: Stri
 
 private enum class TalkPhase { Ready, Talking, Thinking, Feeling, Report }
 
+/**
+ * What is kept of a take's numbers. The rate of hesitations only when there was enough speech for it to mean anything;
+ * the count and the seconds always, so a later version can compare however it likes.
+ */
+internal fun metrics(report: TalkReport): Map<String, JSONValue> = buildMap {
+    put("syllablesPerSecond", JSONValue.Number(report.rate))
+    put("pitchSpread", JSONValue.Number(report.pitchSpread))
+    put("hesitationCount", JSONValue.Number(report.fillers.count.toDouble()))
+    put("speechSeconds", JSONValue.Number(report.fillers.seconds))
+    report.fillers.perMinute?.let { put("hesitationsPerMinute", JSONValue.Number(it)) }
+}
+
+/** The opening of the person's own talk: where nerves are highest, and short enough to say again and again. */
+internal const val OPENING_SECONDS = 60
+
 @Composable
-private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profile, app: AppModel, path: PathModel, onDone: () -> Unit) {
+private fun TalkScreen(
+    prompt: SpeechPrompt,
+    language: Language,
+    profile: Profile,
+    app: AppModel,
+    path: PathModel,
+    /** Only the first minute of the person's own talk: it stops on time and says nothing about length. */
+    openingOnly: Boolean = false,
+    /** The tip for nerves in full, for the first talks. Later it waits behind "Ai emoții?". */
+    showsNervesTip: Boolean = true,
+    /** The hesitations of the person's earlier talks, oldest first: what a take's hesitations are compared with. */
+    fillerHistory: List<FillerSample> = emptyList(),
+    /** Called once per take that was heard all the way to the report, with that take's hesitations. */
+    onFinished: (FillerSample) -> Unit = {},
+    onDone: () -> Unit,
+) {
     var phase by remember { mutableStateOf(TalkPhase.Ready) }
     var seconds by remember { mutableIntStateOf(prompt.seconds) }
     var previous by remember { mutableStateOf<TalkReport?>(null) }
@@ -371,11 +455,7 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
             prompt = prompt.title,
             duration = current.seconds,
             transcript = current.transcript,
-            metrics = mapOf(
-                "syllablesPerSecond" to JSONValue.Number(current.rate),
-                "hesitationsPerMinute" to JSONValue.Number(current.hesitationsPerMinute),
-                "pitchSpread" to JSONValue.Number(current.pitchSpread),
-            ),
+            metrics = metrics(current),
             selfRating = feeling,
             correctedFillers = corrected,
         )
@@ -404,7 +484,9 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
         }
         phase = TalkPhase.Thinking
         clip = captured
-        report = TalkReport.make(captured, language, profile, app.content, app.speech.transcriber, seconds)
+        val made = TalkReport.make(captured, language, profile, app.content, app.speech.transcriber, if (openingOnly) 0 else seconds, fillerHistory)
+        report = made
+        if (made.focus != TalkFocus.NotHeard) onFinished(made.fillers)
         noUm = if (language == Language.Ro) NoUmTake.make(captured, report?.rawTranscript) else null
         cleanView = true
         phase = TalkPhase.Feeling
@@ -433,7 +515,7 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
             }
             elapsed = 0
             phase = TalkPhase.Talking
-            val limit = seconds + 30
+            val limit = if (openingOnly) seconds else seconds + 30
             while (phase == TalkPhase.Talking && elapsed < limit) {
                 delay(1000)
                 if (phase == TalkPhase.Talking) elapsed += 1
@@ -448,7 +530,8 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
         save()
         previous = report
         takes += 1
-        seconds = max(30, seconds * 2 / 3)
+        // The opening keeps its minute: it is said again, not cut.
+        if (!openingOnly) seconds = max(30, seconds * 2 / 3)
         report = null
         clip = null
         noUm = null
@@ -485,7 +568,7 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
         FieldBackdrop(Field.paper)
         Crossfade(phase, Modifier.windowInsetsPadding(WindowInsets.systemBars), animationSpec = swiftSpring(0.34, 0.08), label = "talk") { shownPhase ->
             when (shownPhase) {
-                TalkPhase.Ready -> Ready(prompt, seconds, micOff, startFailed, onClose = { close() }, onStart = { app.scope.launch { start() } })
+                TalkPhase.Ready -> Ready(prompt, seconds, openingOnly, showsNervesTip, micOff, startFailed, onClose = { close() }, onStart = { app.scope.launch { start() } })
                 TalkPhase.Talking -> Talking(prompt, elapsed, app) { app.scope.launch { stop() } }
                 TalkPhase.Thinking -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(verticalArrangement = Arrangement.spacedBy(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -503,6 +586,7 @@ private fun TalkScreen(prompt: SpeechPrompt, language: Language, profile: Profil
                     previous = previous,
                     feeling = feeling,
                     takes = takes,
+                    openingOnly = openingOnly,
                     clip = clip,
                     app = app,
                     noUm = noUm,
@@ -554,7 +638,16 @@ private fun CloseBar(onClose: () -> Unit) {
 }
 
 @Composable
-private fun Ready(prompt: SpeechPrompt, seconds: Int, micOff: Boolean, startFailed: Boolean, onClose: () -> Unit, onStart: () -> Unit) {
+private fun Ready(
+    prompt: SpeechPrompt,
+    seconds: Int,
+    openingOnly: Boolean,
+    showsNervesTip: Boolean,
+    micOff: Boolean,
+    startFailed: Boolean,
+    onClose: () -> Unit,
+    onStart: () -> Unit,
+) {
     val durationText = if (seconds % 60 == 0) {
         Plural.format(seconds / 60, Plural.Noun.Minut)
     } else if (seconds % 100 >= 20) {
@@ -575,7 +668,13 @@ private fun Ready(prompt: SpeechPrompt, seconds: Int, micOff: Boolean, startFail
         PracticeSheet {
             FoniaText(prompt.prompt, Modifier.padding(vertical = 12.dp), style = ui(22, UIWeight.medium, TextRole.title3), color = Palette.ink, textAlign = TextAlign.Center)
         }
-        FoniaText("Ai $durationText. Oprește-te când ai terminat.", style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
+        FoniaText(
+            if (openingOnly) "Ai un minut pentru început." else "Ai $durationText. Oprește-te când ai terminat.",
+            style = fBody,
+            color = Palette.inkSoft,
+            textAlign = TextAlign.Center,
+        )
+        NervesTip(showsNervesTip)
         if (micOff || startFailed) {
             FoniaText(
                 if (micOff) "Microfonul e oprit. Pornește-l din Setări, la Fonia." else "Nu pot porni microfonul acum. Închide alte aplicații care îl folosesc și mai încearcă.",
@@ -586,6 +685,31 @@ private fun Ready(prompt: SpeechPrompt, seconds: Int, micOff: Boolean, startFail
         }
         Spacer(Modifier.weight(1f))
         StyledButton(onClick = onStart, style = FoniButtonStyle(field = Field.paper)) { CTALabel("Începem") }
+    }
+}
+
+/**
+ * Saying "Abia aștept!" to yourself helps some people and not others, so after the first talks it is one tap away
+ * instead of on every start.
+ */
+@Composable
+private fun NervesTip(showsInFull: Boolean) {
+    var open by remember { mutableStateOf(false) }
+    when {
+        showsInFull -> FoniaText("Ai emoții? Spune-ți în gând „Abia aștept!”", style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
+        open -> FoniaText(
+            "Spune-ți în gând „Abia aștept!”",
+            Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            style = fBody,
+            color = Palette.inkSoft,
+            textAlign = TextAlign.Center,
+        )
+        else -> StyledButton(
+            onClick = { open = true },
+            style = MiniPillStyle(),
+            modifier = Modifier.heightIn(min = 48.dp),
+            onClickLabel = "Arată un sfat",
+        ) { FoniaText("Ai emoții?") }
     }
 }
 
@@ -651,6 +775,7 @@ private fun ReportView(
     previous: TalkReport?,
     feeling: Int?,
     takes: Int,
+    openingOnly: Boolean,
     clip: CapturedClip?,
     app: AppModel,
     noUm: NoUmTake?,
@@ -677,6 +802,8 @@ private fun ReportView(
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Foni(Modifier.size(84.dp), mood = if (feeling == 1) FoniMood.idle else FoniMood.happy, reactsToTap = true)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                // What worked first, then the one thing to change.
+                report.strength?.let { FoniaText(it, style = fBodyStrong, color = Palette.accentText) }
                 FoniaText(report.headline, style = ui(22, UIWeight.bold, TextRole.title2), color = Palette.ink)
                 val change = previous?.let { report.change(it) }
                 if (change != null) FoniaText(change, style = fBodyStrong, color = Palette.accentText)
@@ -686,7 +813,7 @@ private fun ReportView(
         // One main thing to do next: the same talk again, shorter. The rest stays quiet.
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             StyledButton(onClick = onAgain, style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular)) {
-                FoniaText(if (takes == 0) "Încă o dată, mai scurt" else "Mai încerc o dată")
+                FoniaText(if (openingOnly) "Încă o dată" else if (takes == 0) "Încă o dată, mai scurt" else "Mai încerc o dată")
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (clip != null && noUm?.worthPlaying != true) {
@@ -790,13 +917,18 @@ data class TalkReport(
     /** Syllables per second over the whole time spent speaking, pauses included. */
     val rate: Double,
     val focus: TalkFocus,
+    /** One thing that went well, said before the one thing to change. Null only when nothing was heard. */
+    val strength: String?,
     val headline: String,
     val paceTimeline: List<Double>,
     val paceZone: ClosedFloatingPointRange<Double>,
     val paceMax: Double,
     val paceSentence: String,
     val details: List<Detail>,
-    val hesitationsPerMinute: Double,
+    /** The take's hesitations and the seconds of speech they were counted in. */
+    val fillers: FillerSample,
+    /** How they compare with the person's own earlier talks. */
+    val fillerTrend: FillerTrend,
     val medianPhrase: Int?,
     val pitchSpread: Double,
     val transcript: String?,
@@ -806,9 +938,18 @@ data class TalkReport(
 ) {
     data class Detail(val title: String, val sentence: String)
 
+    /** What went well, in the words the report says it. Only measured things, or the plain fact of the effort. */
+    object Strength {
+        const val PACE = "Ai vorbit într-un ritm ușor de urmărit."
+        const val PITCH = "Vocea a urcat și a coborât, ca într-o discuție vie."
+        const val FEWER_FILLERS = "Ai spus „ăă” mai rar decât de obicei."
+        const val HELD_TIME = "Ai intrat în timpul pe care ți l-ai propus."
+        const val FINISHED = "Ai vorbit până la capăt."
+    }
+
     /** Only changes bigger than the noise between two takes get mentioned. */
     fun change(earlier: TalkReport): String? {
-        if (earlier.hesitationsPerMinute - hesitationsPerMinute >= 2) return "Mai puține „ăă” decât data trecută."
+        if (FillerTrend.change(earlier.fillers, fillers) == FillerTrend.Direction.Lower) return "Mai puține „ăă” decât data trecută."
         if (pitchSpread - earlier.pitchSpread >= 0.5) return "Vocea a urcat și a coborât mai mult decât data trecută."
         if (earlier.rate > 0 && abs(rate - earlier.rate) / earlier.rate >= 0.1) {
             return if (rate < earlier.rate) "Ai vorbit mai rar decât data trecută." else "Ai vorbit mai repede decât data trecută."
@@ -828,6 +969,7 @@ data class TalkReport(
             content: FoniaContent,
             transcriber: Transcriber?,
             target: Int,
+            earlierFillers: List<FillerSample> = emptyList(),
         ): TalkReport {
             val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration)
             var speechReport: SpeechReport? = null
@@ -864,9 +1006,9 @@ data class TalkReport(
             val zone = if (language == Language.Ro) 3.2..5.0 else 2.75..4.25
             val rate = summary.speechRate.toDouble()
             val span = max(summary.speechEnd - summary.speechStart, 0.1)
-            val spokenMinutes = span / 60
             val hesitationCount = summary.hesitations.size
-            val hesitationsPerMinute = if (spokenMinutes > 0) hesitationCount.toDouble() / spokenMinutes else 0.0
+            val fillers = FillerSample(hesitationCount, span)
+            val fillerTrend = FillerTrend.compare(hesitationCount, span, earlierFillers)
             val runs = phraseLengths(summary.syllables, summary.pauses)
             val median = if (runs.size >= 8) runs.sorted()[runs.size / 2] else null
             val pitchSpread = summary.pvq.toDouble() * 17.3
@@ -881,28 +1023,29 @@ data class TalkReport(
                 headline = "Nu te-am auzit. Ține telefonul mai aproape și mai încearcă."
             } else if (target >= 60 && abs(span - target.toDouble()) > target.toDouble() * 0.1) {
                 focus = TalkFocus.Time
-                headline = "Ai ținut ${clock(span.toInt())} din ${clock(target)}. Vezi ce poți lăsa deoparte sau ce poți adăuga."
-            } else if (spokenMinutes >= 1 && hesitationCount >= 3 && hesitationsPerMinute >= 12) {
+                headline = "Ai ținut ${clock(span.toInt())} din ${clock(target)}. Alege o idee pe care o scurtezi sau o lungești, ca să intri fix în timp."
+            } else if (fillerTrend is FillerTrend.More) {
+                // Only against the person's own earlier talks: no fixed number of "ăă" is too many.
                 focus = TalkFocus.Hesitations
-                headline = "Ai multe „ăă”. Când vine unul, închide gura și oprește-te o clipă."
+                headline = "Ai spus „ăă” mai des decât de obicei. Când simți că vine unul, taci o clipă: pauza sună mai sigur."
             } else if (enoughForPace && rate > zone.endInclusive) {
                 focus = TalkFocus.TooFast
-                headline = "Ai vorbit repede. Încearcă o pauză după fiecare idee."
+                headline = "Ai vorbit repede. Fă o pauză scurtă după fiecare idee, ca să te poată urmări cine te ascultă."
             } else if (enoughForPace && rate < zone.start) {
                 focus = TalkFocus.TooSlow
-                headline = "Ai vorbit rar. Leagă cuvintele din aceeași idee."
+                headline = "Ai vorbit rar. Spune dintr-o suflare cuvintele care țin de aceeași idee."
             } else if (median != null && median < 6) {
                 focus = TalkFocus.PhrasesShort
-                headline = "Frazele au ieșit tăiate. Spune o idee dintr-o suflare."
+                headline = "Frazele au ieșit tăiate. Spune fiecare idee dintr-o suflare, apoi respiră."
             } else if (median != null && median > 20) {
                 focus = TalkFocus.PhrasesLong
-                headline = "Frazele au fost lungi. Oprește-te după fiecare idee."
+                headline = "Frazele au fost lungi. Pune punct după fiecare idee și respiră."
             } else if (summary.speechSeconds >= 30 && pitchSpread < 2) {
                 focus = TalkFocus.FlatPitch
-                headline = "Vocea a stat mai mult pe loc. Încearcă să apeși pe cuvântul important."
+                headline = "Vocea a stat mai mult pe loc. În fiecare frază, alege un cuvânt și apasă pe el."
             } else {
                 focus = TalkFocus.None
-                headline = "A curs bine. Încearcă să spui același lucru în mai puțin timp."
+                headline = "A curs bine, deci putem ridica ștacheta: spune același lucru în mai puțin timp."
             }
 
             val paceSentence = if (!enoughForPace) {
@@ -913,34 +1056,73 @@ data class TalkReport(
                 "$shown silabe pe secundă. Zona verde e doar un reper."
             }
 
+            val heldTime = target >= 60 && focus != TalkFocus.Time
+            val strengthLine = strength(
+                focus = focus,
+                paceInZone = enoughForPace && rate in zone,
+                pitchMoved = summary.speechSeconds >= 30 && pitchSpread >= 2.8,
+                fewerFillers = fillerTrend.isFewer,
+                heldTime = heldTime,
+            )
+
             val details = mutableListOf<Detail>()
             if (longPauses > 0) {
                 details += Detail("Pauze lungi", if (longPauses == 1) "O pauză de peste 3 secunde." else "$longPauses pauze de peste 3 secunde.")
             }
-            if (spokenMinutes >= 1 && hesitationCount >= 3) {
-                details += Detail("„Ăă”", "Cam ${roundedHalfAway(hesitationsPerMinute)} pe minut. Până la 5 aproape că nu se observă.")
-            }
-            if (summary.speechSeconds >= 30 && pitchSpread >= 2.8) {
-                details += Detail("Vocea", "A urcat și a coborât frumos.")
+            fillerSentence(hesitationCount, fillerTrend, fillers.perMinute)?.let { details += Detail("„Ăă”", it) }
+            if (summary.speechSeconds >= 30 && pitchSpread >= 2.8 && strengthLine != Strength.PITCH) {
+                details += Detail("Vocea", Strength.PITCH)
             }
 
             return TalkReport(
                 seconds = clip.duration,
                 rate = rate,
                 focus = focus,
+                strength = strengthLine,
                 headline = headline,
                 paceTimeline = paceLine(summary.syllables, summary.speechStart, summary.speechEnd),
                 paceZone = zone,
                 paceMax = zone.endInclusive * 1.6,
                 paceSentence = paceSentence,
                 details = details,
-                hesitationsPerMinute = hesitationsPerMinute,
+                fillers = fillers,
+                fillerTrend = fillerTrend,
                 medianPhrase = median,
                 pitchSpread = pitchSpread,
                 transcript = heardText,
                 rawTranscript = raw,
                 speech = speechReport,
             )
+        }
+
+        /**
+         * The first thing that went well and doesn't clash with the one thing to change. When nothing measured stands
+         * out, the effort itself, which is always true of a take that was heard. Never invented praise.
+         */
+        fun strength(focus: TalkFocus, paceInZone: Boolean, pitchMoved: Boolean, fewerFillers: Boolean, heldTime: Boolean): String? {
+            if (focus == TalkFocus.NotHeard) return null
+            if (paceInZone && focus != TalkFocus.TooFast && focus != TalkFocus.TooSlow) return Strength.PACE
+            if (pitchMoved && focus != TalkFocus.FlatPitch) return Strength.PITCH
+            if (fewerFillers && focus != TalkFocus.Hesitations) return Strength.FEWER_FILLERS
+            if (heldTime) return Strength.HELD_TIME
+            return Strength.FINISHED
+        }
+
+        /**
+         * What the report says about "ăă", or null when there were none. The count alone when the take was too short for
+         * a rate; the rate and, with enough history, how it compares with the person's usual. Never a limit.
+         */
+        fun fillerSentence(count: Int, trend: FillerTrend, rate: Double?): String? {
+            if (count <= 0) return null
+            val rateText = rate?.let { "Cam ${roundedHalfAway(it)} pe minut." } ?: ""
+            val counted = "Am numărat $count."
+            return when (trend) {
+                FillerTrend.TooShort -> "$counted E prea puțin timp ca să le compar cu alte dăți."
+                FillerTrend.FirstTalks -> "${rateText.ifEmpty { counted }} După câteva vorbiri îți arăt cum se schimbă la tine."
+                is FillerTrend.Fewer -> "$rateText Mai rar decât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."
+                is FillerTrend.Same -> "$rateText Cam cât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."
+                is FillerTrend.More -> "$rateText Mai des decât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."
+            }
         }
 
         /** `String(format: "%d:%02d", ...)`. */
