@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
@@ -62,8 +63,14 @@ internal fun ModelSections(app: AppModel) {
         if (!app.isPilotLogOn) append(" Notează doar cu jurnalul de exersare pornit.")
         if (state is ModelsHub.State.Failed && state.noNetwork) append(" Acum nu e Wi-Fi.")
     }
-    ListSection(header = "Ascultare pe sunete, în probă", footer = footer) {
-        row { ShadowModelRow(ml.models, entry) }
+    // The shipped app has no internet permission (app/src/main/AndroidManifest.xml), so it can't fetch the package:
+    // the row would only fail. It shows where the permission is there (a build that asks for it).
+    val context = LocalContext.current
+    val canFetch = remember { context.checkSelfPermission(android.Manifest.permission.INTERNET) == android.content.pm.PackageManager.PERMISSION_GRANTED }
+    if (canFetch || state != ModelsHub.State.Absent) {
+        ListSection(header = "Ascultare pe sunete, în probă", footer = footer) {
+            row { ShadowModelRow(ml.models, entry) }
+        }
     }
     if (IS_DEBUG_BUILD) {
         var badge by rememberStoredBoolean(app.preferences, ShadowBadgeSettings.KEY)

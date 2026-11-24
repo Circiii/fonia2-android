@@ -51,9 +51,11 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -102,12 +104,16 @@ import tech.fonia.design.ui
 import tech.fonia.domain.FoniaContent
 import tech.fonia.dsp.VoiceGroup
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.FoniaSheet
+import tech.fonia.features.grownups.LegalInfo
+import tech.fonia.features.grownups.PrivacyNote
+import tech.fonia.features.grownups.PrivacyText
 import tech.fonia.features.app.SoundEffect
 import tech.fonia.features.app.field
 import tech.fonia.store.Profile
 
 @Suppress("EnumEntryName")
-private enum class Step { voice, who, child, adult }
+private enum class Step { voice, forAdult, who, child, adult }
 
 /** First run starts with a sound, not with slides: say "aaa" and Foni swells with you. */
 @Composable
@@ -135,7 +141,8 @@ fun FirstRunFlow(app: AppModel) {
         label = "first-run",
     ) { shown ->
         when (shown) {
-            Step.voice -> VoiceWelcome(app) { step = Step.who }
+            Step.voice -> VoiceWelcome(app) { step = Step.forAdult }
+            Step.forAdult -> ForTheAdult(onBack = { step = Step.voice }, onNext = { step = Step.who })
             Step.who -> WhoIsPractising(onChild = { step = Step.child }, onAdult = { step = Step.adult })
             Step.child -> ChildSetup(app, onBack = { step = Step.who }, onDone = { finish(it) })
             Step.adult -> AdultSetup(onBack = { step = Step.who }, onDone = { finish(it) })
@@ -252,6 +259,70 @@ private fun VoiceWelcome(app: AppModel, onNext: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+/** What the adult should know before anything else (iOS `ForTheAdult`): three lines, and the whole text one tap away. */
+@Composable
+private fun ForTheAdult(onBack: () -> Unit, onNext: () -> Unit) {
+    var showsAll by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val icons = listOf(FoniaIcon.microphone, FoniaIcon.mirror, FoniaIcon.lock)
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Field.paper.background)
+            .windowInsetsPadding(WindowInsets.navigationBars),
+    ) {
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(horizontal = 20.dp)
+                .padding(top = 8.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(22.dp),
+        ) {
+            SetupBack(onBack)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                FoniaText("Pentru adultul de lângă copil", Modifier.semantics { heading() }, style = fDisplay, color = Palette.ink)
+                FoniaText("Fonia nu ține locul logopedului. Te ajută să exersați între ședințe.", style = fBody, color = Palette.inkSoft)
+            }
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Palette.sheet, ContinuousRoundedRectangle(22.dp))
+                    .padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                PrivacyText.summary.forEachIndexed { index, line ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.Top) {
+                        Box(
+                            Modifier
+                                .size(42.dp)
+                                .background(Palette.accentSoft, ContinuousRoundedRectangle(12.dp)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FoniaIconView(icons[index % icons.size], size = 22f, tint = Palette.accentText)
+                        }
+                        FoniaText(line, Modifier.weight(1f), style = fLead, color = Palette.ink)
+                    }
+                }
+            }
+            StyledButton(
+                onClick = { showsAll = true },
+                style = QuietButtonStyle(Palette.accentText),
+                modifier = Modifier.semantics { contentDescription = "Citește tot, despre ce păstrăm pe telefon" },
+            ) { FoniaText("Citește tot", style = fBodyStrong) }
+        }
+        Dock {
+            StyledButton(onClick = onNext, style = FoniButtonStyle(field = Field.paper)) { CTALabel("Mai departe") }
+        }
+    }
+    FoniaSheet(isPresented = showsAll, onDismiss = { showsAll = false }) {
+        // No profile yet, so no gate: the adult is the one setting the app up.
+        PrivacyNote(onDone = { showsAll = false }, withReading = true, onOpenLink = { LegalInfo.open(context, it) })
     }
 }
 

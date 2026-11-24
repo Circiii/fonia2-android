@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -29,6 +30,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tech.fonia.design.FoniaText
+import tech.fonia.design.QuietButtonStyle
+import tech.fonia.design.StyledButton
+import tech.fonia.design.fBodyStrong
 import tech.fonia.design.Palette
 import tech.fonia.design.fBody
 import tech.fonia.design.fCaption
@@ -54,6 +58,7 @@ import tech.fonia.features.app.ProgressRow
 import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.SystemNavigationBar
 import tech.fonia.features.app.ToggleRow
+import tech.fonia.features.app.ValueRow
 import tech.fonia.features.app.rememberStoredBoolean
 import tech.fonia.features.home.DestinationScreen
 import tech.fonia.features.home.displayName
@@ -84,6 +89,7 @@ fun GrownupsHome(app: AppModel, onDone: () -> Unit) {
 @Composable
 private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
     val push = rememberPushDestination()
+    val context = LocalContext.current
     var keepRecordings by rememberStoredBoolean(app.preferences, Settings.keepRecordings)
     var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
     var addingChild by remember { mutableStateOf(false) }
@@ -135,13 +141,15 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
             ModelSections(app)
             ListSection {
                 row { ButtonRow("Ce păstrăm pe telefon", onClick = { showLegal = true }) }
+                row { ButtonRow("Ajutor", onClick = { LegalInfo.open(context, LegalInfo.SUPPORT_URL) }) }
+                row { ValueRow("Versiunea", LegalInfo.version(context)) }
                 row { ButtonRow("Șterge tot de pe telefon", onClick = { confirmWipe = true }, destructive = true) }
             }
         }
     }
     AddChildSheet(app, isPresented = addingChild, onDone = { addingChild = false })
     FoniaSheet(isPresented = showLegal, onDismiss = { showLegal = false }) {
-        PrivacyNote(onDone = { showLegal = false })
+        PrivacyNote(onDone = { showLegal = false }, withReading = true, onOpenLink = { LegalInfo.open(context, it) })
     }
     FoniaConfirmationDialog(
         isPresented = confirmWipe,
@@ -305,20 +313,9 @@ internal object ProfileExport {
     }
 }
 
-private val paragraphs = listOf(
-    "Vocea" to "O ascultăm aici, pe telefon. Nu pleacă nicăieri. Înregistrările copiilor se păstrează doar dacă pornești tu opțiunea. Ale tale rămân aici, pe telefon.",
-    "Camera" to "Se uită la gură doar cât ești la oglindă. Nu păstrăm nicio imagine.",
-    "Internetul" to "Îl folosim doar ca să descărcăm pachetele de ascultare (vorbirea și sunetele), dacă vrei tu. Nu trimitem nimic despre tine.",
-    "Fișierul pentru logoped" to "Îl trimiți doar tu, dacă vrei. Are încercările și notițele, fără voce.",
-    "Jurnalul de exersare" to "Telefonul notează câte încercări faceți, la ce sunet, cât durează o lecție și ce a răspuns telefonul, fără voce și fără cuvinte scrise. Detaliile stau cel mult 90 de zile, apoi rămân doar totalurile pe zi. Pleacă de pe telefon doar ca rezumat, lângă fișierul pentru logoped, sub un nume inventat.",
-    "Probele de citire" to "Păstrăm data, lista citită, timpul și cuvintele marcate de tine. Raportul îl faci și îl trimiți doar tu. Se șterg odată cu profilul.",
-    "Modul adaptiv" to "Dacă îl pornești, telefonul ține minte, pe fiecare sunet, cât de sigur iese, ca să aleagă exercițiile următoare. Sunt doar cifre, fără voce. Se șterg odată cu profilul.",
-    "Ce nu face Fonia" to "Nu pune diagnostice și nu ține locul logopedului. Ce spune telefonul e doar o părere, iar tu o poți schimba. Vârstele din ghiduri vin din studii pe alte limbi, pentru română nu avem încă date.",
-)
-
-/** "Ce păstrăm pe telefon". */
+/** "Ce păstrăm pe telefon": [PrivacyText], the policy on the web, and the credits. */
 @Composable
-private fun PrivacyNote(onDone: () -> Unit) {
+internal fun PrivacyNote(onDone: () -> Unit, withReading: Boolean, onOpenLink: (String) -> Unit) {
     Column(Modifier.fillMaxSize().background(Palette.paper)) {
         SystemNavigationBar("Ce păstrăm pe telefon", onDone = onDone)
         Column(
@@ -329,12 +326,17 @@ private fun PrivacyNote(onDone: () -> Unit) {
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            for ((title, text) in paragraphs) {
+            for (section in PrivacyText.sections(withReading)) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    FoniaText(title, Modifier.semantics { heading() }, style = fHeadline, color = Palette.ink)
-                    FoniaText(text, style = fBody, color = Palette.inkSoft)
+                    FoniaText(section.title, Modifier.semantics { heading() }, style = fHeadline, color = Palette.ink)
+                    FoniaText(section.body, style = fBody, color = Palette.inkSoft)
                 }
             }
+            StyledButton(
+                onClick = { onOpenLink(LegalInfo.PRIVACY_URL) },
+                style = QuietButtonStyle(Palette.accentText),
+                modifier = Modifier.heightIn(min = 44.dp),
+            ) { FoniaText("Politica de confidențialitate", style = fBodyStrong) }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 FoniaText("Mulțumiri", Modifier.semantics { heading() }, style = fHeadline, color = Palette.ink)
                 // The libraries named at the end are the Android ones: WhisperKit and GRDB are not in this app.
