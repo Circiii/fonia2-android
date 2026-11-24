@@ -138,6 +138,7 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
                 }
                 row { ToggleRow("Păstrează înregistrările copiilor", keepRecordings) { keepRecordings = it } }
             }
+            ReminderSection(app)
             ListSection(header = "Recunoașterea vorbirii", footer = "Fără ea, telefonul nu înțelege engleza și propozițiile.") {
                 row { ModelRow(app.speech) }
             }

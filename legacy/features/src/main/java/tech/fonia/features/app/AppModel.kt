@@ -643,6 +643,7 @@ class AppModel(
                     pilotFolder = PilotLog.defaultFolder(context),
                     clearSettings = {
                         val app = context.applicationContext
+                        PracticeReminder.cancel(app)
                         listOf("fonia", "fonia_talker").all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }
                     },
                 ),

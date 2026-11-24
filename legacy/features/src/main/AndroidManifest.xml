@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- The daily reminder (PracticeReminder): a local notification, asked for only when an adult turns it on in the
+         settings, and set again after a restart. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!-- The file for the logoped (ProfileExport) is shared from the cache through this provider, the way ShareLink
          hands a Transferable to the share sheet on iOS. -->
     <application>
@@ -13,5 +18,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/fonia_export_paths" />
         </provider>
+        <receiver
+            android:name="tech.fonia.features.app.PracticeReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
