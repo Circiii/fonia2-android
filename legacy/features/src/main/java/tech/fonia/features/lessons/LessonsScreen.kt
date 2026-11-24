@@ -87,6 +87,7 @@ import tech.fonia.domain.Lesson
 import tech.fonia.domain.SoundDef
 import tech.fonia.domain.Track
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.isChild
 import tech.fonia.features.app.AppRoute
 import tech.fonia.features.app.HeaderPage
 import tech.fonia.features.app.PageHeader
@@ -466,7 +467,7 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
             // The second path next to his lessons: the diction training of this sound.
             if (sound != null) tech.fonia.features.diction.TrainingCard(sound.id, app, path.profile.id, push)
             // His progress on this sound: the dots of his takes, the first time and today (session/ProgressDots.kt).
-            if (sound != null) tech.fonia.features.session.SoundProgressCard(sound.id, app, path.profile.id)
+            if (sound != null) tech.fonia.features.session.SoundProgressCard(sound.id, app, path.profile.id, showsCount = !path.profile.isChild)
             val pose = contrast?.pose
             if (pose != null) MouthCard(shape = pose.mouth.shape, height = 170.dp)
             val key = contrast?.let { coachKeys[it.id] }
@@ -521,7 +522,7 @@ private fun LessonRow(lesson: Lesson, unit: CourseUnit, path: PathModel, app: Ap
         CardRow(
             ArtTileMark.Art(lesson.art),
             lesson.title,
-            if (state == LessonState.locked && explainsLock) "Se deschide când îți iese sunetul de ${tech.fonia.features.session.OwnSuccess.TARGET} ori." else lesson.detail,
+            if (state == LessonState.locked && explainsLock) tech.fonia.features.session.OwnSuccess.lockLine(unit.sound?.let { path.ownSuccessEstablished(it) } ?: 0) else lesson.detail,
             Modifier
                 .then(if (state == LessonState.current) Modifier.border(2.dp, Palette.accent, card) else Modifier)
                 .alpha(if (canOpen) 1f else 0.6f),

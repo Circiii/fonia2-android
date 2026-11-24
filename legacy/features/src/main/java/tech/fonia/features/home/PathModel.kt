@@ -151,6 +151,9 @@ class PathModel(profile: Profile, val content: FoniaContent) {
     /** How many of the plain sound's good takes that open the next lessons are done (the dots of [OwnSuccess]). */
     fun ownSuccessDots(sound: SoundID): Int = tech.fonia.features.session.OwnSuccess.dots(ladder(sound).establishCorrect)
 
+    /** The plain sound's good takes so far, for the line under a shut lesson. */
+    fun ownSuccessEstablished(sound: SoundID): Int = ladder(sound).establishCorrect
+
     // Picking up
 
     val hasStarted: Boolean get() = sessions.any { it.focus != null }

@@ -6,10 +6,13 @@ import tech.fonia.domain.ProgressionStep
 import tech.fonia.domain.Rung
 
 /**
- * No adult in the loop (v2-flow, owner 2026-11-24): what used to wait for an adult opens by the learner's own success.
+ * The learner's own success (v2-flow, 2026-11-24), with the lock of the plan (docs/v2/06, „Lacătul”) kept:
  *
- * - The lessons past the plain sound open once the plain sound was heard right [TARGET] times (good takes on the
- *   isolated rung, counted from the stored blocks), shown as [TARGET] dots.
+ * - The plain sound heard right [TARGET] times (good takes on the isolated rung, counted from the stored blocks,
+ *   shown as [TARGET] dots) is what makes the next step possible.
+ * - The step after the isolated sound still waits for an adult who listened ("Am ascultat, e bine", in Setări),
+ *   when the profile keeps the lock on (a child's default). Without it, a child could repeat a wrong sound for weeks.
+ *   With the lock off, or once an adult confirmed, the dots alone move him on.
  * - Past sentences, where the phone used to wait for an adult, a good block moves on by itself.
  *
  * Everything else is [Progression] unchanged: 5 of 6 to move up, under 3 of 6 to step down.
@@ -22,19 +25,40 @@ object OwnSuccess {
     /** The dots: how many of [TARGET] are done. */
     fun dots(establishCorrect: Int): Int = establishCorrect.coerceIn(0, TARGET)
 
-    /** [Progression.afterBlock] where the learner's own good takes stand in for the adult's word. */
+    /** The lock is on and no adult has listened yet (nor opened the whole path). */
+    fun waitsForAdult(state: ProgressionState): Boolean =
+        state.lockEnabled && !state.openedByParent && !state.adultConfirmed
+
+    /** Under a shut lesson past the plain sound: the dots still to fill, then the adult who listens. */
+    fun lockLine(establishCorrect: Int): String =
+        if (opened(establishCorrect)) "Un adult te ascultă, apoi se deschide." else "Se deschide când îți iese sunetul de $TARGET ori."
+
+    /** [Progression.afterBlock] where the learner's own good takes stand in for the 12 of the plan. */
     fun afterBlock(correct: Int, attempted: Int, state: ProgressionState): Progression.BlockOutcome {
+        val onPlainSound = state.rung == Rung.Isolated
+        val ownOpened = onPlainSound && opened(state.establishCorrect + correct)
+        val locked = onPlainSound && waitsForAdult(state)
         var before = state
-        if (before.rung == Rung.Isolated && opened(before.establishCorrect + correct)) before = before.copy(adultConfirmed = true)
+        if (ownOpened && !locked) before = before.copy(adultConfirmed = true)
         val outcome = Progression.afterBlock(correct = correct, attempted = attempted, state = before)
         val step = outcome.step
+        if (locked) {
+            val next = state.rung.next
+            if (ownOpened && next != null && step == ProgressionStep.Stay && attempted == Progression.blockSize) {
+                return Progression.BlockOutcome(outcome.state, ProgressionStep.NeedsAdult(next))
+            }
+            return outcome
+        }
         if (step is ProgressionStep.NeedsAdult) {
             return Progression.BlockOutcome(outcome.state.copy(rung = step.next), ProgressionStep.Advance(step.next))
         }
         return outcome
     }
 
-    /** A step from elsewhere (the adaptive pilot) that would wait for an adult moves on instead. */
-    fun withoutAdult(step: ProgressionStep): ProgressionStep =
-        if (step is ProgressionStep.NeedsAdult) ProgressionStep.Advance(step.next) else step
+    /**
+     * A step from elsewhere (the adaptive pilot) that would wait for an adult moves on instead, except past the plain
+     * sound while the lock waits.
+     */
+    fun withoutAdult(step: ProgressionStep, state: ProgressionState): ProgressionStep =
+        if (step is ProgressionStep.NeedsAdult && !(state.rung == Rung.Isolated && waitsForAdult(state))) ProgressionStep.Advance(step.next) else step
 }

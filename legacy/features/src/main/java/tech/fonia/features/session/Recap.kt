@@ -136,11 +136,14 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
                         color = Palette.ink,
                         maxLines = 1,
                     )
-                    // No "0 din N": a run with nothing right yet shows no count, only what comes next.
-                    if (run.attempts > 0 && run.goodAttempts > 0) {
+                    // No "0 din N": a run with nothing right yet shows no count, only what comes next. A child sees no
+                    // count at all, only the one word above and the longest sound; the count is for adults.
+                    val showsCount = RecapRules.showsCount(run.profile.isChild, run.attempts, run.goodAttempts)
+                    val showsHold = run.attempts > 0 && run.goodAttempts > 0 && run.longestHold >= 0.5
+                    if (showsCount || showsHold) {
                         Row(Modifier.fillMaxWidth().staggeredEntrance(1), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            RecapTile(Modifier.weight(1f), "au ieșit bine", "din ${run.attempts}") { RollingCount(run.goodAttempts) }
-                            if (run.longestHold >= 0.5) {
+                            if (showsCount) RecapTile(Modifier.weight(1f), "au ieșit bine", "din ${run.attempts}") { RollingCount(run.goodAttempts) }
+                            if (showsHold) {
                                 RecapTile(Modifier.weight(1f), "cel mai lung sunet", null) {
                                     FoniaText(
                                         String.format(Locale.ROOT, "%.1f s", run.longestHold).replace('.', ','),
@@ -153,11 +156,12 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
                     }
                     // His S dots on the axis, the first time and today, and how many sat in the zone.
                     if (sound != null && run.attempts > 0) {
-                        SoundProgressCard(sound.id, app, run.profile.id, Modifier.staggeredEntrance(2))
+                        SoundProgressCard(sound.id, app, run.profile.id, Modifier.staggeredEntrance(2), showsCount = !run.profile.isChild)
                     }
                     val opened = run.movedUpTo
                     val line = when {
                         opened != null && sound != null -> "Ai deschis: ${opened.title(sound.shortLetter)}"
+                        run.needsAdultNext != null -> RecapRules.WAITS_FOR_ADULT
                         next != null -> "Urmează: $next"
                         else -> null
                     }
@@ -180,6 +184,15 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
             }
         }
     }
+}
+
+/** What the end of a session shows, apart from the screen. */
+object RecapRules {
+    /** "N au ieșit bine din M": for adults only, and never "0 din M". */
+    fun showsCount(isChild: Boolean, attempts: Int, good: Int): Boolean = !isChild && attempts > 0 && good > 0
+
+    /** The plain sound came out well enough; the lock waits for an adult to listen. */
+    const val WAITS_FOR_ADULT = "Un adult te ascultă, apoi mergi mai departe."
 }
 
 @Composable

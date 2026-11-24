@@ -14,7 +14,7 @@ import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
 import java.time.Instant
 
-/** v2-flow: what waited for an adult opens by the learner's own success. */
+/** v2-flow: the learner's own success moves him on, except past the plain sound while the lock waits for an adult. */
 class OwnSuccessTests {
     private val profile = Profile(
         kind = Profile.Kind.Child, ageBand = Profile.AgeBand.EightToTen, voiceGroup = Profile.VoiceGroup.Child,
@@ -27,23 +27,48 @@ class OwnSuccessTests {
     )
 
     @Test
-    fun syllablesStayShutUntilThePlainSoundCameOutWellFiveTimes() {
+    fun withTheLockOnSyllablesWaitForAnAdultEvenAfterFiveGood() {
         val four = profile.progressionState(SoundID.S, progress(2, 2))
         assertTrue(Progression.isLocked(Rung.Syllables, four))
         assertEquals(4, OwnSuccess.dots(four.establishCorrect))
+        assertEquals("Se deschide când îți iese sunetul de 5 ori.", OwnSuccess.lockLine(four.establishCorrect))
         val five = profile.progressionState(SoundID.S, progress(2, 3))
-        assertFalse(Progression.isLocked(Rung.Syllables, five))
+        assertTrue(Progression.isLocked(Rung.Syllables, five))
+        assertEquals("Un adult te ascultă, apoi se deschide.", OwnSuccess.lockLine(five.establishCorrect))
         assertEquals(OwnSuccess.TARGET, OwnSuccess.dots(12))
+        val listened = profile.copy(confirmedSounds = listOf("s")).progressionState(SoundID.S, progress(2, 3))
+        assertFalse(Progression.isLocked(Rung.Syllables, listened))
     }
 
     @Test
-    fun theBlockThatReachesFiveMovesHimOnWithNoAdult() {
+    fun theBlockThatReachesFiveAsksForAnAdultWhileTheLockIsOn() {
         val state = ProgressionState(rung = Rung.Isolated, establishCorrect = 0)
         val (after, step) = OwnSuccess.afterBlock(correct = 5, attempted = 6, state = state)
-        assertEquals(ProgressionStep.Advance(Rung.Syllables), step)
-        assertEquals(Rung.Syllables, after.rung)
-        // The plain rule would have waited.
+        assertEquals(ProgressionStep.NeedsAdult(Rung.Syllables), step)
+        assertEquals(Rung.Isolated, after.rung)
+        assertEquals(5, after.establishCorrect)
+        // The plain rule would have waited for 12 without asking.
         assertEquals(ProgressionStep.Stay, Progression.afterBlock(correct = 5, attempted = 6, state = state).step)
+    }
+
+    @Test
+    fun withTheLockOffOrAfterTheAdultFiveGoodMoveHimOn() {
+        for (state in listOf(
+            ProgressionState(rung = Rung.Isolated, establishCorrect = 0, lockEnabled = false),
+            ProgressionState(rung = Rung.Isolated, establishCorrect = 0, adultConfirmed = true),
+        )) {
+            val (after, step) = OwnSuccess.afterBlock(correct = 5, attempted = 6, state = state)
+            assertEquals(ProgressionStep.Advance(Rung.Syllables), step)
+            assertEquals(Rung.Syllables, after.rung)
+        }
+    }
+
+    @Test
+    fun theAdaptiveStepKeepsTheLockAndOnlyThatOne() {
+        val waiting = ProgressionState(rung = Rung.Isolated)
+        assertEquals(ProgressionStep.NeedsAdult(Rung.Syllables), OwnSuccess.withoutAdult(ProgressionStep.NeedsAdult(Rung.Syllables), waiting))
+        val sentences = ProgressionState(rung = Rung.Sentences, adultConfirmed = true)
+        assertEquals(ProgressionStep.Advance(Rung.Retell), OwnSuccess.withoutAdult(ProgressionStep.NeedsAdult(Rung.Retell), sentences))
     }
 
     @Test

@@ -251,7 +251,7 @@ class AdaptivePilotTests {
     }
 
     @Test
-    fun theLockAfterTheIsolatedSoundOpensByHisOwnSuccess() = runBlocking {
+    fun theLockAfterTheIsolatedSoundWaitsForAnAdult() = runBlocking {
         val app = makeApp()
         val locked = child.copy(confirmedSounds = emptyList())
         app.repository.saveProfile(locked)
@@ -263,9 +263,9 @@ class AdaptivePilotTests {
         val run = SessionRun(SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Isolated), title = "test", sound = SoundID.S), locked, app, null, AttemptsSummary())
         run.start()
         play(run) { Attempt.Outcome.Good }
-        // v2-flow: no adult in the loop; the rung the engine would have held for an adult opens.
-        assertEquals(null, run.needsAdultNext)
-        assertEquals(Rung.Syllables, run.movedUpTo)
+        // The plan's lock: past the plain sound, an adult listens first.
+        assertEquals(Rung.Syllables, run.needsAdultNext)
+        assertEquals(null, run.movedUpTo)
     }
 
     @Test

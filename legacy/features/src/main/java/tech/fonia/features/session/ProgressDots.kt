@@ -46,7 +46,7 @@ import java.util.UUID
  * Draws nothing before the first judged take.
  */
 @Composable
-fun SoundProgressCard(sound: SoundID, app: AppModel, profileId: UUID, modifier: Modifier = Modifier) {
+fun SoundProgressCard(sound: SoundID, app: AppModel, profileId: UUID, modifier: Modifier = Modifier, showsCount: Boolean = true) {
     var progress by remember(sound, profileId) { mutableStateOf<SoundProgress?>(null) }
     var calibrated by remember(sound, profileId) { mutableStateOf(false) }
     LaunchedEffect(sound, profileId) {
@@ -66,12 +66,15 @@ fun SoundProgressCard(sound: SoundID, app: AppModel, profileId: UUID, modifier: 
             .fillMaxWidth()
             .background(Palette.sheet, RoundedCornerShape(22.dp))
             .padding(horizontal = 14.dp, vertical = 12.dp)
-            .clearAndSetSemantics { contentDescription = "${p.latestGood} din ${p.latestTotal} în zonă azi" },
+            .clearAndSetSemantics { contentDescription = if (showsCount) "${p.latestGood} din ${p.latestTotal} în zonă azi" else "Încercările tale de azi" },
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FoniaIconView(FoniaIcon.target, size = 22f, tint = field.deep)
-            FoniaText("${p.latestGood} din ${p.latestTotal} în zonă", Modifier.weight(1f), style = ui(18, UIWeight.black, TextRole.headline), color = Palette.ink, maxLines = 1)
+        // A child sees the dots move, not "N din M".
+        if (showsCount) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FoniaIconView(FoniaIcon.target, size = 22f, tint = field.deep)
+                FoniaText("${p.latestGood} din ${p.latestTotal} în zonă", Modifier.weight(1f), style = ui(18, UIWeight.black, TextRole.headline), color = Palette.ink, maxLines = 1)
+            }
         }
         if (calibrated) CalibratedBadge()
         val rows = if (p.sameDay) listOf("azi" to p.latest) else listOf("prima dată" to p.first, "azi" to p.latest)
