@@ -28,6 +28,7 @@ class PracticeReportPdfTest {
         rungs = 10,
         lesson = "În mijlocul cuvântului",
         lessonDetail = "Cuvinte cu $letter la mijloc",
+        stage = "Consolidare",
         confirmedByAdult = letter == "S",
         attempts = 6,
         days = 2,
