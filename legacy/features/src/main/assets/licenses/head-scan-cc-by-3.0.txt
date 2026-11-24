@@ -1,0 +1,15 @@
+Infinite, 3D Head Scan by Lee Perry-Smith / Infinite-Realities (Triplegangers).
+
+Original work: https://www.triplegangers.com/
+
+Geometry and displacement distribution: https://github.com/mrdoob/three.js/tree/r180/examples/models/gltf/LeePerrySmith
+
+Photographic colour distribution: https://github.com/keijiro/InfiniteScan
+
+Format conversions by Morgan McGuire, Guedis Cardenas and Keijiro Takahashi.
+
+Licensed under the Creative Commons Attribution 3.0 Unported License (CC BY 3.0). The full legal code is at https://creativecommons.org/licenses/by/3.0/legalcode
+
+Changes made for Fonia: isolated and registered the lower face, replaced the oral pouch, subdivided the surface, rigged the lips and chin for speech, cropped the original colour map and derived a normal map from the displacement capture.
+
+The work is provided as-is, without warranties of any kind.

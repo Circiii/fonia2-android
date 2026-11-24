@@ -70,6 +70,11 @@ sealed interface Destination {
 
     /** The adaptive pilot's switch, modes and estimates (not on iOS, docs/PLAN.md §7.4). */
     data class Adaptive(val profileID: UUID) : Destination
+
+    /** What the app is built from, and each licence's full text. */
+    data object Licences : Destination
+
+    data class LicenceText(val id: String) : Destination
 }
 
 /** One `NavigationStack` path. The root is always there; [push] and [pop] change what's on top. */

@@ -1,0 +1,13 @@
+ZIPA-small CR-CTC (500k steps), file model.int8.onnx at commit dfe87c97662606fa6db90ad06f627d4363314744.
+
+Copyright the ZIPA authors (Jian Zhu and others).
+
+Source: https://huggingface.co/anyspeech/zipa-small-crctc-500k
+
+Paper: Zhu et al., "ZIPA: A family of efficient models for multilingual phone recognition", ACL 2025.
+
+Licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). The full legal code is at https://creativecommons.org/licenses/by/4.0/legalcode
+
+Fonia carries the published file inside the app, without changes (the int8 export is the authors' own).
+
+The model is provided as-is, without warranties of any kind.

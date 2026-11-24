@@ -148,6 +148,7 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
             ModelSections(app)
             ListSection {
                 row { ButtonRow("Ce păstrăm pe telefon", onClick = { showLegal = true }) }
+                row { NavigationRow("Licențe", onClick = { push(Destination.Licences) }) }
                 row { ButtonRow("Ajutor", onClick = { LegalInfo.open(context, LegalInfo.SUPPORT_URL) }) }
                 row { ValueRow("Versiunea", LegalInfo.version(context)) }
                 row { ButtonRow("Șterge tot de pe telefon", onClick = { confirmWipe = true }, destructive = true) }

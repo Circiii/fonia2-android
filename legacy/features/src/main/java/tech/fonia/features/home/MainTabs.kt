@@ -311,6 +311,8 @@ fun DestinationScreen(destination: Destination, app: AppModel, path: PathModel?,
         Destination.Who -> WhoScreen(app)
         is Destination.Reading -> if (app.arguments.drafts) ReadingHome(destination.profileID, app) else EmptyPage()
         is Destination.Adaptive -> AdaptiveScreen(destination.profileID, app)
+        Destination.Licences -> tech.fonia.features.grownups.LicencesScreen()
+        is Destination.LicenceText -> tech.fonia.features.grownups.LicenceTextScreen(destination.id)
     }
 }
 

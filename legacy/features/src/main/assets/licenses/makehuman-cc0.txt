@@ -1,0 +1,7 @@
+Dental crowns adapted from MakeHuman teeth_base.obj.
+
+The MakeHuman assets are released under CC0 1.0 Universal (public domain dedication): https://www.makehumancommunity.org/content/license.html
+
+The CC0 legal code is at https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+No attribution is required; Fonia names the source anyway.
