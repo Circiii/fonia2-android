@@ -62,14 +62,11 @@ fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit)
     val isChild = path.profile.isChild
     val intro = run {
         if (step == null) return@run "Ai terminat tot ce ai ales. Dacă vrei, mai facem o încălzire."
-        val sound = step.unit.sound
-        if (sound != null && path.isWaitingForAdult(sound)) return@run "Întâi te ascultă logopedul. Când zice că e bine, mergem mai departe."
         val range = path.profile.domainAge.attemptRange
         val minutes = path.profile.domainAge.minutes((range.first + range.last) / 2)
         "Urmează „${step.lesson.title}”. Durează cam ${Plural.format(minutes, Plural.Noun.Minut)}."
     }
-    // One line for the adult next to the child: what to listen for today.
-    val parentBrief = step?.unit?.sound?.takeIf { isChild }?.let { "Pentru adult: ascultă dacă se aude ${path.content.sound(it).shortLetter} și laudă ce a ieșit bine." }
+    val parentBrief: String? = null
 
     Box(Modifier.fillMaxSize()) {
         SceneBackdrop(SceneName.start)

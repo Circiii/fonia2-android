@@ -194,13 +194,28 @@ class TakeJudge(
             dspSegments.none { it.first - 0.06 <= span.second && span.first <= it.second + 0.06 }
         ) notes += "zipaDspApart"
         val blocked = if (useFull) measured.blocked - measured.pending else measured.blocked
-        // Several occurrences (sentences): the one least likely correct speaks for the take.
+        val v2 = spec.population.judge2
+        // Several occurrences (sentences): the one least likely correct speaks for the take. v2 bursts ("ț-ț-ț"): the
+        // median burst speaks when enough bursts were found (one blurred burst is not a wrong sound).
         val scored = measured.occurrences.map { occ ->
-            val features = measured.global + occ.features + zipa
+            val features = trustPlace(withContext(measured.global + occ.features + zipa, request, v2), fusion, v2)
             features to Probs(fusion, head.probabilities(features, which.raw))
         }
-        val (features, probs) = scored.minBy { it.second.correct }
+        val burst = isBurst(request) && v2.burst.minFound > 0
+        val found = scored.filter { it.first[Features.PRESENT] == 1f }
+        val (features, probs) = if (burst && found.size >= v2.burst.minFound) {
+            notes += "burst:${found.size}/${scored.size}"
+            found.sortedBy { it.second.correct }[found.size / 2]
+        } else scored.minBy { it.second.correct }
+        val fastCorrect = if (which == Head.Fast) probs.correct else head.probabilities(features, Head.Fast.raw)[0]
         var decision = DecisionPolicy.decide(probs, which, request.sound, unlock, runtime, blocked, measured.capture)
+        // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself.
+        if (useFull && decision.verdict != Verdict.Correct && probs.correct >= v2.praise.full && fastCorrect >= v2.praise.fast &&
+            phones!!.lpr.values.all { it >= 0f }
+        ) {
+            decision = decision.copy(verdict = Verdict.Correct, confidence = probs.correct, withheld = null, adultNote = null)
+            notes += "praiseAgree"
+        }
         // Safety net from the parity-locked judge (plan 03 §1, head v0): a lateral hint on an S-family target never
         // passes as correct without the phoneme model. There is no adult to ask any more, so it is "almost" (the take
         // counts and something kind happens) instead of a silent retake.
@@ -224,6 +239,54 @@ class TakeJudge(
             versions = versions,
             fastFinal = which == Head.Fast && decision.verdict == Verdict.Correct,
             micros = micros,
+            sound = request.sound,
+            fastCorrect = fastCorrect,
+            visual = TakeVisuals.of(request, features, decision.verdict, decision.topError, decision.topErrorProbability, probs.correct,
+                v2.visual, request.reference),
+            talker = request.talker,
         )
+    }
+
+    /**
+     * v2 place trust: when the measured place evidence (`toward`) is already clearly in the target zone, the phoneme
+     * model's place candidate (lpr of the placeSwap / affricatePlace class) is masked: ZIPA hears [s] in good Ș on
+     * synthetic voices (EVAL_v1) and must not overrule a clear spectrum. Note `placeTrusted` in the trace.
+     */
+    private fun trustPlace(features: Map<String, Float>, fusion: FusionSpec, v2: Judge2Thresholds): Map<String, Float> {
+        val toward = features[Features.TOWARD] ?: return features
+        if (toward.isNaN() || toward < v2.placeTrust) return features
+        val keys = fusion.phoneMap.filterKeys {
+            val k = FusionSpec.kindOf(it)
+            k == ErrorKind.PlaceSwap || k == ErrorKind.AffricatePlace
+        }.values.map { Features.LPR_PREFIX + it }
+        if (keys.none { it in features }) return features
+        val out = HashMap(features)
+        for (k in keys) out.remove(k)
+        out["placeTrusted"] = 1f
+        return out
+    }
+
+    private fun isBurst(request: JudgeRequest): Boolean =
+        request.level == Level.Syllable && request.text.contains('-') && traits(request.sound).family == Family.Affricate
+
+    /**
+     * v2 vowel context: before i/e the S↔Ș evidence is moved by the fitted shift (logit of sNess, keyed
+     * "<target place>:<i|e>") and `toward` recomputed; the raw values stay in the trace as `sNessRaw`.
+     */
+    private fun withContext(features: Map<String, Float>, request: JudgeRequest, v2: Judge2Thresholds): Map<String, Float> {
+        if (v2.contextShift.isEmpty()) return features
+        val place = traits(request.sound).place ?: return features
+        val ctx = when (features[Features.FRONT_CONTEXT]) { 1f -> "i"; 2f -> "e"; else -> return features }
+        val shift = v2.contextShift["${if (place == SibilantPlace.S) "s" else "ș"}:$ctx"] ?: return features
+        val s = features[Features.S_NESS] ?: return features
+        val t = features[Features.TOWARD] ?: Float.NaN
+        if (s.isNaN()) return features
+        val p = s.coerceIn(1e-4f, 1f - 1e-4f)
+        val shifted = (1.0 / (1.0 + kotlin.math.exp(-(kotlin.math.ln(p / (1.0 - p)) + shift)))).toFloat()
+        val out = HashMap(features)
+        out["sNessRaw"] = s
+        out[Features.S_NESS] = shifted
+        if (!t.isNaN()) out[Features.TOWARD] = if (place == SibilantPlace.S) shifted else 1f - shifted
+        return out
     }
 }

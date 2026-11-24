@@ -104,7 +104,6 @@ fun JournalScreen(path: PathModel, app: AppModel) {
     var month by rememberSaveable { mutableStateOf(YearMonth.now()) }
     var openedDay by remember { mutableStateOf<JournalDay?>(null) }
     var shownDay by remember { mutableStateOf<JournalDay?>(null) }
-    var askAdult by remember { mutableStateOf(false) }
     val push = rememberPushDestination()
     val zone = ZoneId.systemDefault()
     val practised = path.sessions.filter { it.endedAt != null || it.attempts > 0 }.map { it.localDay }.toSet()
@@ -187,7 +186,7 @@ fun JournalScreen(path: PathModel, app: AppModel) {
             ) {
                 MonthStep(FoniaIcon.back, "Luna trecută", enabled = true) { month = month.minusMonths(1) }
                 StyledButton(
-                    onClick = { if (path.profile.isChild) askAdult = true else push(Destination.Notes(path.profile.id)) },
+                    onClick = { push(Destination.Notes(path.profile.id)) },
                     style = PlusButtonStyle(),
                     modifier = Modifier.semantics { contentDescription = "Adaugă o notiță pentru logoped" },
                 ) {
@@ -217,16 +216,6 @@ fun JournalScreen(path: PathModel, app: AppModel) {
     ) {
         shownDay?.let { DaySheet(it, path, app) }
     }
-    FoniaAlert(
-        isPresented = askAdult,
-        onDismiss = { askAdult = false },
-        title = "Notițele sunt pentru adulți",
-        message = "Aici scrii ce ai observat, ca să vadă și logopedul.",
-        actions = listOf(
-            DialogAction("Sunt adult") { push(Destination.Notes(path.profile.id)) },
-            DialogAction("Renunță", ActionRole.Cancel),
-        ),
-    )
 }
 
 @Composable

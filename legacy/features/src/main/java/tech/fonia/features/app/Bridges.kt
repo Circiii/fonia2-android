@@ -119,7 +119,9 @@ fun Profile.progressionState(sound: SoundID, progress: SoundProgress?): Progress
     val history = progress?.blockHistory?.filter { it.rung == 0 } ?: emptyList()
     return ProgressionState(
         rung = Rung.at(progress?.rung ?: 0),
-        adultConfirmed = sound.rawValue in confirmedSounds,
+        // An adult's word, or his own: the plain sound heard right often enough (v2-flow, no adult in the loop).
+        adultConfirmed = sound.rawValue in confirmedSounds ||
+            tech.fonia.features.session.OwnSuccess.opened(history.fold(0) { sum, block -> sum + block.good }),
         lockEnabled = requireConfirmation,
         openedByParent = openPath,
         establishCorrect = history.fold(0) { sum, block -> sum + block.good },

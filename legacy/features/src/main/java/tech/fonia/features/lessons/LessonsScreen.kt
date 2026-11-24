@@ -463,6 +463,10 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (sound != null) Tools(sound, push)
+            // The second path next to his lessons: the diction training of this sound.
+            if (sound != null) tech.fonia.features.diction.TrainingCard(sound.id, app, path.profile.id, push)
+            // His progress on this sound: the dots of his takes, the first time and today (session/ProgressDots.kt).
+            if (sound != null) tech.fonia.features.session.SoundProgressCard(sound.id, app, path.profile.id)
             val pose = contrast?.pose
             if (pose != null) MouthCard(shape = pose.mouth.shape, height = 170.dp)
             val key = contrast?.let { coachKeys[it.id] }
@@ -517,23 +521,29 @@ private fun LessonRow(lesson: Lesson, unit: CourseUnit, path: PathModel, app: Ap
         CardRow(
             ArtTileMark.Art(lesson.art),
             lesson.title,
-            if (state == LessonState.locked && explainsLock) "Se deschide după ce te ascultă un adult." else lesson.detail,
+            if (state == LessonState.locked && explainsLock) "Se deschide când îți iese sunetul de ${tech.fonia.features.session.OwnSuccess.TARGET} ori." else lesson.detail,
             Modifier
                 .then(if (state == LessonState.current) Modifier.border(2.dp, Palette.accent, card) else Modifier)
                 .alpha(if (canOpen) 1f else 0.6f),
-        ) { Trailing(state, canOpen) }
+        ) { Trailing(state, canOpen, unit.sound?.let { path.ownSuccessDots(it) } ?: 0) }
     }
 }
 
 @Composable
-private fun Trailing(state: LessonState, canOpen: Boolean) {
+private fun Trailing(state: LessonState, canOpen: Boolean, ownDots: Int = 0) {
     when (state) {
         LessonState.done -> DoneDot(true)
         LessonState.current -> Box(Modifier.size(34.dp).background(Palette.accent, CircleShape), contentAlignment = Alignment.Center) {
             FoniaIconView(FoniaIcon.play, size = 16f, tint = Palette.buttonLabel)
         }
-        LessonState.locked -> Box(Modifier.size(26.dp), contentAlignment = Alignment.Center) {
-            FoniaIconView(FoniaIcon.lock, size = 18f, tint = Palette.inkSoft)
+        // Opened by his own success: one dot per good plain sound, of five.
+        LessonState.locked -> androidx.compose.foundation.layout.Row(
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(3.dp),
+            modifier = Modifier.semantics { stateDescription = "$ownDots din ${tech.fonia.features.session.OwnSuccess.TARGET}" },
+        ) {
+            repeat(tech.fonia.features.session.OwnSuccess.TARGET) { i ->
+                Box(Modifier.size(8.dp).background(if (i < ownDots) Palette.progress else Palette.progressTrack, CircleShape))
+            }
         }
         LessonState.later -> Box(Modifier.size(26.dp), contentAlignment = Alignment.Center) {
             Box(Modifier.size(22.dp).border(2.dp, Palette.ink.copy(alpha = if (canOpen) 0.3f else 0.15f), CircleShape))

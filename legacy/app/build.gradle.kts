@@ -132,6 +132,10 @@ val specAssets = tasks.register<SpecAssetsTask>("specAssets") {
         fileTree(spec.resolve("fusion")) { include("*.json") },
         spec.resolve("unlock.json"),
         spec.resolve("feedback.json"),
+        // The diction training (v2-flow): the original v2 texts and their generated voice clips (about 11 MB).
+        fileTree(spec.resolve("content/v2")) { include("**/*.json") },
+        spec.resolve("content/voice/index.json"),
+        fileTree(spec.resolve("content/voice/clips")) { include("*.m4a") },
     )
 }
 

@@ -20,6 +20,7 @@ enum class UnlockAnswer { Allowed, Trial, Locked }
 /** The unlock registry (plan 03 §7, Q3): a kind is named to the child only when unlocked and its conditions hold. */
 class UnlockView(val spec: UnlockSpec, val everything: Boolean = false) {
     fun answer(sound: SoundId, kind: ErrorKind, p: Float, tauErr: Float, runtime: RuntimeContext, capture: CaptureReport?): UnlockAnswer {
+        if (runtime.policy == PolicyLevel.Self) selfAnswer(kind, p)?.let { return it }
         val e = spec.entry(sound, kind) ?: return UnlockAnswer.Locked
         return when (e.state) {
             "unlocked" -> {
@@ -41,6 +42,27 @@ class UnlockView(val spec: UnlockSpec, val everything: Boolean = false) {
             "trial" -> UnlockAnswer.Trial
             else -> UnlockAnswer.Locked
         }
+    }
+
+    /** The `self` rule: Allowed at or above its confidence, else null (the registry answers as for a child). */
+    private fun selfAnswer(kind: ErrorKind, p: Float): UnlockAnswer? {
+        val rule = spec.rules["self"] ?: return null
+        val min = rule.minConfidence ?: return null
+        if (rule.kinds != null && kind.raw !in rule.kinds) return null
+        return if (p >= min) UnlockAnswer.Allowed else null
+    }
+
+    /**
+     * Whether the visual block's hint may be shown on this take: always for [PolicyLevel.Self] at or above the `self`
+     * rule's confidence; for a child only when the take named an unlocked kind (today: never).
+     */
+    fun hintAllowed(result: TakeResult, runtime: RuntimeContext): Boolean {
+        val hint = result.visual?.hint ?: return false
+        if (runtime.policy == PolicyLevel.Self) {
+            val min = spec.rules["self"]?.minConfidence ?: return false
+            return hint.confidence >= min
+        }
+        return result.verdict is Verdict.NamedError
     }
 
     companion object {

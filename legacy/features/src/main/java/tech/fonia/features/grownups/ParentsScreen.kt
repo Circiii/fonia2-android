@@ -99,35 +99,13 @@ import java.time.ZoneId
 import java.util.UUID
 
 /**
- * How it's going, the notes and the settings. For a child's profile there's a door first, which only stops a child
- * who taps here by accident. It isn't a lock, and it doesn't ask for a sum.
+ * How it's going, the notes and the settings. A plain settings page: no door, no question.
  */
 @Composable
 fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, onShowGrownups: (Boolean) -> Unit) {
-    // Local to this visit: it stays open while pages above it come and go, and the door is shut again the next time
-    // the page is pushed (a new stack entry starts with no saved state).
-    var isOpen by rememberSaveable { mutableStateOf(false) }
+    // No grown-ups' door any more (v2-flow, owner 2026-11-24): the one who practises opens his own settings.
     HeaderPage("Setări", closes = true) {
-        if (isOpen || !profile.isChild) {
-            Rooms(profile, app, path, onShowGrownups)
-        } else {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                MascotView(MascotPose.easy, Modifier.height(150.dp))
-                FoniaText(
-                    "Aici intră doar adulții. Găsești ce a lucrat copilul, notițele și setările.",
-                    style = fLead,
-                    color = Palette.ink,
-                    textAlign = TextAlign.Center,
-                )
-                StyledButton(onClick = { isOpen = true }, style = FoniButtonStyle()) { FoniaText("Sunt adult") }
-            }
-        }
+        Rooms(profile, app, path, onShowGrownups)
     }
 }
 

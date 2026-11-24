@@ -118,15 +118,16 @@ class TalkerTracker(prior: TalkerGroup) {
 }
 
 /**
- * [TakeJudge.measure] with the talker heard from this take: measures with the tracker's group, feeds the take's F0 to
- * [tracker], and measures again with the new group if the voice moved it (≈ 20 ms more, only when it changes).
+ * [TakeJudge.measure] with the talker heard from this take: measures with the tracker's group, feeds the take's F0
+ * ([TalkerEstimator], octave-safe) to [tracker], and measures again with the new group if the voice moved it (≈ 20 ms more, only when it changes).
  * The returned [Measured.request] carries the group that was used.
  */
 fun TakeJudge.measureForVoice(request: JudgeRequest, clip: Clip, tracker: TalkerTracker): Measured {
     val first = measure(request.copy(talker = tracker.group), clip)
     // Only a take that passed the capture and word gates says who spoke: a beep, a cough or a wrong word does not.
     if (first.gate != null) return first
-    val f0 = first.global[Features.F0] ?: Float.NaN
+    // v2: the octave-safe estimate (YIN + the DSP tracker), not the DSP median alone, which halves some women's F0.
+    val f0 = TalkerEstimator.estimate(clip, first.global[Features.F0] ?: Float.NaN).f0Hz
     val before = first.request.talker
     val after = tracker.observe(f0)
     return if (after == before) first else measure(request.copy(talker = after), clip)

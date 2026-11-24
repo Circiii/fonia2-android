@@ -102,11 +102,26 @@ class PathModelTests {
         assertEquals("s-isolated", model.continuing?.lesson?.id)
     }
 
-    /** the row follows what was worked on last, even if it isn't the first sound */
+    /**
+     * v2-flow decision (differs from iOS): with chosen sounds, the big button keeps to today's sound, the first chosen
+     * one with lessons left, one sound at a time, even after a lesson of another sound was opened by hand.
+     */
     @Test
-    fun followsTheLastUnit() = runBlocking {
+    fun keepsToTodaysSound() = runBlocking {
         val app = makeApp()
         val profile = child(targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        finish(SessionFocus.Meet(SoundID.S), profile, app, at = Instant.now().minusSeconds(60))
+        finish(SessionFocus.Meet(SoundID.R), profile, app)
+        val model = path(profile, app)
+        assertEquals("s-isolated", model.continuing?.lesson?.id)
+    }
+
+    /** with no sound chosen, the row follows what was worked on last, as on iOS */
+    @Test
+    fun followsTheLastUnitWithNoChosenSound() = runBlocking {
+        val app = makeApp()
+        val profile = child(targets = emptyList())
         app.repository.saveProfile(profile)
         finish(SessionFocus.Meet(SoundID.S), profile, app, at = Instant.now().minusSeconds(60))
         finish(SessionFocus.Meet(SoundID.R), profile, app)

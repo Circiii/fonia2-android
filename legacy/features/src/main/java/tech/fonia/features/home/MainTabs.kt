@@ -107,10 +107,10 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
 
     // Anything that can change where someone stands: a session just ended, or an adult edited the profile.
     val isIdle = app.ticket == null && !showGrownups
-    LaunchedEffect(isIdle, profile) {
+    LaunchedEffect(isIdle, profile, app.checksVersion) {
         if (!isIdle) return@LaunchedEffect
         path.profile = profile
-        path.reload(app.repository)
+        path.reload(app.repository, app.checks)
     }
     LaunchedEffect(Unit) {
         app.takePendingRoute()?.let { AppRoute.parse(it) }?.let { stack.push(it) }
@@ -120,7 +120,11 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
         Box(Modifier.fillMaxSize().then(if (showStart) Modifier.clearAndSetSemantics {} else Modifier)) {
             NavigationHost(stack) { destination ->
                 if (destination == Destination.Root) {
-                    TabPages(profile, app, path, pager, onStart = { showStart = true })
+                    // His yellow button: one tap continues today's sound. The sheet only shows when nothing is left.
+                    TabPages(profile, app, path, pager, onStart = {
+                        val step = path.continuing
+                        if (step != null) app.start(step.lesson, step.unit) else showStart = true
+                    })
                 } else {
                     DestinationScreen(destination, app, path, onShowGrownups)
                 }
@@ -150,6 +154,12 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
                     showStart = false
                 },
             )
+        }
+        // Once, when the first run ends: the quick check, which sets what to practise.
+        val offering = app.offerCheck && profile.track == Profile.Track.Ro && app.ticket == null
+        FullScreenCover(isPresented = offering) {
+            BackHandler { app.offerCheck = false }
+            tech.fonia.features.check.CheckOffer(onStart = { app.startCheck() }, onLater = { app.offerCheck = false })
         }
     }
 }
@@ -320,6 +330,7 @@ private fun RouteScreen(route: AppRoute, app: AppModel, path: PathModel, onShowG
         AppRoute.English -> EnglishScreen(path)
         AppRoute.Speaking -> SpeakingHome(path.profile, app, path)
         AppRoute.Settings -> ParentsScreen(path.profile, app, path, onShowGrownups)
+        is AppRoute.Training -> tech.fonia.features.diction.TrainingScreen(route.sound, app, path.profile.id)
     }
 }
 

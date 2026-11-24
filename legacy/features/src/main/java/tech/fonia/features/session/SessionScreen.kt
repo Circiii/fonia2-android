@@ -157,6 +157,51 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         }
     }
 
+    // What „Încă una” opens and the recap names: read again once this session's saves are in.
+    var nextStep by remember { mutableStateOf<tech.fonia.features.home.NextStep?>(null) }
+    var nextTitle by remember { mutableStateOf<String?>(null) }
+    var nextDrill by remember { mutableStateOf<Int?>(null) }
+    val drillKind = ticket.custom?.kind as? tech.fonia.features.app.CustomRun.Kind.Drill
+    val drill = remember { drillKind?.let { app.drills(it.sound).getOrNull(it.index) } }
+    val finished = run?.phase == SessionRun.Phase.Finished
+    LaunchedEffect(finished) {
+        val ended = run ?: return@LaunchedEffect
+        if (!finished || ended.isCheck) return@LaunchedEffect
+        if (drillKind != null && drill != null) {
+            // A drill: its best result opens the next one (his own success); „Încă una” is the next drill, or this
+            // one again while the next is still closed.
+            val takes = ended.takes.values
+            val judged = takes.count { it.outcome == tech.fonia.store.Attempt.Outcome.Good || it.outcome == tech.fonia.store.Attempt.Outcome.Almost || it.outcome == tech.fonia.store.Attempt.Outcome.NotYet }
+            val share = tech.fonia.features.diction.DictionDrills.share(takes.count { it.outcome == tech.fonia.store.Attempt.Outcome.Good }, judged, drill.judged)
+            runCatching { app.drills.record(profile.id, drillKind.sound, drillKind.index, share) }
+            val best = runCatching { app.drills.best(profile.id, drillKind.sound) }.getOrDefault(emptyMap())
+            val all = app.drills(drillKind.sound)
+            val following = drillKind.index + 1
+            val goTo = if (following < all.size && tech.fonia.features.diction.DictionDrills.isOpen(following, best)) following else drillKind.index
+            nextDrill = goTo
+            nextTitle = all.getOrNull(goTo)?.title
+            return@LaunchedEffect
+        }
+        ended.awaitSaves()
+        val now = app.profiles.firstOrNull { it.id == profile.id } ?: profile
+        val path = tech.fonia.features.home.PathModel(now, app.content)
+        path.reload(app.repository, app.checks)
+        val step = path.continuing ?: path.warmingUp
+        nextStep = step
+        nextTitle = step.lesson.title
+    }
+
+    fun more() {
+        val step = nextStep
+        val goTo = nextDrill
+        app.scope.launch {
+            app.audio.shutDown()
+            onDone()
+            if (drillKind != null && goTo != null) app.startDrill(drillKind.sound, goTo)
+            else if (step != null) app.start(step.lesson, step.unit)
+        }
+    }
+
     val current = run
     if (current == null) {
         // `Color.clear` inside a cover, which iOS shows on the system background.
@@ -169,8 +214,10 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     FoniaOverlayHost(Modifier.fillMaxSize()) {
     Box(Modifier.fillMaxSize()) {
         if (current.phase != SessionRun.Phase.Finished) SceneBackdrop(current.field.scene)
-        if (current.phase == SessionRun.Phase.Finished) {
-            EndScreen(current, app, onDone = { finish() })
+        if (current.phase == SessionRun.Phase.Finished && current.isCheck) {
+            tech.fonia.features.check.CheckResultScreen(current, app, onDone = { finish() })
+        } else if (current.phase == SessionRun.Phase.Finished) {
+            RecapScreen(current, app, next = nextTitle, onMore = { more() }, onDone = { finish() })
         } else {
             Column(
                 Modifier
@@ -202,6 +249,9 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
                         ChapterBeat(app.content.sound(chapterSound).hero, chapter, current.field, app) { current.finishChapter() }
                     }
                 } else {
+                    if (drill != null) {
+                        tech.fonia.features.diction.DrillStrip(drill, current.index, current.takes.mapValues { it.value.outcome })
+                    }
                     Exercises(current, app, Modifier.weight(1f))
                 }
             }

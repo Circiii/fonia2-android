@@ -30,6 +30,8 @@ android {
             all { test ->
                 // The tests read the shared content (JSON) straight from the submodule, like :domain's.
                 test.systemProperty("fonia.content", rootDir.resolve("content").absolutePath)
+                // The original v2 texts of the diction training.
+                test.systemProperty("fonia.contentV2", rootDir.resolve("spec/content/v2").absolutePath)
             }
         }
     }
@@ -153,6 +155,8 @@ dependencies {
     implementation(project(":platform:ml"))
     implementation(project(":core:mouth3d"))
     implementation(project(":engine:speaking"))
+    // The diction training reads the original v2 texts (spec/content/v2) through the lessons loader.
+    implementation(project(":core:lessons"))
     // The pilot's event log is its own SQLite file, on the same bundled driver as :store (whose schema stays iOS's).
     implementation(libs.androidx.sqlite.bundled)
     implementation(libs.androidx.activity.compose)

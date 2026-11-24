@@ -15,6 +15,16 @@ import tech.fonia.domain.ContentSource
 import tech.fonia.domain.CourseUnit
 import tech.fonia.domain.DictionAreaID
 import tech.fonia.domain.EnglishFocus
+import tech.fonia.domain.Exercise
+import tech.fonia.domain.FeedbackLevel
+import tech.fonia.domain.Language
+import tech.fonia.domain.RepeatPrompt
+import tech.fonia.domain.SessionBlock
+import tech.fonia.domain.Trial
+import tech.fonia.features.check.CheckStore
+import tech.fonia.features.check.FileCheckStore
+import tech.fonia.features.check.MemoryCheckStore
+import tech.fonia.features.check.QuickCheckRules
 import tech.fonia.domain.FoniaContent
 import tech.fonia.domain.Lesson
 import tech.fonia.domain.Rung
@@ -71,6 +81,9 @@ sealed interface AppRoute {
 
     data object Settings : AppRoute
 
+    /** „Antrenament de dicție” of a sound: the ladder of drills. */
+    data class Training(val sound: SoundID) : AppRoute
+
     companion object {
         /**
          * Parses `foniaRoute`: `journal`, `settings`, `sounds`, `warmup`, `play`, `guides`, `stories`, `english`,
@@ -92,6 +105,7 @@ sealed interface AppRoute {
                 "guide" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Guide(it) }
                 "mirror" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Mirror(it) }
                 "coach" -> parts.getOrNull(1)?.let { Coach(it) }
+                "training" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Training(it) }
                 else -> null
             }
         }
@@ -104,7 +118,25 @@ data class SessionTicket(
     val focus: SessionFocus,
     val title: String,
     val sound: SoundID?,
+    /** Trials the app prepared itself (the quick check, a diction drill) instead of the session builder's. */
+    val custom: CustomRun? = null,
 )
+
+/** A run of trials made by the app, played through the same session screen, take cycle and judge. */
+data class CustomRun(
+    val kind: Kind,
+    val trials: List<Trial>,
+    /** Per trial, the speed the model is played at (a twister's tempo ladder); null: normal. */
+    val modelSpeeds: List<Float>? = null,
+) {
+    sealed interface Kind {
+        /** „Verificare rapidă”: one or two words per sound; ends on the three groups. */
+        data object Check : Kind
+
+        /** One drill of the diction training of [sound], the [index]-th of its ladder. */
+        data class Drill(val sound: SoundID, val index: Int) : Kind
+    }
+}
 
 /**
  * The launch arguments of the iOS app, which arrive here as intent extras. `foniaFixtures` works in any build, as
@@ -225,7 +257,36 @@ class AppModel(
     val judge: tech.fonia.features.session.SoundJudge? = null,
     /** Who really speaks for each profile, heard from the voice (a man on a child profile is judged as a man). */
     val talkers: tech.fonia.features.session.TalkerMemory = tech.fonia.features.session.TalkerMemory.inMemory(),
+    /** His own voice reference and the dots of his takes, per profile (no audio); in memory in the JVM tests. */
+    val voice: tech.fonia.features.session.VoiceStore = tech.fonia.features.session.VoiceStore(null),
+    /** The quick checks of each profile (a small file beside the database; in memory for the JVM tests). */
+    val checks: CheckStore = MemoryCheckStore(),
+    /** The original v2 texts (spec/content/v2) the diction training is made of; null when they are not bundled. */
+    val lessonContent: tech.fonia.lessons.LessonContent? = null,
+    /** The best result of each diction drill. */
+    val drills: tech.fonia.features.diction.DrillStore = tech.fonia.features.diction.MemoryDrillStore(),
+    /** Whether a word picture exists, by name. */
+    val hasPicture: (String) -> Boolean = { true },
 ) {
+    /** The drills of a sound's training ladder (empty without the v2 texts). */
+    fun drills(sound: SoundID): List<tech.fonia.features.diction.Drill> {
+        val v2 = lessonContent ?: return emptyList()
+        return runCatching {
+            tech.fonia.features.diction.DictionDrills.build(content.sound(sound), v2, { audio.hasClip(it, Language.Ro) }, hasPicture)
+        }.getOrDefault(emptyList())
+    }
+
+    /** Opens one drill of the diction training. */
+    fun startDrill(sound: SoundID, index: Int) {
+        val drill = drills(sound).getOrNull(index) ?: return
+        ticket = SessionTicket(
+            focus = SessionFocus.Sound(sound, if (index == 3) Rung.WordsInitial else Rung.Isolated),
+            title = drill.title,
+            sound = sound,
+            custom = CustomRun(CustomRun.Kind.Drill(sound, index), drill.trials, drill.tempos?.map { it.speed }),
+        )
+    }
+
     var profiles: List<Profile> by mutableStateOf(emptyList())
         private set
 
@@ -237,6 +298,38 @@ class AppModel(
     var ticket: SessionTicket? by mutableStateOf(null)
 
     val activeProfile: Profile? get() = profiles.firstOrNull { it.id == activeProfileID }
+
+    /** Set when the first run ends: the home offers the quick check once („Hai să vedem ce sunete exersăm”). */
+    var offerCheck: Boolean by mutableStateOf(false)
+
+    /** Bumps when a check is saved, so the home and Progres read the plan again. */
+    var checksVersion: Int by mutableStateOf(0)
+        private set
+
+    fun checkSaved() {
+        checksVersion += 1
+    }
+
+    /** Opens „Verificare rapidă”: the words with a clip and a picture, one or two per sound, each with its model voice. */
+    fun startCheck() {
+        offerCheck = false
+        val words = QuickCheckRules.words(content, { audio.hasClip(it, Language.Ro) })
+        if (words.isEmpty()) return
+        val trials = words.map { (id, word) ->
+            Trial(
+                exercise = Exercise.Repeat(RepeatPrompt(text = word.text, language = Language.Ro, sound = id, picture = word.picture, level = RepeatPrompt.Level.Word)),
+                feedback = FeedbackLevel.Quick,
+                block = SessionBlock(SessionBlock.Kind.TargetB),
+            )
+        }
+        // The focus only tells the judge the words have the sound at the start; nothing here moves a ladder.
+        ticket = SessionTicket(
+            focus = SessionFocus.Sound(SoundID.S, Rung.WordsInitial),
+            title = "Verificare rapidă",
+            sound = null,
+            custom = CustomRun(CustomRun.Kind.Check, trials),
+        )
+    }
 
     /** A page `foniaRoute` asked for, taken once by the tabs. */
     var pendingRoute: String? = arguments.route
@@ -273,8 +366,12 @@ class AppModel(
             if (activeProfileID == null && list.size == 1) activeProfileID = list[0].id
             // A deleted profile, or a wipe, takes its reading probes too.
             reading?.let { store -> scope.launch { ignoringFailure { store.keepOnly(list.map { it.id }.toSet()) } } }
+            scope.launch { ignoringFailure { checks.keepOnly(list.map { it.id }.toSet()) } }
             // And its adaptive state.
             adaptive?.let { store -> scope.launch { ignoringFailure { store.keepOnly(list.map { it.id }.toSet()) } } }
+            // And its voice: his own reference, the dots of his takes, the talker heard ("Șterge tot" empties the list).
+            val voiceIds = list.map { it.id }.toSet()
+            scope.launch(Dispatchers.IO) { ignoringFailure { voice.keepOnly(voiceIds); talkers.keepOnly(voiceIds) } }
             jumpIfAsked()
         }
     }
@@ -286,6 +383,14 @@ class AppModel(
         didJump = true
         val parts = start.split(":")
         when (parts[0]) {
+            "check" -> startCheck()
+            // The invitation the first run ends on, for screenshots.
+            "offer" -> offerCheck = true
+            "drill" -> {
+                val sound = parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }
+                val index = parts.getOrNull(2)?.toIntOrNull()
+                if (sound != null && index != null) startDrill(sound, index)
+            }
             "en" -> parts.getOrNull(1)?.let { contrast ->
                 ticket = SessionTicket(focus = SessionFocus.English(EnglishFocus.Speaking(contrast = contrast)), title = contrast, sound = null)
             }
@@ -373,6 +478,14 @@ class AppModel(
             // A bare name is looked up in the app's own external folder (adb push … /sdcard/Android/data/<app>/files/).
             val micFile = arguments.micFile?.let { if (it.startsWith("/")) File(it) else File(context.getExternalFilesDir(null), it) }
             val audio = AudioHub(voices, backend, fixtures, assets = assets, microphone = microphone, micFile = micFile)
+            // The diction training: the original v2 texts and their generated clips (ElevenLabs), when bundled.
+            fun text(path: String) = assets.open(path).use { it.readBytes().toString(Charsets.UTF_8) }
+            val v2 = runCatching { tech.fonia.lessons.LessonContent.load { text("spec/content/v2/$it") } }.getOrNull()
+            runCatching {
+                val index = tech.fonia.lessons.VoiceIndex.parse(text("spec/content/voice/index.json"))
+                audio.extraClips = index.clips.values.filter { it.checked }.associate { it.text.trim().lowercase() to "spec/content/voice/${it.file}" }
+            }
+            val pictures = runCatching { assets.list("images/pictures")?.map { it.substringBeforeLast('.') }?.toSet() }.getOrNull() ?: emptySet()
             val speech = SpeechHub(runCatching { platform.speechModel(context.applicationContext, arguments) }.getOrNull(), scope)
             // The new ML is optional: a phone where its files can't be opened runs the app as before.
             val pilot = runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull()
@@ -393,6 +506,11 @@ class AppModel(
                 adaptive = AdaptiveStore(File(context.noBackupFilesDir, "Fonia/Adaptive")),
                 judge = runCatching { tech.fonia.features.session.SoundJudge.live(context, scope) }.getOrNull(),
                 talkers = tech.fonia.features.session.TalkerMemory.preferences(context),
+                voice = tech.fonia.features.session.VoiceStore(File(context.noBackupFilesDir, "Fonia/Voice")),
+                checks = FileCheckStore(File(context.noBackupFilesDir, "Fonia/Check")),
+                lessonContent = v2,
+                drills = tech.fonia.features.diction.FileDrillStore(File(context.noBackupFilesDir, "Fonia/Diction")),
+                hasPicture = { name -> name in pictures },
             )
         }
     }

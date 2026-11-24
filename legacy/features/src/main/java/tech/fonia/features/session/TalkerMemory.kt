@@ -15,7 +15,12 @@ import java.util.UUID
  * sessions. The profile's own voice group is only the starting guess: a teenager with a man's voice who picked
  * "Un copil" is judged as a man after his first voiced take. Thread-safe (the judge runs off the main thread).
  */
-class TalkerMemory(private val read: (String) -> String?, private val write: (String, String) -> Unit) {
+class TalkerMemory(
+    private val read: (String) -> String?,
+    private val write: (String, String) -> Unit,
+    /** Removes every stored key the predicate rejects (a deleted profile, "Șterge tot"). */
+    private val prune: ((keep: (String) -> Boolean) -> Unit)? = null,
+) {
     private val trackers = HashMap<UUID, TalkerTracker>()
 
     fun tracker(profile: Profile): TalkerTracker = synchronized(trackers) {
@@ -55,6 +60,13 @@ class TalkerMemory(private val read: (String) -> String?, private val write: (St
         return if (sound.id.family == SoundFamily.WarmAir) VoiceGroup.CHILD else VoiceGroup.MALE
     }
 
+    /** Forgets every profile not in [ids]. */
+    fun keepOnly(ids: Set<UUID>) {
+        synchronized(trackers) { trackers.keys.retainAll(ids) }
+        val keep = ids.map { key(it) }.toSet()
+        prune?.invoke { it in keep }
+    }
+
     companion object {
         private fun key(id: UUID) = "talker.$id"
 
@@ -65,7 +77,11 @@ class TalkerMemory(private val read: (String) -> String?, private val write: (St
 
         fun preferences(context: Context): TalkerMemory {
             val prefs = context.applicationContext.getSharedPreferences("fonia_talker", Context.MODE_PRIVATE)
-            return TalkerMemory({ prefs.getString(it, null) }, { k, v -> prefs.edit().putString(k, v).apply() })
+            return TalkerMemory(
+                { prefs.getString(it, null) },
+                { k, v -> prefs.edit().putString(k, v).apply() },
+                { keep -> prefs.edit().apply { prefs.all.keys.filterNot(keep).forEach { remove(it) } }.apply() },
+            )
         }
     }
 }

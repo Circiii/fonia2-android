@@ -68,6 +68,41 @@ else emit(zipaHost.score(clip, request)?.let { judge.decide(m, it, runtime = run
 - Save `evidence` + `versions` + `probabilities` with each attempt (the `JudgeTrace` of plan 03 §1). No audio.
 - `RuntimeContext.childOkOffset` / `childErrOffset` carry the adult-disagreement offsets of plan 03 §7.
 
+## v2 (2026-11-24): what changed and the hooks
+
+Numbers, folds and the standing caveat (synthetic voices only): `spec/fusion/EVAL_v2.md`. Coefficients are data:
+`spec/fusion/<s>.json` (`fullFrom` per sound, `make_v2.py`), `spec/thresholds/population.json` → `judge2`
+(`Judge2Thresholds`: vowel context, praise when the heads agree, bursts, visual zones, personal-reference gates),
+`spec/unlock.json` → `rules.self`. Without a `judge2` section the judge behaves as v1.
+
+- **Talker group**: `TalkerEstimator.estimate(clip, dspMedianHz)` (YIN first-dip + the DSP tracker, octave errors
+  folded; `TalkerEstimate.f0Hz/group/confidence/note`). `measureForVoice` already uses it, so the session's tracker is
+  fed the octave-safe F0 with no change in the app. The live letter's `AudioHub.pitchMedian()` may switch to it too.
+- **Per-sound full head**: `FullHeadParams.cPlace` = the phone evidence's weight on place classes, fitted per sound.
+- **Vowel context**: `Features.FRONT_CONTEXT` (1 = i, 2 = e after the target); `judge2.contextShift["s:i"]` etc. is
+  added to the sNess logit before the head (S/Z, Ș/J; the raw value stays as `sNessRaw`). Shipped empty (EVAL_v2).
+- **Place trust** (`judge2.placeTrust`): mask ZIPA's place candidate when `toward` ≥ it. Shipped off (2).
+- **Praise when the heads agree**: with a reliable full head, Correct when p_full ≥ `praise.full`, p_fast ≥
+  `praise.fast` and every `lpr` ≥ 0 (the target is ZIPA's best candidate); note `praiseAgree`. Shipped off (2).
+- **Bursts** ("ț-ț-ț", "ci-ci-ci", "gi-gi-gi", Level.Syllable with '-'): the median burst speaks when ≥
+  `burst.minFound` were found (note `burst:n/m`). The session can now send bursts to the judge (see below).
+- **`TakeResult` additions**: `sound`, `fastCorrect` (fast head's p(correct) even when the full head decided),
+  `talker`, `visual: TakeVisual` (`placeAxis` 0 = Ș … 1 = S with the target zone and whose reference, `voicing`,
+  `trill`, `closure`, `duration`, `loudness`, and one `hint: Hint(key: HintKey, confidence, from)`); no text.
+- **Personal reference**: `PersonalReference` (`apply(request)`, `update(result)`, `toJson()` / `fromJson()`).
+- **Policy level**: `RuntimeContext.policy` (`PolicyLevel.Child` default, `Self` for a teen/adult practising alone,
+  `PolicyLevel.select(talker, profileIsAdult)`); `UnlockView.hintAllowed(result, runtime)` says whether to show the hint.
+
+Hooks for the session code (`legacy/features/.../SoundJudge.kt`), one line each:
+
+```kotlin
+val request = personal.apply(baseRequest)                                   // before measure: his anchors / group / F0
+val runtime = runtime.copy(policy = PolicyLevel.select(measured.request.talker, profile.isAdult))
+if (personal.update(result)) prefs.edit { putString("personal.${profile.id}", personal.toJson()) }   // after decide
+// bursts: drop the early `return null` for "ț-ț-ț" in SoundJudge.request(...) so the judge judges them
+// UI: result.visual (+ judge.unlock.hintAllowed(result, runtime)) drives the drawing; keys -> words in the app
+```
+
 ## The chain
 
 | Stage | Where | What |

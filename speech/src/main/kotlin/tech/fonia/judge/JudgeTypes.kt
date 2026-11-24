@@ -31,6 +31,8 @@ data class JudgeRequest(
     val calibration: TalkerCalibration? = null,
     /** The child's median F0 from calibration, for the adult-voice gate; null = population default. */
     val childF0Hz: Float? = null,
+    /** The person's own reference ([PersonalReference.apply] sets it): his loudness floor for the visual block. */
+    val reference: PersonalReference? = null,
 )
 
 /** Why a take must be said again. A retake is not an attempt: it never counts (plan 03 §8). */
@@ -132,6 +134,14 @@ data class TakeResult(
     /** True when a fast-head verdict may be shown at once (p(correct) ≥ tauOkFast); otherwise wait for the full head. */
     val fastFinal: Boolean = false,
     val micros: Map<String, Long> = emptyMap(),
+    /** v2: the target of this take (for [PersonalReference.update]). */
+    val sound: SoundId? = null,
+    /** v2: p(correct) of the fast head on this take, also when the full head decided (heads agreeing = trust). */
+    val fastCorrect: Float? = null,
+    /** v2: what the UI can draw (cues against target zones, one articulator hint); null for a gate's result. */
+    val visual: TakeVisual? = null,
+    /** v2: the talker group the take was measured with. */
+    val talker: TalkerGroup? = null,
 )
 
 /** Optional phoneme-model evidence (ZIPA + GOP, `:engine:phones`). Absent → the fast head alone, with wider abstention. */
@@ -179,4 +189,26 @@ data class RuntimeContext(
     /** Raised by 0.05 after 3 adult disagreements in 20 on a sound (plan 03 §7). */
     val childOkOffset: Float = 0f,
     val childErrOffset: Map<ErrorKind, Float> = emptyMap(),
+    /** v2: who practises; [PolicyLevel.Self] (a teen or adult alone) may see hints that a child would not (unlock.json "self"). */
+    val policy: PolicyLevel = PolicyLevel.Child,
 )
+
+/**
+ * Who the verdicts are for (`spec/unlock.json` rules). [Child]: the wave/unlock registry decides, nothing is named on
+ * synthetic evidence. [Self]: a teenager or adult practising alone ([PolicyLevel.select]); the visual block's hint is
+ * shown when its confidence reaches the `self` rule's `minHintConfidence`, and the error kinds it lists are named.
+ */
+enum class PolicyLevel(val raw: String) {
+    Child("child"),
+    Self("self"),
+    ;
+
+    companion object {
+        /**
+         * The level for a take: [Self] when the voice (or the profile) is a man's or a woman's, i.e. a teenager or an
+         * adult; [Child] otherwise. A child's profile with a man's voice (the owner) is Self.
+         */
+        fun select(talker: TalkerGroup?, profileIsAdult: Boolean = false): PolicyLevel =
+            if (profileIsAdult || talker == TalkerGroup.Man || talker == TalkerGroup.Woman) Self else Child
+    }
+}

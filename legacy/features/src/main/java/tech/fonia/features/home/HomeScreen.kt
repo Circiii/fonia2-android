@@ -148,6 +148,10 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             TodayCard(app, path, Modifier.arrives(hasArrived, 2))
+            // The quick check: what to practise, and later what moved (sounds track only).
+            if (profile.track == Profile.Track.Ro) {
+                tech.fonia.features.check.CheckCard(path.lastCheck, app, Modifier.arrives(hasArrived, 3))
+            }
             val list = doors(profile)
             if (!profile.isChild) {
                 list.forEachIndexed { index, item -> DoorButton(item, 2.3f, large = true, index + 3, hasArrived, push) }
@@ -337,6 +341,15 @@ private fun TodayCard(app: AppModel, path: PathModel, modifier: Modifier = Modif
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Today's sound, said plainly: the one the yellow button continues.
+            if (sound != null) {
+                FoniaText(
+                    "Sunetul de azi: ${sound.shortLetter}",
+                    style = ui(14, UIWeight.semibold, TextRole.footnote),
+                    color = sound.id.family.field.deep,
+                    maxLines = 1,
+                )
+            }
             FoniaText(title, style = ui(21, UIWeight.bold, TextRole.headline), color = Palette.ink, maxLines = 2, minimumScaleFactor = 0.75f)
             if (unit != null) {
                 val done = path.doneCount(unit)

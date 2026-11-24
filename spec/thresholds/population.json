@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "version": "2026-11-23.v1",
- "source": "hand-set v0, not trained: capture values from DSPThresholds v1 and plan 03 §8, word and measurement values from plan 03 §3-§4 [P]",
+ "version": "2026-11-24.v2",
+ "source": "hand-set v0, not trained: capture values from DSPThresholds v1 and plan 03 §8, word and measurement values from plan 03 §3-§4 [P] | v2: judge2 fitted by leave-one-voice-out on 8 synthetic voices (tools/eval, spec/fusion/EVAL_v2.md), word gate -4.5 from the correct takes' 1st percentile; not children",
  "capture": {
   "maxDropped": 0,
   "minBandSnrDb": 15,
@@ -19,7 +19,7 @@
   "baseSeconds": 0.15,
   "minRatio": 0.5,
   "maxRatio": 2.5,
-  "minFitPerLabel": -3,
+  "minFitPerLabel": -4.5,
   "minFitFrames": 10
  },
  "measure": {
@@ -29,5 +29,19 @@
   "minPlaceMs": 40,
   "minVoicingMs": 40,
   "onsetSearchSeconds": 0.25
+ },
+ "judge2": {
+  "version": "2026-11-24.v2",
+  "contextShift": {},
+  "placeTrust": 2.0,
+  "praise": {
+   "fast": 2.0,
+   "full": 2.0
+  },
+  "burst": {
+   "minFound": 2
+  },
+  "visual": {},
+  "personal": {}
  }
 }

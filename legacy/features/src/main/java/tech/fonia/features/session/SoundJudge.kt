@@ -23,6 +23,10 @@ import tech.fonia.dsp.TalkerCalibration
 import tech.fonia.dsp.VoiceGroup
 import tech.fonia.features.app.shortLetter
 import tech.fonia.judge.Head
+import tech.fonia.judge.HintKey
+import tech.fonia.judge.PersonalReference
+import tech.fonia.judge.PolicyLevel
+import tech.fonia.judge.TakeVisual
 import tech.fonia.judge.JudgeRequest
 import tech.fonia.judge.JudgeSpec
 import tech.fonia.judge.Level
@@ -68,6 +72,16 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
         val heard: String? = null,
         /** For the log: which head decided and with what confidence. */
         val trace: String = "",
+        /** How sure the judge is that this verdict is right (0..1): p(correct) for a good take, 1 - p(correct) for "almost". */
+        val certainty: Float? = null,
+        /** What the take looked like (the strip under the outcome word draws it); null for a gate. */
+        val visual: TakeVisual? = null,
+        /** The one hint to show, only when `unlock.hintAllowed` says so for this person's policy. */
+        val hint: HintKey? = null,
+        /** True when this take joined the person's own reference (the caller saves it). */
+        val joinedReference: Boolean = false,
+        /** The few numbers of [visual] to keep for his progress (null for a gate: nothing was measured). */
+        val dot: TakeDot? = null,
     )
 
     fun warmUp() {
@@ -89,7 +103,14 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
         runCatching { zipa?.trim() }
     }
 
-    /** Null when this take is not one the new judge decides (no target sound, English, a voice task...). */
+    /**
+     * Null when this take is not one the new judge decides (no target sound, English, a voice task...).
+     *
+     * The hooks of speech/JUDGE.md (v2): [personal] measures against his own reference first and learns from takes
+     * both heads accept ([Judged.joinedReference]: the caller saves it); the policy is chosen from the voice heard in
+     * this take ([PolicyLevel.select]); the full head (ZIPA) runs on every take it can, within [fullBudgetMs], so the
+     * reference can grow and the place evidence is the phoneme model's.
+     */
     suspend fun judge(
         request: JudgeRequest,
         sound: SoundDef,
@@ -97,36 +118,74 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
         runtime: RuntimeContext = RuntimeContext(),
         /** The speaker's voice so far: the take is judged with the group heard in it, and moves the tracker. */
         talker: TalkerTracker? = null,
+        /** His own reference (anchors, group, loudness); not thread-safe, so used under its own lock. */
+        personal: PersonalReference? = null,
+        profileIsAdult: Boolean = false,
     ): Judged? {
         val judge = ready.await() ?: return null
         val clip = Clip(take.samples, take.sampleRate, take.dropped)
         var used = request.talker
+        var policy = runtime.policy
+        var fastMs = 0L
+        var fullMs = -1L
+        var joined = false
+        var hint: HintKey? = null
         val result: TakeResult = withContext(Dispatchers.Default) {
-            val measured = if (talker != null) synchronized(talker) { judge.measureForVoice(request, clip, talker) } else judge.measure(request, clip)
+            val t0 = System.nanoTime()
+            val base = personal?.let { synchronized(it) { it.apply(request) } } ?: request
+            // His reference knows his group once it has three accepted voiced takes; until then the voice tracker does.
+            val knowsGroup = personal?.let { synchronized(it) { it.talker() } } != null
+            val measured = if (talker != null && !knowsGroup) {
+                synchronized(talker) { judge.measureForVoice(base, clip, talker) }
+            } else {
+                judge.measure(base, clip)
+            }
             used = measured.request.talker
-            val fast = judge.decide(measured, runtime = runtime)
+            val rt = runtime.copy(policy = PolicyLevel.select(used, profileIsAdult))
+            policy = rt.policy
+            val fast = judge.decide(measured, runtime = rt)
+            fastMs = (System.nanoTime() - t0) / 1_000_000
             val host = zipa
-            if (fast.head == Head.Gate || fast.fastFinal || host == null || zipaOff) {
+            val decided = if (fast.head == Head.Gate || host == null || zipaOff) {
                 fast
             } else {
+                val t1 = System.nanoTime()
                 val phones = try {
-                    host.score(clip, request)
+                    host.score(clip, measured.request, fullBudgetMs)
                 } catch (cancelled: CancellationException) {
                     throw cancelled
                 } catch (_: Throwable) {
                     null
                 }
-                phones?.let { judge.decide(measured, it, runtime = runtime) } ?: fast
+                fullMs = (System.nanoTime() - t1) / 1_000_000
+                phones?.let { judge.decide(measured, it, runtime = rt) } ?: fast
             }
+            if (personal != null) joined = synchronized(personal) { personal.update(decided) }
+            if (judge.unlock.hintAllowed(decided, rt)) hint = decided.visual?.hint?.key
+            decided
         }
-        val judged = map(result, sound)
+        val dot = if (result.head == Head.Gate) null else TakeDot.of(result.visual, request.sound.raw, result.verdict, System.currentTimeMillis())
+        val judged = map(result, sound).copy(visual = result.visual, hint = hint, joinedReference = joined, dot = dot)
         val f0 = result.evidence.features[tech.fonia.judge.Features.F0]
-        Log.i(TAG, "take '${request.text}' ${request.sound.raw}/${request.level.raw} talker=${used.raw} f0=${f0?.let { "%.0f".format(it) } ?: "-"}: ${judged.trace} -> ${judged.cue} \"${judged.verdict.title}\"")
+        Log.i(
+            TAG,
+            "take '${request.text}' ${request.sound.raw}/${request.level.raw} talker=${used.raw} policy=${policy.raw} " +
+                "f0=${f0?.let { "%.0f".format(it) } ?: "-"} head=${result.head.raw} fast=${fastMs}ms " +
+                "full=${if (fullMs < 0) "-" else "${fullMs}ms"}${if (fullMs > fullBudgetMs) " (over budget)" else ""} " +
+                "budget=${fullBudgetMs}ms: ${judged.trace} -> ${judged.cue} \"${judged.verdict.title}\" " +
+                "place=${result.visual?.placeAxis?.let { "%.2f".format(it.value) + if (it.inZone) " in" else " out" } ?: "-"} " +
+                "hint=${hint?.raw ?: result.visual?.hint?.key?.raw?.let { "($it withheld)" } ?: "-"} joined=$joined",
+        )
         return judged
     }
 
+    /** The full head's budget: 600 ms on phones (N6); an x86 emulator runs ZIPA slower, so it gets 1,200 ms. */
+    private val fullBudgetMs: Long get() = if (isEmulator) EMULATOR_FULL_BUDGET_MS else PHONE_FULL_BUDGET_MS
+
     companion object {
         private const val TAG = "FoniaJudge"
+        const val PHONE_FULL_BUDGET_MS = 600L
+        const val EMULATOR_FULL_BUDGET_MS = 1200L
 
         fun live(context: Context, scope: CoroutineScope): SoundJudge {
             val app = context.applicationContext
@@ -162,9 +221,6 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
          * What the new judge is asked for this exercise, or null when it is not its kind of take: a Romanian word,
          * syllable or sentence with a target sound.
          */
-        /** Ț, CE and GE: practised as bursts ("ț-ț-ț") at the isolated rung. */
-        private val burstSounds = setOf(SoundID.Ts, SoundID.Ce, SoundID.Ge)
-
         fun request(
             exercise: Exercise,
             focus: SessionFocus,
@@ -183,8 +239,7 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
                     val p = exercise.prompt
                     if (p.language != Language.Ro) return null
                     val s = p.sound ?: return null
-                    // "ț-ț-ț": the new judge has no rule for bursts yet, so his check judges them, leniently (§2.5).
-                    if (p.level == RepeatPrompt.Level.Syllable && s in burstSounds && p.text.contains('-')) return null
+                    // "ț-ț-ț", "ci-ci-ci", "ge-ge-ge": the judge v2 has a burst rule (Level.Syllable with '-').
                     Triple(s, p.text, when (p.level) {
                         RepeatPrompt.Level.Syllable -> Level.Syllable
                         RepeatPrompt.Level.Sentence -> Level.Sentence
@@ -231,7 +286,14 @@ class SoundJudge(scope: CoroutineScope, private val zipa: ZipaHost?, load: suspe
          * "A sunat ca …" line and the instruction animation (no tip sentence), Unsure or a capture gate → a retake.
          * Never a "wrong", never more than one short line.
          */
-        fun map(result: TakeResult, sound: SoundDef): Judged {
+        fun map(result: TakeResult, sound: SoundDef): Judged = mapVerdict(result, sound).copy(
+            certainty = when (result.verdict) {
+                Verdict.Almost -> 1f - result.confidence
+                else -> result.confidence
+            }.coerceIn(0f, 1f),
+        )
+
+        private fun mapVerdict(result: TakeResult, sound: SoundDef): Judged {
             val trace = "${result.head.raw} p=${"%.2f".format(result.confidence)}" + (result.retakeReason?.let { " retake=${it.raw}" } ?: "")
             return when (val v = result.verdict) {
                 Verdict.Correct -> Judged(

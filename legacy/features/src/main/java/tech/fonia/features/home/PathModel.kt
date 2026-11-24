@@ -18,6 +18,8 @@ import tech.fonia.domain.SoundDef
 import tech.fonia.domain.SoundID
 import tech.fonia.domain.Track
 import tech.fonia.features.app.field
+import tech.fonia.features.check.CheckRecord
+import tech.fonia.features.check.CheckStore
 import tech.fonia.features.app.index
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.orderedSounds
@@ -69,7 +71,14 @@ class PathModel(profile: Profile, val content: FoniaContent) {
 
     private var finished: Set<String> by mutableStateOf(emptySet())
 
-    suspend fun reload(repository: FoniaRepository) {
+    /** The quick checks, oldest first (empty until the first one). */
+    var checks: List<CheckRecord> by mutableStateOf(emptyList())
+        private set
+
+    val lastCheck: CheckRecord? get() = checks.lastOrNull()
+
+    suspend fun reload(repository: FoniaRepository, checkStore: CheckStore? = null) {
+        if (checkStore != null) checks = orEmpty { checkStore.history(profile.id) }
         progress = orEmpty { repository.soundProgress(profile.id) }
         sessions = orEmpty { repository.sessions(profile.id) }
         val ended = sessions.filter { it.endedAt != null }
@@ -139,25 +148,24 @@ class PathModel(profile: Profile, val content: FoniaContent) {
 
     fun doneCount(unit: CourseUnit): Int = unit.lessons.count { isDone(it, unit) }
 
-    /** The adult has to listen before the sound can move on to syllables. */
-    fun isWaitingForAdult(sound: SoundID): Boolean {
-        val state = ladder(sound)
-        return state.rung == Rung.Isolated && state.establishCorrect >= Progression.establishTarget && Progression.isLocked(Rung.Syllables, state)
-    }
+    /** How many of the plain sound's good takes that open the next lessons are done (the dots of [OwnSuccess]). */
+    fun ownSuccessDots(sound: SoundID): Int = tech.fonia.features.session.OwnSuccess.dots(ladder(sound).establishCorrect)
 
     // Picking up
 
     val hasStarted: Boolean get() = sessions.any { it.focus != null }
 
     /**
-     * What the big button continues with: the next thing in the unit worked on last, or for someone new, the first
-     * thing on their track. Warming up is never the place to pick up from.
+     * What the big button continues with. With sounds chosen (by hand or by the quick check), today's sound: the first
+     * of them that still has a lesson to do, one sound at a time. Otherwise the next thing in the unit worked on last,
+     * or for someone new, the first thing on their track. Warming up is never the place to pick up from.
      */
     val continuing: NextStep?
         get() {
             val units = catalog.allUnits(soundOrder)
             val last = sessions.lastOrNull { it.focus != null }?.focus
             val lastUnit = units.firstOrNull { unit -> unit.lessons.any { it.focus.key == last } }
+                .takeUnless { profile.track == Profile.Track.Ro && profile.targetSounds.isNotEmpty() }
             for (unit in listOfNotNull(lastUnit) + trackUnits) {
                 val lesson = unit.lessons.firstOrNull { !it.isWarmup && !isDone(it, unit) && canOpen(it, unit) }
                 if (lesson != null) return NextStep(unit, lesson)

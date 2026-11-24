@@ -73,6 +73,10 @@ object Features {
     const val CENTROID = "centroidHz"
     const val PEAK = "peakHz"
     const val BAND_RATIO = "bandRatioDb"
+    /** Spectral tilt of the detector's segment (for the personal anchors; not a fusion input). */
+    const val TILT = "tiltDb"
+    /** v2: 1 when the letter after the target is i or e (palatalising context), 0 otherwise; trace only. */
+    const val FRONT_CONTEXT = "frontContext"
     const val R_TAP = "rTap"
     const val R_EVENTS = "rEvents"
     const val R_OBSERVABLE = "rObservable"
@@ -230,8 +234,14 @@ internal class Measurer(private val population: PopulationThresholds, private va
         } else if (summary.quality.bandwidthHz < cap.fullBandwidthHz) {
             blocked += ErrorKind.Lateral
         }
+        val letters = romanian(request.text)
+        val span = maxOf(1, letters.length - 1).toFloat()
         val result = chosen.map { match ->
             val f = HashMap<String, Float>()
+            // v2: the letter after the target (palatalising i/e context); CE/CI/GE/GI carry their vowel.
+            val g = match.expected.grapheme
+            val next = if (g.length == 2) g[1] else letters.getOrNull(Math.round(match.expected.position * span) + 1)
+            f[Features.FRONT_CONTEXT] = when (next) { 'i' -> 1f; 'e' -> 2f; else -> 0f }
             val initial = match.expected.position == 0f && match === all.first() && request.level != Level.Sentence
             val d = match.detected
             if (d == null) {
@@ -271,6 +281,7 @@ internal class Measurer(private val population: PopulationThresholds, private va
                 f[Features.CENTROID] = d.centroidHz
                 f[Features.PEAK] = d.peakHz
                 f[Features.BAND_RATIO] = d.bandRatioDb
+                f[Features.TILT] = d.tiltDb
                 val coreA = (d.coreStart * rate).toInt()
                 val coreB = (d.coreEnd * rate).toInt()
                 val spectrum = segmentSpectrum(pcm, rate, coreA, coreB - coreA)

@@ -82,8 +82,10 @@ fun FeedLetter(
     holdSeconds: () -> Float = { 0f },
     baseInflation: () -> Float = { REST_INFLATION },
     heard: ((Float) -> Unit)? = null,
+    /** Log-odds added to the live S-ness before the letter and the meters see it (see [placeBias]). */
+    placeBias: Float = 0f,
 ) {
-    LaunchedEffect(link, listening, modelVoice) {
+    LaunchedEffect(link, listening, modelVoice, placeBias) {
         val d = link.drive
         d.listening = listening
         if (!listening && !modelVoice) {
@@ -104,7 +106,7 @@ fun FeedLetter(
                 d.feed(
                     level = (envelope * 1.6f).coerceAtMost(1f),
                     speaking = hears,
-                    sNess = if (levels.isFricative) levels.sNess else Float.NaN,
+                    sNess = if (levels.isFricative) recentred(levels.sNess, placeBias) else Float.NaN,
                     fricative = levels.fricativeStrength,
                     voicing = levels.clarity,
                     trill = levels.trillStrength,
@@ -122,6 +124,22 @@ fun FeedLetter(
             }
         }
     }
+}
+
+/**
+ * Where the live S-ness is recentred for the place meter and the letter. The live analyzer's man boundary sits high:
+ * on the man's test clips (output/aude/clips held_s5/held_sh5, tmp/test_audio roger_s/roger_sh) a held S reads a median
+ * 0.34-0.59 and a held Ș 0.01-0.02 with the MALE group, so the bead stayed in the middle for a good S. Shifting the
+ * log-odds by 2.2 puts that S at about 0.84-0.94 and that Ș at 0.07-0.13. Children and women are left as they are.
+ * Display only: no verdict reads it.
+ */
+fun placeBias(group: tech.fonia.dsp.VoiceGroup): Float = if (group == tech.fonia.dsp.VoiceGroup.MALE) 2.2f else 0f
+
+internal fun recentred(sNess: Float, bias: Float): Float {
+    if (bias == 0f || sNess.isNaN()) return sNess
+    val p = sNess.coerceIn(1e-4f, 1f - 1e-4f)
+    val logit = kotlin.math.ln(p / (1f - p)) + bias
+    return (1f / (1f + kotlin.math.exp(-1.1f * logit)))
 }
 
 /** The letter's size at rest (the drive's own default). */

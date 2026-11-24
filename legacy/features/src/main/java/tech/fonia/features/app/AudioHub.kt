@@ -57,6 +57,29 @@ class TakeStats(val sampleRate: Double, val source: String) {
         }
     }
 
+    private val hiss = FloatArray(MAX_PITCHES)
+
+    @Volatile private var hissCount = 0
+
+    internal fun addHiss(sNess: Float) {
+        val n = hissCount
+        if (!sNess.isNaN() && n < MAX_PITCHES) {
+            hiss[n] = sNess
+            hissCount = n + 1
+        }
+    }
+
+    /**
+     * Where the take's hiss sat between Ș (0) and S (1), the median of the live hops that heard one (the same value
+     * the live place meter shows); NaN under ~50 ms of hiss.
+     */
+    fun hissMedian(): Float {
+        val n = hissCount
+        if (n < 5) return Float.NaN
+        val sorted = hiss.copyOf(n).also { it.sort() }
+        return if (n % 2 == 1) sorted[n / 2] else (sorted[n / 2 - 1] + sorted[n / 2]) / 2f
+    }
+
     /** Median pitch of the voiced hops, NaN when the take had less than ~0.25 s of voice (a hiss, silence, a beep). */
     fun pitchMedian(): Float = TalkerVoice.medianVoiced(pitches, pitchCount, minVoiced = MIN_VOICED_HOPS)
 
@@ -82,6 +105,7 @@ private class AnalyzerProcessor(
     /** The `into` overload of `process`, so a hop allocates nothing, as on iOS. */
     private val frame: LiveFrame = LiveFrame.silent
     private var lastPitch = Float.NaN
+    private var lastHiss = Float.NaN
     private var logged = false
 
     override fun process(samples: FloatArray, offset: Int, count: Int, levels: LiveLevels) {
@@ -95,6 +119,8 @@ private class AnalyzerProcessor(
         val frame = analyzer.process(samples, offset, count, frame)
         // A new analysis hop (the analyzer returns its last reading between hops): one pitch per hop.
         if (frame.pitchHz > 0f && frame.pitchHz != lastPitch) stats.addPitch(frame.pitchHz)
+        if (frame.fricativePresent && frame.sNess != lastHiss) stats.addHiss(frame.sNess)
+        lastHiss = if (frame.fricativePresent) frame.sNess else Float.NaN
         lastPitch = frame.pitchHz
         if (!logged && stats.seconds >= 3.0) {
             logged = true
@@ -213,11 +239,42 @@ class AudioHub(
         )
     }
 
-    fun hasClip(text: String, language: Language): Boolean = voices?.clipUrl(text, language) != null
+    /**
+     * Debug: `foniaMicFile` naming a folder feeds a whole run (the quick check, a drill) right, wrong and silent takes:
+     * the WAV named after the take's text without diacritics (`supa.wav` for „supă”) when there is one, else the next
+     * WAV in name order, one per take.
+     */
+    private val micPlaylist: List<java.io.File>? by lazy {
+        micFile?.takeIf { it.isDirectory }?.listFiles()?.filter { it.isFile && it.name.endsWith(".wav") }?.sortedBy { it.name }
+    }
+    private var micTurn = 0
+
+    private fun nextMicFile(text: String?): java.io.File {
+        val list = micPlaylist
+        if (list.isNullOrEmpty()) return micFile!!
+        val slug = text?.let { asciiSlug(it) }
+        list.firstOrNull { slug != null && it.nameWithoutExtension == slug }?.let { return it }
+        return list[micTurn++ % list.size]
+    }
+
+    private fun asciiSlug(text: String): String = java.text.Normalizer.normalize(text.lowercase(), java.text.Normalizer.Form.NFD)
+        .replace(Regex("\\p{M}+"), "").replace(Regex("[^a-z0-9]+"), "_").trim('_')
+
+    /**
+     * The generated clips of the v2 content (`spec/content/voice`, ElevenLabs), by text: asked only when the content's
+     * own recordings have none. Lower-cased, trimmed text → asset path.
+     */
+    var extraClips: Map<String, String> = emptyMap()
+
+    private fun extraClip(text: String, language: Language, voice: Voice?): String? =
+        if (language == Language.Ro && voice == null) extraClips[text.trim().lowercase()] else null
+
+    fun hasClip(text: String, language: Language): Boolean =
+        voices?.clipUrl(text, language) != null || extraClip(text, language, null) != null
 
     /** `clipURL(text:language:)`: where the recorded clip of a text is, if there is one. */
     fun clipURL(text: String, language: Language, voice: Voice? = null): ClipLocation? {
-        val path = voices?.clipUrl(text, language, voice) ?: return null
+        val path = voices?.clipUrl(text, language, voice) ?: extraClip(text, language, voice) ?: return null
         val assets = assets ?: return null
         return ClipLocation.Asset(assets, path)
     }
@@ -240,6 +297,17 @@ class AudioHub(
         if (!IS_DEBUG_BUILD) return
         // runCatching: android.util.Log is a stub that throws in the JVM unit tests.
         runCatching { android.util.Log.w("FoniaVoice", "no clip: ${language.rawValue}|${voice?.rawValue ?: "-"}|$text") }
+    }
+
+    /** The clip at [speed] (a twister's tempo ladder: slow, medium, fast); the speed is set back afterwards. */
+    suspend fun sayAt(text: String, speed: Float, language: Language = Language.Ro) {
+        if (speed == 1f) return say(text, language)
+        backend.playback.setSpeed(speed)
+        try {
+            say(text, language)
+        } finally {
+            withContext(NonCancellable) { backend.playback.setSpeed(1f) }
+        }
     }
 
     /** The same clip at 0.6 speed: the pitch stays, the word opens up. Only for hearing how it's built. */
@@ -290,7 +358,7 @@ class AudioHub(
         val fixture = fixtureText?.let { clipURL(it, fixtureLanguage) }
         val fallbackFixture = clipURL(FixtureMode.FALLBACK_TEXT, Language.Ro)
         val source: TakeSource = when {
-            micFile != null -> TakeSource.Fixture(ClipLocation.File(micFile), thenSilence = true)
+            micFile != null -> TakeSource.Fixture(ClipLocation.File(nextMicFile(fixtureText)), thenSilence = true)
             usesFixtures && fixture != null -> TakeSource.Fixture(fixture)
             usesFixtures && fallbackFixture != null -> TakeSource.Fixture(fallbackFixture)
             else -> TakeSource.Microphone
@@ -310,7 +378,7 @@ class AudioHub(
         val gate = gate
         analysisThresholds = DSPThresholds.v1
         val sourceName = when (source) {
-            is TakeSource.Fixture -> if (micFile != null) "micFile:${micFile.name}" else "fixture:${source.clip.name}"
+            is TakeSource.Fixture -> if (micFile != null) "micFile:${source.clip.name}" else "fixture:${source.clip.name}"
             TakeSource.Microphone -> "microphone"
         }
         try {
@@ -335,6 +403,9 @@ class AudioHub(
             throw e
         }
     }
+
+    /** Where the last take's hiss sat on the Ș…S axis, live (NaN: no hiss heard). */
+    fun lastTakeHiss(): Float = take?.hissMedian() ?: Float.NaN
 
     /** Median pitch of the voiced hops of the last take (NaN: no voice), for the talker tracker. */
     fun lastTakePitch(): Float = take?.pitchMedian() ?: Float.NaN

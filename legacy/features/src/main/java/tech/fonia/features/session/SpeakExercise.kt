@@ -48,6 +48,8 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import tech.fonia.audio.CapturedClip
 import tech.fonia.audio.LiveLevels
 import tech.fonia.design.ContinuousRoundedRectangle
@@ -128,6 +130,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     var judged by remember { mutableStateOf<SoundJudge.Judged?>(null) }
     /** 3, 2, 1 in the capsule before it opens again after "Mai spune o dată". */
     var countdown by remember { mutableStateOf<Int?>(null) }
+    /** „Vezi cum”: the sound's „Cum spun?” steps over the session, at this step (null: closed). */
+    var howStep by remember { mutableStateOf<Int?>(null) }
     val haptics = rememberFoniaHaptics()
     val letter = rememberLetterLink()
     val heard = remember { HeardLevel() }
@@ -219,15 +223,22 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     /**
      * The phone could not judge the take. Never a silent reset (owner, 2026-11-23): a dead microphone says "Nu te aud"
      * and what to do; otherwise the letter shows its retake mark, the capsule says "Mai spune o dată" and counts 3-2-1
-     * before it opens again; after [MAX_AUTO_RETAKES] it is a kind "almost" and the session moves on by itself.
+     * before it opens again; after [SessionRun.maxAutoRetakes] it is a kind "almost" and the session moves on by itself.
      */
     suspend fun retakeByItself(): Boolean {
-        when (HearRules.afterUnjudged(run.autoRetakes, MAX_AUTO_RETAKES, app.audio.lastTakeWasSilent)) {
+        when (HearRules.afterUnjudged(run.autoRetakes, run.maxAutoRetakes, app.audio.lastTakeWasSilent)) {
             HearRules.Unjudged.NoMicrophone -> {
                 letter.rest()
                 verdict = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Nu te aud", tip = noMicHint(), keepsTake = false)
                 phase = SpeakPhase.Result
-                waitingForChoice = true
+                // The quick check is never blocked by a dead microphone: the cue shows, then the next word comes.
+                if (run.isCheck) {
+                    delay(2600)
+                    if (adult != null || waitingForChoice) return true
+                    run.finishAttempt(exercise, machine = Attempt.Outcome.Unclear, adult = null, take = take)
+                } else {
+                    waitingForChoice = true
+                }
             }
             HearRules.Unjudged.Retake -> {
                 letter.retake()
@@ -254,6 +265,16 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         return true
     }
 
+    /** A take with a strip (and a hint) under the outcome word stays this much longer, so it can be looked at. */
+    fun stripExtraMs(): Long {
+        val j = judged ?: return 0
+        return when {
+            j.hint != null -> 3000
+            j.visual?.placeAxis != null || j.visual?.voicing != null || j.visual?.trill != null || j.visual?.closure != null -> 900
+            else -> 0
+        }
+    }
+
     /** The feedback schedule decides how much is said and whether the flow waits for anyone. */
     suspend fun showResult(result: TakeVerdict) {
         cueLetter(result)
@@ -274,11 +295,9 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             feedback == FeedbackLevel.Quick && !asked -> {
                 result.rating?.let { app.audio.effect(it.effect) }
                 phase = SpeakPhase.Result
-                if (result.rating != Rating.yes) {
-                    waitingForChoice = true
-                    return
-                }
-                delay(850)
+                // The letter and one word say how it went, then the next one comes by itself; a tap on "Încă o dată"
+                // (or any other button) stops the flow there.
+                delay(if (result.rating == Rating.yes) 850 + stripExtraMs() else AUTO_NEXT_MS + stripExtraMs())
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
@@ -290,7 +309,18 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 val shown = System.nanoTime()
                 announce(result)
                 val said = (System.nanoTime() - shown) / 1_000_000
-                delay(max(1300 - said, 350))
+                delay(max(1300 + stripExtraMs() - said, 350))
+                if (adult != null || waitingForChoice) return
+                run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
+            }
+            feedback == FeedbackLevel.Teach && !asked -> {
+                // Not yet right: the letter shows what to do, one short line, then the session moves on by itself.
+                result.rating?.let { app.audio.effect(it.effect) }
+                phase = SpeakPhase.Result
+                val shown = System.nanoTime()
+                announce(result)
+                val said = (System.nanoTime() - shown) / 1_000_000
+                delay(max(AUTO_NEXT_MS + 500 + stripExtraMs() - said, 600))
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
@@ -319,12 +349,27 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         // The new judge (speech/JUDGE.md, ZIPA as second head) decides Romanian sound takes; his judge the rest.
         val request = SoundJudge.request(exercise, run.ticket.focus, group, profile.calibration)
         val fresh = if (request != null && sound != null) {
-            app.judge?.judge(request, sound, clip, runtimeFor(run), talker = app.talkers.tracker(profile))?.also { app.talkers.remember(profile) }
+            app.judge?.judge(
+                request, sound, clip, runtimeFor(run),
+                talker = app.talkers.tracker(profile),
+                personal = app.voice.personal(profile.id),
+                profileIsAdult = !profile.isChild,
+            )?.also { j ->
+                app.talkers.remember(profile)
+                // No audio is kept: his reference (when this take joined it) and the few numbers of what it looked like.
+                withContext(Dispatchers.IO) {
+                    if (j.joinedReference) app.voice.savePersonal(profile.id)
+                    j.dot?.let { app.voice.addDot(profile.id, it) }
+                }
+            }
         } else {
             null
         }
         if (fresh == null) app.talkers.observe(profile, app.audio.lastTakePitch())
-        judged = fresh
+        // When the judge could not place the hiss (no frication found where the target was expected), the strip still
+        // shows where the live meter heard it: what he did is always seen.
+        judged = fresh?.let { j -> j.copy(visual = TakeFeedbackRules.withLivePlace(j.visual, sound?.id, app.audio.lastTakeHiss())) }
+        run.noteJudged(fresh?.certainty)
         if (fresh?.cue == SoundJudge.Cue.Retake && retakeByItself()) return
         var result = when {
             fresh != null -> fresh.verdict.also { app.shadowSessionTake(run, trial, clip, it) }
@@ -358,7 +403,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             app.audio.startListening(app.talkers.group(profile), profile.calibration, fixtureText, fixtureLanguage)
         } catch (cancelled: CancellationException) {
             throw cancelled
-        } catch (_: Exception) {
+        } catch (failure: Exception) {
+            runCatching { android.util.Log.w("FoniaTake", "capture could not start: $failure") }
             verdict = TakeVerdict(
                 rating = null,
                 outcome = Attempt.Outcome.Unclear,
@@ -367,6 +413,11 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 keepsTake = false,
             )
             phase = SpeakPhase.Result
+            // The quick check never stops on a microphone that will not open: the next word comes.
+            if (run.isCheck) {
+                delay(2600)
+                if (adult == null && !waitingForChoice) run.finishAttempt(exercise, machine = Attempt.Outcome.Unclear, adult = null, take = null)
+            }
             return
         }
         phase = SpeakPhase.Listening
@@ -444,7 +495,10 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         val shown = verdict ?: return@LaunchedEffect
         if (shown.rating == Rating.yes) haptics.success() else haptics.tap()
     }
-    FeedLetter(letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it })
+    FeedLetter(
+        letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it },
+        placeBias = placeBias(app.talkers.group(profile)),
+    )
 
     val showsPanel = phase == SpeakPhase.Result && verdict != null
     val spring = swiftSpring<Float>(0.34, 0.14)
@@ -479,6 +533,13 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 if (panel && shown != null) {
                     ResultPanel(
                         verdict = shown,
+                        judged = judged,
+                        soundId = sound?.id,
+                        field = field,
+                        onHow = { key ->
+                            waitingForChoice = true
+                            howStep = sound?.let { HintWords.step(key, it.how) } ?: 0
+                        },
                         feedback = trial.feedback,
                         adult = adult,
                         canReplay = take != null,
@@ -491,6 +552,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                     )
                 } else {
                     ListeningBar(
+                        sound = sound?.id?.takeIf { exercise.isRomanianSoundTake },
+                        drive = letter.drive,
                         phase = phase,
                         field = field,
                         showsHeardColour = showsLiveAir,
@@ -503,6 +566,9 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 }
             }
         }
+        // „Vezi cum”: the sound's steps, the one the hint is about lit.
+        val how = howStep
+        if (how != null && sound != null) HowSheet(sound, how, field, app, onClose = { howStep = null })
         // A good take: a ring of stars over the word (the motion kit's burst, drawn in the session's overlay).
         CelebrationBurst(
             trigger = if (phase == SpeakPhase.Result && verdict?.rating == Rating.yes) verdict else null,
@@ -517,7 +583,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         app.audio.prepare()
         val model = modelText
         when {
-            model != null -> app.audio.say(model.first, model.second)
+            model != null -> run.modelSpeed()?.let { app.audio.sayAt(model.first, it, model.second) } ?: app.audio.say(model.first, model.second)
             exercise is Exercise.Retell -> {
                 for (line in exercise.prompt.lines) {
                     if (!isActive) break
@@ -535,8 +601,17 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
 
 const val NAME_PROMPT = "Ce e în poză?"
 
-/** How many times a trial is said again by itself before it moves on, unjudged. */
-private const val MAX_AUTO_RETAKES = 2
+/** A Romanian take with a target sound: the ones the live meters speak about. */
+private val tech.fonia.domain.Exercise.isRomanianSoundTake: Boolean
+    get() = when (this) {
+        is tech.fonia.domain.Exercise.Repeat -> prompt.language == Language.Ro && prompt.sound != null
+        is tech.fonia.domain.Exercise.Name -> true
+        is tech.fonia.domain.Exercise.Twister -> language == Language.Ro && sound != null
+        else -> false
+    }
+
+/** How long a result that is not yet right stays before the next trial comes by itself. */
+private const val AUTO_NEXT_MS = 1700L
 
 /** What the session knows at decision time: no adult in the loop; calibrated once there are ten anchors. */
 internal fun runtimeFor(run: SessionRun): RuntimeContext =
@@ -545,6 +620,8 @@ internal fun runtimeFor(run: SessionRun): RuntimeContext =
 /** The waiting state under the prompt: Foni in the rings of the voice, and one line that always says whose turn it is. */
 @Composable
 private fun ListeningBar(
+    sound: tech.fonia.domain.SoundID?,
+    drive: tech.fonia.designsystem.letter.LetterDrive,
     phase: SpeakPhase,
     field: Field,
     showsHeardColour: Boolean,
@@ -557,7 +634,9 @@ private fun ListeningBar(
     val levels = app.audio.levels
     val still = LocalStillMeters.current
     val level: () -> Float = if (phase == SpeakPhase.Model) ({ levels.talk }) else ({ levels.level })
-    Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // Live meters under the living letter while the microphone is open (place, voice, trill; at most two).
+        LiveMeters(sound, drive, listening = phase == SpeakPhase.Listening)
         NoMicCue(app, field, listening = phase == SpeakPhase.Listening)
         // The rings are wider than the row: they spread over the sheet above and the capsule below, under both.
         Box(Modifier.fillMaxWidth().height(124.dp), contentAlignment = Alignment.Center) {
@@ -630,6 +709,10 @@ val LiveLevels.heardColour: Color?
 @Composable
 private fun ResultPanel(
     verdict: TakeVerdict,
+    judged: SoundJudge.Judged?,
+    soundId: tech.fonia.domain.SoundID?,
+    field: Field,
+    onHow: (tech.fonia.judge.HintKey) -> Unit,
     feedback: FeedbackLevel,
     adult: Rating?,
     canReplay: Boolean,
@@ -657,13 +740,19 @@ private fun ResultPanel(
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         verdict.rating?.let { RatingMark(it, Modifier.size(24.dp)) }
-                        PraiseTitle(verdict.title, popping = verdict.rating == Rating.yes)
+                        // One word says how it went ("Aproape"); the letter shows the rest.
+                        PraiseTitle(if (verdict.rating == Rating.nearly) verdict.title.substringBefore(". ") else verdict.title, popping = verdict.rating == Rating.yes)
                     }
                     verdict.detail?.let { FoniaText(it, style = fBody, color = Palette.inkSoft) }
                 }
             }
         }
         verdict.tip?.let { FoniaText(it, Modifier.staggeredEntrance(1), style = ui(18, UIWeight.medium, TextRole.body), color = Palette.ink, textAlign = TextAlign.Center) }
+        // What the take looked like, then the one hint (only when the policy allows it): seen, not said.
+        val visual = judged?.visual
+        if (visual != null && soundId != null && !asks) TakeStrip(visual, soundId, field, correct = verdict.rating == Rating.yes, modifier = Modifier.staggeredEntrance(1))
+        val hint = judged?.hint
+        if (hint != null && verdict.rating != Rating.yes && !asks) HintCard(hint, field, onHow = { onHow(hint) }, modifier = Modifier.staggeredEntrance(2))
 
         Box(Modifier.staggeredEntrance(2)) {
             FittingRow(spacing = 10.dp) {

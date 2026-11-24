@@ -100,6 +100,10 @@ class SessionRun(
     var needsAdultNext: Rung? by mutableStateOf(null)
         private set
 
+    /** The rung this session opened by his own success, for the recap ("Ai deschis …"). */
+    var movedUpTo: Rung? by mutableStateOf(null)
+        private set
+
     /** The summary at the end of a block whose trials said nothing in the moment. */
     var blockNote: String? by mutableStateOf(null)
         private set
@@ -156,19 +160,27 @@ class SessionRun(
         if (app.arguments.short) {
             built = Session(trials = built.trials.take(2), targetAttempts = 2)
         }
+        // The quick check and the diction drills bring their own trials: every one is played, none is cut by a dose.
+        ticket.custom?.let { custom ->
+            val trials = if (app.arguments.short) custom.trials.take(4) else custom.trials
+            built = Session(trials = trials, targetAttempts = 0, timeLimitSeconds = 3600)
+        }
         // A hero with a story is for children. Adults start at the mouth.
-        if (!profile.isChild) {
+        if (!profile.isChild && ticket.custom == null) {
             built = Session(trials = built.trials.filter { it.exercise !is Exercise.Intro }, targetAttempts = built.targetAttempts)
         }
         session = built
         // The story is for children, as the hero's intro is.
-        chapter = if (profile.isChild) ticket.sound?.let { app.content.sound(it).chapter(ticket.focus) } else null
+        chapter = if (profile.isChild && ticket.custom == null) ticket.sound?.let { app.content.sound(it).chapter(ticket.focus) } else null
         field = ticket.sound?.family?.field ?: (if (profile.isChild) Field.cold else Field.paper)
         record = SessionRecord(
             profileId = profile.id,
             track = track(ticket.focus),
             sound = ticket.sound?.rawValue,
-            focus = ticket.focus.key,
+            focus = when (val kind = ticket.custom?.kind) {
+                is tech.fonia.features.app.CustomRun.Kind.Drill -> "drill:${kind.sound.rawValue}:${kind.index}"
+                else -> ticket.focus.key
+            },
             // `Int64(bitPattern: seed)`.
             seed = seed.toLong(),
         )
@@ -186,6 +198,37 @@ class SessionRun(
 
     val current: Trial? get() = session.trials.getOrNull(index)
 
+    /** The speed the model of the trial on screen is played at (a twister's tempo ladder); null: normal. */
+    fun modelSpeed(): Float? = ticket.custom?.modelSpeeds?.getOrNull(index)
+
+    /** The quick check: its takes stay in memory for the result screen and are never stored as practice. */
+    val isCheck: Boolean get() = ticket.custom?.kind == tech.fonia.features.app.CustomRun.Kind.Check
+
+    /** How many times a trial is said again by itself before it moves on: once in the quick check, twice elsewhere. */
+    val maxAutoRetakes: Int get() = if (isCheck) 1 else 2
+
+    /**
+     * The last take of each trial of a custom run (the check, a drill): its sound, what was decided and how sure the
+     * judge was. A trial said again keeps only its last take.
+     */
+    val takes = androidx.compose.runtime.mutableStateMapOf<Int, tech.fonia.features.check.CheckTake>()
+
+    /** How sure the new judge was of the take being finished (null: his judge decided). */
+    private var pendingCertainty: Float? = null
+
+    /** Called by the take cycle right before it finishes an attempt the new judge decided. */
+    fun noteJudged(certainty: Float?) {
+        pendingCertainty = certainty
+    }
+
+    /** The longest held sound of this session, in seconds (the recap shows it). */
+    var longestHold: Double by androidx.compose.runtime.mutableDoubleStateOf(0.0)
+        private set
+
+    fun noteHeld(seconds: Double) {
+        if (seconds > longestHold) longestHold = seconds
+    }
+
     /** The id of this session's row: the pilot log and shadow mode tie their rows to it. */
     val sessionID: UUID get() = record.id
 
@@ -195,8 +238,10 @@ class SessionRun(
      */
     val progressValue: Double
         get() {
-            if (session.targetAttempts <= 0) return index.toDouble() / max(session.trials.size, 1).toDouble()
-            return minOf(1.0, attempts.toDouble() / session.targetAttempts.toDouble())
+            val byTrial = index.toDouble() / max(session.trials.size, 1).toDouble()
+            if (session.targetAttempts <= 0) return byTrial
+            // Listening and teaching screens move the bar too, so he always sees it advance (v2-flow).
+            return minOf(1.0, max(byTrial, attempts.toDouble() / session.targetAttempts.toDouble()))
         }
 
     /** True when the session opens on the hero's intro for this sound, which then tells the chapter. */
@@ -217,11 +262,12 @@ class SessionRun(
         app.judge?.warmUp()
         app.audio.prepare()
         // Before the first trial shows: the adaptive pilot plans its blocks, or leaves iOS's session as it is.
-        AdaptiveRun.start(app, profile, ticket, record.id, progress, history, session, ::later)?.let { (run, planned) ->
+        if (ticket.custom == null) AdaptiveRun.start(app, profile, ticket, record.id, progress, history, session, ::later)?.let { (run, planned) ->
             adaptive = run
             session = planned
         }
         isTellingChapter = chapter != null && !opensOnIntro
+        if (isCheck) return
         ignoringFailure { app.repository.addSession(record) }
         app.logSessionStart(this, record)
     }
@@ -268,8 +314,12 @@ class SessionRun(
                 if (decided == Attempt.Outcome.Good) identifiedRight += 1
             }
         }
-        if (counts) store(exercise, machine, adult, selfRating, take)
-        app.logAttempt(this, takeKey, exercise, machine, adult, selfRating, decided, counts, retry)
+        if (ticket.custom != null && counts) {
+            soundOf(exercise)?.let { sound -> takes[index] = tech.fonia.features.check.CheckTake(sound, decided, pendingCertainty) }
+        }
+        pendingCertainty = null
+        if (counts && !isCheck) store(exercise, machine, adult, selfRating, take)
+        if (!isCheck) app.logAttempt(this, takeKey, exercise, machine, adult, selfRating, decided, counts, retry)
         if (counts) adaptive?.take(index, exercise, machine, adult)
         if (retry) {
             retryToken += 1
@@ -369,10 +419,13 @@ class SessionRun(
             // Later target blocks still practise this session's rung, so once one block has moved the learner, the
             // rest of the session can't move them again.
             if (state.rung == rungOfSession) {
-                val outcome = Progression.afterBlock(correct = blockGood, attempted = blockTotal, state = state)
+                val outcome = OwnSuccess.afterBlock(correct = blockGood, attempted = blockTotal, state = state)
                 state = outcome.state
                 when (val step = outcome.step) {
-                    is ProgressionStep.Advance -> updated = updated.copy(rung = step.to.index)
+                    is ProgressionStep.Advance -> {
+                        updated = updated.copy(rung = step.to.index)
+                        movedUpTo = step.to
+                    }
                     is ProgressionStep.Drop -> updated = updated.copy(rung = step.to.index)
                     is ProgressionStep.NeedsAdult -> needsAdultNext = step.next
                     ProgressionStep.Stay -> Unit
@@ -410,8 +463,9 @@ class SessionRun(
     /** The adaptive session ended: the rung moves on, or waits for an adult, by T1 and the iOS locks. */
     private fun closeAdaptiveSession(engine: AdaptiveRun, finished: Boolean) {
         val sound = ticket.sound
-        when (val step = engine.end(finished, state)) {
+        when (val step = OwnSuccess.withoutAdult(engine.end(finished, state))) {
             is ProgressionStep.Advance -> if (sound != null) {
+                movedUpTo = step.to
                 val updated = (progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue)).copy(rung = step.to.index)
                 progress = updated
                 val repository = app.repository
@@ -479,7 +533,7 @@ class SessionRun(
         app.judge?.trim()
         app.audio.effect(SoundEffect.Star)
         tech.fonia.design.FoniaSfx.play(tech.fonia.design.SfxCue.SessionEnd)
-        if (didStoreSession) return
+        if (didStoreSession || isCheck) return
         didStoreSession = true
         val repository = app.repository
         val id = record.id
@@ -491,7 +545,7 @@ class SessionRun(
         isClosed = true
         app.judge?.trim()
         if (phase != Phase.Finished) adaptive?.let { closeAdaptiveSession(it, finished = false) }
-        if (phase != Phase.Finished) app.logSessionEnd(this, finished = false)
+        if (phase != Phase.Finished && !isCheck) app.logSessionEnd(this, finished = false)
         app.audio.shutDown()
     }
 
@@ -501,6 +555,15 @@ class SessionRun(
             isChild -> "Încă o parte gata. Bravo!"
             good == 0 -> "Mai exersăm puțin."
             else -> "$good din $total au sunat bine."
+        }
+
+        /** The target sound of a spoken exercise. */
+        internal fun soundOf(exercise: Exercise): SoundID? = when (exercise) {
+            is Exercise.Repeat -> exercise.prompt.sound
+            is Exercise.Name -> exercise.sound
+            is Exercise.Twister -> exercise.sound
+            is Exercise.Sustain -> (exercise.target as? tech.fonia.domain.SustainTarget.Sound)?.id
+            else -> null
         }
 
         /** A syllable, a word, a held sound: short enough to make a sure last item. Sentences and stories are not. */

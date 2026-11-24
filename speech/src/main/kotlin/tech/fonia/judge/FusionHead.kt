@@ -108,9 +108,11 @@ object FullHead {
                     weights += names.indices.map { i -> correctRow[i] + (fast.weights[k][i] - fast.weights[0][i]) / t }
                 }
                 else -> {
+                    val kind = FusionSpec.kindOf(cls)
+                    val c = if (kind == ErrorKind.PlaceSwap || kind == ErrorKind.AffricatePlace) params.cPlace ?: params.c else params.c
                     bias += params.alpha * fast.bias[k] / t
                     weights += names.indices.map { i ->
-                        params.alpha * fast.weights[k][i] / t - if (names[i] == key) params.c * spec.inputs[i].scale else 0f
+                        params.alpha * fast.weights[k][i] / t - if (names[i] == key) c * spec.inputs[i].scale else 0f
                     }
                 }
             }

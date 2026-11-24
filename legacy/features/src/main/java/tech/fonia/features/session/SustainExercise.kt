@@ -116,6 +116,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         letter, levels, listening = isListening, modelVoice = false, holdSeconds = { held.value.toFloat() },
         baseInflation = { (0.4 + 0.6 * (held.value / seconds)).toFloat().coerceIn(0.4f, 1f) },
         heard = { heard.value = it },
+        placeBias = placeBias(app.talkers.group(run.profile)),
     )
 
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -130,17 +131,19 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
                 color = FoniTone(field).glow,
                 isLive = isListening && !still,
                 level = { levels.level },
-                modifier = Modifier.widthIn(max = 250.dp),
+                // A little smaller than before, so the live meters fit under the hold bar (v2-flow).
+                modifier = Modifier.widthIn(max = 210.dp),
                 heard = if (sound != null && trial.feedback == FeedbackLevel.Teach) ({ levels.heardColour }) else null,
             )
             Foni(
-                Modifier.widthIn(max = 150.dp).foniReaction(if (isDone) Rating.yes else null),
+                Modifier.widthIn(max = 126.dp).foniReaction(if (isDone) Rating.yes else null),
                 mood = if (isDone) FoniMood.happy else FoniMood.listening,
                 level = { levels.level },
             )
         }
         Spacer(Modifier.weight(1f))
         HoldMeter(seconds = seconds, isLive = isListening && !still, color = field.deep, track = field.track, progress = { held.value / seconds })
+        LiveMeters(sound?.id, letter.drive, listening = isListening)
         if (isListening) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 HearMic(heard, field.deep)
@@ -204,6 +207,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         app.audio.cancelListening()
         isListening = false
         app.talkers.observe(run.profile, app.audio.lastTakePitch())
+        run.noteHeld(held.value)
         runCatching {
             android.util.Log.i("FoniaHold", "held ${"%.2f".format(held.value)} of ${"%.1f".format(goal)} s, ${if (machine == Rating.yes) "full" else "partial"}, role=$role")
         }

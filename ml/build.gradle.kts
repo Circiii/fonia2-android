@@ -147,9 +147,49 @@ val referenceClip = tasks.register<ReferenceClipTask>("zipaReferenceClip") {
     outputs.upToDateWhen { false }
 }
 
+/** The judge's data files for the instrumented full-head check (JudgeOnDeviceTest), as the app bundles them. */
+abstract class JudgeSpecAssetsTask : DefaultTask() {
+    @get:InputDirectory
+    abstract val specDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val out = File(outputDir.get().asFile, "spec")
+        out.deleteRecursively()
+        val spec = specDir.get().asFile
+        for (rel in listOf("thresholds/population.json", "unlock.json", "feedback.json")) File(spec, rel).copyTo(File(out, rel), overwrite = true)
+        File(spec, "fusion").listFiles { f -> f.extension == "json" }!!.forEach { it.copyTo(File(out, "fusion/${it.name}"), overwrite = true) }
+        // Four of the prompt voice's words (content submodule) for a real take on the device; skipped without it.
+        val voice = voiceDir.get().asFile
+        val manifest = File(voice, "manifest.json")
+        if (manifest.isFile) {
+            @Suppress("UNCHECKED_CAST")
+            val map = JsonSlurper().parse(manifest) as Map<String, Any?>
+            for (w in listOf("sare", "șarpe", "rac", "ger")) {
+                val rel = map["ro|ro|$w"] as? String ?: continue
+                val f = File(voice, rel)
+                if (f.isFile) f.copyTo(File(outputDir.get().asFile, "judge-takes/$w.mp3"), overwrite = true)
+            }
+        }
+    }
+
+    @get:Internal
+    abstract val voiceDir: DirectoryProperty
+}
+
+val judgeSpecAssets = tasks.register<JudgeSpecAssetsTask>("judgeSpecAssets") {
+    specDir.set(rootProject.layout.projectDirectory.dir("spec"))
+    voiceDir.set(rootProject.layout.projectDirectory.dir("content/voice"))
+    outputDir.set(layout.buildDirectory.dir("generated/judge-spec"))
+}
+
 androidComponents {
     onVariants { variant ->
         variant.sources.assets?.addGeneratedSourceDirectory(modelAssets, ModelAssetsTask::outputDir)
         variant.androidTest?.sources?.assets?.addGeneratedSourceDirectory(referenceClip, ReferenceClipTask::outputDir)
+        variant.androidTest?.sources?.assets?.addGeneratedSourceDirectory(judgeSpecAssets, JudgeSpecAssetsTask::outputDir)
     }
 }

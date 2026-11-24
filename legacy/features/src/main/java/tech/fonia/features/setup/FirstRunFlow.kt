@@ -118,6 +118,8 @@ fun FirstRunFlow(app: AppModel) {
             app.audio.shutDown()
             app.save(profile)
             app.select(profile)
+            // The first run ends on the quick check's invitation („Hai să vedem ce sunete exersăm”).
+            app.offerCheck = profile.track == Profile.Track.Ro
         }
     }
     AnimatedContent(
@@ -408,7 +410,7 @@ fun ChildSetup(app: AppModel, onBack: (() -> Unit)?, onDone: (Profile) -> Unit) 
         }
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             FoniaText("Ce sunete îi vin greu?", style = fPrompt, color = Palette.ink)
-            FoniaText("Alege câte vrei, le punem primele. Nu știi încă? Le alegi mai târziu, cu logopedul.", style = fBody, color = Palette.inkSoft)
+            FoniaText("Alege câte vrei, le punem primele. Nu știi încă? Le aflăm cu o verificare rapidă.", style = fBody, color = Palette.inkSoft)
             SoundPicker(app.content, picked, onChange = { picked = it })
         }
     }

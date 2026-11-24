@@ -18,6 +18,81 @@ data class PopulationThresholds(
     val capture: CaptureThresholds = CaptureThresholds(),
     val word: WordThresholds = WordThresholds(),
     val measure: MeasureThresholds = MeasureThresholds(),
+    /** v2 (2026-11-24): context, praise, bursts, the visual block, personal references. Absent = all off. */
+    val judge2: Judge2Thresholds = Judge2Thresholds(),
+)
+
+/**
+ * The v2 coefficients (`population.json` → `judge2`, fitted with leave-one-voice-out on synthetic voices, see
+ * `spec/fusion/EVAL_v2.md`). Every default is "off", so a spec without the section behaves as v1.
+ */
+@Serializable
+data class Judge2Thresholds(
+    val version: String = "off",
+    /**
+     * Vowel context (plan 03 §6): S before i/e is palatalised and reads Ș-ward. Keyed "<place>:<next vowel>" ("s:i",
+     * "ș:e"; place s for S/Z/Ț, ș for Ș/J/CE/GE): added to the logit of sNess before the head runs (`toward` follows).
+     */
+    val contextShift: Map<String, Float> = emptyMap(),
+    /**
+     * Place trust: with `toward` ≥ this, the phoneme model's place candidate is masked (the spectrum is clearly in the
+     * target zone). 2 = off.
+     */
+    val placeTrust: Float = 2f,
+    val praise: PraiseThresholds = PraiseThresholds(),
+    val burst: BurstThresholds = BurstThresholds(),
+    val visual: VisualThresholds = VisualThresholds(),
+    val personal: PersonalThresholds = PersonalThresholds(),
+)
+
+/**
+ * Praise when both heads agree (owner 2026-11-24: "when he says a sound right the app must say so"): with a reliable
+ * full head, Correct when p_full ≥ [full] AND p_fast ≥ [fast] AND the phoneme model's best candidate is the target,
+ * even under `tauOk`. 2 = off.
+ */
+@Serializable
+data class PraiseThresholds(val fast: Float = 2f, val full: Float = 2f)
+
+/**
+ * Bursts ("ț-ț-ț", "ci-ci-ci", "gi-gi-gi", plan 03 §2.5): the take is judged on the median burst (by p(correct))
+ * instead of the worst, when at least [minFound] of the bursts were found. 0 = off (v1: the worst one speaks).
+ */
+@Serializable
+data class BurstThresholds(val minFound: Int = 0)
+
+/** Target zones and floors of the visual block ([TakeVisuals]). */
+@Serializable
+data class VisualThresholds(
+    /** Half-width of the uncertain middle of the S↔Ș axis: S zone is [0.5 + h, 1], Ș zone [0, 0.5 − h]. */
+    val placeZoneHalf: Float = 0.1f,
+    val voicedFraction: Float = 0.5f,
+    val dipFloorDb: Float = 3f,
+    val dipFullDb: Float = 12f,
+    val trillNeeded: Float = 0.5f,
+    val closureGapMs: Float = 15f,
+    val closureBurstDb: Float = 6f,
+    val releaseMinMs: Float = 25f,
+    val wordMinMs: Float = 60f,
+    val isolatedMinMs: Float = 250f,
+    val relLevelFloorDb: Float = -25f,
+    /** A personal floor sits this far under the person's own median level. */
+    val personalLevelMarginDb: Float = 8f,
+    /** An error class below this probability does not choose the hint (the cues do). */
+    val minKindProbability: Float = 0.35f,
+)
+
+/** When a take may become part of the person's reference ([PersonalReference.update]). */
+@Serializable
+data class PersonalThresholds(
+    /** p(correct) of the full head, and of the fast head, both needed. */
+    val minFull: Float = 0.9f,
+    val minFast: Float = 0.8f,
+    /** Anchors per place before the person's own S/Ș boundary is used (the DSP's fit also needs it). */
+    val minPerPlace: Int = 5,
+    /** Takes kept per sound for the medians. */
+    val window: Int = 20,
+    /** An anchor whose sNess sits in the uncertain middle (|sNess − 0.5| < this) is never taken. */
+    val minPlaceMargin: Float = 0.2f,
 )
 
 @Serializable
@@ -85,6 +160,11 @@ data class FullHeadParams(
     val g: Float,
     /** Added to the "correct" bias. */
     val correctBias: Float,
+    /**
+     * v2: the weight of the phone evidence on the PLACE classes (placeSwap, affricatePlace) when it differs from [c]:
+     * on S/Ș the phoneme model hears [s] in good Ș (EVAL_v1), so its say on place is fitted per sound. Null = [c].
+     */
+    val cPlace: Float? = null,
 )
 
 @Serializable
@@ -175,6 +255,16 @@ data class UnlockRule(
     val maxFalseAlarm: Float? = null,
     val minPrecision: Float? = null,
     val runtime: UnlockRuntime? = null,
+    /**
+     * The `self` rule (v2): a teen or adult practising alone. A kind is named, and the visual hint shown, when its
+     * probability reaches this (chosen from the held-out false-alarm rate, EVAL_v2.md). Null = the rule is off.
+     */
+    val minConfidence: Float? = null,
+    /** The `self` rule: the kinds it may name (null = every kind of the sound). */
+    val kinds: List<String>? = null,
+    /** The `self` rule: who it applies to (talker groups "man", "woman"; profile kinds "adult", "teen"). Informative. */
+    val appliesTo: List<String> = emptyList(),
+    val note: String = "",
 )
 
 @Serializable
