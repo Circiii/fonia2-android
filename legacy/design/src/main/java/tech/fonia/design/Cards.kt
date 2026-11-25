@@ -53,7 +53,14 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.max
 import kotlin.math.min
 
-private val cardShape = ContinuousRoundedRectangle(16.dp)
+/** The corners the app uses, and only these: a small tile or chip, a card or row, a panel that holds other things. */
+object Radius {
+    val small = 12.dp
+    val card = 16.dp
+    val panel = 22.dp
+}
+
+private val cardShape = ContinuousRoundedRectangle(Radius.card)
 
 /** A door on the home page: a scene with a short label under it. */
 @Composable
@@ -79,7 +86,7 @@ fun HomeTile(scene: SceneName, title: String, modifier: Modifier = Modifier, asp
     }
 }
 
-/** A whole-width card: a wide scene, how much of it is finished, its name and a bar. */
+/** A whole-width card: a wide scene, how much of it is finished, its name and a bar. [showsCount] false keeps the bar alone. */
 @Composable
 fun WideCard(
     scene: SceneName,
@@ -87,6 +94,7 @@ fun WideCard(
     done: Int,
     total: Int,
     modifier: Modifier = Modifier,
+    showsCount: Boolean = true,
     detail: String? = null,
     art: @Composable BoxScope.() -> Unit = {},
 ) {
@@ -95,7 +103,7 @@ fun WideCard(
             .clip(cardShape)
             .clearAndSetSemantics {
                 contentDescription = title
-                stateDescription = "$done din $total"
+                if (showsCount) stateDescription = "$done din $total"
             },
     ) {
         Box {
@@ -109,7 +117,7 @@ fun WideCard(
                 .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            FoniaText("$done din $total", style = fCaption.monospacedDigit(), color = Palette.ink)
+            if (showsCount) FoniaText("$done din $total", style = fCaption.monospacedDigit(), color = Palette.ink)
             FoniaText(title, style = fHeadline, color = Palette.ink, textAlign = TextAlign.Start)
             if (detail != null) {
                 FoniaText(detail, style = fCaption, color = Palette.inkSoft, textAlign = TextAlign.Start, maxLines = 2)
@@ -270,7 +278,7 @@ fun FloatingPanel(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier
             .fillMaxWidth()
-            .background(Palette.sheet, ContinuousRoundedRectangle(21.dp))
+            .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel))
             .padding(16.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -284,7 +292,7 @@ fun StatCard(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> 
     Box(
         modifier
             .fillMaxWidth()
-            .background(Palette.sheet, ContinuousRoundedRectangle(24.dp)),
+            .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel)),
         contentAlignment = Alignment.CenterStart,
         content = content,
     )

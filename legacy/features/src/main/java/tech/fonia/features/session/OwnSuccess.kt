@@ -1,5 +1,6 @@
 package tech.fonia.features.session
 
+import tech.fonia.domain.DaySpread
 import tech.fonia.domain.Progression
 import tech.fonia.domain.ProgressionState
 import tech.fonia.domain.ProgressionStep
@@ -45,13 +46,18 @@ object OwnSuccess {
         if (opened(establishCorrect)) "Un adult te ascultă, apoi se deschide." else "Se deschide când îți iese sunetul de $TARGET ori."
 
     /** [Progression.afterBlock] where the learner's own good takes stand in for the 12 of the plan. */
-    fun afterBlock(correct: Int, attempted: Int, state: ProgressionState): Progression.BlockOutcome {
+    fun afterBlock(
+        correct: Int,
+        attempted: Int,
+        state: ProgressionState,
+        daySpread: DaySpread = DaySpread.NotRequired,
+    ): Progression.BlockOutcome {
         val onPlainSound = state.rung == Rung.Isolated
         val ownOpened = onPlainSound && opened(state.establishCorrect + correct)
         val locked = onPlainSound && waitsForAdult(state)
         var before = state
         if (ownOpened && !locked) before = before.copy(adultConfirmed = true)
-        val outcome = Progression.afterBlock(correct = correct, attempted = attempted, state = before)
+        val outcome = Progression.afterBlock(correct = correct, attempted = attempted, state = before, daySpread = daySpread)
         val step = outcome.step
         if (locked) {
             val next = state.rung.next
@@ -61,6 +67,8 @@ object OwnSuccess {
             return outcome
         }
         if (step is ProgressionStep.NeedsAdult) {
+            // Where no adult is asked, the phone moves a child on only as the two-day rule allows.
+            if (daySpread == DaySpread.Required(earlierGoodDay = false)) return Progression.BlockOutcome(outcome.state, ProgressionStep.Stay)
             return Progression.BlockOutcome(outcome.state.copy(rung = step.next), ProgressionStep.Advance(step.next))
         }
         return outcome

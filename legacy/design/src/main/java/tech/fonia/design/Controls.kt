@@ -38,7 +38,9 @@ import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
@@ -147,6 +149,8 @@ class FoniButtonStyle(
     val field: Field = Field.paper,
     val size: Size = Size.large,
     val kind: Kind = Kind.primary,
+    /** The least height, when a lesson asks for more than the size gives (64 for a child's main action). */
+    val minHeight: Dp? = null,
 ) : ButtonStyle {
     @Suppress("EnumEntryName")
     enum class Size { regular, large }
@@ -157,23 +161,25 @@ class FoniButtonStyle(
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
         val primary = kind == Kind.primary
+        // A button that can't be pressed yet lies flat and pale, with its words still readable, so it never passes for
+        // a live one. The edge's room stays, so nothing moves when it turns on.
+        val on = configuration.isEnabled
         CompositionLocalProvider(
             LocalFont provides if (size == Size.large) fButton else ui(16, UIWeight.bold, TextRole.headline),
-            LocalForeground provides if (primary) Palette.buttonLabel else Palette.ink,
+            LocalForeground provides if (!on) Palette.inkSoft else if (primary) Palette.buttonLabel else Palette.ink,
             LocalTextAlign provides TextAlign.Center,
         ) {
             Box(
                 modifier
-                    .alpha(if (configuration.isEnabled) 1f else 0.5f)
                     .raised(
                         shape = Capsule,
-                        face = if (primary) Palette.accent else Palette.sheet,
-                        edge = if (primary) Palette.accentEdge else Palette.chipEdge,
+                        face = if (!on) Palette.cloud else if (primary) Palette.accent else Palette.sheet,
+                        edge = if (!on) Color.Transparent else if (primary) Palette.accentEdge else Palette.chipEdge,
                         depth = 3.3.dp,
                         isPressed = configuration.isPressed,
                     )
                     .fillMaxWidth()
-                    .heightIn(min = if (size == Size.large) 48.dp else 44.dp)
+                    .heightIn(min = minHeight ?: if (size == Size.large) 48.dp else 44.dp)
                     .padding(horizontal = 18.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
@@ -259,7 +265,7 @@ class RoundButtonStyle(
 class TileButtonStyle(
     val face: Color = Palette.sheet,
     val border: Color? = null,
-    val radius: Dp = 16.dp,
+    val radius: Dp = Radius.card,
 ) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
@@ -275,8 +281,40 @@ class TileButtonStyle(
     }
 }
 
+/**
+ * A tile that can be picked: a raised tile, and once picked a pale green face, a green edge and a tick. The one way the
+ * app shows a choice is on, so an age, a sound and a moment all look picked the same.
+ */
+class ChoiceTileStyle(val isOn: Boolean, val radius: Dp = Radius.card) : ButtonStyle {
+    @Composable
+    override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
+        val shape = remember(radius) { ContinuousRoundedRectangle(radius) }
+        Box(
+            modifier
+                .semantics { selected = isOn }
+                .raised(shape, if (isOn) Palette.accentSoft else Palette.sheet, Palette.chipEdge.copy(alpha = 0.75f), 3.dp, configuration.isPressed),
+        ) {
+            Box(
+                Modifier.then(if (isOn) Modifier.border(2.dp, Palette.accent, shape) else Modifier),
+                contentAlignment = Alignment.Center,
+            ) { configuration.label() }
+            if (isOn) {
+                Box(
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .size(20.dp)
+                        .background(Palette.accent, CircleShape)
+                        .clearAndSetSemantics {},
+                    contentAlignment = Alignment.Center,
+                ) { FoniaIconView(FoniaIcon.tick, size = 11f, tint = Palette.buttonLabel) }
+            }
+        }
+    }
+}
+
 /** Small rounded action with an icon, next to its neighbours. */
-class PillButtonStyle : ButtonStyle {
+class PillButtonStyle(val minHeight: Dp = 44.dp) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
         CompositionLocalProvider(
@@ -287,11 +325,46 @@ class PillButtonStyle : ButtonStyle {
                 modifier
                     .raised(Capsule, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
                     .fillMaxWidth()
-                    .heightIn(min = 44.dp)
+                    .heightIn(min = minHeight)
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
         }
+    }
+}
+
+/**
+ * One of a row of equal small actions inside a card: the icon over a short word, on the raised white face. Give its
+ * label as [IconOverTitle]. 44 is the least for an adult's finger; a child's controls ask for 56.
+ */
+class IconTileButtonStyle(val minHeight: Dp = 54.dp) : ButtonStyle {
+    @Composable
+    override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
+        val shape = RoundedCornerShape(18.dp)
+        CompositionLocalProvider(
+            LocalFont provides ui(14, UIWeight.semibold, TextRole.subheadline),
+            LocalForeground provides Palette.ink,
+            LocalTextAlign provides TextAlign.Center,
+        ) {
+            Box(
+                modifier
+                    .raised(shape, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
+                    .border(1.5.dp, Palette.line, shape)
+                    .fillMaxWidth()
+                    .heightIn(min = maxOf(44.dp, minHeight))
+                    .padding(6.dp),
+                contentAlignment = Alignment.Center,
+            ) { configuration.label() }
+        }
+    }
+}
+
+/** The label of an [IconTileButtonStyle]: the icon over the word, at most two lines. */
+@Composable
+fun IconOverTitle(title: String, icon: FoniaIcon, iconSize: Float = 20f, modifier: Modifier = Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        FoniaIconView(icon, size = iconSize)
+        FoniaText(title, maxLines = 2)
     }
 }
 
@@ -363,7 +436,17 @@ class PlusButtonStyle : ButtonStyle {
  */
 @Composable
 fun Dock(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    Box(modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 6.dp)) { content() }
+    Column(
+        modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) { content() }
+}
+
+/** One short line over a button that can't be pressed yet, saying what it waits for. */
+@Composable
+fun DockHint(text: String) {
+    FoniaText(text, Modifier.fillMaxWidth(), style = fBodyStrong, color = Palette.inkSoft, textAlign = TextAlign.Center)
 }
 
 /** The three answers an adult or a learner can give. Shape carries the meaning, not just colour. */

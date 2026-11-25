@@ -3,9 +3,9 @@ package tech.fonia.features.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -75,6 +75,8 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
     var micOff by remember { mutableStateOf(false) }
     /** The take ended with a dead microphone: "Nu te aud" and what to do, instead of an empty bar. */
     var micSilent by remember { mutableStateOf(false) }
+    /** The line the turn line ends on once the hold is over. */
+    var ended by remember { mutableStateOf<String?>(null) }
     val haptics = LocalHapticFeedback.current
     val still = LocalStillMeters.current
     val letter = rememberLetterLink()
@@ -126,7 +128,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         if (sound == null) {
             BlowFlame(isLive = isListening && !still, isOut = flameOut, strength = { levels.blowStrength }, modifier = Modifier.size(width = 130.dp, height = 210.dp))
         }
-        Box(contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             VoiceRings(
                 color = FoniTone(field).glow,
                 isLive = isListening && !still,
@@ -140,24 +142,34 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
                 mood = if (isDone) FoniMood.happy else FoniMood.listening,
                 level = { levels.level },
             )
+            // Over Foni rather than under the line, so the sheet below keeps its size when it shows.
+            NoMicCue(app, field, listening = isListening, modifier = Modifier.align(Alignment.BottomCenter))
         }
         Spacer(Modifier.weight(1f))
         HoldMeter(seconds = seconds, isLive = isListening && !still, color = field.deep, track = field.track, progress = { held.value / seconds })
-        LiveMeters(sound?.id, letter.drive, listening = isListening)
-        if (isListening) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                HearMic(heard, field.deep)
-                HearLabel(heard, field.foreground)
-            }
-        }
-        NoMicCue(app, field, listening = isListening)
         if (micSilent) {
             NoMicBox(field)
             StyledButton(onClick = { run.advance() }, style = FoniButtonStyle(field = field)) { CTALabel("Mai departe") }
-        }
-        if (micOff) {
+        } else if (micOff) {
             FoniaText("Microfonul e oprit. Pornește-l din Setări, la Fonia.", style = fBodyStrong, color = field.foreground, textAlign = TextAlign.Center)
             StyledButton(onClick = { run.advance() }, style = FoniButtonStyle(field = field)) { CTALabel("Mai departe") }
+        } else {
+            // The same sheet as in the spoken tasks: the meters right above whose turn it is.
+            DockSheet {
+                if (sound != null && MeterPlan.shows(trial.feedback)) LiveMeters(sound.id, letter.drive, listening = isListening)
+                val endLine = ended
+                TurnLine(
+                    mode = when {
+                        isListening -> TurnMode.Listening
+                        endLine != null -> TurnMode.Finished(endLine, praised = isDone)
+                        else -> TurnMode.Model
+                    },
+                    field = field,
+                    height = DockMetrics.rowHeight(run.profile.isChild),
+                    heard = heard,
+                    level = { levels.level },
+                )
+            }
         }
         if (role == SustainRole.Facilitation) {
             StyledButton(onClick = { skip() }, style = QuietButtonStyle(field.foreground)) { FoniaText("Sar peste") }
@@ -219,6 +231,11 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         }
         flameOut = machine == Rating.yes && isBreath
         isDone = machine == Rating.yes
+        ended = when {
+            !isDone -> "Gata"
+            isBreath -> "Ai stins lumânarea. Bravo!"
+            else -> "Ai ținut până la capăt. Bravo!"
+        }
         if (machine == Rating.yes) {
             letter.pop()
             letter.correct()

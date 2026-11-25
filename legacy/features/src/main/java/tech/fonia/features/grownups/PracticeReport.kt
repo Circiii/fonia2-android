@@ -13,6 +13,7 @@ import tech.fonia.features.app.orderedSounds
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
 import tech.fonia.features.guide.AdultCards
+import tech.fonia.features.journal.MissionFollowUp
 import tech.fonia.features.reading.ReadingReport
 import tech.fonia.store.Attempt
 import tech.fonia.store.PracticeData
@@ -293,15 +294,20 @@ data class PracticeReport(
                 )
             }
 
-            val notes = data.notes
-                .sortedByDescending { it.localDay }
-                .mapNotNull { note ->
-                    val text = note.text.trim()
-                    if (text.isEmpty()) return@mapNotNull null
-                    // A very long note would take a page of its own; the whole of it is in the JSON file.
-                    val shown = if (text.length > NOTE_LENGTH) text.take(NOTE_LENGTH) + "…" else text
-                    Note(day(note.localDay)?.let(ReadingReport::longDate) ?: note.localDay, shown)
-                }
+            val written = data.notes.mapNotNull { note ->
+                val text = note.text.trim()
+                if (text.isEmpty()) return@mapNotNull null
+                // A very long note would take a page of its own; the whole of it is in the JSON file.
+                val shown = if (text.length > NOTE_LENGTH) text.take(NOTE_LENGTH) + "…" else text
+                note.localDay to Note(longDay(note.localDay), shown)
+            }
+            // What the adult said about a mission is one plain line under the day the mission was for.
+            val missions = data.missionAnswers.mapNotNull { mission ->
+                val answer = mission.answer ?: return@mapNotNull null
+                val letter = SoundID.fromRawValue(mission.sound)?.let { content.sound(it).shortLetter } ?: mission.sound.uppercase()
+                mission.localDay to Note(longDay(mission.localDay), MissionFollowUp.line(letter, answer))
+            }
+            val notes = (missions + written).sortedByDescending { it.first }.map { it.second }
 
             return PracticeReport(
                 ageBand = data.profile.ageBand,
@@ -335,6 +341,8 @@ data class PracticeReport(
             }
             return weeks.toList()
         }
+
+        private fun longDay(text: String): String = day(text)?.let(ReadingReport::longDate) ?: text
 
         private fun day(text: String): LocalDate? = runCatching { LocalDate.parse(text) }.getOrNull()
     }

@@ -237,6 +237,45 @@ class FoniaRepository(
     private fun fetchNotes(db: Database, profileId: UUID): List<MoodlessNote> =
         MoodlessNote.fetchAll(db, "SELECT * FROM note WHERE profileId = ? ORDER BY localDay DESC", listOf(profileId))
 
+    // MARK: Missions
+
+    /** Notes that a session gave a mission. A second call for the same session changes nothing. */
+    suspend fun addMission(mission: MissionCheck) {
+        writer.write { db ->
+            if (db.fetchCount("SELECT COUNT(*) FROM missionCheck WHERE sessionId = ?", listOf(mission.sessionId)) == 0) {
+                MissionCheck.insert(db, mission)
+            }
+        }
+    }
+
+    /** The latest mission, when it was for a day before [today] and its question hasn't been shown yet. */
+    suspend fun pendingMission(profileId: UUID, today: String): MissionCheck? = writer.read { db ->
+        val latest = MissionCheck.fetchAll(
+            db,
+            "SELECT * FROM missionCheck WHERE profileId = ? ORDER BY givenAt DESC LIMIT 1",
+            listOf(profileId),
+        ).firstOrNull()
+        latest?.takeIf { !it.asked && it.localDay < today }
+    }
+
+    /** The question was shown: kept with the answer, or with none for "Nu acum". It is not asked again. */
+    suspend fun answerMission(id: UUID, answer: MissionCheck.Answer?, at: Instant = Instant.now()) {
+        writer.write { db ->
+            val mission = MissionCheck.fetchOne(db, listOf(id)) ?: return@write
+            MissionCheck.update(db, mission.copy(asked = true, answer = answer, answeredAt = if (answer == null) null else at))
+        }
+    }
+
+    /** The missions an adult answered about, newest day first. */
+    suspend fun missionAnswers(profileId: UUID): List<MissionCheck> = writer.read { db -> fetchMissionAnswers(db, profileId) }
+
+    internal fun fetchMissionAnswers(db: Database, profileId: UUID): List<MissionCheck> =
+        MissionCheck.fetchAll(
+            db,
+            "SELECT * FROM missionCheck WHERE profileId = ? AND answer IS NOT NULL ORDER BY localDay DESC, givenAt DESC",
+            listOf(profileId),
+        )
+
     // MARK: Streams
 
     fun profilesStream(): Flow<List<Profile>> =

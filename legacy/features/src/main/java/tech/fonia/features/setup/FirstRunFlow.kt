@@ -83,6 +83,8 @@ import tech.fonia.design.SceneBackdrop
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
+import tech.fonia.design.ChoiceTileStyle
+import tech.fonia.design.DockHint
 import tech.fonia.design.TileButtonStyle
 import tech.fonia.design.ToolButtonStyle
 import tech.fonia.design.UIWeight
@@ -141,10 +143,12 @@ fun FirstRunFlow(app: AppModel) {
         label = "first-run",
     ) { shown ->
         when (shown) {
-            Step.voice -> VoiceWelcome(app) { step = Step.forAdult }
-            Step.forAdult -> ForTheAdult(withReading = app.arguments.drafts, onBack = { step = Step.voice }, onNext = { step = Step.who })
-            Step.who -> WhoIsPractising(onChild = { step = Step.child }, onAdult = { step = Step.adult })
-            Step.child -> ChildSetup(app, onBack = { step = Step.who }, onDone = { finish(it) })
+            Step.voice -> VoiceWelcome(app) { step = Step.who }
+            // The note for the adult next to a child comes only on a child's path; an adult learner reads what stays
+            // on the phone on their own setup page.
+            Step.who -> WhoIsPractising(onChild = { step = Step.forAdult }, onAdult = { step = Step.adult })
+            Step.forAdult -> ForTheAdult(withReading = app.arguments.drafts, onBack = { step = Step.who }, onNext = { step = Step.child })
+            Step.child -> ChildSetup(app, onBack = { step = Step.forAdult }, onDone = { finish(it) })
             Step.adult -> AdultSetup(onBack = { step = Step.who }, onDone = { finish(it) })
         }
     }
@@ -407,7 +411,7 @@ private fun Modifier.dismissesKeyboardOnScroll(): Modifier {
  * over the keyboard, as `safeAreaBar(edge: .bottom)` keeps it.
  */
 @Composable
-private fun SetupPage(onDone: () -> Unit, form: @Composable () -> Unit) {
+private fun SetupPage(onDone: () -> Unit, waitsFor: String? = null, form: @Composable () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -426,7 +430,9 @@ private fun SetupPage(onDone: () -> Unit, form: @Composable () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(26.dp),
         ) { form() }
         Dock {
-            StyledButton(onClick = onDone, style = FoniButtonStyle(field = Field.paper)) { CTALabel("Gata") }
+            // A button that can't be pressed yet says above it what it waits for.
+            if (waitsFor != null) DockHint(waitsFor)
+            StyledButton(onClick = onDone, style = FoniButtonStyle(field = Field.paper), enabled = waitsFor == null) { CTALabel("Gata") }
         }
     }
 }
@@ -434,16 +440,18 @@ private fun SetupPage(onDone: () -> Unit, form: @Composable () -> Unit) {
 @Composable
 fun ChildSetup(app: AppModel, onBack: (() -> Unit)?, onDone: (Profile) -> Unit) {
     var name by rememberSaveable { mutableStateOf("") }
-    var age by rememberSaveable { mutableStateOf(Profile.AgeBand.SixToSeven) }
+    var age by rememberSaveable { mutableStateOf<Profile.AgeBand?>(null) }
     var picked by rememberSaveable { mutableStateOf(listOf<String>()) }
     SetupPage(
+        waitsFor = if (age == null) "Alege vârsta" else null,
         onDone = {
+            val band = age ?: return@SetupPage
             val trimmed = name.trim()
             onDone(
                 Profile(
                     name = trimmed.ifEmpty { null },
                     kind = Profile.Kind.Child,
-                    ageBand = age,
+                    ageBand = band,
                     voiceGroup = Profile.VoiceGroup.Child,
                     color = "cold",
                     targetSounds = picked,
@@ -464,13 +472,10 @@ fun ChildSetup(app: AppModel, onBack: (() -> Unit)?, onDone: (Profile) -> Unit) 
                     val selected = age == band
                     StyledButton(
                         onClick = { age = band },
-                        style = TileButtonStyle(border = if (selected) Palette.ink else null),
+                        style = ChoiceTileStyle(isOn = selected),
                         modifier = Modifier
                             .weight(1f)
-                            .semantics {
-                                contentDescription = "${band.rawValue} ani"
-                                this.selected = selected
-                            },
+                            .semantics { contentDescription = "${band.rawValue} ani" },
                     ) {
                         Box(Modifier.fillMaxWidth().heightIn(min = 62.dp), contentAlignment = Alignment.Center) {
                             FoniaText(band.rawValue, style = ui(22, UIWeight.black, TextRole.title2).monospacedDigit(), color = Palette.ink)
@@ -530,13 +535,10 @@ fun SoundPicker(content: FoniaContent, picked: List<String>, onChange: (List<Str
                             onChange(if (isOn) picked.filter { it != sound.id.rawValue } else picked + sound.id.rawValue)
                             haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                         },
-                        style = TileButtonStyle(face = if (isOn) field.soft else Palette.sheet, border = if (isOn) field.deep else null),
+                        style = ChoiceTileStyle(isOn = isOn),
                         modifier = Modifier
                             .weight(1f)
-                            .semantics {
-                                contentDescription = "Sunetul ${sound.letter}"
-                                selected = isOn
-                            },
+                            .semantics { contentDescription = "Sunetul ${sound.letter}" },
                     ) {
                         Box(Modifier.fillMaxWidth().heightIn(min = 78.dp), contentAlignment = Alignment.Center) {
                             FoniaText(sound.letter, style = practice(if (sound.letter.length > 2) 24 else 36, PracticeWeight.bold, TextRole.title), color = field.deep)
@@ -583,6 +585,11 @@ private fun AdultSetup(onBack: () -> Unit, onDone: (Profile) -> Unit) {
             }
             FoniaText("Așa ascultăm mai bine S și Ș.", style = fCaption, color = Palette.inkSoft)
         }
+        // An adult learner skips the note for the adult beside a child; what stays on the phone is said here.
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            FoniaIconView(FoniaIcon.lock, size = 18f, tint = Palette.accentText)
+            FoniaText(PrivacyText.summary[0], style = fBody, color = Palette.ink)
+        }
     }
 }
 
@@ -590,14 +597,13 @@ private fun AdultSetup(onBack: () -> Unit, onDone: (Profile) -> Unit) {
 private fun Option(title: String, detail: String, art: String, isOn: Boolean, action: () -> Unit) {
     StyledButton(
         onClick = action,
-        style = TileButtonStyle(border = if (isOn) Palette.ink else null),
-        modifier = Modifier.semantics { selected = isOn },
+        style = ChoiceTileStyle(isOn = isOn),
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .heightIn(min = 70.dp)
-                .padding(horizontal = 14.dp),
+                .padding(start = 14.dp, end = 34.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -606,7 +612,6 @@ private fun Option(title: String, detail: String, art: String, isOn: Boolean, ac
                 FoniaText(title, style = fBodyStrong, color = Palette.ink)
                 FoniaText(detail, style = fCaption, color = Palette.inkSoft)
             }
-            if (isOn) FoniaIconView(FoniaIcon.check, size = 24f, tint = Palette.ink)
         }
     }
 }
@@ -615,8 +620,8 @@ private fun Option(title: String, detail: String, art: String, isOn: Boolean, ac
 private fun VoiceButton(title: String, isOn: Boolean, modifier: Modifier, action: () -> Unit) {
     StyledButton(
         onClick = action,
-        style = TileButtonStyle(border = if (isOn) Palette.ink else null),
-        modifier = modifier.semantics { selected = isOn },
+        style = ChoiceTileStyle(isOn = isOn),
+        modifier = modifier,
     ) {
         Box(Modifier.fillMaxWidth().heightIn(min = 58.dp), contentAlignment = Alignment.Center) {
             FoniaText(title, style = fBodyStrong, color = Palette.ink)

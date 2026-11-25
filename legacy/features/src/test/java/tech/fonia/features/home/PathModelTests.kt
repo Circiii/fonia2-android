@@ -30,6 +30,8 @@ import tech.fonia.store.SoundProgress
 import java.io.File
 import java.nio.file.Files
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * `PathModelTests.swift` (suite "PathModel"), test for test, with the same inputs and expectations. The model runs on
@@ -115,6 +117,141 @@ class PathModelTests {
         finish(SessionFocus.Meet(SoundID.R), profile, app)
         val model = path(profile, app)
         assertEquals("s-isolated", model.continuing?.lesson?.id)
+    }
+
+    // Today's sound with two sounds chosen
+
+    private val zone: ZoneId = ZoneId.of("Europe/Bucharest")
+
+    private fun day(day: Int, hour: Int = 10): Instant = LocalDateTime.of(2026, 11, day, hour, 0).atZone(zone).toInstant()
+
+    private suspend fun save(sound: String, rung: Rung, profile: Profile, app: AppModel, history: List<SoundProgress.Block> = emptyList()) {
+        app.repository.saveSoundProgress(SoundProgress(profileId = profile.id, sound = sound, rung = rung.index, blockHistory = history))
+    }
+
+    /** Today's sound on each of the given days. */
+    private fun sounds(model: PathModel, days: List<Instant>): List<SoundID?> = days.map { date ->
+        model.today = { date }
+        model.zone = zone
+        model.continuing?.unit?.sound
+    }
+
+    /** A lesson on [sound] practised on that day. */
+    private suspend fun practise(sound: String, on: Instant, profile: Profile, app: AppModel, model: PathModel) {
+        val session = SessionRecord(
+            profileId = profile.id,
+            track = Profile.Track.Ro,
+            sound = sound,
+            focus = "turn-$sound-${on.epochSecond}",
+            startedAt = on,
+            endedAt = on.plusSeconds(120),
+            attempts = 4,
+            timeZone = zone,
+        )
+        app.repository.addSession(session)
+        model.reload(app.repository)
+    }
+
+    /** the everyday lesson can never be done, so a sound there held the button for good */
+    @Test
+    fun everydayIsNeverDone() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Everyday, profile, app)
+        val model = path(profile, app)
+        val unit = soundUnit(model)
+        val everyday = unit.lessons.first { it.rung == Rung.Everyday }
+        assertNotEquals(LessonState.done, model.state(everyday, unit))
+        assertTrue(model.isAutomating(SoundID.S))
+    }
+
+    /** a sound in automatizare no longer holds the button: the next chosen sound comes up */
+    @Test
+    fun automatingSoundLetsTheNextOneIn() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"), targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Everyday, profile, app)
+        val model = path(profile, app)
+        assertEquals(listOf(SoundID.R, SoundID.R, SoundID.R), sounds(model, listOf(day(20), day(21), day(22))))
+    }
+
+    /** from sentences on, the two sounds take turns: the one practised last rests on the next day of practice */
+    @Test
+    fun alternatesFromSentences() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"), targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Sentences, profile, app)
+        val model = path(profile, app)
+        assertEquals("the first chosen sound opens", listOf(SoundID.S), sounds(model, listOf(day(20, hour = 7))))
+        practise("s", day(20, hour = 8), profile, app, model)
+        assertEquals("the same all day", listOf(SoundID.S), sounds(model, listOf(day(20, hour = 22))))
+        assertEquals("a day off does not skip a turn", listOf(SoundID.R, SoundID.R), sounds(model, listOf(day(21), day(23))))
+        practise("r", day(23, hour = 8), profile, app, model)
+        assertEquals("the same all day", listOf(SoundID.R), sounds(model, listOf(day(23, hour = 22))))
+        assertEquals(listOf(SoundID.S, SoundID.S), sounds(model, listOf(day(24), day(26))))
+    }
+
+    /** practising every other day still reaches both sounds */
+    @Test
+    fun everyOtherDayReachesBoth() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"), targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Sentences, profile, app)
+        val model = path(profile, app)
+        val seen = mutableListOf<SoundID>()
+        for (date in listOf(16, 18, 20, 22)) {
+            val sound = sounds(model, listOf(day(date)))[0]
+            assertNotNull(sound)
+            seen += sound!!
+            practise(sound.rawValue, day(date), profile, app, model)
+        }
+        assertEquals(listOf(SoundID.S, SoundID.R, SoundID.S, SoundID.R), seen)
+    }
+
+    /** while the first sound waits for the adult, the second gets its days; the lock stays on the first */
+    @Test
+    fun alternatesWhileWaiting() = runBlocking {
+        val app = makeApp()
+        val profile = child(targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        val blocks = List(2) { SoundProgress.Block(rung = 0, good = 6, total = 6, endedAt = day(18)) }
+        save("s", Rung.Isolated, profile, app, history = blocks)
+        val model = path(profile, app)
+        assertTrue(model.isWaitingForAdult(SoundID.S))
+        assertFalse(model.isWaitingForAdult(SoundID.R))
+        practise("s", day(18), profile, app, model)
+        assertEquals(listOf(SoundID.R), sounds(model, listOf(day(20))))
+        practise("r", day(20), profile, app, model)
+        assertEquals(listOf(SoundID.S), sounds(model, listOf(day(21))))
+    }
+
+    /** below sentences the first sound keeps the button every day */
+    @Test
+    fun staysOnTheFirstBelowSentences() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"), targets = listOf("s", "r"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Pairs, profile, app)
+        val model = path(profile, app)
+        assertEquals(listOf(SoundID.S, SoundID.S), sounds(model, listOf(day(20), day(21))))
+    }
+
+    /** with one sound chosen nothing changes, in automatizare or not */
+    @Test
+    fun oneSoundUnchanged() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("s"))
+        app.repository.saveProfile(profile)
+        save("s", Rung.Sentences, profile, app)
+        val model = path(profile, app)
+        assertEquals(listOf(SoundID.S, SoundID.S), sounds(model, listOf(day(20), day(21))))
+        save("s", Rung.Everyday, profile, app)
+        model.reload(app.repository)
+        assertEquals(listOf(SoundID.S, SoundID.S), sounds(model, listOf(day(20), day(21))))
     }
 
     /** with no sound chosen, the row follows what was worked on last, as on iOS */

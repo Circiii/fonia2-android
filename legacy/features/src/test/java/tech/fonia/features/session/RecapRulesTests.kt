@@ -1,6 +1,8 @@
 package tech.fonia.features.session
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -22,5 +24,19 @@ class RecapRulesTests {
     fun theLineForTheLockIsShortAndKind() {
         val words = RecapRules.WAITS_FOR_ADULT.trimEnd('.').split(" ")
         assertTrue(words.size <= 8)
+    }
+
+    @Test
+    fun aLessonDoneToTheEndIsPraisedEvenWithNothingToSay() {
+        assertEquals("Bravo!", RecapRules.title(attempts = 0, good = 0))
+        assertEquals("Bravo!", RecapRules.title(attempts = 6, good = 2))
+        assertEquals("Ai exersat!", RecapRules.title(attempts = 6, good = 0))
+    }
+
+    @Test
+    fun whatComesNextNamesItsSound() {
+        assertEquals("Urmează la R: Facem cunoștință", RecapRules.nextLine("Facem cunoștință", sound = "R"))
+        assertEquals("Urmează: Lumânările", RecapRules.nextLine("Lumânările"))
+        assertNull(RecapRules.nextLine(null, sound = "R"))
     }
 }

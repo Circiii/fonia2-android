@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,7 @@ import tech.fonia.designsystem.letter.LetterCue
 import tech.fonia.designsystem.letter.LiveLetter
 import tech.fonia.designsystem.tokens.VerdictStickers
 import tech.fonia.features.app.field
+import tech.fonia.features.progress.ChildCounts
 import tech.fonia.features.session.rememberLetterLink
 import tech.fonia.features.session.stickerFor
 import androidx.compose.foundation.background
@@ -77,10 +79,12 @@ import tech.fonia.design.HomeTile
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
+import tech.fonia.design.Radius
 import tech.fonia.design.PressableStyle
 import tech.fonia.design.ProgressPill
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
+import tech.fonia.design.ToolButtonStyle
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
 import tech.fonia.design.fBody
@@ -131,12 +135,13 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
     LaunchedEffect(Unit) { hasArrived = true }
     val push = rememberPush()
     val scroll = rememberScrollState()
+    Box(Modifier.fillMaxSize()) {
     Column(
         Modifier
             .fillMaxSize()
             .verticalScroll(scroll),
     ) {
-        Hero(app, path, hasArrived) { scroll.value }
+        Hero(app, path, hasArrived, onSettings = { push(AppRoute.Settings) }) { scroll.value }
         Column(
             Modifier
                 .fillMaxWidth()
@@ -144,7 +149,7 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
                 .widthIn(max = 620.dp)
                 .offset(y = (-38).dp)
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 22.dp + bottomInset),
+                .padding(bottom = 16.dp + bottomInset),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             TodayCard(app, path, Modifier.arrives(hasArrived, 2))
@@ -168,11 +173,23 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             }
         }
     }
+    // A band of the page colour behind the status bar, so the cards never run under the clock. The sky shows
+    // through it at the top and the band comes in as soon as the page moves.
+    val top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(top)
+            .graphicsLayer { alpha = (scroll.value / 24.dp.toPx()).coerceIn(0f, 1f) }
+            .background(Palette.paper)
+            .clearAndSetSemantics {},
+    )
+    }
 }
 
 /** The sky at the top: the two counters, the greeting, and Foni next to today's letter. It drifts as the page scrolls. */
 @Composable
-private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, scrolled: () -> Int) {
+private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, onSettings: () -> Unit, scrolled: () -> Int) {
     val unit = path.continuing?.unit
     val sound = unit?.sound?.let { app.content.sound(it) }
     val didPracticeToday = path.week.firstOrNull { it.isToday }?.hasPractice == true
@@ -201,18 +218,33 @@ private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, scrolled: 
         }
         Row(
             Modifier
+                .fillMaxWidth()
                 .padding(top = top + 8.dp)
                 .padding(horizontal = 16.dp)
                 .arrives(hasArrived, 0),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // As on iOS: a check and "N zile", no flame; a day missed breaks nothing.
-            CountPill(
-                FoniaIcon.check, Palette.accentText, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " în care ai exersat",
-                unit = Plural.form(path.totalDays, Plural.Noun.Zi),
-            )
+            // As on iOS: a check and "N zile", no flame; a day missed breaks nothing. The counts wait for the first
+            // lesson; two zeros greet nobody.
+            if (path.totalDays > 0) {
+                CountPill(
+                    FoniaIcon.check, Palette.accentText, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " în care ai exersat",
+                    unit = Plural.form(path.totalDays, Plural.Noun.Zi),
+                )
+            }
             Spacer(Modifier.weight(1f))
-            CountPill(FoniaIcon.star, Palette.starTint, path.totalLessons, Plural.format(path.totalLessons, Plural.Noun.Stea))
+            if (path.totalLessons > 0) {
+                CountPill(FoniaIcon.star, Palette.starTint, path.totalLessons, Plural.format(path.totalLessons, Plural.Noun.Stea))
+                Spacer(Modifier.width(8.dp))
+            }
+            // The grown-ups' area, behind the same gate as from Progres.
+            StyledButton(
+                onClick = onSettings,
+                style = ToolButtonStyle(diameter = 44.dp),
+                modifier = Modifier.semantics { contentDescription = "Setări" },
+            ) {
+                FoniaIconView(FoniaIcon.settings, size = 22f)
+            }
         }
         FoniaText(
             greeting,
@@ -299,7 +331,7 @@ private fun DoorButton(
 /** A door: the whole tile is its picture, with the name written on it. */
 @Composable
 private fun DoorTile(scene: SceneName, title: String, aspect: Float, large: Boolean, modifier: Modifier = Modifier) {
-    val shape = remember { ContinuousRoundedRectangle(26.dp) }
+    val shape = remember { ContinuousRoundedRectangle(Radius.card) }
     Box(
         modifier
             .softShadow(shape)
@@ -358,7 +390,9 @@ private fun TodayCard(app: AppModel, path: PathModel, modifier: Modifier = Modif
             if (unit != null) {
                 val done = path.doneCount(unit)
                 val total = unit.lessons.size
-                LessonDots(done, total, Modifier.clearAndSetSemantics { contentDescription = "Ai terminat $done din $total lecții" })
+                // A child sees the dots fill, never the count, and TalkBack doesn't read one either (ChildCounts).
+                val label = ChildCounts.todayLabel(done, total, path.profile.isChild)
+                LessonDots(done, total, Modifier.clearAndSetSemantics { if (label != null) contentDescription = label })
             }
         }
         if (sound != null) {

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tech.fonia.design.CTALabel
-import tech.fonia.design.ChoicePillStyle
+import tech.fonia.design.QuietButtonStyle
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.Foni
 import tech.fonia.design.FoniButtonStyle
@@ -141,7 +141,7 @@ fun CheckOffer(onStart: () -> Unit, onLater: () -> Unit) {
                 )
                 FoniaText("Două minute. Asculți cuvântul și îl spui după Foni.", style = fLead, color = Palette.inkSoft, textAlign = TextAlign.Center)
                 StyledButton(onClick = onStart, style = FoniButtonStyle()) { CTALabel("Încep") }
-                StyledButton(onClick = onLater, style = ChoicePillStyle(ChoicePillStyle.Tone.quiet)) { FoniaText("Mai târziu") }
+                StyledButton(onClick = onLater, style = QuietButtonStyle(Palette.accentText)) { FoniaText("Mai târziu") }
             }
         }
     }

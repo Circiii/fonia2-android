@@ -46,6 +46,65 @@ Aplicația livrată (`:legacy:app` → `:legacy:features`) a fost adusă la star
   - Alarma e inexactă (fereastră de 10 minute), deci nu cere permisiunea de alarme exacte. Revine după repornirea telefonului, după schimbarea orei și la deschiderea aplicației după o oprire forțată.
   - „Șterge tot” oprește alarma și notificarea afișată.
 
+### A treia tură (25 noiembrie 2026)
+
+Sursa: `docs/port-android.md` §21, §22 și §23 din aplicația iOS.
+
+- **Partea de jos a unei încercări.** Jos e o singură foaie albă, cu aceeași mărime în „Ascultă”, „Acum tu”, „Te aud” și „Mă gândesc”.
+  - Linia Ș–S stă chiar deasupra rândului de jos. Rândul are înălțimea lui „Mai departe”: 64 dp la copil, 56 la adult.
+  - Pistele liniei stau pe loc tot timpul. Bila se vede doar cât e microfonul deschis.
+  - Pe o încercare fără linie (tăcută sau judecată de el), locul liniei rămâne gol, dacă alte încercări din lecție o au. Așa foaia nu-și schimbă mărimea.
+  - Cardul cu rezultatul e aceeași foaie. „Ascultă-te”, „Așa se spune” și „Mai rar” sunt trei butoane egale pe un rând, cu iconița deasupra. La text foarte mare trec unul sub altul. Dovada încercării (linia) stă chiar deasupra lui „Mai departe”.
+  - Cercul „Te aud” crește doar în pătratul lui de 56 dp, așa că nu acoperă cuvintele. Barele vocii au loc rezervat și se văd doar cât ascultă.
+  - Cuvintele se schimbă pe loc: cele vechi ies, apoi intră cele noi. Cardul intră după ce linia a ieșit. Pagina următoare intră după ce a ieșit cea veche. Cu „Reduce mișcarea”, doar se estompează.
+  - „Nu te aud” stă peste Foni, nu sub linie.
+  - La „Ține sunetul” e aceeași foaie, iar la final linia spune „Ai ținut până la capăt. Bravo!”, „Ai stins lumânarea. Bravo!” sau „Gata”.
+- **Fără vârste.** Propoziția cu vârsta a ieșit din notele pentru părinte, iar `typicalByAge` a ieșit din conținut și din cod. Notele sunt identice cu cele de pe iOS.
+- **Regula celor două zile.** Un copil urcă o treaptă doar dacă a avut un bloc bun și într-o zi de dinainte. Două lecții bune în aceeași zi nu ajung. Ce își notează copilul singur („Bine”, „Aproape”) nu umple un bloc. Adultul care exersează singur nu are regula asta.
+- **Butonul mare.** Un sunet ajuns la „Peste tot” (automatizare) lasă loc următorului. De la propoziții în sus, două sunete se iau pe rând, câte unul pe zi, chiar dacă exersează o zi da, una nu.
+- **Întrebarea despre misiune.** După o zi cu „Azi, peste zi”, următoarea lecție întreabă adultul o singură dată: „A folosit sunetul peste zi?”, cu „Da”, „Uneori”, „Încă nu” și „Nu acum”.
+  - Pagina se cheamă „Pentru adult” la copil și „Azi, peste zi” la adult.
+  - Nu apare la verificarea rapidă și nici cu `foniaNoAdultCards`. Pentru probă există `foniaMissionSample`.
+  - Răspunsul apare în Jurnal și în raportul PDF, pe un rând: „R: A folosit sunetul peste zi? Uneori.”
+  - E salvat în tabelul nou `missionCheck` (migrarea `v3-mission-checks`). Se șterge cu profilul și cu „Șterge tot”. Nu intră în exportul JSON, ca pe iOS.
+- **Numărătorile.** Copilul nu mai vede câte lecții are făcute: nici pe Acasă, nici la medalie, nici „N din M” pe cardurile din Lecții. A ieșit și promisiunea „6–8 săptămâni”.
+
+Din §23:
+
+- **Ecranul de final.** O lecție terminată primește „Bravo!”. „Ai exersat!” apare doar când nicio încercare n-a ieșit. Foni e mereu vesel. Sub titlu stă pasul următor pentru sunetul exersat („Urmează la R: …”). „Încă una” și „Gata” apar doar când există un pas următor. Copilul care a terminat tot vede la revedere.
+- **Paginile cu scenă.** Butonul înapoi stă mereu pe o bandă de hârtie care apare după ce scena iese din ecran. Nu mai e voal cu gradient.
+- **Pagina sunetului.** Sub scenă scrie „<eroul> te învață <sunetul>”. Lecțiile următoare au numărul pe un disc. Lecțiile încuiate stau sub un singur rând, fără număr: „Urmează și alte lecții”, „Se deschid după ce te ascultă un adult.” și legătura „Pentru adult”. Punctele de reușită ale lui Android au rămas pe rândul acela.
+- **Încălzirea.** E o pagină cu scenă și câte un rând pentru fiecare exercițiu.
+- **Primul start.** Ordinea e: vocea, cine exersează, apoi (la copil) nota pentru adult și copilul. Stilul ales e unul singur, cu bifă și chenar. Butonul care așteaptă spune ce lipsește („Alege vârsta”).
+- **Vorbit în public.** Fiecare pas are X. Cât vorbește, X întreabă „Te oprești aici?”, cu „Mă opresc” și „Mai rămân”, și spune „Ce ai spus până acum nu se păstrează.”. „Sar peste” sare întrebarea despre cum te-ai simțit. Butoanele raportului stau jos. Ritmul apare doar când are destule date. „Ai ajuns la capăt” apare doar dacă discursul a durat cel puțin 80% din timp.
+- **Acasă.** Pagina se oprește deasupra butonului galben. O bandă de culoarea paginii stă sub ceas cât pagina e derulată. Rotița „Setări” duce în zona adultului, prin aceeași verificare. „0 zile” și „0” stele nu apar până la prima lecție.
+- **Progres.** Butonul „Exersează” a ieșit. Barele săptămânii arată minute, cu numărul deasupra și „Minute pe zi” dedesubt. Rândul cursului spune „Ai N minute. Merge cel mai bine cu puțin și des.”.
+- **Verificarea rapidă.** „Mai târziu” e un buton text verde. Pe rezultat, butonul stă jos, cu „Lecțiile de acasă vor începe cu X.” deasupra.
+- **Titluri și notițe.** Un titlu lung trece pe două rânduri („Notițe pentru logoped”). „Salvează” stă mereu acolo și e oprit cât nota e goală.
+- **Bara lecției** are pista culorii câmpului, cerneală la 9%.
+- **Cuvintele cu cratimă** nu se mai rup la capăt de rând în ghid (pași, „Dacă nu iese”), în fișele pentru adult și în indiciile oglinzii. Cititorul de ecran citește textul simplu.
+- **Oglinda** se cheamă „Încearcă S”, ca butonul care o deschide.
+- **Colțuri.** Trei raze: 12, 16 și 22.
+
+Decizii din tura asta:
+
+- **Regula celor două zile după propoziții.** Pe Android, de la propoziții în sus, copilul urcă prin reușita lui, fără să fie întrebat un adult. Regula celor două zile se aplică și acolo: o singură zi bună nu ajunge.
+- **„Mă gândesc”.** Linia spunea „Ascult” cât se judecă încercarea. Acum spune „Mă gândesc”, ca pe iOS, cu clepsidra.
+- **Linia pe încercările tăcute.** Android arăta linia Ș–S și pe încercările tăcute sau judecate de copil. Acum o arată doar unde iOS o arată (blocurile care răspund pe loc), iar pe celelalte îi ține locul gol.
+- **Butonul mare.** Regula din `PathModel.todaysSound` e aceeași ca pe iOS: sunetul exersat ultima dată într-o zi de dinainte stă, cel de azi rămâne, fără lecții se ia primul.
+- **„Câte 12 minute, de 4 ori pe săptămână.”** E doar în pagina „Engleză”, pe care o văd doar adulții. A rămas.
+- **„peste câteva săptămâni”** din proba de citire e identic cu iOS și îl vede doar adultul (Setări, „Citire”, doar cu ciornele). A rămas.
+
+Ce nu s-a făcut în tura asta:
+
+- Pe iOS, cardurile din Lecții mai arată „N din M” și la copil. Pe Android nu le mai arată.
+- Ecranele de dicție, verificarea rapidă și oglinda nu folosesc foaia de jos. Au rămas cum erau.
+- Alegerea momentului („Alege un moment”). Android nu are pasul acela la primul start.
+- „Nu acum” pe rezultatul verificării rapide. Pe Android planul se pune singur la final, deci nu e nimic de refuzat.
+- Razele din verificarea rapidă, listele de setări, citire, BAC și accent. Verificarea e a colegului, iar celelalte nu sunt în §23.
+- Ghidul sunetului de pe Android nu are nota pentru adult, iar indiciile oglinzii noi au un singur rând. Acolo nu era nimic de legat.
+- Rândul „Se deschide când îți iese sunetul de 5 ori.” nu mai apare pe pagina sunetului. Punctele de reușită au rămas.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.

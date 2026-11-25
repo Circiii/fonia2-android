@@ -70,7 +70,16 @@ import java.util.Locale
  * sound, what comes next, and exactly two choices: „Încă una” and „Gata”.
  */
 @Composable
-fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Unit, onDone: () -> Unit) {
+fun RecapScreen(
+    run: SessionRun,
+    app: AppModel,
+    next: String?,
+    nextSound: String? = null,
+    nextKnown: Boolean = true,
+    isDrill: Boolean = false,
+    onMore: () -> Unit,
+    onDone: () -> Unit,
+) {
     val reduceMotion = LocalReduceMotion.current
     val settled = remember { Animatable(if (reduceMotion) 1f else 0f) }
     var hasSettled by remember { mutableStateOf(false) }
@@ -82,8 +91,10 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
             settled.animateTo(1f, swiftSpring(0.55, 0.3))
         }
     }
-    LaunchedEffect(Unit) {
-        if (run.profile.isChild && run.attempts > 0) app.audio.sayIfRecorded(Session.goodbye)
+    // A child hears the goodbye once the lesson is over for today: nothing more is offered after it.
+    val saysGoodbye = run.profile.isChild && nextKnown && next == null && !isDrill && run.needsAdultNext == null
+    LaunchedEffect(saysGoodbye) {
+        if (saysGoodbye) app.audio.sayIfRecorded(Session.goodbye)
     }
     Box(Modifier.fillMaxSize()) {
         SceneBackdrop(SceneName.lesson)
@@ -101,7 +112,7 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
                                 transformOrigin = TransformOrigin(0.5f, 1f)
                                 alpha = v.coerceIn(0f, 1f)
                             },
-                        mood = if (run.goodAttempts > 0) FoniMood.happy else FoniMood.idle,
+                        mood = FoniMood.happy,
                         reactsToTap = true,
                     )
                     if (sound != null) {
@@ -131,7 +142,7 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     FoniaText(
-                        if (run.attempts == 0) "Ne vedem mâine" else if (run.goodAttempts > 0) "Bravo!" else "Ai exersat!",
+                        RecapRules.title(run.attempts, run.goodAttempts),
                         style = ui(30, UIWeight.black, TextRole.title),
                         color = Palette.ink,
                         maxLines = 1,
@@ -162,23 +173,31 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
                     val line = when {
                         opened != null && sound != null -> "Ai deschis: ${opened.title(sound.shortLetter)}"
                         run.needsAdultNext != null -> RecapRules.WAITS_FOR_ADULT
-                        next != null -> "Urmează: $next"
-                        else -> null
+                        else -> RecapRules.nextLine(next, nextSound)
                     }
                     if (line != null) {
                         FoniaText(line, Modifier.staggeredEntrance(2), style = ui(17, UIWeight.semibold, TextRole.body), color = Palette.ink, textAlign = TextAlign.Center)
                     }
-                    Row(Modifier.fillMaxWidth().staggeredEntrance(3), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    // „Încă una” only when another lesson exists; otherwise one button closes the day.
+                    if (isDrill || (next != null && run.needsAdultNext == null)) {
+                        Row(Modifier.fillMaxWidth().staggeredEntrance(3), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            StyledButton(
+                                onClick = onDone,
+                                style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular, kind = FoniButtonStyle.Kind.secondary),
+                                modifier = Modifier.weight(1f),
+                            ) { CTALabel("Gata") }
+                            StyledButton(
+                                onClick = onMore,
+                                style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular),
+                                modifier = Modifier.weight(1f),
+                            ) { CTALabel("Încă una") }
+                        }
+                    } else {
                         StyledButton(
                             onClick = onDone,
-                            style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular, kind = FoniButtonStyle.Kind.secondary),
-                            modifier = Modifier.weight(1f),
-                        ) { CTALabel("Gata") }
-                        StyledButton(
-                            onClick = onMore,
                             style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular),
-                            modifier = Modifier.weight(1f),
-                        ) { CTALabel("Încă una") }
+                            modifier = Modifier.staggeredEntrance(3),
+                        ) { CTALabel(run.session.endButton) }
                     }
                 }
             }
@@ -188,6 +207,19 @@ fun RecapScreen(run: SessionRun, app: AppModel, next: String?, onMore: () -> Uni
 
 /** What the end of a session shows, apart from the screen. */
 object RecapRules {
+    /**
+     * The end screen only shows for a lesson done to the end. One with nothing to say, a listening lesson or a
+     * warm-up, was done all the same, so it gets the same praise as one that came out well.
+     */
+    fun title(attempts: Int, good: Int): String = if (attempts == 0 || good > 0) "Bravo!" else "Ai exersat!"
+
+    /** What comes next, in one line, naming the sound when the lesson belongs to one. */
+    fun nextLine(title: String?, sound: String? = null): String? {
+        if (title == null) return null
+        if (sound == null) return "Urmează: $title"
+        return "Urmează la $sound: $title"
+    }
+
     /** "N au ieșit bine din M": for adults only, and never "0 din M". */
     fun showsCount(isChild: Boolean, attempts: Int, good: Int): Boolean = !isChild && attempts > 0 && good > 0
 

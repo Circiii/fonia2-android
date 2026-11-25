@@ -90,7 +90,7 @@ fun PracticeSheet(modifier: Modifier = Modifier, content: @Composable BoxScope.(
         Box(
             modifier
                 .fillMaxWidth()
-                .background(Palette.sheet, ContinuousRoundedRectangle(24.dp))
+                .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel))
                 .padding(20.dp),
             contentAlignment = Alignment.Center,
             content = content,

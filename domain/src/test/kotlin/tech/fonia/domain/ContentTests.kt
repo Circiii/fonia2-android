@@ -47,13 +47,15 @@ class ContentTests {
         assertEquals(family, content.sound(id).family)
     }
 
-    @Test
-    fun rAndLDoNotShareAnAge() {
-        assertEquals(4, content.sound(SoundID.L).typicalByAge)
-        assertEquals(6, content.sound(SoundID.R).typicalByAge)
-        for (id in listOf(SoundID.S, SoundID.Sh, SoundID.Z, SoundID.J, SoundID.Ts, SoundID.Ce, SoundID.Ge)) {
-            assertEquals(5, content.sound(id).typicalByAge)
-        }
+    /** The adult note explains the sound; it never says at what age children usually say it. */
+    @ParameterizedTest
+    @MethodSource("defaultOrder")
+    fun parentNoteCarriesNoAgeNorm(id: SoundID) {
+        val note = content.sound(id).parentNote
+        assertTrue(note.isNotEmpty())
+        val ageWords = Regex("""\bani\b|vârst""", RegexOption.IGNORE_CASE)
+        assertEquals(null, ageWords.find(note), "$id: $note")
+        assertFalse(note.contains("  "))
     }
 
     @ParameterizedTest
@@ -84,6 +86,9 @@ class ContentTests {
 
         @JvmStatic
         fun jsonFiles(): List<String> = Paths.jsonFiles
+
+        @JvmStatic
+        fun defaultOrder(): List<SoundID> = SoundID.defaultOrder
     }
 }
 

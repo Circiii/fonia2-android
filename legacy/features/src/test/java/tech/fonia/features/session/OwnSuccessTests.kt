@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import tech.fonia.domain.DaySpread
 import tech.fonia.domain.Progression
 import tech.fonia.domain.ProgressionState
 import tech.fonia.domain.ProgressionStep
@@ -100,5 +101,20 @@ class OwnSuccessTests {
             (0..6).map(OwnSuccess::spokenDots),
         )
         assertFalse((0..6).any { Regex("\\d").containsMatchIn(OwnSuccess.spokenDots(it)) })
+    }
+
+    /** past sentences no adult is asked, so the phone moves a child on only after good blocks on two days */
+    @Test
+    fun pastSentencesTheTwoDayRuleStillHolds() {
+        val sentences = ProgressionState(rung = Rung.Sentences, adultConfirmed = true)
+        assertEquals(
+            ProgressionStep.Stay,
+            OwnSuccess.afterBlock(6, Progression.blockSize, sentences, DaySpread.Required(earlierGoodDay = false)).step,
+        )
+        assertEquals(
+            ProgressionStep.Advance(Rung.Retell),
+            OwnSuccess.afterBlock(6, Progression.blockSize, sentences, DaySpread.Required(earlierGoodDay = true)).step,
+        )
+        assertEquals(ProgressionStep.Advance(Rung.Retell), OwnSuccess.afterBlock(6, Progression.blockSize, sentences).step)
     }
 }

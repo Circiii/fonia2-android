@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -423,9 +424,12 @@ fun NotesScreen(profileID: UUID, app: AppModel) {
                     )
                 }
             }
-            if (newNote.isNotEmpty()) {
-                row {
-                    ButtonRow("Salvează", onClick = {
+            // Always there, so the page says how a note is kept; it waits for some text.
+            val canSave = newNote.isNotBlank()
+            row {
+                ListRow(
+                    Modifier.semantics { if (!canSave) disabled() },
+                    onClick = if (!canSave) null else ({
                         val note = MoodlessNote(profileId = profileID, localDay = localDay(Instant.now()), text = newNote)
                         newNote = ""
                         app.scope.launch {
@@ -437,7 +441,9 @@ fun NotesScreen(profileID: UUID, app: AppModel) {
                             }
                             notes = orEmpty { app.repository.notes(profileID) }
                         }
-                    })
+                    }),
+                ) {
+                    FoniaText("Salvează", color = if (canSave) Palette.accentText else SystemColors.tertiaryLabel)
                 }
             }
         }

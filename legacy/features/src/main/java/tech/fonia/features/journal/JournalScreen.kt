@@ -284,6 +284,7 @@ private fun DayCell(day: JournalDay, isToday: Boolean, hasPractice: Boolean, onC
 @Composable
 private fun DaySheet(day: JournalDay, path: PathModel, app: AppModel) {
     var notes by remember { mutableStateOf<List<MoodlessNote>>(emptyList()) }
+    var missions by remember { mutableStateOf<List<tech.fonia.store.MissionCheck>>(emptyList()) }
     LaunchedEffect(day.key) {
         val all = try {
             app.repository.notes(path.profile.id)
@@ -293,6 +294,14 @@ private fun DaySheet(day: JournalDay, path: PathModel, app: AppModel) {
             emptyList()
         }
         notes = all.filter { it.localDay == day.key }
+        val answered = try {
+            app.repository.missionAnswers(path.profile.id)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            emptyList()
+        }
+        missions = answered.filter { it.localDay == day.key }
     }
     val units = path.catalog.allUnits(path.soundOrder)
     val titles = path.sessions
@@ -310,11 +319,15 @@ private fun DaySheet(day: JournalDay, path: PathModel, app: AppModel) {
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         FoniaText(dayAndMonth(day.date), style = fTitle, color = Palette.ink)
-        if (titles.isEmpty() && notes.isEmpty()) {
+        if (titles.isEmpty() && notes.isEmpty() && missions.isEmpty()) {
             FoniaText("Nimic în ziua asta.", style = fBody, color = Palette.ink)
         }
         for (title in titles) {
             Surface(padding = 14.dp) { FoniaText(title, style = fBodyStrong, color = Palette.ink) }
+        }
+        for (mission in missions) {
+            val answer = mission.answer ?: continue
+            Surface(padding = 14.dp) { FoniaText(MissionFollowUp.line(MissionFollowUp.letter(app, mission), answer), style = fBody, color = Palette.ink) }
         }
         for (note in notes) {
             Surface(padding = 14.dp) { FoniaText(note.text, style = fBody, color = Palette.ink) }

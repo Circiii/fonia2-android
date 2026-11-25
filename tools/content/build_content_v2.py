@@ -204,7 +204,7 @@ def build_sound(sound: str, feedback_kinds: dict) -> dict:
         "graphemes": spec["graphemes"],
         "hero": {"name": hero["name"], "who": hero["who"], "emoji": hero["emoji"], "says": hero["says"],
                  "saysVoice": "human-needed", "line": hero["line"], "lineVoice": "human-needed", "chapters": chapters},
-        "voiced": spec["voiced"], "holdMode": spec["holdMode"], "typicalByAge": spec["typicalByAge"],
+        "voiced": spec["voiced"], "holdMode": spec["holdMode"],
         "confusions": src.CONFUSIONS[sound], "howParent": spec["howParent"], "warmups": spec["warmups"],
         "rungs": src.RUNGS, "plan": src.PLAN[sound], "errors": errors, "items": items,
     }

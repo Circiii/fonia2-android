@@ -4,15 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterExitState
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +29,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import tech.fonia.features.home.isWarmup
+import tech.fonia.features.app.shortLetter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,15 +47,11 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import tech.fonia.designsystem.motion.FoniaOverlayHost
 import tech.fonia.designsystem.motion.staggeredEntrance
 import tech.fonia.design.CTALabel
@@ -161,6 +153,9 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     var nextStep by remember { mutableStateOf<tech.fonia.features.home.NextStep?>(null) }
     var nextTitle by remember { mutableStateOf<String?>(null) }
     var nextDrill by remember { mutableStateOf<Int?>(null) }
+    var nextSound by remember { mutableStateOf<String?>(null) }
+    // Whether the look for what comes next has finished, so the goodbye waits until it's known there is no more.
+    var nextKnown by remember { mutableStateOf(false) }
     val drillKind = ticket.custom?.kind as? tech.fonia.features.app.CustomRun.Kind.Drill
     val drill = remember { drillKind?.let { app.drills(it.sound).getOrNull(it.index) } }
     val finished = run?.phase == SessionRun.Phase.Finished
@@ -180,15 +175,26 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
             val goTo = if (following < all.size && tech.fonia.features.diction.DictionDrills.isOpen(following, best)) following else drillKind.index
             nextDrill = goTo
             nextTitle = all.getOrNull(goTo)?.title
+            nextKnown = true
             return@LaunchedEffect
         }
         ended.awaitSaves()
         val now = app.profiles.firstOrNull { it.id == profile.id } ?: profile
         val path = tech.fonia.features.home.PathModel(now, app.content)
         path.reload(app.repository, app.checks)
-        val step = path.continuing ?: path.warmingUp
+        // The next lesson of the unit just practised, or today's sound once that unit has nothing left to open. Null
+        // when there's nothing more, so „Încă una” only shows when another one exists.
+        val practised = path.catalog.allUnits(path.soundOrder).firstOrNull { unit ->
+            unit.lessons.any { it.focus.key == ended.ticket.focus.key }
+        }
+        val step = practised?.lessons
+            ?.firstOrNull { !it.isWarmup && path.state(it, practised) != tech.fonia.features.home.LessonState.done && path.canOpen(it, practised) }
+            ?.let { tech.fonia.features.home.NextStep(practised, it) }
+            ?: path.continuing
         nextStep = step
-        nextTitle = step.lesson.title
+        nextTitle = step?.lesson?.title
+        nextSound = step?.unit?.sound?.let { app.content.sound(it).shortLetter }
+        nextKnown = true
     }
 
     fun more() {
@@ -217,7 +223,7 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         if (current.phase == SessionRun.Phase.Finished && current.isCheck) {
             tech.fonia.features.check.CheckResultScreen(current, app, onDone = { finish() })
         } else if (current.phase == SessionRun.Phase.Finished) {
-            RecapScreen(current, app, next = nextTitle, onMore = { more() }, onDone = { finish() })
+            RecapScreen(current, app, next = nextTitle, nextSound = nextSound, nextKnown = nextKnown, isDrill = drillKind != null, onMore = { more() }, onDone = { finish() })
         } else {
             Column(
                 Modifier
@@ -295,41 +301,26 @@ private fun TopBar(run: SessionRun, onClose: () -> Unit) {
         StyledButton(onClick = onClose, style = ToolButtonStyle(field = run.field), modifier = Modifier.semantics { contentDescription = "Mă opresc" }) {
             FoniaIconView(FoniaIcon.close, size = 18f)
         }
-        SessionBar(run.progressValue, color = Palette.accent, track = Palette.sheet, modifier = Modifier.weight(1f), height = 12.dp)
+        SessionBar(run.progressValue, color = Palette.accent, track = run.field.track, modifier = Modifier.weight(1f), height = 12.dp)
     }
 }
 
-/** The exercise of the moment, which gives way to the next with a short slide. */
+/** The exercise of the moment, which gives way to the next: the old one leaves, then the next slides in. */
 @Composable
 private fun Exercises(run: SessionRun, app: AppModel, modifier: Modifier) {
     // `.id("\(run.index)-\(run.retryToken)")`: a new trial, or the same one again, is a new view with a new task.
     val identity = ExerciseIdentity(run.index, run.retryToken)
     val reduceMotion = LocalReduceMotion.current
+    val pageDensity = LocalDensity.current
     // Set this large, a task can be taller than the screen. It scrolls instead of pushing the bar away. Android's font
     // scale stands in for the accessibility sizes, which start at about 1.6 times the normal text on iOS.
     val isAccessibilitySize = LocalDensity.current.fontScale >= 1.5f
     AnimatedContent(
         targetState = identity,
         modifier = modifier.fillMaxWidth(),
-        transitionSpec = {
-            // `.animation(.spring(duration: 0.28, bounce: 0), value: run.index)`: only a new trial slides; a retry of
-            // the same trial changes no index, so it swaps at once.
-            if (targetState.index == initialState.index) {
-                // A retake: the same card settles again in place.
-                val settle = spring<Float>(dampingRatio = 0.6f, stiffness = 500f)
-                (if (reduceMotion) EnterTransition.None else fadeIn(settle, 0.4f) + scaleIn(settle, 0.97f)) togetherWith
-                    ExitTransition.None using SizeTransform(clip = false)
-            } else if (reduceMotion) {
-                fadeIn(tween(160)) togetherWith fadeOut(tween(120)) using SizeTransform(clip = false)
-            } else {
-                // The next card comes in from the right with a little overshoot, the done one leaves to the left.
-                val slideIn = spring<IntOffset>(dampingRatio = 0.72f, stiffness = 380f)
-                val slideOut = spring<IntOffset>(dampingRatio = 1f, stiffness = 700f)
-                val enter = fadeIn(tween(180)) + slideInHorizontally(slideIn) { it / 3 } + scaleIn(spring(0.7f, 380f), 0.94f)
-                val exit = fadeOut(tween(140)) + slideOutHorizontally(slideOut) { -it / 4 } + scaleOut(tween(160), 0.96f)
-                enter togetherWith exit using SizeTransform(clip = false)
-            }
-        },
+        // The page that leaves fades out quickly; the next one (or the same one again) comes in after it, with a short
+        // slide. The two never stand on top of each other while either can be read. With Reduce Motion on, plain fades.
+        transitionSpec = { DockMotion.page(reduceMotion, pageDensity) },
         contentKey = { it },
         label = "exercise",
     ) { shown ->

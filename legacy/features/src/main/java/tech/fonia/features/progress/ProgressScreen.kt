@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import tech.fonia.design.ContinuousRoundedRectangle
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
@@ -85,7 +84,7 @@ import kotlin.math.min
 
 /** What's been done, in counts that only go up. There's no streak to lose and no score to chase. */
 @Composable
-fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, onStart: () -> Unit, bottomInset: Dp) {
+fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp) {
     var recordings by remember { mutableStateOf<List<Recording>>(emptyList()) }
     LaunchedEffect(profile.id) {
         app.repository.recordingsStream(profile.id).collect { recordings = it }
@@ -122,12 +121,12 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, onStart: ()
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
-                    .padding(top = 8.dp, bottom = 48.dp + bottomInset)
+                    .padding(top = 8.dp, bottom = 16.dp + bottomInset)
                     .wrapContentWidth()
                     .widthIn(max = 620.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                TodayCard(today, onStart)
+                TodayCard(today)
                 if (profile.track == Profile.Track.Ro) tech.fonia.features.check.CheckCard(path.lastCheck, app)
                 StyledButton(onClick = { push(AppRoute.Journal) }, style = PressableStyle(), onClickLabel = "Deschide jurnalul") {
                     WeekCard(path.week)
@@ -150,10 +149,10 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, onStart: ()
                                             .clearAndSetSemantics {
                                                 role = Role.Button
                                                 contentDescription = "Sunetul ${sound.shortLetter}"
-                                                stateDescription = "$done din $total"
+                                                ChildCounts.medalValue(done, total, profile.isChild)?.let { stateDescription = it }
                                             },
                                     ) {
-                                        RingMedal(done.toDouble() / max(total, 1), "$done/$total") {
+                                        RingMedal(done.toDouble() / max(total, 1), ChildCounts.medalCaption(done, total, profile.isChild)) {
                                             FoniaText(sound.shortLetter, style = practice(24, PracticeWeight.bold, TextRole.title2), color = Palette.ink)
                                         }
                                     }
@@ -193,14 +192,12 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, onStart: ()
 }
 
 @Composable
-private fun TodayCard(today: DayActivity?, onStart: () -> Unit) {
+private fun TodayCard(today: DayActivity?) {
     val line = if (today == null || !today.hasPractice) "Încă n-ai exersat azi" else "Ai făcut ${Plural.format(today.attempts, Plural.Noun.Incercare)}"
     StatCard {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             FoniaText("Azi", style = ui(15, UIWeight.regular, TextRole.subheadline), color = Palette.ink)
             FoniaText(line, style = fHeadline, color = Palette.ink)
-            Box(Modifier.fillMaxWidth().height(1.dp).background(Palette.line))
-            StyledButton(onClick = onStart, style = FoniButtonStyle(size = FoniButtonStyle.Size.regular)) { FoniaText("Exersează") }
         }
     }
 }
@@ -213,7 +210,7 @@ private fun CourseCard(path: PathModel) {
             FoniaText("Spre 400 de minute", style = ui(16, UIWeight.bold, TextRole.headline), color = Palette.ink)
             ProgressPill(min(path.totalMinutes, 400), 400)
             FoniaText(
-                "Ai ${Plural.format(path.totalMinutes, Plural.Noun.Minut)}. De obicei se aude diferența după 6 până la 8 săptămâni, câte 12 minute de 4 ori pe săptămână.",
+                "Ai ${Plural.format(path.totalMinutes, Plural.Noun.Minut)}. Merge cel mai bine cu puțin și des.",
                 style = fBody,
                 color = Palette.inkSoft,
             )
@@ -263,14 +260,17 @@ fun AppModel.play(recording: Recording) {
     }
 }
 
+/** Bars stand for minutes, the one count every kind of lesson has. A day with practice under a minute still shows. */
+private fun minutes(day: DayActivity): Int = if (day.hasPractice) max(day.minutes, 1) else 0
+
 /** How much happened on each day this week, as columns. A day with nothing is just low, never red. */
 @Composable
 private fun WeekCard(days: List<DayActivity>) {
-    val highest = max(days.maxOfOrNull { it.attempts } ?: 0, 1)
+    val highest = max(days.maxOfOrNull { minutes(it) } ?: 0, 1)
     StatCard(
         Modifier.clearAndSetSemantics {
             contentDescription = "Săptămâna asta"
-            stateDescription = Plural.format(days.count { it.hasPractice }, Plural.Noun.Zi)
+            stateDescription = "${Plural.format(days.count { it.hasPractice }, Plural.Noun.Zi)}, ${Plural.format(days.sumOf { minutes(it) }, Plural.Noun.Minut)}"
         },
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -280,17 +280,23 @@ private fun WeekCard(days: List<DayActivity>) {
                 Spacer(Modifier.size(width = 8.dp, height = 0.dp))
                 FoniaIconView(FoniaIcon.forward, size = 11f, tint = Palette.accentText)
             }
-            Row(Modifier.fillMaxWidth().height(124.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {
+            Row(Modifier.fillMaxWidth().height(140.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {
                 for (day in days) {
+                    val count = minutes(day)
                     Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        FoniaText(
+                            if (count > 0) "$count" else " ",
+                            style = ui(12, UIWeight.semibold, TextRole.caption).copy(fontFeatureSettings = "tnum"),
+                            color = Palette.inkSoft,
+                        )
                         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-                            val share = day.attempts.toFloat() / highest
+                            val share = count.toFloat() / highest
                             Box(
                                 Modifier
                                     .align(Alignment.BottomCenter)
                                     .fillMaxWidth()
                                     .height(max(12.dp.value, maxHeight.value * share).dp)
-                                    .background(if (day.attempts > 0) Palette.accent else Palette.progressTrack, ContinuousRoundedRectangle(8.dp)),
+                                    .background(if (count > 0) Palette.accent else Palette.progressTrack, ContinuousRoundedRectangle(8.dp)),
                             )
                         }
                         FoniaText(
@@ -301,6 +307,7 @@ private fun WeekCard(days: List<DayActivity>) {
                     }
                 }
             }
+            FoniaText("Minute pe zi", style = fCaption, color = Palette.inkSoft)
         }
     }
 }

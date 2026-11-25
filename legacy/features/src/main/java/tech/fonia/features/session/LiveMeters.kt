@@ -22,6 +22,7 @@ import tech.fonia.designsystem.feedback.PlaceMeter
 import tech.fonia.designsystem.feedback.TrillMeter
 import tech.fonia.designsystem.feedback.VoiceMeter
 import tech.fonia.designsystem.letter.LetterDrive
+import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.SoundID
 import tech.fonia.features.app.field
 
@@ -36,6 +37,9 @@ internal data class MeterPlan(
     val trill: Boolean = false,
 ) {
     companion object {
+        /** Live meters only in a block that answers at once; a silent or self-judged take keeps its own counsel. */
+        fun shows(feedback: FeedbackLevel): Boolean = feedback == FeedbackLevel.Teach || feedback == FeedbackLevel.Quick
+
         fun of(id: SoundID): MeterPlan = when (id) {
             SoundID.S -> MeterPlan(targetSharp = 1f, left = "Ș", right = "S")
             SoundID.Z -> MeterPlan(targetSharp = 1f, left = "J", right = "Z", wantVoice = true)
@@ -51,15 +55,15 @@ internal data class MeterPlan(
 }
 
 /**
- * The live meters of a take, under the living letter, fed by the same [LetterDrive]: where the hiss sits between its
- * two letters, whether the voice is on, the R flutter. Shown only while the microphone is open; they fade out with
- * the outcome. The room they take stays, so nothing jumps.
+ * The live meters of a take, in the sheet at the bottom, fed by the same [LetterDrive] as the living letter: where the
+ * hiss sits between its two letters, whether the voice is on, the R flutter. The tracks stay put in every phase; what
+ * moves on them shows only while the microphone is open and fades with the take, so nothing jumps. Neutral colours:
+ * the zone lights green, nothing turns red.
  */
 @Composable
 fun LiveMeters(sound: SoundID?, drive: LetterDrive, listening: Boolean, modifier: Modifier = Modifier) {
     if (sound == null) return
     val plan = MeterPlan.of(sound)
-    val shown by animateFloatAsState(if (listening) 1f else 0f, tween(if (listening) 180 else 420), label = "meters")
     val colors = MeterColors(
         track = Palette.progressTrack,
         zone = Palette.accentSoft,
@@ -68,8 +72,9 @@ fun LiveMeters(sound: SoundID?, drive: LetterDrive, listening: Boolean, modifier
         ink = Palette.ink,
         gloss = Palette.sheet,
     )
+    // The bead, the voice line and the flutter follow `drive.listening` and fade out by themselves when it closes.
     Column(
-        modifier.fillMaxWidth().alpha(shown).clearAndSetSemantics {},
+        modifier.fillMaxWidth().clearAndSetSemantics {},
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         val label = ui(17, UIWeight.black, TextRole.headline)

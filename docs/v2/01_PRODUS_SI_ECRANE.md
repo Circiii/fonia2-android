@@ -85,7 +85,7 @@ Ordinea: voce → reușită → date → amintire (N). ~3:25 în total.
 
 **Instantaneul (ON-4).**
 - Câte un cuvânt pentru S, Ș, Z, J, R și L, fiecare cu un singur sunet greu **[P: supă, șapcă, zână, pijama, rac, lună; lista finală în capitolul 06]**. Africatele nu sunt întrebate: se sprijină pe S, Ș și J (AA §C) și rămân în alfabet.
-- Nu dă scor. Sunt propuse cel mult 3 litere, cele cu „Încă nu”, în ordinea `typicalByAge`, doar din răspunsurile adultului. Se poate reface din ADULT-SOUNDS.
+- Nu dă scor. Sunt propuse cel mult 3 litere, cele cu „Încă nu”, în ordinea sunetelor, doar din răspunsurile adultului. Se poate reface din ADULT-SOUNDS.
 
 **Modul „cu degetul”** (microfon refuzat): capsula devine butonul „Am zis”, litera reacționează la apăsare și judecă adultul. Cererea se repetă o singură dată, la prima lecție.
 

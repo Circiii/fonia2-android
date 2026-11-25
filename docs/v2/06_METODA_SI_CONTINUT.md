@@ -126,7 +126,7 @@ Adaptarea nu schimbă niciodată treapta; treapta o schimbă doar `Progression` 
 
 ### 3.1 Ce există azi (`fonia-content`)
 
-- `sounds.json`: listă de 9 obiecte cu `id`, `letter`, `graphemes`, `hero {name, picture, says, story, chapters{13 chei}}`, `viseme`, `detector`, `voiced`, `isAffricate`, `typicalByAge`, `parentNote`, `how[4]`, `fixes[{when, tip}]`, `warmups[3]`, `syllables {direct, inverse, between, repeated}`, `words {initial, medial, final, clusters}` (fiecare cuvânt: `text`, `picture`, `otherSounds`, `clusters`, `namable`, `recorded`), `sentences`, `twisters[{text, folk}]`, `contrasts[{with, pairs[{a, b, spoken}]}]`, `retell`, `describe`, `missions`.
+- `sounds.json`: listă de 9 obiecte cu `id`, `letter`, `graphemes`, `hero {name, picture, says, story, chapters{13 chei}}`, `viseme`, `detector`, `voiced`, `isAffricate`, `parentNote`, `how[4]`, `fixes[{when, tip}]`, `warmups[3]`, `syllables {direct, inverse, between, repeated}`, `words {initial, medial, final, clusters}` (fiecare cuvânt: `text`, `picture`, `otherSounds`, `clusters`, `namable`, `recorded`), `sentences`, `twisters[{text, folk}]`, `contrasts[{with, pairs[{a, b, spoken}]}]`, `retell`, `describe`, `missions`.
 - Acoperire azi: 3–7 cuvinte pe poziție (finalul are 3–5), 3–4 propoziții, 1–2 frământări, 1–3 perechi, 3 misiuni pe sunet. Lipsesc cheile de capitol `listen` și `twister`.
 - `exercises.json` (19 încălziri: `id`, `name`, `say`, `picture`, `pose`, `mode` camera/audio/self, `holdMs`, `reps`, `match`), `coach_plans.json` (pași de așezare și 3 `faults` pe sunet), `listening.json`, `diction.json` (arii, norme de fonație, `finalIWords`, perechi de intonație, texte de ritm și de pauză, 7 teme de vorbit, umpluturi), `english.json` (rămâne neatins în v1).
 - Poze: 184 de fișiere numite după codul emoji (`1f981.png`), descrise în `images/catalog.json`.
@@ -141,7 +141,7 @@ Fișiere: `json/v2/sounds/<id>.json` (unul pe sunet), `items/<id>.json`, `messag
 { "schema": 2, "id": "s", "letter": "S", "graphemes": ["s"],
   "hero": { "name": "Sâsâilă", "picture": "1f40d", "says": "Ssssss",
             "story": "…", "chapters": { "listen": "…", "warmup": "…", "…": "…", "twister": "…", "everyday": "…" } },
-  "voiced": false, "isAffricate": false, "typicalByAge": 5,
+  "voiced": false, "isAffricate": false,
   "howParent": ["Zâmbet larg, dinții aproape.", "Vârful limbii jos, după dinții de jos.", "Aer rece, drept pe mijloc."],
   "tricks": [{ "id": "din-i", "text": "Un «iii» lung, apoi suflă.", "forTherapist": true }],
   "errors": [{ "kind": "Interdental", "sounds": "ca «th»", "seen": "limba între dinți", "toTherapist": false },
@@ -700,7 +700,7 @@ Acordul trebuie să fie în scris, cu lista exercițiilor; pentru o versiune com
 | 10 | Frământările pentru copii | Care merg la 4–6 ani? S/Ș amestecate doar după `pairs`? |
 | 11 | Clipurile (§7.6) | Sunetele izolate, silabele, finalurile „-ci/-gi” |
 | 12 | Cardurile și sfaturile (§9) | Ceva de schimbat în ton sau în conținut? |
-| 13 | Vârstele (`typicalByAge`) și ținta de 3 zile | Le păstrăm? |
+| 13 | Ținta de 3 zile | Vârstele s-au scos la cererea logopedului (25 noiembrie 2026). Ținta o păstrăm? |
 
 **Cum se notează corecturile.** Unealta `tools/review_export.py` scoate o foaie (`review/logoped-<data>.csv` și varianta HTML cu redare) cu coloanele `itemId, text, verdict (ok / schimbă / scoate), notă, cine, data`. `review_import.py` scrie verdictul în `review.status` al fiecărui item (`approved`, `rejected`, `draft`) și păstrează foaia în repo. Un item `rejected` nu ajunge în aplicație (CI). Itemii (V) fără verdict nu intră în sesiuni. Raportul de construire spune câți itemi sunt aprobați și câți în ciornă; aceeași cifră apare, cinstit, în „Despre metodă”.
 

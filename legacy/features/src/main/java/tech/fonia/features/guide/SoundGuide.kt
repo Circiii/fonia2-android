@@ -43,6 +43,7 @@ import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
+import tech.fonia.design.TiedText
 import tech.fonia.design.Palette
 import tech.fonia.design.PracticeSheet
 import tech.fonia.design.StyledButton
@@ -120,8 +121,8 @@ fun SoundGuide(sound: SoundDef, app: AppModel) {
                             FoniaText("Dacă nu iese", style = fHeadline, color = Palette.ink)
                             for (fix in sound.fixes) {
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    FoniaText(fix.`when`.capitalizedFirstLetter, style = fBodyStrong, color = Palette.ink)
-                                    FoniaText(fix.tip, style = fBody, color = Palette.inkSoft)
+                                    TiedText(fix.`when`.capitalizedFirstLetter, style = fBodyStrong, color = Palette.ink)
+                                    TiedText(fix.tip, style = fBody, color = Palette.inkSoft)
                                 }
                             }
                         }
@@ -176,7 +177,7 @@ private fun Steps(lines: List<String>, current: Int, onPick: (Int) -> Unit) {
                         color = if (isCurrent) Palette.buttonLabel else Palette.accentText,
                     )
                 }
-                FoniaText(
+                TiedText(
                     line,
                     Modifier.alignBy(FirstBaseline).weight(1f),
                     style = ui(18, if (isCurrent) UIWeight.semibold else UIWeight.regular, TextRole.body),

@@ -55,8 +55,8 @@ class FoniaUITests : Journeys() {
         reachChildHome()
 
         tap(button("Încălzirea"))
-        assertTrue(waitFor(button("Începem")))
-        assertTrue(exists(button("Exercițiul")))
+        // Each warm-up is its own row that starts it; there is no menu and "Începem" any more.
+        assertTrue(waitFor(buttonStartingWith("Suflăm lumânările")))
     }
 
     @Test
@@ -87,7 +87,7 @@ class FoniaUITests : Journeys() {
 
         for ((door, inside) in listOf(
             "Sunete" to "Sunetele tale",
-            "Încălzirea" to "Începem",
+            "Încălzirea" to "Suflăm lumânările",
             "Cum spun?" to "Cum spun S?",
             "Povești" to "Sâsâilă",
         )) {

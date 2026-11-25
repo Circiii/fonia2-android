@@ -182,6 +182,15 @@ class AdultFlowTests {
         assertEquals(TalkReport.Strength.FINISHED, strength(TalkFocus.FlatPitch))
     }
 
+    @Test
+    fun neverSaysToTheEndOfATakeCutShort() {
+        assertNull(TalkReport.strength(TalkFocus.Time, paceInZone = false, pitchMoved = false, fewerFillers = false, heldTime = false, reachedEnd = false))
+        assertEquals(
+            TalkReport.Strength.PACE,
+            TalkReport.strength(TalkFocus.None, paceInZone = true, pitchMoved = false, fewerFillers = false, heldTime = false, reachedEnd = false),
+        )
+    }
+
     // "ăă" against the person's own talks
 
     private fun minute(count: Int) = FillerSample(count, 60.0)

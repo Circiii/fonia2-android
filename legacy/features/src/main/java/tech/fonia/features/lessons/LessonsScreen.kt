@@ -35,13 +35,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -68,6 +69,8 @@ import tech.fonia.design.Palette
 import tech.fonia.design.PillButtonStyle
 import tech.fonia.design.PracticeWeight
 import tech.fonia.design.PressableStyle
+import tech.fonia.design.QuietButtonStyle
+import tech.fonia.design.Surface
 import tech.fonia.design.RisingPanel
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
@@ -77,6 +80,7 @@ import tech.fonia.design.WideCard
 import tech.fonia.design.WordPicture
 import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
+import tech.fonia.design.fCaption
 import tech.fonia.design.fHeadline
 import tech.fonia.design.practice
 import tech.fonia.design.scene
@@ -92,7 +96,6 @@ import tech.fonia.features.app.AppRoute
 import tech.fonia.features.app.HeaderPage
 import tech.fonia.features.app.PageHeader
 import tech.fonia.features.app.ScenePage
-import tech.fonia.features.app.ScenePanel
 import tech.fonia.features.app.characterCount
 import tech.fonia.features.app.field
 import tech.fonia.features.app.orderedSounds
@@ -129,7 +132,8 @@ private fun CardPage(title: String, content: @Composable ColumnScope.() -> Unit)
 fun UnitCard(unit: CourseUnit, path: PathModel, modifier: Modifier = Modifier) {
     val push = rememberPush()
     StyledButton(onClick = { push(AppRoute.Unit(unit.id)) }, style = PressableStyle(), modifier = modifier) {
-        WideCard(path.scene(unit), unit.title, done = path.doneCount(unit), total = unit.lessons.size, detail = unit.subtitle) {
+        // A child sees the bar fill, never "N din M" (ChildCounts).
+        WideCard(path.scene(unit), unit.title, done = path.doneCount(unit), total = unit.lessons.size, detail = unit.subtitle, showsCount = !path.profile.isChild) {
             UnitArt(unit, Modifier.height(96.dp))
         }
     }
@@ -242,54 +246,33 @@ fun EnglishScreen(path: PathModel) {
     }
 }
 
-/** Încălzirea: a scene, then a panel rising over it where you choose what to warm up and begin. */
+/** Încălzirea: the same scene page as the other doors, then every warm-up as its own row, started with one tap. */
 @Composable
 fun WarmupScreen(path: PathModel, app: AppModel) {
     val unit = path.catalog.warmup
-    var lessonID by rememberSaveable { mutableStateOf<String?>(null) }
-    val lesson = unit.lessons.firstOrNull { it.id == lessonID } ?: unit.lessons.firstOrNull()
-    val density = LocalDensity.current
-    val bottomInset = with(density) { WindowInsets.navigationBars.getBottom(this).toDp() }
-    BoxWithConstraints(Modifier.fillMaxSize().background(Palette.sage)) {
-        // 42% of the page down to the system's navigation area, the status bar included, as on iOS.
-        val sceneHeight = (maxHeight - bottomInset) * 0.42f
-        Column(Modifier.fillMaxSize()) {
-            Box(Modifier.fillMaxWidth().height(sceneHeight).clipToBounds()) {
-                FoniaImage("scene-warmup-tall", Modifier.matchParentSize(), contentScale = ContentScale.Crop)
+    ScenePage(
+        scene = SceneName.warmup,
+        title = "Încălzirea",
+        sentence = "Gura se încălzește, ca un sportiv. Tragi aer pe nas, apoi sufli încet.",
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                Modifier.fillMaxWidth().padding(bottom = 4.dp).semantics(mergeDescendants = true) {},
+                horizontalArrangement = Arrangement.spacedBy(44.dp, Alignment.CenterHorizontally),
+            ) {
+                BreathFigure(MascotPose.inhale, "Inspiri")
+                BreathFigure(MascotPose.exhale, "Sufli")
             }
-            RisingPanel(Modifier.pullUp(24.dp).weight(1f)) {
-                Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.navigationBars)) {
-                    Column(
-                        Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .padding(top = 22.dp, bottom = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(14.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        FoniaText(
-                            "Tragi aer pe nas, apoi sufli încet.",
-                            style = ui(18, UIWeight.medium, TextRole.title3),
-                            color = Palette.ink,
-                            textAlign = TextAlign.Center,
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(44.dp)) {
-                            BreathFigure(MascotPose.inhale, "Inspiri")
-                            BreathFigure(MascotPose.exhale, "Sufli")
+            for (lesson in unit.lessons) key(lesson.id) {
+                StyledButton(onClick = { app.start(lesson, unit) }, style = PressableStyle()) {
+                    CardRow(ArtTileMark.Art(lesson.art), lesson.title, lesson.detail) {
+                        Box(Modifier.size(34.dp).background(Palette.accentSoft, CircleShape).clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
+                            FoniaIconView(FoniaIcon.play, size = 14f, tint = Palette.accentText)
                         }
-                        LessonMenu(unit.lessons, lesson) { lessonID = it.id }
                     }
-                    StyledButton(
-                        onClick = { if (lesson != null) app.start(lesson, unit) },
-                        style = FoniButtonStyle(),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    ) { FoniaText("Începem") }
                 }
             }
         }
-        PageHeader("Încălzirea", Modifier.windowInsetsPadding(WindowInsets.statusBars))
     }
 }
 
@@ -298,64 +281,6 @@ private fun BreathFigure(pose: MascotPose, label: String) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         MascotView(pose, Modifier.size(84.dp, 74.dp))
         FoniaText(label, style = ui(15, UIWeight.regular, TextRole.subheadline), color = Palette.ink)
-    }
-}
-
-/**
- * `Menu { Picker("Exercițiul") }`: a white capsule with the chosen title; a tap opens the list under it, with a tick at
- * the one chosen.
- */
-@Composable
-private fun LessonMenu(lessons: List<Lesson>, chosen: Lesson?, onPick: (Lesson) -> Unit) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    Box {
-        Row(
-            Modifier
-                .background(Palette.sheet, RoundedCornerShape(50))
-                .clickable { open = true }
-                .heightIn(min = 52.dp)
-                .padding(horizontal = 18.dp)
-                .semantics {
-                    contentDescription = "Exercițiul"
-                    stateDescription = chosen?.title ?: ""
-                },
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            FoniaText(chosen?.title ?: "", style = fBodyStrong, color = Palette.ink, maxLines = 1, minimumScaleFactor = 0.8f)
-            FoniaIconView(FoniaIcon.down, size = 14f, tint = Palette.ink)
-        }
-        if (open) {
-            Popup(alignment = Alignment.TopCenter, offset = androidx.compose.ui.unit.IntOffset(0, 0), onDismissRequest = { open = false }, properties = PopupProperties(focusable = true)) {
-                Column(
-                    Modifier
-                        .width(250.dp)
-                        .shadow(18.dp, ContinuousRoundedRectangle(22.dp))
-                        .background(Palette.sheet, ContinuousRoundedRectangle(22.dp))
-                        .padding(vertical = 6.dp),
-                ) {
-                    for (item in lessons) {
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onPick(item)
-                                    open = false
-                                }
-                                .heightIn(min = ChildTarget)
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(Modifier.width(18.dp)) {
-                                if (item.id == chosen?.id) FoniaIconView(FoniaIcon.tick, size = 15f, tint = Palette.ink)
-                            }
-                            FoniaText(item.title, style = fBody, color = Palette.ink)
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -368,7 +293,6 @@ fun PlayScreen(path: PathModel, app: AppModel) {
         scene = SceneName.play,
         title = "Jocuri",
         sentence = "Câteva minute de joacă cu sunetele.",
-        panel = ScenePanel.attached,
         heroHeight = 300.dp,
     ) {
         val cards = buildList {
@@ -453,7 +377,8 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
     } else {
         null
     }
-    val sentence = contrast?.cue ?: unit.subtitle
+    // A sound's page says who teaches it, as a sentence, not a name standing alone.
+    val sentence = contrast?.cue ?: sound?.let { "${it.hero.name} te învață ${it.shortLetter}" } ?: unit.subtitle
     ScenePage(
         scene = path.scene(unit),
         title = unit.title,
@@ -476,11 +401,12 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
                     FoniaLabel("Pune gura la locul ei", FoniaIcon.mirror, 20f)
                 }
             }
-            // The lock is explained once, on the first closed lesson; the rest keep saying what they are (QA 2026-11-21).
-            val firstLocked = unit.lessons.firstOrNull { path.state(it, unit) == LessonState.locked }?.id
-            for ((i, lesson) in unit.lessons.withIndex()) key(lesson.id) {
-                LessonRow(lesson, unit, path, app, explainsLock = lesson.id == firstLocked, modifier = Modifier.staggeredEntrance(i))
+            // The lessons that wait for an adult are gathered under one line instead of each saying the same.
+            val locked = unit.lessons.filter { path.state(it, unit) == LessonState.locked }
+            for ((i, lesson) in unit.lessons.withIndex()) if (lesson !in locked) key(lesson.id) {
+                LessonRow(lesson, unit, path, app, number = i + 1, modifier = Modifier.staggeredEntrance(i))
             }
+            if (locked.isNotEmpty()) LockedRow(unit.sound?.let { path.ownSuccessDots(it) }, push)
             if (contrast != null && contrast.kind != EnglishContrast.Kind.Stress) ModelNotice(app.speech)
         }
     }
@@ -502,7 +428,7 @@ private fun Tools(sound: SoundDef, push: (AppRoute) -> Unit) {
 }
 
 @Composable
-private fun LessonRow(lesson: Lesson, unit: CourseUnit, path: PathModel, app: AppModel, explainsLock: Boolean, modifier: Modifier = Modifier) {
+private fun LessonRow(lesson: Lesson, unit: CourseUnit, path: PathModel, app: AppModel, number: Int, modifier: Modifier = Modifier) {
     val state = path.state(lesson, unit)
     val canOpen = path.canOpen(lesson, unit)
     val card = ContinuousRoundedRectangle(16.dp)
@@ -522,32 +448,71 @@ private fun LessonRow(lesson: Lesson, unit: CourseUnit, path: PathModel, app: Ap
         CardRow(
             ArtTileMark.Art(lesson.art),
             lesson.title,
-            if (state == LessonState.locked && explainsLock) tech.fonia.features.session.OwnSuccess.lockLine(unit.sound?.let { path.ownSuccessEstablished(it) } ?: 0) else lesson.detail,
-            Modifier
-                .then(if (state == LessonState.current) Modifier.border(2.dp, Palette.accent, card) else Modifier)
-                .alpha(if (canOpen) 1f else 0.6f),
-        ) { Trailing(state, canOpen, unit.sound?.let { path.ownSuccessDots(it) } ?: 0) }
+            lesson.detail,
+            Modifier.then(if (state == LessonState.current) Modifier.border(2.dp, Palette.accent, card) else Modifier),
+        ) { Trailing(state, number) }
+    }
+}
+
+/**
+ * One row for every lesson an adult has to open, saying once what opens them and where the adult does it. It says
+ * there are more, never how many: the count is not the child's to carry. Android keeps his own-success dots on it.
+ */
+@Composable
+private fun LockedRow(ownDots: Int?, push: (AppRoute) -> Unit) {
+    Surface(padding = 14.dp) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.size(44.dp).background(Palette.cloud, CircleShape), contentAlignment = Alignment.Center) {
+                    FoniaIconView(FoniaIcon.lock, size = 20f, tint = Palette.ink)
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    FoniaText("Urmează și alte lecții", style = fBodyStrong, color = Palette.ink)
+                    FoniaText("Se deschid după ce te ascultă un adult.", style = fCaption, color = Palette.inkSoft)
+                }
+                if (ownDots != null) OwnDots(ownDots)
+            }
+            StyledButton(
+                onClick = { push(AppRoute.Settings) },
+                style = QuietButtonStyle(Palette.accentText),
+                modifier = Modifier.padding(start = 44.dp).semantics { onClick(label = "Adultul ascultă sunetul și deschide lecțiile", action = null) },
+            ) { FoniaText("Pentru adult") }
+        }
+    }
+}
+
+/** Opened by his own success: one dot per good plain sound, of five. */
+@Composable
+private fun OwnDots(ownDots: Int) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        modifier = Modifier.semantics { stateDescription = tech.fonia.features.session.OwnSuccess.spokenDots(ownDots) },
+    ) {
+        repeat(tech.fonia.features.session.OwnSuccess.TARGET) { i ->
+            Box(Modifier.size(8.dp).background(if (i < ownDots) Palette.progress else Palette.progressTrack, CircleShape))
+        }
     }
 }
 
 @Composable
-private fun Trailing(state: LessonState, canOpen: Boolean, ownDots: Int = 0) {
+private fun Trailing(state: LessonState, number: Int) {
     when (state) {
         LessonState.done -> DoneDot(true)
         LessonState.current -> Box(Modifier.size(34.dp).background(Palette.accent, CircleShape), contentAlignment = Alignment.Center) {
             FoniaIconView(FoniaIcon.play, size = 16f, tint = Palette.buttonLabel)
         }
-        // Opened by his own success: one dot per good plain sound, of five.
-        LessonState.locked -> androidx.compose.foundation.layout.Row(
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(3.dp),
-            modifier = Modifier.semantics { stateDescription = tech.fonia.features.session.OwnSuccess.spokenDots(ownDots) },
+        // Locked lessons are gathered in [LockedRow]; none reaches here.
+        LessonState.locked -> Unit
+        // The lesson's place in the unit, on a soft disc: a number, not an empty circle that reads as a choice.
+        LessonState.later -> Box(
+            Modifier.size(28.dp).background(Palette.cloud, CircleShape).clearAndSetSemantics {},
+            contentAlignment = Alignment.Center,
         ) {
-            repeat(tech.fonia.features.session.OwnSuccess.TARGET) { i ->
-                Box(Modifier.size(8.dp).background(if (i < ownDots) Palette.progress else Palette.progressTrack, CircleShape))
-            }
-        }
-        LessonState.later -> Box(Modifier.size(26.dp), contentAlignment = Alignment.Center) {
-            Box(Modifier.size(22.dp).border(2.dp, Palette.ink.copy(alpha = if (canOpen) 0.3f else 0.15f), CircleShape))
+            FoniaText("$number", style = ui(13, UIWeight.bold, TextRole.caption), color = Palette.inkSoft)
         }
     }
 }

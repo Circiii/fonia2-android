@@ -45,7 +45,6 @@ data class SoundContent(
     val hero: Hero,
     val voiced: Boolean,
     val holdMode: String,
-    val typicalByAge: Int,
     val confusions: List<String>,
     val howParent: List<String>,
     val warmups: List<String>,
