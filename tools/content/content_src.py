@@ -79,7 +79,7 @@ CHAPTER_TEMPLATES = {
 
 SOUNDS = {
     "s": dict(
-        letter="S", graphemes=["s"], voiced=False, holdMode="sustain", typicalByAge=5,
+        letter="S", graphemes=["s"], voiced=False, holdMode="sustain",
         hero=dict(name="Sâsâilă", who="șarpele", emoji="🐍", says="sssss",
                   line="Sâsâilă alunecă prin iarbă: sssss. Sâsâie și tu cu el!",
                   listen="Ascultă bine! Sâsâilă încurcă uneori cuvintele. Îl prinzi?",
@@ -112,7 +112,7 @@ SOUNDS = {
                   "În parc, strigă: sus, sus!", "Numără pașii până la ușă: un pas, doi pași."],
     ),
     "ș": dict(
-        letter="Ș", graphemes=["ș"], voiced=False, holdMode="sustain", typicalByAge=5,
+        letter="Ș", graphemes=["ș"], voiced=False, holdMode="sustain",
         hero=dict(name="Șușu", who="trenulețul", emoji="🚂", says="șșșș",
                   line="Trenulețul Șușu pleacă la drum: șșșș! Suflă și tu, ca trenul.",
                   listen="Ascultă bine! Trenulețul Șușu încurcă uneori cuvintele. Îl prinzi?",
@@ -145,7 +145,7 @@ SOUNDS = {
                   "În mașină, numărați mașinile.", "Închide ușa și spune: ușa!", "La baie: fac duș!"],
     ),
     "z": dict(
-        letter="Z", graphemes=["z"], voiced=True, holdMode="sustain", typicalByAge=5,
+        letter="Z", graphemes=["z"], voiced=True, holdMode="sustain",
         hero=dict(name="Zuzu", who="albinuța", emoji="🐝", says="zzzz",
                   line="Albinuța Zuzu zboară din floare în floare: zzzz! Palma pe gât și bâzâie cu ea.",
                   listen="Ascultă bine! Albinuța Zuzu încurcă uneori cuvintele. O prinzi?",
@@ -178,7 +178,7 @@ SOUNDS = {
                   "Găsiți ceva roz în casă.", "Pe stradă, căutați trecerea de zebră."],
     ),
     "j": dict(
-        letter="J", graphemes=["j"], voiced=True, holdMode="sustain", typicalByAge=5,
+        letter="J", graphemes=["j"], voiced=True, holdMode="sustain",
         hero=dict(name="Vâjâilă", who="vântul", emoji="🌬️", says="jjjj",
                   line="Vântul Vâjâilă suflă printre frunze: jjjj! Palma pe gât și suflă cu el.",
                   listen="Ascultă bine! Vântul Vâjâilă încurcă uneori cuvintele. Îl prinzi?",
@@ -209,7 +209,7 @@ SOUNDS = {
                   "Seara: îmi iau pijamaua!", "La plecare: unde e bagajul?"],
     ),
     "ț": dict(
-        letter="Ț", graphemes=["ț"], voiced=False, holdMode="burst", typicalByAge=5,
+        letter="Ț", graphemes=["ț"], voiced=False, holdMode="burst",
         hero=dict(name="Țuțu", who="șoricelul", emoji="🐭", says="ț-ț-ț",
                   line="Șoricelul Țuțu e mic și iute: ț-ț-ț! Fă și tu ca el, scurt și repede.",
                   listen="Ascultă bine! Șoricelul Țuțu încurcă uneori cuvintele. Îl prinzi?",
@@ -242,7 +242,7 @@ SOUNDS = {
                   "Numără degetele: toți zece!", "Afară e frig? Spune: ce ger, ce gheață!"],
     ),
     "ce": dict(
-        letter="CE", graphemes=["ce", "ci"], voiced=False, holdMode="burst", typicalByAge=5,
+        letter="CE", graphemes=["ce", "ci"], voiced=False, holdMode="burst",
         hero=dict(name="Cici", who="stropitoarea", emoji="💧", says="ci-ci-ci",
                   line="Stropitoarea Cici udă florile: ci-ci-ci! Stropește și tu, scurt, ca ea.",
                   listen="Ascultă bine! Stropitoarea Cici încurcă uneori cuvintele. O prinzi?",
@@ -275,7 +275,7 @@ SOUNDS = {
                   "La masă: ce bun e!", "Arată cinci degete și spune: cinci!"],
     ),
     "ge": dict(
-        letter="GE", graphemes=["ge", "gi"], voiced=True, holdMode="burst", typicalByAge=5,
+        letter="GE", graphemes=["ge", "gi"], voiced=True, holdMode="burst",
         hero=dict(name="Gigel", who="motorașul", emoji="🛵", says="gi-gi-gi",
                   line="Motorașul Gigel pornește: gi-gi-gi! Palma pe gât și pornește-l și tu.",
                   listen="Ascultă bine! Motorașul Gigel încurcă uneori cuvintele. Îl prinzi?",
@@ -307,7 +307,7 @@ SOUNDS = {
                   "Ninge? Spune: ninge!", "Arată un deget și numește-l."],
     ),
     "r": dict(
-        letter="R", graphemes=["r"], voiced=True, holdMode="burst", typicalByAge=5,
+        letter="R", graphemes=["r"], voiced=True, holdMode="burst",
         hero=dict(name="Rică", who="tigrul", emoji="🐯", says="rrr",
                   line="Tigrul Rică mârâie când se joacă: rrr! Mârâie și tu, ca un tigru.",
                   listen="Ascultă bine! Tigrul Rică încurcă uneori cuvintele. Îl prinzi?",
@@ -340,7 +340,7 @@ SOUNDS = {
                   "Spune cuiva: mersi frumos!", "La culcare: noapte bună, somn ușor!"],
     ),
     "l": dict(
-        letter="L", graphemes=["l"], voiced=True, holdMode="sustain", typicalByAge=5,
+        letter="L", graphemes=["l"], voiced=True, holdMode="sustain",
         hero=dict(name="Lalalu", who="leul", emoji="🦁", says="lll",
                   line="Leul Lalalu cântă cu limba sus: la-la-la! Cântă și tu cu el.",
                   listen="Ascultă bine! Leul Lalalu încurcă uneori cuvintele. Îl prinzi?",

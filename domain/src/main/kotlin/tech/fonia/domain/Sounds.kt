@@ -195,11 +195,6 @@ data class SoundDef(
     val voiced: Boolean,
     /** Ț, CE and GE are short: they are counted in bursts, not held. */
     val isAffricate: Boolean,
-    /**
-     * Age by which many children say this sound, from studies on other languages. Shown to parents as orientation only
-     * and never used to judge a child.
-     */
-    val typicalByAge: Int,
     /** What the sound should sound like, for the adult. */
     val parentNote: String,
     val how: List<String>,

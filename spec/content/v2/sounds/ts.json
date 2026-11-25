@@ -90,7 +90,6 @@
  },
  "voiced": false,
  "holdMode": "burst",
- "typicalByAge": 5,
  "confusions": [
   "s",
   "ce"
