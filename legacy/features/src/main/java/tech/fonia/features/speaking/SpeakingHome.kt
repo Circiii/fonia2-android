@@ -3,6 +3,7 @@ package tech.fonia.features.speaking
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,7 +68,9 @@ import tech.fonia.design.FoniaLabel
 import tech.fonia.design.FoniaText
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.PaceChart
+import tech.fonia.design.Dock
 import tech.fonia.design.Palette
+import tech.fonia.design.QuietButtonStyle
 import tech.fonia.design.Radius
 import tech.fonia.design.PillButtonStyle
 import tech.fonia.design.PracticeSheet
@@ -97,7 +100,10 @@ import tech.fonia.domain.SpeechPrompt
 import tech.fonia.dsp.TimeSpan
 import tech.fonia.dsp.heardSpeech
 import tech.fonia.features.app.ActivityIndicator
+import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.DialogAction
+import tech.fonia.features.app.FoniaConfirmationDialog
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.FullScreenCover
 import tech.fonia.features.app.LocalStillMeters
@@ -179,7 +185,13 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
 
                 Heading("Azi")
                 if (todaysPrompt != null) {
-                    TalkRow(ArtTileMark.Art("art-megaphone"), "Un minut pe zi", todaysPrompt.prompt) { talk = Talk(todaysPrompt, step = todaysStep) }
+                    // Today's topic, where it sits on the ladder and how long it takes: one source for the time.
+                    TalkRow(
+                        ArtTileMark.Art("art-megaphone"),
+                        todaysPrompt.title,
+                        "Pasul ${todaysStep + 1} din ${prompts.size} · ${todaysPrompt.shortDuration}",
+                        isNext = true,
+                    ) { talk = Talk(todaysPrompt, step = todaysStep) }
                     LadderRow(todaysStep, prompts.size) {
                         memory = memory.stepBack(prompts.size)
                         memory.save(profile.id, app.preferences)
@@ -267,12 +279,12 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
  */
 private data class Talk(val prompt: SpeechPrompt, val step: Int? = null, val openingOnly: Boolean = false)
 
-/** Where today's topic sits on the ladder, and the way back down a step. */
+/** The way back down a step. Where today's topic sits is said inside its card. */
 @Composable
-private fun LadderRow(step: Int, count: Int, onBack: () -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(start = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-        FoniaText("Pasul ${step + 1} din $count", Modifier.weight(1f), style = fCaption, color = Palette.inkSoft)
-        if (step > 0) {
+private fun LadderRow(step: Int, @Suppress("UNUSED_PARAMETER") count: Int, onBack: () -> Unit) {
+    if (step <= 0) return
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+        run {
             StyledButton(
                 onClick = onBack,
                 style = MiniPillStyle(),
@@ -306,16 +318,23 @@ private fun Heading(title: String) {
 }
 
 @Composable
-private fun TalkRow(tile: ArtTileMark, title: String, detail: String, onClick: () -> Unit) {
+private fun TalkRow(tile: ArtTileMark, title: String, detail: String, isNext: Boolean = false, onClick: () -> Unit) {
     StyledButton(onClick = onClick, style = PressableStyle()) {
-        CardRow(tile, title, detail) { StartMark() }
+        CardRow(tile, title, detail) { StartMark(isNext) }
     }
 }
 
+/** One filled play mark on the page, on today's topic; every other row gets the quiet outline. */
 @Composable
-private fun StartMark() {
-    Box(Modifier.size(32.dp).background(Palette.accent, CircleShape), contentAlignment = Alignment.Center) {
-        FoniaIconView(FoniaIcon.play, size = 14f, tint = Palette.buttonLabel)
+private fun StartMark(isNext: Boolean) {
+    Box(
+        Modifier
+            .size(32.dp)
+            .background(if (isNext) Palette.accent else Palette.sheet, CircleShape)
+            .then(if (isNext) Modifier else Modifier.border(1.5.dp, Palette.accentText, CircleShape)),
+        contentAlignment = Alignment.Center,
+    ) {
+        FoniaIconView(FoniaIcon.play, size = 14f, tint = if (isNext) Palette.buttonLabel else Palette.accentText)
     }
 }
 
@@ -462,13 +481,23 @@ private fun TalkScreen(
         app.scope.launch { runCatching { repository.saveSpeech(record) } }
     }
 
-    fun close() {
+    // Asked before a take under way is thrown away.
+    var confirmsLeaving by remember { mutableStateOf(false) }
+
+    fun leave() {
         speakingAudio.stopPlayback()
-        if (phase == TalkPhase.Report) save()
+        if (phase == TalkPhase.Report || phase == TalkPhase.Feeling) save()
+        // Ends the timer loop of a take under way, so nothing stops or saves it after the page has gone.
+        if (phase == TalkPhase.Talking) phase = TalkPhase.Ready
         app.scope.launch {
             app.audio.shutDown()
             onDone()
         }
+    }
+
+    /** Leaves the talk. A take still being recorded is asked about first; one already heard is kept as it is. */
+    fun close() {
+        if (phase == TalkPhase.Talking) confirmsLeaving = true else leave()
     }
 
     suspend fun stop() {
@@ -563,19 +592,39 @@ private fun TalkScreen(
         }
     }
 
+    FoniaConfirmationDialog(
+        isPresented = confirmsLeaving,
+        onDismiss = { confirmsLeaving = false },
+        title = "Te oprești aici?",
+        message = "Ce ai spus până acum nu se păstrează.",
+        actions = listOf(
+            DialogAction("Mă opresc", ActionRole.Destructive) { leave() },
+            DialogAction("Mai rămân", ActionRole.Cancel),
+        ),
+    )
     Box(Modifier.fillMaxSize()) {
         FieldBackdrop(Field.paper)
         Crossfade(phase, Modifier.windowInsetsPadding(WindowInsets.systemBars), animationSpec = swiftSpring(0.34, 0.08), label = "talk") { shownPhase ->
             when (shownPhase) {
                 TalkPhase.Ready -> Ready(prompt, seconds, openingOnly, showsNervesTip, micOff, startFailed, onClose = { close() }, onStart = { app.scope.launch { start() } })
-                TalkPhase.Talking -> Talking(prompt, elapsed, app) { app.scope.launch { stop() } }
-                TalkPhase.Thinking -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(verticalArrangement = Arrangement.spacedBy(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                TalkPhase.Talking -> Talking(prompt, elapsed, app, onClose = { close() }) { app.scope.launch { stop() } }
+                TalkPhase.Thinking -> Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 8.dp)) {
+                    CloseBar { close() }
+                    Spacer(Modifier.weight(1f))
+                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         ActivityIndicator()
                         FoniaText("Ascult ce ai spus", style = fBodyStrong, color = Palette.inkSoft)
                     }
+                    Spacer(Modifier.weight(1f))
                 }
-                TalkPhase.Feeling -> FeelingStep { value ->
+                TalkPhase.Feeling -> FeelingStep(
+                    onClose = { close() },
+                    onSkip = {
+                        feeling = null
+                        phase = TalkPhase.Report
+                        save()
+                    },
+                ) { value ->
                     feeling = value
                     phase = TalkPhase.Report
                     save()
@@ -713,7 +762,7 @@ private fun NervesTip(showsInFull: Boolean) {
 }
 
 @Composable
-private fun Talking(prompt: SpeechPrompt, elapsed: Int, app: AppModel, onStop: () -> Unit) {
+private fun Talking(prompt: SpeechPrompt, elapsed: Int, app: AppModel, onClose: () -> Unit, onStop: () -> Unit) {
     val levels = app.audio.levels
     val still = LocalStillMeters.current
     Column(
@@ -723,6 +772,7 @@ private fun Talking(prompt: SpeechPrompt, elapsed: Int, app: AppModel, onStop: (
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        CloseBar(onClose)
         Spacer(Modifier.weight(1f))
         Box(Modifier.fillMaxWidth().height(280.dp), contentAlignment = Alignment.Center) {
             VoiceRings(color = FoniTone.neutral.glow, isLive = !still, level = { levels.level }, modifier = Modifier.requiredSize(320.dp))
@@ -745,14 +795,15 @@ private fun Talking(prompt: SpeechPrompt, elapsed: Int, app: AppModel, onStop: (
 }
 
 @Composable
-private fun FeelingStep(onPick: (Int) -> Unit) {
+private fun FeelingStep(onClose: () -> Unit, onSkip: () -> Unit, onPick: (Int) -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        CloseBar(onClose)
         Spacer(Modifier.weight(1f))
         FoniaText("Cum ți s-a părut?", style = fDisplay, color = Palette.ink)
         FoniaText("Întâi spui tu, apoi îți spun și eu.", style = fBody, color = Palette.inkSoft)
@@ -764,6 +815,7 @@ private fun FeelingStep(onPick: (Int) -> Unit) {
                 ) { FoniaText(title) }
             }
         }
+        StyledButton(onClick = onSkip, style = QuietButtonStyle(Palette.ink)) { FoniaText("Sar peste") }
         Spacer(Modifier.weight(1f))
     }
 }
@@ -789,9 +841,11 @@ private fun ReportView(
     onToggleFiller: (Int) -> Unit,
     onDrill: (NextStep) -> Unit,
 ) {
+    Column(Modifier.fillMaxSize()) {
     Column(
         Modifier
-            .fillMaxSize()
+            .weight(1f)
+            .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -809,32 +863,14 @@ private fun ReportView(
             }
         }
 
-        // One main thing to do next: the same talk again, shorter. The rest stays quiet.
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            StyledButton(onClick = onAgain, style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular)) {
-                FoniaText(if (openingOnly) "Încă o dată" else if (takes == 0) "Încă o dată, mai scurt" else "Mai încerc o dată")
-            }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (clip != null && noUm?.worthPlaying != true) {
-                    StyledButton(onClick = { app.scope.launch { app.audio.play(clip) } }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
-                        FoniaLabel("Ascultă-te", FoniaIcon.play, iconSize = 16f)
-                    }
-                }
-                if (drill != null) {
-                    StyledButton(onClick = { onDrill(drill) }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
-                        FoniaLabel("Exercițiul potrivit", FoniaIcon.arrow, iconSize = 16f)
-                    }
-                }
-            }
-        }
-
         if (noUm != null && noUm.worthPlaying) {
             NoUmBlock(noUm, cleanView, playing, onView, onPlay, Modifier.staggeredEntrance(1))
         }
 
         Column(Modifier.staggeredEntrance(2), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             FoniaText("Ritmul", style = fHeadline, color = Palette.ink)
-            PaceChart(
+            // Too little speech for a pace: the sentence says so, and an empty chart would only repeat it.
+            if (report.hasPace) PaceChart(
                 samples = report.paceTimeline,
                 zone = report.paceZone,
                 modifier = Modifier
@@ -882,6 +918,30 @@ private fun ReportView(
         } else if (app.speech.state != tech.fonia.features.app.SpeechHub.State.Ready) {
             ModelNotice(app.speech)
         }
+    }
+    // The one thing to do next waits under the report, where the reading ends.
+    if (report != null) {
+        Dock(Modifier.background(Palette.paper)) {
+            // One main thing to do next: the same talk again, shorter. The rest stays quiet.
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                StyledButton(onClick = onAgain, style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular)) {
+                    FoniaText(if (openingOnly) "Încă o dată" else if (takes == 0) "Încă o dată, mai scurt" else "Mai încerc o dată")
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    if (clip != null && noUm?.worthPlaying != true) {
+                        StyledButton(onClick = { app.scope.launch { app.audio.play(clip) } }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
+                            FoniaLabel("Ascultă-te", FoniaIcon.play, iconSize = 16f)
+                        }
+                    }
+                    if (drill != null) {
+                        StyledButton(onClick = { onDrill(drill) }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
+                            FoniaLabel("Exercițiul potrivit", FoniaIcon.arrow, iconSize = 16f)
+                        }
+                    }
+                }
+            }
+        }
+    }
     }
 }
 
@@ -934,6 +994,8 @@ data class TalkReport(
     val speech: SpeechReport?,
     /** Whisper's verbatim words, kept for „Ascultă-te fără ăăă” so the take is not transcribed twice. */
     val rawTranscript: tech.fonia.speech.Transcript? = null,
+    /** Whether there was speech enough for the pace to mean anything, and so for its chart. */
+    val hasPace: Boolean = true,
 ) {
     data class Detail(val title: String, val sentence: String)
 
@@ -1062,6 +1124,8 @@ data class TalkReport(
                 pitchMoved = summary.speechSeconds >= 30 && pitchSpread >= 2.8,
                 fewerFillers = fillerTrend.isFewer,
                 heldTime = heldTime,
+                // „Până la capăt” only for a take that came close to the time it had.
+                reachedEnd = clip.duration >= (if (target > 0) target else OPENING_SECONDS).toDouble() * 0.8,
             )
 
             val details = mutableListOf<Detail>()
@@ -1091,20 +1155,22 @@ data class TalkReport(
                 transcript = heardText,
                 rawTranscript = raw,
                 speech = speechReport,
+                hasPace = enoughForPace,
             )
         }
 
         /**
          * The first thing that went well and doesn't clash with the one thing to change. When nothing measured stands
-         * out, the effort itself, which is always true of a take that was heard. Never invented praise.
+         * out, the effort itself, when the take went on to near its time. Never invented praise. Null when nothing was
+         * heard, or when nothing measured stands out in a take that stopped well short of its time.
          */
-        fun strength(focus: TalkFocus, paceInZone: Boolean, pitchMoved: Boolean, fewerFillers: Boolean, heldTime: Boolean): String? {
+        fun strength(focus: TalkFocus, paceInZone: Boolean, pitchMoved: Boolean, fewerFillers: Boolean, heldTime: Boolean, reachedEnd: Boolean = true): String? {
             if (focus == TalkFocus.NotHeard) return null
             if (paceInZone && focus != TalkFocus.TooFast && focus != TalkFocus.TooSlow) return Strength.PACE
             if (pitchMoved && focus != TalkFocus.FlatPitch) return Strength.PITCH
             if (fewerFillers && focus != TalkFocus.Hesitations) return Strength.FEWER_FILLERS
             if (heldTime) return Strength.HELD_TIME
-            return Strength.FINISHED
+            return if (reachedEnd) Strength.FINISHED else null
         }
 
         /**
