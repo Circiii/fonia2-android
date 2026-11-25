@@ -551,6 +551,12 @@ class AppModel(
         val left = FullWipe.run(
             listOf(
                 FullWipe.Part("profilurile și încercările") { repository.wipeAll() },
+                FullWipe.Part("înregistrările") {
+                    local?.let { withContext(Dispatchers.IO) { it.recordingFolders.forEach(FullWipe::emptyFolder) } }
+                },
+                FullWipe.Part("copia datelor făcută la o probă") {
+                    local?.let { withContext(Dispatchers.IO) { it.copyFolders.forEach(FullWipe::deleteFolder) } }
+                },
                 FullWipe.Part("jurnalul de exersare") {
                     val log = pilot
                     if (log != null) log.wipe() else local?.let { withContext(Dispatchers.IO) { FullWipe.deleteFolder(it.pilotFolder) } }
@@ -720,6 +726,10 @@ class AppModel(
                         PracticeReminder.cancel(app)
                         listOf("fonia", "fonia_talker").all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }
                     },
+                    // The takes of the store open now, pinned first tries included.
+                    recordingFolders = listOf(File(home, "Fonia/Recordings")),
+                    // A test run's copy stays behind it; it goes too, unless the app runs on it now.
+                    copyFolders = if (testRun) emptyList() else listOf(File(context.noBackupFilesDir, "TestRun")),
                 ),
             )
         }

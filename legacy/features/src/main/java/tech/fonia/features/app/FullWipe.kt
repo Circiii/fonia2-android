@@ -34,6 +34,18 @@ object FullWipe {
         if (folder.exists()) throw IOException("$folder is still there")
     }
 
+    /**
+     * Deletes everything inside [folder] and keeps the folder, which an open store still writes into; throws when
+     * anything is still there. A missing folder is already empty.
+     */
+    fun emptyFolder(folder: File) {
+        if (!folder.exists()) return
+        val items = folder.listFiles() ?: throw IOException("Could not list $folder")
+        items.forEach { it.deleteRecursively() }
+        val after = folder.listFiles() ?: throw IOException("Could not list $folder")
+        if (after.isNotEmpty()) throw IOException("$folder still holds ${after.size} items")
+    }
+
     /** The line under "Nu am putut șterge tot": what is still on the phone. */
     fun leftLine(left: List<String>): String =
         "Au rămas pe telefon: ${left.joinToString(", ")}. Încearcă din nou. Dacă tot nu merge, repornește telefonul și încearcă iar."
@@ -52,4 +64,14 @@ class LocalData(
     val pilotFolder: File,
     /** Clears the app's settings files; false when one could not be written. */
     val clearSettings: () -> Boolean,
+    /**
+     * The audio of the takes, the pinned first tries included. The store empties it with the rows; this goes again,
+     * so the audio goes even when the rows could not. Emptied, not removed: the open store writes into it.
+     */
+    val recordingFolders: List<File> = emptyList(),
+    /**
+     * Copies of the data a test run worked on (`TestRun`: profiles, tries, voice and takes), removed whole. Empty while
+     * the app runs on that copy.
+     */
+    val copyFolders: List<File> = emptyList(),
 )

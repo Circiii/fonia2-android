@@ -20,6 +20,7 @@ import tech.fonia.features.session.VoiceStore
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
+import tech.fonia.store.Recording
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -56,16 +57,33 @@ class FullWipeTests {
     }
 
     @Test
+    fun aFolderAnOpenStoreWritesIntoIsEmptiedAndKept() {
+        val root = Files.createTempDirectory("fonia-wipe-empty").toFile()
+        val folder = File(root, "Fonia/Recordings").apply { mkdirs() }
+        File(folder, "profile/take.m4a").apply { parentFile.mkdirs() }.writeText("take")
+        File(folder, "stray.m4a").writeText("take")
+        FullWipe.emptyFolder(folder)
+        assertTrue(folder.isDirectory)
+        assertEquals(0, folder.listFiles()?.size)
+        FullWipe.emptyFolder(File(root, "never-made"))
+    }
+
+    @Test
     fun theWipeEmptiesEveryStoreAndReportsSettingsThatCouldNotBeCleared() = runBlocking {
         val root = Files.createTempDirectory("fonia-wipe-app").toFile()
         val folders = listOf("Voice", "Check", "Diction", "Reading", "Adaptive").map { File(root, "Fonia/$it") }
         val export = File(root, "cache/export").apply { mkdirs() }
         File(export, "fonia-copil.json").writeText("{}")
+        val recordings = File(root, "Fonia/Recordings")
+        // What a test run left behind: a copy of the database and the voice, and its own takes.
+        val testRun = File(root, "TestRun")
+        File(testRun, "Fonia/Database/fonia.sqlite").apply { parentFile.mkdirs() }.writeText("copy")
+        File(testRun, "Fonia/Recordings/someone/take.m4a").apply { parentFile.mkdirs() }.writeText("take")
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
         var settingsCleared = false
         val app = AppModel(
             content = content,
-            repository = FoniaRepository(FoniaDatabase.inMemory(recordingsDirectory = File(root, "Recordings"))),
+            repository = FoniaRepository(FoniaDatabase.inMemory(recordingsDirectory = recordings)),
             audio = AudioHub(voices = null, backend = NoAudioBackend(null), usesFixtures = true),
             speech = SpeechHub(model = null, scope = scope),
             scope = scope,
@@ -79,6 +97,8 @@ class FullWipeTests {
                 pilotFolder = File(root, "FoniaPilot"),
                 // A settings file that can't be written is said, not hidden.
                 clearSettings = { settingsCleared = true; false },
+                recordingFolders = listOf(recordings),
+                copyFolders = listOf(testRun),
             ),
         )
         val child = Profile(
@@ -92,6 +112,15 @@ class FullWipeTests {
         app.drills.record(child.id, SoundID.S, 0, 1.0)
         File(folders[3], "${child.id}.json").apply { parentFile.mkdirs() }.writeText("{}")
         app.audio.effectsMuted = true
+        // A pinned first try and a later take of the same word, both with their audio on disk.
+        val first = Recording(profileId = child.id, label = "sare", sound = "s", duration = 1.0, pinned = true)
+        val later = Recording(profileId = child.id, label = "sare", sound = "s", duration = 1.0)
+        for (take in listOf(first, later)) {
+            app.repository.recordingFileURL(take).writeText("take")
+            app.repository.addRecording(take)
+        }
+        // A take whose row never got written.
+        File(recordings, "${child.id}/stray.m4a").writeText("take")
 
         val left = app.wipeEverything()
 
@@ -100,6 +129,11 @@ class FullWipeTests {
         assertEquals(null, app.repository.profile(child.id))
         for (folder in folders) assertFalse("$folder", folder.exists())
         assertFalse(export.exists())
+        // Every take's audio is gone, the pinned first try too; the folder the store writes into stays.
+        assertTrue(recordings.isDirectory)
+        assertEquals(0, recordings.walkTopDown().count { it.isFile })
+        assertTrue(app.repository.recordings(child.id).isEmpty())
+        assertFalse(testRun.exists())
         assertTrue(app.checks.history(child.id).isEmpty())
         assertTrue(app.drills.best(child.id, SoundID.S).isEmpty())
         assertTrue(app.voice.dots(child.id).isEmpty())
