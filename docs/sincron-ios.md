@@ -165,12 +165,12 @@ Ce nu s-a făcut în tura asta:
 - **Minute.** O zi cu exerciții sub un minut numără un minut și în grafic, și în totalul din plăcuța „Minute”. Înainte graficul arăta 1 și plăcuța 0.
 - **Fără numere pentru copil.** Bara lecției se citește cu TalkBack în cuvinte („Peste jumătate”), nu în procente. Cardul „Antrenament” nu mai spune „N din M” unui copil. Pe pagina „Vorbit în public”, copilul vede doar durata, fără „Pasul N din M”.
 - **Stări goale.** Înainte de prima lecție, „Progres” arată un singur rând („După prima lecție, aici se adună zilele, stelele și minutele tale.”) în locul celor patru plăcuțe cu 0. Jurnalul spune „Aici apar zilele în care exersezi.”. O zi care n-a venit încă spune „Ziua asta n-a venit încă.”. Raportul antrenorului de vorbit, după prima încercare: „După încă o încercare vezi aici cum se schimbă.”.
+- **Verificare rapidă.** Copilul nu mai vede pe card literele cu verdict de după o verificare, ci „Hai să vedem ce s-a schimbat”, ca pe iOS.
 - **Tranziții.** Foile urcă cu arc, iar paginile de tab alunecă (sărite cu „Elimină animațiile”). Compose ține cont de scara animațiilor din sistem. Nu s-a adăugat nicio animație nouă.
 - `versionCode` 30. „Merge bine așa” și nota din `pacing.json`, ca pe iOS.
 
 Rămas pentru proprietar:
 
 - Pe Android, ușa „Vorbit în public” apare și copilului (pe iOS doar adultului).
-- Cardul „Verificare rapidă” arată copilului abțibildurile cu verdict după o verificare (iOS le ascunde).
 - Raportul pentru logoped: iOS scrie „Fonia nu pune diagnostice”, Android „Fonia doar numără încercările, nu trage concluzii”. Trebuie ales un text.
 - Testele `ArtTests` din `:legacy:design` caută `legacy/content/images`, care nu există în worktree. Nu au legătură cu schimbările de aici.
