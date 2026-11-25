@@ -38,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tech.fonia.design.AmbientMotion
 import tech.fonia.design.FoniaText
 import tech.fonia.design.FoniaTheme
 import tech.fonia.design.LocalReduceMotion
@@ -184,14 +185,17 @@ private fun AppContent(app: AppModel) {
     ProvideTouchFloor(if (profile?.isChild == true) TouchFloor.child else TouchFloor.adult) {
         Box(Modifier.fillMaxSize()) {
             Box(Modifier.fillMaxSize().then(if (covering) Modifier.clearAndSetSemantics {} else Modifier)) {
-                when {
-                    !app.hasLoadedProfiles -> Launching()
-                    app.profiles.isEmpty() -> FirstRunFlow(app)
-                    profile != null -> key(profile.id) {
-                        // `.id(profile.id)`: another profile gets new tabs, a new stack and a new PathModel.
-                        MainTabs(profile, app, showGrownups = showGrownups, onShowGrownups = { showGrownups = it })
+                // Under a lesson the pages stand still, so they don't repaint the screen while it listens.
+                AmbientMotion(running = !covering) {
+                    when {
+                        !app.hasLoadedProfiles -> Launching()
+                        app.profiles.isEmpty() -> FirstRunFlow(app)
+                        profile != null -> key(profile.id) {
+                            // `.id(profile.id)`: another profile gets new tabs, a new stack and a new PathModel.
+                            MainTabs(profile, app, showGrownups = showGrownups, onShowGrownups = { showGrownups = it })
+                        }
+                        else -> WhoView(app, onShowGrownups = { showGrownups = true })
                     }
-                    else -> WhoView(app, onShowGrownups = { showGrownups = true })
                 }
             }
             FullScreenCover(isPresented = covering) {
