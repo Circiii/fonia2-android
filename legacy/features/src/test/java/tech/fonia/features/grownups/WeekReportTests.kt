@@ -7,6 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import tech.fonia.domain.Rung
 import tech.fonia.features.app.index
+import tech.fonia.features.session.WeakJudgeGate
 import tech.fonia.store.Attempt
 import tech.fonia.store.Profile
 import tech.fonia.store.Recording
@@ -368,6 +369,21 @@ class WeekReportTests {
         assertEquals("O singură înregistrare păstrată. La una nu ai spus încă ce ai auzit.", WeekCopy.takesLead(one.sounds[0]))
         val two = build(pairs = listOf(attempt(16, adult = Attempt.Outcome.Good, kept = true), attempt(17, adult = Attempt.Outcome.NotYet, kept = true)))
         assertEquals("Toate cele 2 înregistrări păstrate.", WeekCopy.takesLead(two.sounds[0]))
+    }
+
+    @Test
+    fun theWeakSoundLineShowsOnlyUnderTheirTakes() {
+        // J, GE, CE and Ț: the phone may not hear a good take as good, so the line says the adult's ear counts.
+        for (sound in WeakJudgeGate.sounds) {
+            val week = build(pairs = listOf(attempt(16, sound = sound.rawValue, kept = true)), order = listOf(sound.rawValue))
+            assertTrue(sound.rawValue, WeekCopy.showsWeakSoundMarks(week.sounds, isChild = true))
+            assertFalse(sound.rawValue, WeekCopy.showsWeakSoundMarks(week.sounds, isChild = false))
+            assertTrue(sound.rawValue, WeekCopy.WEAK_SOUND_MARKS.startsWith("La CE, GE, J și Ț "))
+        }
+        assertFalse(WeekCopy.showsWeakSoundMarks(build(pairs = listOf(attempt(16, kept = true))).sounds, isChild = true))
+        // Practice with nothing to hear: no line.
+        assertFalse(WeekCopy.showsWeakSoundMarks(build(pairs = listOf(attempt(16, sound = "j")), order = listOf("j")).sounds, isChild = true))
+        assertTrue(WeekCopy.WEAK_SOUND_MARKS in WeekCopy.everyLine)
     }
 
     @Test

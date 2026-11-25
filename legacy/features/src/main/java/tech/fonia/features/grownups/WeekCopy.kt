@@ -2,6 +2,7 @@ package tech.fonia.features.grownups
 
 import tech.fonia.domain.Plural
 import tech.fonia.features.app.title
+import tech.fonia.features.session.WeakJudgeGate
 import tech.fonia.store.Attempt
 import java.time.Instant
 import java.time.LocalDate
@@ -25,7 +26,14 @@ object WeekCopy {
     /** Under the takes when the switch is off. Said once, with where the switch is, and nothing more. */
     const val KEEPING_OFF = "Înregistrările copiilor nu se păstrează acum. Dacă vrei să le asculți aici, pornește „Păstrează înregistrările copiilor” din Setări."
 
-    const val WHAT_MARKS_DO = "Ce alegi la o înregistrare se vede în „Cum merge” și în raportul pentru logoped. Lecțiile copilului rămân cum sunt."
+    const val WHAT_MARKS_DO = "Ce alegi la o înregistrare se vede în „Cum merge” și în raportul pentru logoped. „Mai lucrăm” îl ține pe copil la lecțiile de acum până când sunetul iese bine în alte două zile."
+
+    /** Only under takes of the sounds in [WeakJudgeGate.sounds], where the phone may not hear a good take as good. */
+    const val WEAK_SOUND_MARKS = "La CE, GE, J și Ț telefonul poate să nu audă bine, așa că urechea ta contează mai mult. „Sună bine” în două zile diferite îl trece pe copil la lecțiile următoare."
+
+    /** [WEAK_SOUND_MARKS] shows to a child's adult when the week has takes to hear of a [WeakJudgeGate] sound. */
+    fun showsWeakSoundMarks(sounds: List<WeekReport.SoundWeek>, isChild: Boolean): Boolean =
+        isChild && sounds.any { week -> week.picked.isNotEmpty() && WeakJudgeGate.sounds.any { it.rawValue == week.sound } }
 
     /** The three newest takes of each sound stay, and the first tries at new words ([tech.fonia.features.session.RecordingPairs]). */
     const val STAYS_HERE = "Înregistrările nu pleacă de pe telefon. Logopedul le poate asculta aici. La fiecare sunet rămân ultimele trei și primele încercări la cuvinte noi."
@@ -121,7 +129,8 @@ object WeekCopy {
 
     /** Every fixed line, for the tests that read all the wording at once. */
     val everyLine: List<String>
-        get() = listOf(TITLE, ROW_DETAIL, EARLIER, LATER, SOUNDS_GOOD, KEEP_WORKING, NO_PRACTICE, KEEPING_OFF, WHAT_MARKS_DO, STAYS_HERE, STOP) +
+        get() = listOf(TITLE, ROW_DETAIL, EARLIER, LATER, SOUNDS_GOOD, KEEP_WORKING, NO_PRACTICE, KEEPING_OFF, WHAT_MARKS_DO, WEAK_SOUND_MARKS,
+            STAYS_HERE, STOP) +
             Attempt.Outcome.entries.map(::phone) +
             listOf(WeekReport.Take.Why.FirstOnWord, WeekReport.Take.Why.LatestOnWord).mapNotNull(::why)
 }
