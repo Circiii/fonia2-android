@@ -35,6 +35,7 @@ import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
+import tech.fonia.store.SessionRecord
 import tech.fonia.store.SoundProgress
 import java.io.File
 import java.nio.file.Files
@@ -98,7 +99,9 @@ class SessionRunTests {
     ): Int {
         val saved = app.repository.soundProgress(profile.id).firstOrNull { it.sound == sound.rawValue }
         val ticket = SessionTicket(focus = SessionFocus.Sound(sound, rung), title = "test", sound = sound)
-        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), now = { on }, zone = zone)
+        // What the session screen reads before a lesson: what an adult said about earlier takes at this rung.
+        val marks = AdultMarks.load(app.repository, profile.id, saved, rung)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), adultMarks = marks, now = { on }, zone = zone)
         play(run, machine, adult = adult, selfRating = selfRating)
         assertEquals(SessionRun.Phase.Finished, run.phase)
         delay(50)
@@ -195,6 +198,42 @@ class SessionRunTests {
         val today = progress.blockHistory.filter { it.endedAt > day(19) }
         assertTrue(today.isNotEmpty())
         assertTrue(today.all { it.total == 6 && it.good == 6 })
+    }
+
+    /** A take of [sound] an adult marked [outcome], said at [at] in a session of its own. */
+    private suspend fun markedTake(app: AppModel, profile: Profile, at: Instant, outcome: Attempt.Outcome, sound: String = "s") {
+        val session = SessionRecord(profileId = profile.id, track = Profile.Track.Ro, sound = sound, focus = "sound:$sound", startedAt = at.minusSeconds(600), endedAt = at.plusSeconds(1800), timeZone = zone)
+        app.repository.addSession(session)
+        app.repository.addAttempt(
+            Attempt(sessionId = session.id, profileId = profile.id, ts = at, exerciseKind = "say", sound = sound, target = "sac", machineOutcome = Attempt.Outcome.Good, adultOutcome = outcome, timeZone = zone),
+        )
+    }
+
+    /** an adult's „Mai lucrăm” voids the good days at its rung up to the take; it never moves the child down */
+    @Test
+    fun anAdultsKeepWorkingVoidsTheEarlierGoodDay() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        app.repository.saveSoundProgress(goodBlockYesterday(profile, rung = Rung.WordsInitial))
+        markedTake(app, profile, at = day(19, hour = 9), outcome = Attempt.Outcome.NotYet)
+        // The good block of the 19th no longer counts, so the 20th is the first good day, and nobody goes down.
+        assertEquals(Rung.WordsInitial.index, session(app, profile, rung = Rung.WordsInitial, on = day(20), machine = Attempt.Outcome.Good))
+        // The 20th and the 21st are the two days.
+        assertEquals(Rung.WordsMedial.index, session(app, profile, rung = Rung.WordsInitial, on = day(21), machine = Attempt.Outcome.Good))
+    }
+
+    /** a „Mai lucrăm” said on a take at another rung doesn't touch this one */
+    @Test
+    fun aKeepWorkingAtAnotherRungDoesNotApply() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val yesterday = goodBlockYesterday(profile, rung = Rung.WordsInitial)
+        val earlier = SoundProgress.Block(rung = Rung.Syllables.index, good = 6, total = 6, endedAt = day(18))
+        app.repository.saveSoundProgress(yesterday.copy(blockHistory = listOf(earlier) + yesterday.blockHistory))
+        markedTake(app, profile, at = day(18, hour = 9), outcome = Attempt.Outcome.NotYet)
+        assertEquals(Rung.WordsMedial.index, session(app, profile, rung = Rung.WordsInitial, on = day(20), machine = Attempt.Outcome.Good))
     }
 
     /** a path the adult opened moves a child past sentences on two good days, with no one asked */

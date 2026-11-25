@@ -1,6 +1,7 @@
 package tech.fonia.domain
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.test.assertEquals
@@ -9,7 +10,7 @@ import kotlin.test.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-// Port of the suite "Progression over two days" in FoniaDomainTests/ProgressionTests.swift: 7 test functions.
+// Port of the suite "Progression over two days" in FoniaDomainTests/ProgressionTests.swift: 7 test functions, plus the Android-only „Mai lucrăm” one.
 
 @DisplayName("Progression over two days")
 class TwoDayProgressionTests {
@@ -58,6 +59,27 @@ class TwoDayProgressionTests {
         for (history in listOf(elsewhere, weak, short)) {
             assertFalse(Progression.hasGoodBlockOnEarlierDay(history, Rung.WordsInitial, now, zone))
         }
+    }
+
+    /** an adult's „Mai lucrăm” voids the good days up to the take it was said on, and that day itself */
+    @Test
+    fun anAdultsKeepWorkingVoidsTheGoodDaysUpToIt() {
+        val history = listOf(
+            BlockResult(Rung.WordsInitial, good = 6, total = 6, endedAt = day(17)),
+            BlockResult(Rung.WordsInitial, good = 6, total = 6, endedAt = day(18)),
+        )
+        val marked = LocalDate.of(2026, 11, 18)
+        // Before the mark the 17th and the 18th counted; after it neither does.
+        assertTrue(Progression.hasGoodBlockOnEarlierDay(history, Rung.WordsInitial, day(20), zone))
+        assertFalse(Progression.hasGoodBlockOnEarlierDay(history, Rung.WordsInitial, day(20), zone, notBefore = marked))
+        // A good day after the mark counts again.
+        val later = history + BlockResult(Rung.WordsInitial, good = 5, total = 6, endedAt = day(19))
+        assertTrue(Progression.hasGoodBlockOnEarlierDay(later, Rung.WordsInitial, day(20), zone, notBefore = marked))
+        // A block on the day of the mark can't move anyone, even with a good day before.
+        assertFalse(Progression.hasGoodBlockOnEarlierDay(history, Rung.WordsInitial, day(18, hour = 19), zone, notBefore = LocalDate.of(2026, 11, 18)))
+        // So the child stays where he is, and is never moved down for it.
+        val stays = DaySpread.Required(earlierGoodDay = Progression.hasGoodBlockOnEarlierDay(history, Rung.WordsInitial, day(20), zone, marked))
+        assertEquals(ProgressionStep.Stay, Progression.afterBlock(correct = 6, state = state, daySpread = stays).step)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package tech.fonia.domain
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
 /** Where one learner stands on one sound. Swift's `var` fields become `val`s; `Progression` returns updated copies. */
@@ -103,11 +104,25 @@ object Progression {
     /** A whole block of six with at least five good. */
     fun isGood(block: BlockResult): Boolean = block.total == blockSize && block.good >= advanceAt
 
-    /** True when a good block on [rung] ended on a calendar day (in [zone]) before the one [now] falls on. */
-    fun hasGoodBlockOnEarlierDay(history: List<BlockResult>, rung: Rung, now: Instant, zone: ZoneId): Boolean {
+    /**
+     * True when a good block on [rung] ended on a calendar day (in [zone]) before the one [now] falls on.
+     *
+     * [notBefore] is the latest day an adult said „Mai lucrăm” on a take at this rung: good blocks that ended on or
+     * before it no longer count, and neither does the block ending [now] when today is that day, so the sound has to
+     * hold on two days after what the adult heard.
+     */
+    fun hasGoodBlockOnEarlierDay(
+        history: List<BlockResult>,
+        rung: Rung,
+        now: Instant,
+        zone: ZoneId,
+        notBefore: LocalDate? = null,
+    ): Boolean {
         val today = now.atZone(zone).toLocalDate()
+        if (notBefore != null && !today.isAfter(notBefore)) return false
         return history.any { block ->
-            block.rung == rung && isGood(block) && block.endedAt < now && block.endedAt.atZone(zone).toLocalDate() != today
+            val day = block.endedAt.atZone(zone).toLocalDate()
+            block.rung == rung && isGood(block) && block.endedAt < now && day != today && (notBefore == null || day.isAfter(notBefore))
         }
     }
 

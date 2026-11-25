@@ -56,12 +56,14 @@ import tech.fonia.design.fHeadline
 import tech.fonia.design.scene
 import tech.fonia.design.swiftSpring
 import tech.fonia.domain.AttemptsSummary
+import tech.fonia.domain.SessionFocus
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaConfirmationDialog
 import tech.fonia.features.app.SessionTicket
 import tech.fonia.features.app.ViewTask
+import tech.fonia.features.app.isChild
 import tech.fonia.store.Profile
 import java.time.Duration
 import java.time.Instant
@@ -116,7 +118,13 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     ViewTask(Unit) {
         if (run != null) return@ViewTask
         val progress = orNull { app.repository.soundProgress(profile.id) }?.firstOrNull { it.sound == ticket.sound?.rawValue }
-        val made = SessionRun(ticket, profile, app, progress, history(), recentListening())
+        val focus = ticket.focus
+        val marks = if (profile.isChild && focus is SessionFocus.Sound) {
+            orNull { AdultMarks.load(app.repository, profile.id, progress, focus.rung) } ?: emptyList()
+        } else {
+            emptyList()
+        }
+        val made = SessionRun(ticket, profile, app, progress, history(), recentListening(), marks)
         made.start()
         run = made
     }

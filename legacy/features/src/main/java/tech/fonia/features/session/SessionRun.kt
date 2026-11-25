@@ -77,6 +77,8 @@ class SessionRun(
     history: AttemptsSummary,
     /** Items the listening blocks of the last runs on this focus played: drawn last ([ListeningVariety]). */
     recentListening: Set<String> = emptySet(),
+    /** What an adult said about earlier takes of the sound at this rung ([AdultMarks.load]). */
+    private val adultMarks: List<AdultMarks.Mark> = emptyList(),
     /** Where the saving runs: the app's lifetime, as a `Task { }` outlives its screen. */
     private val writes: CoroutineScope = app.scope,
     /** The clock and the time zone that date blocks, so the two-day rule can be tested. */
@@ -460,9 +462,11 @@ class SessionRun(
             // Later target blocks still practise this session's rung, so once one block has moved the learner, the
             // rest of the session can't move them again.
             if (state.rung == rungOfSession) {
-                // A child moves up on good blocks from two different days; an adult paces themselves.
+                // A child moves up on good blocks from two different days, counted after the last „Mai lucrăm” an
+                // adult said at this rung; an adult paces themselves.
                 val daySpread = if (profile.isChild) {
-                    DaySpread.Required(earlierGoodDay = Progression.hasGoodBlockOnEarlierDay(earlier, state.rung, endedAt, zone))
+                    val notBefore = AdultMarks.notBefore(adultMarks, state.rung)
+                    DaySpread.Required(earlierGoodDay = Progression.hasGoodBlockOnEarlierDay(earlier, state.rung, endedAt, zone, notBefore))
                 } else {
                     DaySpread.NotRequired
                 }
