@@ -167,7 +167,17 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                     Triple(FoniaIcon.target, Palette.accent, "${path.totalAttempts}") to "Încercări",
                     Triple(FoniaIcon.hourglass, Palette.accent, "${path.totalMinutes}") to Plural.word(path.totalMinutes, Plural.Noun.Minut).capitalizedFirstLetter,
                 )
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Before anything is done the four counts would all read 0, so one calm line says what gathers here.
+                if (path.totalDays == 0) {
+                    StatCard {
+                        FoniaText(
+                            "După prima lecție, aici se adună zilele, stelele și minutele tale.",
+                            Modifier.padding(16.dp),
+                            style = fBody,
+                            color = Palette.inkSoft,
+                        )
+                    }
+                } else Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     for (pair in tiles.chunked(2)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             for ((look, label) in pair) {

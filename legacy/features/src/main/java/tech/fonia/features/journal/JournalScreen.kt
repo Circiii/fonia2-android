@@ -168,8 +168,9 @@ fun JournalScreen(path: PathModel, app: AppModel) {
                     }
                 }
             }
+            // Before the first lesson there is no day to pick yet.
             FoniaText(
-                "Alege o zi ca să vezi ce ai lucrat atunci.",
+                if (path.totalDays > 0) "Alege o zi ca să vezi ce ai lucrat atunci." else "Aici apar zilele în care exersezi.",
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp)
@@ -320,7 +321,7 @@ private fun DaySheet(day: JournalDay, path: PathModel, app: AppModel) {
     ) {
         FoniaText(dayAndMonth(day.date), style = fTitle, color = Palette.ink)
         if (titles.isEmpty() && notes.isEmpty() && missions.isEmpty()) {
-            FoniaText("Nimic în ziua asta.", style = fBody, color = Palette.ink)
+            FoniaText(if (day.date.isAfter(LocalDate.now())) "Ziua asta n-a venit încă." else "Nimic în ziua asta.", style = fBody, color = Palette.ink)
         }
         for (title in titles) {
             Surface(padding = 14.dp) { FoniaText(title, style = fBodyStrong, color = Palette.ink) }
