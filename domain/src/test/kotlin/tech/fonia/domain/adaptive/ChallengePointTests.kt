@@ -105,6 +105,37 @@ class ChallengePointTests {
     }
 
     @Test
+    fun aChildsBlockOnlyThePhoneHeardStaysButTurnsOnKnowledgeOfPerformance() {
+        val outcome = ChallengePoint.afterBlock(ChallengeState(Rung.WordsMedial), of(2), fastAllowed = true, canGoEasier = false)
+        assertEquals(Move.Stay, outcome.move)
+        assertEquals(ChallengePoint.Reason.PhoneAlone, outcome.reason)
+        assertEquals(Step(Rung.WordsMedial), outcome.state.step)
+        assertTrue(outcome.state.kp)
+        // At the easiest step there is nowhere to go anyway.
+        val bottom = ChallengePoint.afterBlock(ChallengeState(Rung.WordsMedial, step = Step(Rung.Isolated)), of(0), fastAllowed = true, canGoEasier = false)
+        assertEquals(ChallengePoint.Reason.AtBottom, bottom.reason)
+        // Harder is the phone's to decide, as moving up a rung is.
+        var state = ChallengeState(Rung.WordsMedial, step = Step(Rung.WordsInitial))
+        state = ChallengePoint.afterBlock(state, of(6), fastAllowed = true, canGoEasier = false).state
+        assertEquals(Move.Harder, ChallengePoint.afterBlock(state, of(6), fastAllowed = true, canGoEasier = false).move)
+        assertEquals(ChallengePoint.Reason.PhoneAlone, ChallengePoint.Reason.fromRawValue("phoneAlone"))
+    }
+
+    @Test
+    fun aFastStepSlowsDownEvenWhenOnlyThePhoneHeardTheBlock() {
+        // Same rung, said normally: a pace change, not a lower rung, so the phone may make it alone.
+        val fast = ChallengeState(Rung.WordsInitial, step = Step(Rung.WordsInitial, fast = true))
+        val slower = ChallengePoint.afterBlock(fast, of(1), fastAllowed = true, canGoEasier = false)
+        assertEquals(Move.Easier, slower.move)
+        assertEquals(ChallengePoint.Reason.BelowHalf, slower.reason)
+        assertEquals(Step(Rung.WordsInitial), slower.state.step)
+        // The next weak block would take the rung down: that waits for an adult.
+        val held = ChallengePoint.afterBlock(slower.state, of(1), fastAllowed = true, canGoEasier = false)
+        assertEquals(ChallengePoint.Reason.PhoneAlone, held.reason)
+        assertEquals(Step(Rung.WordsInitial), held.state.step)
+    }
+
+    @Test
     fun theEasiestStepCanGoNoLower() {
         val bottom = ChallengePoint.afterBlock(ChallengeState(Rung.WordsInitial, step = Step(Rung.Isolated)), of(0), true)
         assertEquals(Move.Stay, bottom.move)

@@ -84,15 +84,16 @@ class AdaptiveRun internal constructor(
 
     /**
      * The block of trial [index] ended with [good] of [total] takes judged good: the engine decides the next block (T2,
-     * T3) and plans the rest again. Null for a block that is not one of the adaptive ones.
+     * T3) and plans the rest again. [canGoEasier] is false for a child's block no adult rated. Null for a block that is
+     * not one of the adaptive ones.
      */
-    fun blockEnded(index: Int, session: Session, good: Int, total: Int): BlockEnd? {
+    fun blockEnded(index: Int, session: Session, good: Int, total: Int, canGoEasier: Boolean = true): BlockEnd? {
         val plan = planned ?: return null
         val trial = session.trials.getOrNull(index) ?: return null
         if (trial.block.kind != SessionBlock.Kind.TargetA || index < plan.firstBlockAt) return null
         val practised = engine.challenge.step.rung
         val items = session.trials.filter { it.block == trial.block }.mapNotNull { it.exercise.itemText }
-        val (decision, remaining) = engine.blockEnded(trial.block.index, BlockTally(good, total), items)
+        val (decision, remaining) = engine.blockEnded(trial.block.index, BlockTally(good, total), items, canGoEasier)
         log(decision)
         rungs = rungs.take(index + 1) + remaining.flatMap { it.itemRungs } + plan.tail.map { null }
         persist()

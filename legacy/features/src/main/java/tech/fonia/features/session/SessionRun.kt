@@ -140,6 +140,9 @@ class SessionRun(
     private var progress: SoundProgress? = progress
     private var blockGood = 0
     private var blockTotal = 0
+
+    /** Takes of this block an adult rated. Only then can the block move a child down. */
+    private var blockRatedByAdult = 0
     private var didStoreSession = false
 
     /** One finish per trial, however many taps and timers race for it. */
@@ -329,6 +332,7 @@ class SessionRun(
         val machineJudged = machine.isVerdict
         val decided = adult ?: (if (machineJudged) machine else (selfRating?.attemptOutcome ?: machine))
         val counts = current?.countsAsAttempt ?: false
+        if (counts && adult != null && !retry) blockRatedByAdult += 1
         if (counts && decided.isVerdict) {
             attempts += 1
             if (decided == Attempt.Outcome.Good) goodAttempts += 1
@@ -463,8 +467,10 @@ class SessionRun(
                     DaySpread.NotRequired
                 }
                 val outcome = OwnSuccess.afterBlock(correct = blockGood, attempted = blockTotal, state = state, daySpread = daySpread)
-                state = outcome.state
-                when (val step = outcome.step) {
+                // Only a person can move a child down: the phone's ear hasn't earned that yet.
+                val phoneAlone = phoneAloneWouldDrop(profile.isChild, blockRatedByAdult, outcome.step)
+                if (!phoneAlone) state = outcome.state
+                when (val step = if (phoneAlone) ProgressionStep.Stay else outcome.step) {
                     is ProgressionStep.Advance -> {
                         updated = updated.copy(rung = step.to.index)
                         movedUpTo = step.to
@@ -482,6 +488,7 @@ class SessionRun(
             // Swift's `defer`.
             blockGood = 0
             blockTotal = 0
+            blockRatedByAdult = 0
         }
     }
 
@@ -490,7 +497,9 @@ class SessionRun(
      * sound's history under the rung it practised, as iOS's target blocks do. The rung itself moves only at the end.
      */
     private fun closeAdaptiveBlock(engine: AdaptiveRun, trial: Trial) {
-        val ended = engine.blockEnded(index, session, good = blockGood, total = blockTotal) ?: return
+        // Only a person can move a child down, here too: a block only the phone heard keeps its step.
+        val canGoEasier = !profile.isChild || blockRatedByAdult > 0
+        val ended = engine.blockEnded(index, session, good = blockGood, total = blockTotal, canGoEasier = canGoEasier) ?: return
         session = session.copy(trials = session.trials.take(index + 1) + ended.remaining)
         val sound = ticket.sound
         if (isReview || sound == null || blockTotal <= 0) return
@@ -599,6 +608,13 @@ class SessionRun(
          */
         fun countsTowardBlock(isChild: Boolean, machineJudged: Boolean, adult: Attempt.Outcome?): Boolean =
             !isChild || machineJudged || adult != null
+
+        /**
+         * A block that would take a child a rung down while no adult rated any of its takes (iOS `phoneAloneWouldDrop`):
+         * the phone alone never moves a child down. An adult, or a child with an adult's ratings in the block, can go down.
+         */
+        fun phoneAloneWouldDrop(isChild: Boolean, ratedByAdult: Int, step: ProgressionStep): Boolean =
+            isChild && ratedByAdult == 0 && step is ProgressionStep.Drop
 
         /** A child is told a part of the lesson is done, never how many came out right. An adult gets the count. */
         fun blockNote(good: Int, total: Int, isChild: Boolean): String = when {

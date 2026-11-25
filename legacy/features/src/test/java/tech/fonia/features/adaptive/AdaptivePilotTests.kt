@@ -210,23 +210,34 @@ class AdaptivePilotTests {
         assertEquals(blocks.size, history.size)
     }
 
-    @Test
-    fun aBadBlockMovesTheRestOfTheSessionOneRungDown() = runBlocking {
-        val app = makeApp()
-        val progress = setUp(app, Rung.WordsMedial)
-        store.update(child.id) { it.copy(enabled = true) }
-        val run = makeRun(app, Rung.WordsMedial, progress)
-        run.start()
+    /** Plays up to the second target block, the first one with [firstBlockMachine] / [firstBlockAdult], the rest good. */
+    private fun playFirstBlock(run: SessionRun, firstBlockMachine: Attempt.Outcome, firstBlockAdult: Attempt.Outcome?) {
         val firstBlock = run.session.trials.first { it.block.kind == SessionBlock.Kind.TargetA }.block
         var guard = 0
         while (run.current?.block != SessionBlock(SessionBlock.Kind.TargetA, 1) && guard++ < 100) {
             val trial = run.current ?: break
             if (trial.countsAsAttempt) {
-                run.finishAttempt(trial.exercise, machine = if (trial.block == firstBlock) Attempt.Outcome.NotYet else Attempt.Outcome.Good, adult = null, take = null)
+                val first = trial.block == firstBlock
+                run.finishAttempt(
+                    trial.exercise,
+                    machine = if (first) firstBlockMachine else Attempt.Outcome.Good,
+                    adult = if (first) firstBlockAdult else null,
+                    take = null,
+                )
             } else {
                 run.advance()
             }
         }
+    }
+
+    @Test
+    fun aBadBlockAnAdultHeardMovesTheRestOfTheSessionOneRungDown() = runBlocking {
+        val app = makeApp()
+        val progress = setUp(app, Rung.WordsMedial)
+        store.update(child.id) { it.copy(enabled = true) }
+        val run = makeRun(app, Rung.WordsMedial, progress)
+        run.start()
+        playFirstBlock(run, Attempt.Outcome.NotYet, firstBlockAdult = Attempt.Outcome.NotYet)
         val initialWords = AdaptiveMaterial(content).primary(SoundID.S, Rung.WordsInitial, emptySet()).exercises.mapNotNull { it.itemText }.toSet()
         val next = run.session.trials.filter { it.block == SessionBlock(SessionBlock.Kind.TargetA, 1) }
         assertEquals(6, next.size)
@@ -234,6 +245,24 @@ class AdaptivePilotTests {
         pilot.flush()
         val decision = pilot.snapshot().adaptive.getValue(child.id.toString()).first { it["kind"] == "block" && it["block"] == 1 }
         assertEquals(listOf("easier", "below50", "wordsInitial", true), listOf(decision["choice"], decision["reason"], decision["rung"], decision["kp"]))
+    }
+
+    @Test
+    fun aBadBlockOnlyThePhoneHeardKeepsAChildsStep() = runBlocking {
+        val app = makeApp()
+        val progress = setUp(app, Rung.WordsMedial)
+        store.update(child.id) { it.copy(enabled = true) }
+        val run = makeRun(app, Rung.WordsMedial, progress)
+        run.start()
+        playFirstBlock(run, Attempt.Outcome.NotYet, firstBlockAdult = null)
+        val medialWords = AdaptiveMaterial(content).primary(SoundID.S, Rung.WordsMedial, emptySet()).exercises.mapNotNull { it.itemText }.toSet()
+        val next = run.session.trials.filter { it.block == SessionBlock(SessionBlock.Kind.TargetA, 1) }
+        assertEquals(6, next.size)
+        // Same words, but now the live view on every take.
+        assertTrue(next.all { it.exercise.itemText in medialWords && it.feedback == FeedbackLevel.Teach })
+        pilot.flush()
+        val decision = pilot.snapshot().adaptive.getValue(child.id.toString()).first { it["kind"] == "block" && it["block"] == 1 }
+        assertEquals(listOf("stay", "phoneAlone", "wordsMedial", true), listOf(decision["choice"], decision["reason"], decision["rung"], decision["kp"]))
     }
 
     @Test

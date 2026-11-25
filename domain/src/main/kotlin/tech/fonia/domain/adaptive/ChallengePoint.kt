@@ -94,6 +94,9 @@ object ChallengePoint {
 
         /** Easier was due, but this is the easiest step. */
         AtBottom("atBottom"),
+
+        /** Easier was due, a rung down, but only the phone heard a child's block: only a person moves a child down. */
+        PhoneAlone("phoneAlone"),
         ;
 
         companion object {
@@ -127,8 +130,11 @@ object ChallengePoint {
         return Move.Stay to Reason.Held
     }
 
-    /** One block ended at [state]'s step: the step of the next block. */
-    fun afterBlock(state: ChallengeState, block: BlockTally, fastAllowed: Boolean): Outcome {
+    /**
+     * One block ended at [state]'s step: the step of the next block. With [canGoEasier] false (a child's block no adult
+     * rated) a block under half keeps its rung, as `SessionRun` does; a fast step still slows down.
+     */
+    fun afterBlock(state: ChallengeState, block: BlockTally, fastAllowed: Boolean, canGoEasier: Boolean = true): Outcome {
         val (wanted, reason) = decide(state.sinceMove, block)
         if (reason == Reason.TooFewTakes) return Outcome(state, Move.Stay, reason, block)
         val steps = steps(state.ceiling, fastAllowed)
@@ -143,6 +149,9 @@ object ChallengePoint {
         return when (wanted) {
             Move.Easier -> if (at <= 0) {
                 Outcome(state.copy(sinceMove = emptyList(), recent = recent, kp = kp), Move.Stay, Reason.AtBottom, block)
+            } else if (!canGoEasier && steps[at - 1].rung != state.step.rung) {
+                // Slowing down on the same rung is only a pace change, so the phone may make it alone.
+                Outcome(state.copy(sinceMove = emptyList(), recent = recent, kp = kp), Move.Stay, Reason.PhoneAlone, block)
             } else {
                 Outcome(state.copy(step = steps[at - 1], sinceMove = emptyList(), recent = recent, kp = kp), Move.Easier, reason, block)
             }

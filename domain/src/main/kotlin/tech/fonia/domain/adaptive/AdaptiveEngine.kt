@@ -181,12 +181,17 @@ class AdaptiveSession(
     /**
      * Block [index] ended with [tally] after practising [items]: the controller decides the next step (T2) and the next
      * feedback (T3), and the blocks still to come are planned again from them. Returns the decision to log and those
-     * blocks.
+     * blocks. [canGoEasier] is false for a child's block no adult rated: only a person moves a child down.
      */
-    fun blockEnded(index: Int, tally: BlockTally, items: Collection<String>): Pair<AdaptiveDecision, List<PlannedBlock>> {
+    fun blockEnded(
+        index: Int,
+        tally: BlockTally,
+        items: Collection<String>,
+        canGoEasier: Boolean = true,
+    ): Pair<AdaptiveDecision, List<PlannedBlock>> {
         sessionTally += tally
         usedItems += items
-        val outcome = ChallengePoint.afterBlock(challenge, tally, fastAllowed)
+        val outcome = ChallengePoint.afterBlock(challenge, tally, fastAllowed, canGoEasier)
         challenge = outcome.state
         if (!isReview) state = state.copy(challenge = challenge)
         val total = planned?.blocks ?: 0

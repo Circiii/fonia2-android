@@ -18,6 +18,7 @@ import tech.fonia.domain.EnglishFocus
 import tech.fonia.domain.Exercise
 import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.FoniaContent
+import tech.fonia.domain.ProgressionStep
 import tech.fonia.domain.Rung
 import tech.fonia.domain.SessionBlock
 import tech.fonia.domain.SessionFocus
@@ -375,15 +376,41 @@ class SessionRunTests {
         assertTrue("rung $rung", rung == -1 || rung == Rung.WordsInitial.index)
     }
 
-    /** real misses drop one rung, once */
+    /** misses an adult heard drop one rung, once */
     @Test
     fun missesDropOnce() = runBlocking {
         val app = makeApp()
         val profile = child()
         app.repository.saveProfile(profile)
         val run = makeRun(app, profile, Rung.WordsInitial)
-        play(run, Attempt.Outcome.NotYet)
+        play(run, Attempt.Outcome.NotYet, adult = Attempt.Outcome.NotYet)
         assertEquals(Rung.Syllables.index, savedRung(app, profile, run))
+    }
+
+    /** the phone alone can't move a child down (iOS `phoneAloneDoesNotDrop`) */
+    @Test
+    fun phoneAloneDoesNotDrop() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val saved = SoundProgress(profileId = profile.id, sound = "s", rung = Rung.Syllables.index)
+        app.repository.saveSoundProgress(saved)
+        val ticket = SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Syllables), title = "test", sound = SoundID.S)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary())
+        play(run, Attempt.Outcome.NotYet)
+        assertEquals(SessionRun.Phase.Finished, run.phase)
+        assertEquals(Rung.Syllables.index, savedRung(app, profile, run))
+    }
+
+    /** only a child's block that no adult rated is kept from dropping; an adult moves themselves down */
+    @Test
+    fun onlyAPersonMovesAChildDown() {
+        val drop = ProgressionStep.Drop(Rung.Syllables)
+        assertTrue(SessionRun.phoneAloneWouldDrop(isChild = true, ratedByAdult = 0, step = drop))
+        assertFalse(SessionRun.phoneAloneWouldDrop(isChild = true, ratedByAdult = 1, step = drop))
+        assertFalse(SessionRun.phoneAloneWouldDrop(isChild = false, ratedByAdult = 0, step = drop))
+        assertFalse(SessionRun.phoneAloneWouldDrop(isChild = true, ratedByAdult = 0, step = ProgressionStep.Stay))
+        assertFalse(SessionRun.phoneAloneWouldDrop(isChild = true, ratedByAdult = 0, step = ProgressionStep.Advance(Rung.WordsInitial)))
     }
 
     /** a second finish for the same trial is ignored */

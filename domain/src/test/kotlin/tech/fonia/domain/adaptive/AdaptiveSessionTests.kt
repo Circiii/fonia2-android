@@ -59,6 +59,19 @@ class AdaptiveSessionTests {
     }
 
     @Test
+    fun aChildsBlockOnlyThePhoneHeardKeepsTheStep() {
+        // Only a person moves a child down: the block still turns on knowledge of performance.
+        val run = engine()
+        run.plan(Fixture.builder.build(request))
+        val (decision, remaining) = run.blockEnded(0, BlockTally(1, 6), emptyList(), canGoEasier = false)
+        assertEquals("stay" to "phoneAlone", decision.choice to decision.reason)
+        assertEquals(Rung.WordsMedial, decision.rung)
+        assertEquals(true, decision.kp)
+        assertTrue(remaining.flatMap { it.itemRungs }.all { it == Rung.WordsMedial })
+        assertEquals(Step(Rung.WordsMedial), run.state.challenge!!.step)
+    }
+
+    @Test
     fun generalizationFadesItsResultsAsTheBlocksGoWell() {
         val saved = SoundAdaptive(setting = ModeSetting.Generalization)
         val run = engine(saved)
