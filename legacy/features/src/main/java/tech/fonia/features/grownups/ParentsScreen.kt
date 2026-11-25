@@ -179,6 +179,7 @@ fun WeekStrip(days: List<DayActivity>) {
 fun ListSectionScope.profileActivityRows(profile: Profile, app: AppModel, context: Context, push: (Destination) -> Unit) {
     if (profile.isChild) {
         row { DetailRow("Cum merge", "Sunete, încercări, ce a auzit telefonul", onClick = { push(Destination.HowItGoes(profile.id)) }) }
+        row { DetailRow(WeekCopy.TITLE, WeekCopy.ROW_DETAIL, onClick = { push(Destination.Week(profile.id)) }) }
         if (app.arguments.drafts) row { DetailRow("Citire", "Un minut de citit cu voce tare. Tu atingi cuvintele, telefonul măsoară timpul.", onClick = { push(Destination.Reading(profile.id)) }) }
     }
     row { NavigationRow(AudienceCopy.notesTitle(profile.isChild), onClick = { push(Destination.Notes(profile.id)) }) }

@@ -39,6 +39,7 @@ import tech.fonia.face.FaceSource
 import tech.fonia.face.FakeFaceSource
 import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.adaptive.AdaptiveStore
+import tech.fonia.features.grownups.addSampleWeek
 import tech.fonia.features.ml.MlHub
 import tech.fonia.features.pilot.PilotLog
 import tech.fonia.features.pilot.PilotSlot
@@ -164,6 +165,7 @@ data class CustomRun(
  * | | `foniaFace` (string) | the face the mouth coach sees, held still, as `name=value` pairs of `FaceFrame` (`smile=0.8,jawOpen=0.1`) |
  * | `-foniaNoAdultCards` | `foniaNoAdultCards` (boolean) | no first-time card for the adult before a lesson or the mirror |
  * | `-foniaMissionSample` | `foniaMissionSample` (boolean) | a mission answered two days ago and one from yesterday still to ask about |
+ * | `-foniaWeekSample` | `foniaWeekSample` (boolean) | a child with no practice gets two weeks on the first sound, with kept takes, for the week page |
  * | | `foniaMicFile` (string) | a WAV on the device read in real time in place of the microphone, then silence, through the same live path (levels, judge, screens) |
  *
  * The same switches can also come as iOS-style strings in a string-array extra `arguments`
@@ -191,6 +193,8 @@ data class LaunchArguments(
     val hidesAdultCards: Boolean = false,
     /** Debug only (iOS `-foniaMissionSample`): two missions, one answered and one still to ask about. */
     val missionSample: Boolean = false,
+    /** Debug only (iOS `-foniaWeekSample`): two weeks of practice with kept takes, for the week page. */
+    val weekSample: Boolean = false,
     /**
      * The drafts (Bac, "Cuvântul important", the reading probes, the diction training): shown in debug builds, or
      * with `foniaDrafts`; a release build without the flag doesn't show them (iOS `LaunchFlags.showsDrafts`).
@@ -224,6 +228,7 @@ data class LaunchArguments(
                 gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
                 hidesAdultCards = debug && flag("foniaNoAdultCards"),
                 missionSample = debug && flag("foniaMissionSample"),
+                weekSample = debug && flag("foniaWeekSample"),
                 drafts = debug || flag("foniaDrafts"),
                 coachVideo = if (debug) value("foniaCoachVideo") else null,
             )
@@ -461,6 +466,7 @@ class AppModel(
             // And the best result of each diction drill.
             scope.launch { ignoringFailure { drills.keepOnly(voiceIds) } }
             addSampleMissionsIfAsked()
+            addSampleWeekIfAsked()
             jumpIfAsked()
         }
     }
@@ -488,6 +494,15 @@ class AppModel(
     }
 
     private var didAddSampleMissions = false
+
+    /** `foniaWeekSample`: see [addSampleWeek]. */
+    private suspend fun addSampleWeekIfAsked() {
+        if (didAddSampleWeek || !arguments.weekSample || activeProfile == null) return
+        didAddSampleWeek = true
+        ignoringFailure { addSampleWeek() }
+    }
+
+    private var didAddSampleWeek = false
 
     /** `-foniaStart s:wordsInitial`, `-foniaStart en:th`, `-foniaStart dictie:pitch` open a session on launch. */
     private fun jumpIfAsked() {

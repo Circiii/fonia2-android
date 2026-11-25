@@ -140,6 +140,23 @@ Ce nu s-a făcut în tura asta:
 - „Spui odată cu vocea” rămâne la lecțiile de melodie din engleză, ca pe iOS.
 - Textele cu voce înregistrată din `sounds.json` nu s-au schimbat (nici pe iOS).
 
+### Raportul săptămânal pentru adult (25 noiembrie 2026)
+
+Sursa: `docs/port-android.md` §29 din aplicația iOS. Răspunde la §5.5 din `PENTRU_STEFAN.md` (modelul McKechnie din `CERCETARE_DISLALIE.md`: aplicația spune „bine / încă nu”, iar un om ascultă o dată pe săptămână).
+
+- **Pagina „Săptămâna pe scurt”** (`grownups/WeekScreen.kt`, `Destination.Week`). Rând nou sub „Cum merge”, la fiecare copil, în spatele verificării adultului. Se deschide pe săptămâna curentă; săgețile (48 dp) duc la „Săptămâna trecută” și mai înapoi, până la prima săptămână cu exerciții.
+- **Ce arată.** Zilele și minutele săptămânii; pe fiecare sunet litera, treapta, etapa, zilele, minutele, încercările și ce s-a mișcat; apoi cel mult cinci înregistrări păstrate, fiecare cu butonul de ascultat, ziua și ora, ce a zis telefonul și „Sună bine” / „Mai lucrăm” (cel puțin 48 dp).
+- **Alegerea** (`WeekReport.pick`, funcție pură, ca pe iOS): întâi prima și ultima rostire a aceluiași cuvânt, perechea cea mai depărtată în timp; apoi cele la care telefonul a zis „aproape” sau nu a judecat și la care adultul nu a răspuns; apoi orice altă rostire fără răspuns; apoi restul. Cele mai noi întâi, afișate de la cea mai veche. După un răspuns lista nu se reordonează.
+- **Ce scrie un răspuns.** „Sună bine” pune `adultOutcome = Good`; „Mai lucrăm” pune `NotYet` și lasă un „aproape” al adultului cum era. Se vede în „Cum merge” și în raportul PDF. Treapta, blocurile și motorul adaptiv nu se schimbă: un răspuns nu urcă niciodată copilul.
+- **Ascultarea** trece prin playerul existent (`ClipDecoder` + `audio.play`). Nu pornește cât e microfonul deschis (`AudioHub.isListening`, nou) și se oprește la ieșirea din pagină.
+- **Cu „Păstrează înregistrările copiilor” oprit** apare un singur rând sub săptămână, cu locul comutatorului.
+- **Nimic nu pleacă de pe telefon.** Nu s-a adăugat export sau partajare de înregistrări.
+- **Store:** `FoniaRepository.attempts(profileId, fromLocalDay, throughLocalDay)`, cu testul `attemptsBetweenDays`.
+- **Mostra de debug:** `foniaWeekSample` (sau `-foniaWeekSample` în `arguments`) dă unui copil fără exerciții două săptămâni pe primul sunet, cu trei înregistrări făcute din vocile aplicației. Cu `keepChildRecordings` pornit se vede și lista.
+- **Teste:** `WeekReportTests` (aceleași cazuri ca pe iOS).
+
+Diferență față de iOS: Android nu fixează primele încercări la cuvinte noi, deci pe fiecare sunet rămân doar ultimele trei înregistrări. Perechea „prima / cea mai nouă” apare rar, iar săptămânile vechi rămân de obicei fără înregistrări. Rândul de jos spune doar „La fiecare sunet rămân ultimele trei.”.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.

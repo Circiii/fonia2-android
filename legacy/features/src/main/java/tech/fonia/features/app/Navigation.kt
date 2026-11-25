@@ -58,6 +58,9 @@ sealed interface Destination {
 
     data class HowItGoes(val profileID: UUID) : Destination
 
+    /** The week page for the adult: what moved and a few takes to hear. */
+    data class Week(val profileID: UUID) : Destination
+
     data class Notes(val profileID: UUID) : Destination
 
     data class SoundChoice(val profileID: UUID) : Destination
