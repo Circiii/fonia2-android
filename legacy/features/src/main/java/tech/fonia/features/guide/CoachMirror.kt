@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import tech.fonia.design.FoniaText
 import tech.fonia.design.Palette
 import tech.fonia.design.TextRole
@@ -71,6 +72,7 @@ import tech.fonia.facecamera.LipTargetOverlay
 import tech.fonia.facecamera.MirrorColors
 import tech.fonia.facecamera.MouthTracker
 import tech.fonia.features.app.FaceCamera
+import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.model.SoundId
 import kotlin.math.PI
 import kotlin.math.exp
@@ -219,8 +221,18 @@ internal fun SelfView(
 ) {
     val currentMouth by rememberUpdatedState(mouth)
     val currentReduce by rememberUpdatedState(reduceMotion)
-    LaunchedEffect(state) {
-        while (true) withFrameNanos { now -> state.frame(currentMouth, now, currentReduce) }
+    // The UI tests' still meters (`foniaReduceMotion`): the mirror follows ten times a second instead of every frame,
+    // so the screen can be idle between two looks, as a Compose test waits for.
+    val still = LocalStillMeters.current
+    LaunchedEffect(state, still) {
+        if (still) {
+            while (true) {
+                delay(100)
+                state.frame(currentMouth, System.nanoTime(), currentReduce)
+            }
+        } else {
+            while (true) withFrameNanos { now -> state.frame(currentMouth, now, currentReduce) }
+        }
     }
     Box(
         modifier
