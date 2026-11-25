@@ -301,7 +301,7 @@ private fun TopBar(run: SessionRun, onClose: () -> Unit) {
         StyledButton(onClick = onClose, style = ToolButtonStyle(field = run.field), modifier = Modifier.semantics { contentDescription = "Mă opresc" }) {
             FoniaIconView(FoniaIcon.close, size = 18f)
         }
-        SessionBar(run.progressValue, color = Palette.accent, track = Palette.sheet, modifier = Modifier.weight(1f), height = 12.dp)
+        SessionBar(run.progressValue, color = Palette.accent, track = run.field.track, modifier = Modifier.weight(1f), height = 12.dp)
     }
 }
 
