@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tech.fonia.design.CTALabel
+import tech.fonia.design.Dock
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.Foni
 import tech.fonia.design.FoniButtonStyle
@@ -122,10 +123,11 @@ fun CheckResultScreen(run: SessionRun, app: AppModel, onDone: () -> Unit) {
     val moved = QuickCheckRules.movedToGood(before, record)
     Box(Modifier.fillMaxSize()) {
         SceneBackdrop(SceneName.lesson)
+        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
         Column(
             Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars)
+                .weight(1f)
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .wrapContentWidth()
@@ -167,9 +169,27 @@ fun CheckResultScreen(run: SessionRun, app: AppModel, onDone: () -> Unit) {
                 color = Palette.inkSoft,
                 textAlign = TextAlign.Center,
             )
-            val label = first?.let { "Începem cu ${app.content.sound(it).shortLetter}" } ?: "Gata"
-            StyledButton(onClick = onDone, style = FoniButtonStyle(), modifier = Modifier.padding(top = 2.dp)) { CTALabel(label) }
-            Spacer(Modifier.height(8.dp))
+        }
+        // The next step waits at the bottom, where every other page keeps it.
+        Dock(
+            Modifier
+                .fillMaxWidth()
+                .background(Palette.paper)
+                .wrapContentWidth()
+                .widthIn(max = 620.dp),
+        ) {
+            val letter = first?.let { app.content.sound(it).shortLetter }
+            if (letter != null) {
+                FoniaText(
+                    "Lecțiile de acasă vor începe cu $letter.",
+                    Modifier.fillMaxWidth(),
+                    style = fCaption,
+                    color = Palette.inkSoft,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            StyledButton(onClick = onDone, style = FoniButtonStyle()) { CTALabel(letter?.let { "Începem cu $it" } ?: "Gata") }
+        }
         }
     }
 }
