@@ -389,7 +389,7 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (sound != null) Tools(sound, push)
             // The second path next to his lessons: the diction training of this sound.
-            if (sound != null) tech.fonia.features.diction.TrainingCard(sound.id, app, path.profile.id, push)
+            if (sound != null) tech.fonia.features.diction.TrainingCard(sound.id, app, path.profile.id, push, showsCount = !path.profile.isChild)
             // His progress on this sound: the dots of his takes, the first time and today (session/ProgressDots.kt).
             if (sound != null) tech.fonia.features.session.SoundProgressCard(sound.id, app, path.profile.id, showsCount = !path.profile.isChild)
             val pose = contrast?.pose

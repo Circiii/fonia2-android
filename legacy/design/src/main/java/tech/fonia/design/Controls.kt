@@ -605,6 +605,14 @@ fun RungStrip(total: Int, reached: Int, color: Color, track: Color, modifier: Mo
     }
 }
 
+/** The bar in words, as on iOS (`SessionBar.spokenValue`). No percentages: a child hears how far along, not a number to beat. */
+fun sessionBarSpoken(value: Double): String = when {
+    value < 0.01 -> "Abia începem"
+    value < 0.5 -> "Mai puțin de jumătate"
+    value < 0.99 -> "Peste jumătate"
+    else -> "Gata"
+}
+
 /** Session progress with no numbers: one bar that fills. */
 @Composable
 fun SessionBar(value: Double, color: Color, track: Color, modifier: Modifier = Modifier, height: Dp = 8.dp) {
@@ -618,7 +626,7 @@ fun SessionBar(value: Double, color: Color, track: Color, modifier: Modifier = M
             .height(height)
             .semantics {
                 contentDescription = "Cât am lucrat azi"
-                stateDescription = "${(target * 100).toInt()} la sută"
+                stateDescription = sessionBarSpoken(target.toDouble())
             },
     ) {
         val radius = CornerRadius(size.height / 2)

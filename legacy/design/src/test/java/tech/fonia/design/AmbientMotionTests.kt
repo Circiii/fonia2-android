@@ -25,4 +25,12 @@ class AmbientMotionTests {
         assertTrue(held.copy(blink = if (held.blink > 0.5) 0.0 else 1.0).movesFrom(held))
         assertTrue(held.copy(eyes = ParrotPose.Eyes.smile).movesFrom(held))
     }
+
+    @Test
+    fun theSessionBarSpeaksInWords() {
+        assertEquals("Abia începem", sessionBarSpoken(0.0))
+        assertEquals("Mai puțin de jumătate", sessionBarSpoken(0.3))
+        assertEquals("Peste jumătate", sessionBarSpoken(0.7))
+        assertEquals("Gata", sessionBarSpoken(1.0))
+    }
 }
