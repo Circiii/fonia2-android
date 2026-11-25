@@ -16,10 +16,13 @@ class PracticeData(
     val attempts: List<Attempt>,
     /** Newest day first. */
     val notes: List<MoodlessNote>,
+    /** What the adult said about the missions, newest day first. */
+    val missionAnswers: List<MissionCheck> = emptyList(),
 )
 
 /** What the report is drawn from, never with the name in it. */
 suspend fun FoniaRepository.practiceData(profileId: UUID): PracticeData {
+    val missionAnswers = writer.read { db -> fetchMissionAnswers(db, profileId) }
     val contents = writer.read { db ->
         val profile = Profile.fetchOne(db, listOf(profileId)) ?: throw FoniaStoreError.ProfileNotFound()
         ExportDocument.Contents(
@@ -38,5 +41,6 @@ suspend fun FoniaRepository.practiceData(profileId: UUID): PracticeData {
         sessions = contents.sessions,
         attempts = contents.attempts,
         notes = contents.notes,
+        missionAnswers = missionAnswers,
     )
 }

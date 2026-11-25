@@ -473,7 +473,7 @@ class GRDBConventionTests {
     }
 
     private fun describeSchema(db: Database): Map<String, List<String>> =
-        listOf("profile", "soundProgress", "recording", "session", "attempt", "speech", "note").associateWith { table ->
+        listOf("profile", "soundProgress", "recording", "session", "attempt", "speech", "note", "missionCheck").associateWith { table ->
             val columns = db.fetchAll("PRAGMA table_info(\"$table\")") { row ->
                 buildString {
                     append(row.string("name")).append(' ').append(row.string("type"))
@@ -597,6 +597,22 @@ class GRDBConventionTests {
                 "FK profileId -> profile(id) ON DELETE CASCADE",
                 "INDEX note_on_profile_day(profileId, localDay) c",
                 "INDEX sqlite_autoindex_note_1(id) UNIQUE pk",
+            ),
+            "missionCheck" to listOf(
+                "id BLOB NOT NULL PK1",
+                "profileId BLOB NOT NULL",
+                "sessionId BLOB NOT NULL",
+                "sound TEXT NOT NULL",
+                "givenAt DATETIME NOT NULL",
+                "localDay TEXT NOT NULL",
+                "asked BOOLEAN NOT NULL DEFAULT 0",
+                "answer TEXT",
+                "answeredAt DATETIME",
+                "FK profileId -> profile(id) ON DELETE CASCADE",
+                "FK sessionId -> session(id) ON DELETE CASCADE",
+                "INDEX missionCheck_on_profile_givenAt(profileId, givenAt) c",
+                "INDEX sqlite_autoindex_missionCheck_1(id) UNIQUE pk",
+                "INDEX sqlite_autoindex_missionCheck_2(sessionId) UNIQUE u",
             ),
         )
     }

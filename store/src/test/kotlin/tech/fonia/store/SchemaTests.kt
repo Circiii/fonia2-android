@@ -25,6 +25,7 @@ class SchemaTests {
                 "v1-talks",
                 "v1-notes",
                 "v2-session-focus",
+                "v3-mission-checks",
             ),
             Schema.migrator.migrations,
         )
@@ -37,7 +38,7 @@ class SchemaTests {
             Schema.migrator.migrate(queue)
             val completed = queue.readBlocking { db -> Schema.migrator.hasCompletedMigrations(db) }
             assertTrue(completed)
-            for (table in listOf("profile", "soundProgress", "session", "attempt", "recording", "speech", "note")) {
+            for (table in listOf("profile", "soundProgress", "session", "attempt", "recording", "speech", "note", "missionCheck")) {
                 val exists = queue.readBlocking { db -> db.tableExists(table) }
                 assertTrue(exists, "missing table $table")
             }

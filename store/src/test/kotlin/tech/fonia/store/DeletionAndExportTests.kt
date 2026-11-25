@@ -19,7 +19,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 
-private val allTables = listOf("profile", "soundProgress", "session", "attempt", "recording", "speech", "note")
+private val allTables = listOf("profile", "soundProgress", "session", "attempt", "recording", "speech", "note", "missionCheck")
 
 private suspend fun rowCount(store: TestStore, table: String): Int =
     store.database.writer.read { db -> db.fetchLong("SELECT COUNT(*) FROM $table")?.toInt() ?: -1 }
@@ -32,6 +32,9 @@ private suspend fun addFullProfile(store: TestStore, name: String): Pair<Profile
     store.repository.saveProfile(profile)
     store.repository.saveSoundProgress(SoundProgress(profileId = profile.id, sound = "s", rung = 2))
     val session = store.addSession(profile, seed = 11)
+    store.repository.addMission(
+        MissionCheck(profileId = profile.id, sessionId = session.id, sound = "s", givenAt = bucharest(2026, 11, 4, 10, 20), timeZone = Bucharest),
+    )
     val take = store.addTake(profile)
     store.repository.addAttempt(
         Attempt(

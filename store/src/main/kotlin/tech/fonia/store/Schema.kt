@@ -131,6 +131,22 @@ internal object Schema {
                 db.execute("ALTER TABLE \"session\" ADD COLUMN \"focus\" TEXT")
             }
 
+            migrator.registerMigration("v3-mission-checks") { db ->
+                db.execute(
+                    "CREATE TABLE \"missionCheck\" (" +
+                        "\"id\" BLOB PRIMARY KEY NOT NULL, " +
+                        "\"profileId\" BLOB NOT NULL REFERENCES \"profile\"(\"id\") ON DELETE CASCADE, " +
+                        "\"sessionId\" BLOB NOT NULL UNIQUE REFERENCES \"session\"(\"id\") ON DELETE CASCADE, " +
+                        "\"sound\" TEXT NOT NULL, " +
+                        "\"givenAt\" DATETIME NOT NULL, " +
+                        "\"localDay\" TEXT NOT NULL, " +
+                        "\"asked\" BOOLEAN NOT NULL DEFAULT 0, " +
+                        "\"answer\" TEXT, " +
+                        "\"answeredAt\" DATETIME)",
+                )
+                db.execute("CREATE INDEX \"missionCheck_on_profile_givenAt\" ON \"missionCheck\"(\"profileId\", \"givenAt\")")
+            }
+
             return migrator
         }
 }

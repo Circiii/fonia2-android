@@ -434,6 +434,77 @@ data class MoodlessNote(
     }
 }
 
+/**
+ * "Azi, peste zi": a mission a session gave, and what the adult said about it at the next session. Nothing in it is
+ * shown to a child.
+ */
+data class MissionCheck(
+    val id: UUID,
+    val profileId: UUID,
+    /** The session that gave the mission: one mission per session. */
+    val sessionId: UUID,
+    val sound: String,
+    val givenAt: Instant,
+    /** `YYYY-MM-DD`, the day the mission was for. */
+    val localDay: String,
+    /** The question was shown, whatever came of it. It is never shown again. */
+    val asked: Boolean,
+    /** Null when nothing was chosen ("Nu acum"). */
+    val answer: Answer?,
+    val answeredAt: Instant?,
+) {
+    /** Swift's public `init`: [localDay] comes from [givenAt] in [timeZone]. */
+    constructor(
+        id: UUID = UUID.randomUUID(),
+        profileId: UUID,
+        sessionId: UUID,
+        sound: String,
+        givenAt: Instant = Instant.now(),
+        asked: Boolean = false,
+        answer: Answer? = null,
+        answeredAt: Instant? = null,
+        timeZone: ZoneId = ZoneId.systemDefault(),
+    ) : this(id, profileId, sessionId, sound, givenAt, tech.fonia.store.localDay(givenAt, timeZone), asked, answer, answeredAt)
+
+    /** The adult's answer to "A folosit sunetul peste zi?". */
+    enum class Answer(val rawValue: String) {
+        Yes("yes"),
+        Sometimes("sometimes"),
+        NotYet("notYet"),
+        ;
+
+        companion object {
+            fun fromRawValue(rawValue: String): Answer? = entries.firstOrNull { it.rawValue == rawValue }
+        }
+    }
+
+    internal companion object : RecordType<MissionCheck>("missionCheck", listOf("id")) {
+        override fun encode(record: MissionCheck): List<Pair<String, Any?>> = listOf(
+            "id" to record.id,
+            "profileId" to record.profileId,
+            "sessionId" to record.sessionId,
+            "sound" to record.sound,
+            "givenAt" to record.givenAt,
+            "localDay" to record.localDay,
+            "asked" to record.asked,
+            "answer" to record.answer?.rawValue,
+            "answeredAt" to record.answeredAt,
+        )
+
+        override fun decode(row: Row): MissionCheck = MissionCheck(
+            id = row.uuid("id"),
+            profileId = row.uuid("profileId"),
+            sessionId = row.uuid("sessionId"),
+            sound = row.string("sound"),
+            givenAt = row.instant("givenAt"),
+            localDay = row.string("localDay"),
+            asked = row.bool("asked"),
+            answer = row.stringOrNull("answer")?.let { raw -> Answer.fromRawValue(raw) ?: throw SerializationException("Unknown answer $raw") },
+            answeredAt = row.instantOrNull("answeredAt"),
+        )
+    }
+}
+
 // MARK: Nested values as JSON (GRDB's column encoder and decoder, and the export)
 
 internal fun stringsNode(strings: List<String>): JsonNode = JArray(strings.map(::JText))
