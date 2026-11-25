@@ -46,6 +46,11 @@ data class PracticeReport(
     val sounds: List<SoundPart>,
     /** Newest first. */
     val notes: List<Note>,
+    /**
+     * Takes on this week's short lists in „Săptămâna pe scurt” that no adult has answered yet. Always 0 for an adult
+     * practising alone, who has no such page.
+     */
+    val waitingToHear: Int = 0,
 ) {
     /**
      * How many tries got each answer. [none] is "no answer": the phone didn't hear clearly or didn't judge, or the
@@ -171,12 +176,26 @@ data class PracticeReport(
         get() = "${Plural.format(days, Plural.Noun.Zi)} cu exerciții, ${Plural.format(sessions, Plural.Noun.Sedinta)}, " +
             "${Plural.format(minutes, Plural.Noun.Minut)} și ${Plural.format(attempts, Plural.Noun.Incercare)}."
 
+    /** "3 rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt." Null when none wait. */
+    val waitingLine: String?
+        get() = when {
+            waitingToHear <= 0 -> null
+            waitingToHear == 1 -> "O rostire așteaptă să fie ascultată: $WEEK_PATH."
+            else -> {
+                val lastTwo = waitingToHear % 100
+                val takes = if (lastTwo in 1..19) "$waitingToHear rostiri" else "$waitingToHear de rostiri"
+                "$takes așteaptă să fie ascultate: $WEEK_PATH."
+            }
+        }
+
     /** Everything the PDF prints, in order, for the tests and for a quick look. */
     val text: String
         get() {
             val lines = mutableListOf(title)
             lines += facts.map { "${it.first}: ${it.second}" }
-            lines += listOf(summary, HOW_TO_READ_TITLE) + HOW_TO_READ + SOUNDS_TITLE
+            lines += summary
+            waitingLine?.let { lines += it }
+            lines += listOf(HOW_TO_READ_TITLE) + HOW_TO_READ + SOUNDS_TITLE
             for (sound in sounds) {
                 lines += listOf(sound.title, sound.ladder, sound.stageLine)
                 sound.confirmed?.let { lines += it }
@@ -200,6 +219,9 @@ data class PracticeReport(
 
         /** The weeks the chart shows at most, the latest ones. */
         const val CHART_WEEKS = 12
+
+        /** Where the week's takes are heard on the phone: the settings, then the week page. */
+        const val WEEK_PATH = "Setări › ${WeekCopy.TITLE}"
 
         const val HOW_TO_READ_TITLE = "Cum se citește"
 
@@ -309,6 +331,16 @@ data class PracticeReport(
             }
             val notes = (missions + written).sortedByDescending { it.first }.map { it.second }
 
+            // The same short lists the week page shows, for the week the report is made in.
+            val week = WeekReport.build(
+                monday = monday(today),
+                sessions = data.sessions,
+                attempts = data.attempts,
+                recordings = data.recordings,
+                progress = data.soundProgress,
+                order = data.profile.orderedSounds(content).map { it.id.rawValue },
+            )
+
             return PracticeReport(
                 ageBand = data.profile.ageBand,
                 isChild = data.profile.isChild,
@@ -322,6 +354,7 @@ data class PracticeReport(
                 attempts = soundAttempts.size,
                 sounds = sounds,
                 notes = notes,
+                waitingToHear = if (data.profile.isChild) week.listWaiting else 0,
             )
         }
 

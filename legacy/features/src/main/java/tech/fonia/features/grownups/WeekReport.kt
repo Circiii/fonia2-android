@@ -94,6 +94,9 @@ data class WeekReport(
     ) {
         /** Kept takes no adult has answered yet. */
         val waiting: Int get() = kept.count { it.attempt.adultOutcome == null }
+
+        /** Takes on the short list no adult has answered yet. */
+        val listWaiting: Int get() = picked.count { it.attempt.adultOutcome == null }
         val moved: Boolean get() = rungAfter != rungBefore
         val changedStage: Boolean get() = StageNames.name(rungAfter.stage) != StageNames.name(rungBefore.stage)
     }
@@ -101,6 +104,9 @@ data class WeekReport(
     val sunday: LocalDate get() = monday.plusDays(6)
     val isEmpty: Boolean get() = days == 0 && sounds.isEmpty()
     val waiting: Int get() = sounds.sumOf { it.waiting }
+
+    /** Takes on the week's short lists, every sound, that no adult has answered yet. */
+    val listWaiting: Int get() = sounds.sumOf { it.listWaiting }
 
     /**
      * The same report with one attempt's adult verdict changed. The short lists stay as they were, so a row doesn't

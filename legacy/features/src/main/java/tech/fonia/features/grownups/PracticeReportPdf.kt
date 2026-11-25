@@ -226,7 +226,8 @@ object PracticeReportPdf {
                 y += height + 4f
             }
             y += 6f
-            paragraph(report.summary, paint(11.5f, fonts.bold), after = 12f)
+            paragraph(report.summary, paint(11.5f, fonts.bold), after = if (report.waitingLine == null) 12f else 4f)
+            report.waitingLine?.let { paragraph(it, after = 12f) }
         }
 
         /** The box with what the numbers are and aren't. */

@@ -17,6 +17,7 @@ import tech.fonia.store.FoniaRepository
 import tech.fonia.store.MissionCheck
 import tech.fonia.store.MoodlessNote
 import tech.fonia.store.Profile
+import tech.fonia.store.Recording
 import tech.fonia.store.SessionRecord
 import tech.fonia.store.SoundProgress
 import java.io.File
@@ -42,7 +43,7 @@ class PracticeReportTests {
         folder.deleteRecursively()
     }
 
-    private fun moment(day: Int, month: Int = 11) = ZonedDateTime.of(2026, month, day, 17, 0, 0, 0, ZoneOffset.UTC).toInstant()
+    private fun moment(day: Int, month: Int = 11, hour: Int = 17) = ZonedDateTime.of(2026, month, day, hour, 0, 0, 0, ZoneOffset.UTC).toInstant()
 
     private suspend fun child(name: String? = "Ana"): Profile {
         val profile = Profile(
@@ -229,6 +230,71 @@ class PracticeReportTests {
         assertEquals("R: A folosit sunetul peste zi? Uneori.", report.notes.first().text)
         assertTrue(report.text.contains("16 noiembrie 2026\nR: A folosit sunetul peste zi? Uneori."))
         assertFalse(report.text.contains("S: A folosit"))
+    }
+
+    /** A kept take on [day], written the way a lesson writes it: a session, the recording and the attempt. */
+    private suspend fun keptTake(profile: Profile, day: Int, hour: Int = 17, sound: String = "s", word: String, adult: Attempt.Outcome?): Attempt {
+        val ts = moment(day, hour = hour)
+        val session = SessionRecord(
+            profileId = profile.id, track = Profile.Track.Ro, sound = sound, startedAt = ts, endedAt = ts.plusSeconds(60), attempts = 1,
+            timeZone = ZoneOffset.UTC,
+        )
+        repository.addSession(session)
+        val recording = Recording(profileId = profile.id, ts = ts, label = word, sound = sound, duration = 1.0)
+        repository.recordingFileURL(recording).writeBytes(byteArrayOf(1, 2, 3))
+        repository.addRecording(recording, now = ts)
+        val attempt = Attempt(
+            sessionId = session.id, profileId = profile.id, ts = ts, exerciseKind = "repeat", sound = sound, target = word,
+            machineOutcome = Attempt.Outcome.Almost, adultOutcome = adult, recordingId = recording.id, timeZone = ZoneOffset.UTC,
+        )
+        repository.addAttempt(attempt)
+        return attempt
+    }
+
+    /** the report says how many takes on this week's lists wait for the adult, and where to hear them */
+    @Test
+    fun takesWaitingToBeHeard() = runBlocking {
+        val ana = child()
+        // Last week's take doesn't count; this week's lists are the week page's own (`WeekReport.pick`).
+        keptTake(ana, day = 10, sound = "r", word = "rac", adult = null)
+        val first = keptTake(ana, day = 16, word = "sare", adult = null)
+        keptTake(ana, day = 17, word = "sare", adult = Attempt.Outcome.Good)
+        val latest = keptTake(ana, day = 17, hour = 18, word = "soare", adult = null)
+
+        val report = report(ana)
+        assertEquals(2, report.waitingToHear)
+        val line = "2 rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt."
+        assertEquals(line, report.waitingLine)
+        assertTrue(report.text.contains("${report.summary}\n$line"))
+
+        // Once the adult has answered both, the line goes.
+        repository.setAdultOutcome(first.id, Attempt.Outcome.Good)
+        repository.setAdultOutcome(latest.id, Attempt.Outcome.NotYet)
+        val heard = report(ana)
+        assertEquals(0, heard.waitingToHear)
+        assertNull(heard.waitingLine)
+        assertFalse(heard.text.contains("așteaptă"))
+    }
+
+    /** the waiting line counts in plain Romanian, and an adult practising alone never gets it */
+    @Test
+    fun waitingLineWording() = runBlocking {
+        val ana = child()
+        practise(ana, day = 17, tries = listOf(Attempt.Outcome.Good to null))
+        val report = report(ana)
+        assertNull(report.waitingLine)
+        assertEquals("O rostire așteaptă să fie ascultată: Setări › Săptămâna pe scurt.", report.copy(waitingToHear = 1).waitingLine)
+        assertEquals("19 rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt.", report.copy(waitingToHear = 19).waitingLine)
+        assertEquals("20 de rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt.", report.copy(waitingToHear = 20).waitingLine)
+        assertEquals("101 rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt.", report.copy(waitingToHear = 101).waitingLine)
+
+        val adult = Profile(
+            kind = Profile.Kind.Adult, ageBand = Profile.AgeBand.Adult, voiceGroup = Profile.VoiceGroup.Female, color = "cold",
+            targetSounds = listOf("s"), track = Profile.Track.Ro,
+        )
+        repository.saveProfile(adult)
+        keptTake(adult, day = 17, word = "sare", adult = null)
+        assertEquals(0, report(adult).waitingToHear)
     }
 
     /** the journal and the report write the same line */
