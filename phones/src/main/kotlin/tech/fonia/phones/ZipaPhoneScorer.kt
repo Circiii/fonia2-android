@@ -98,9 +98,9 @@ class ZipaPhoneScorer(
             val candidates = ConfusionSets.of(target, config.tapAccepted, wordFinal)
             val alternatives = candidates.map { c -> c.toAlternative().let { if (isolated) it.copy(variants = repeated(it.variants)) else it } }
             val accepted = ConfusionSets.accepted(target, config.tapAccepted, wordFinal).let { if (isolated) repeated(it) else it }
-            candidates to gop.score(posteriors, pronunciation, index, target, config.tapAccepted, alternatives, accepted)
+            Triple(candidates, gop.score(posteriors, pronunciation, index, target, config.tapAccepted, alternatives, accepted), wordFinal)
         }
-        val (candidates, worst) = scored.minBy { it.second.gop }
+        val (candidates, worst, wordFinal) = scored.minBy { it.second.gop }
         val bestCandidate = scored.maxOf { maxOf(it.second.correct.logLikelihood, it.second.best.logLikelihood) }
         val labelCount = pronunciation.phones.size + pronunciation.phones.count { it.wordStart }
         val fit = (bestCandidate - posteriors.bestPathLogProb()) / labelCount
@@ -135,6 +135,7 @@ class ZipaPhoneScorer(
             reliable = reliable,
             targetSpan = span,
             notes = notes,
+            wordFinal = wordFinal,
         )
     }
 

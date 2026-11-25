@@ -8,6 +8,7 @@ import tech.fonia.dsp.SibilantPlace
 import tech.fonia.dsp.SoundOutcome
 import tech.fonia.dsp.TimingEnvelopes
 import tech.fonia.dsp.affricateCues
+import tech.fonia.dsp.affricateOnset
 import tech.fonia.dsp.alignFricatives
 import tech.fonia.dsp.bandFlatness
 import tech.fonia.dsp.dipBetween
@@ -85,6 +86,16 @@ object Features {
     const val UV_NOISE = "uvNoiseDb"
     const val UV_PEAK = "uvPeakHz"
     const val L_TAP = "lTap"
+    /**
+     * How the frication starts (`AffricateOnset`, Android only): trace, and what the opt-in `judge2.affricate` gates
+     * read; not fusion inputs.
+     */
+    const val ONSET_ATTACK = "onsetAttackDb"
+    const val ONSET_SPIKE = "onsetSpikeDb"
+    const val VOICE_LEAD = "voiceLeadMs"
+    const val STOP_ONSET = "stopOnset"
+    /** R/L: 1 when every target letter ends its word (or the rung asks for the final one), 0 when none does; trace. */
+    const val WORD_FINAL = "wordFinal"
     const val BAND_SNR = "cap.bandSnrDb"
     const val BAND_RANGE = "cap.bandRangeDb"
     const val BANDWIDTH = "cap.bandwidthHz"
@@ -130,7 +141,7 @@ internal fun phonemeCount(text: String): Int {
 }
 
 /** For each target letter in a word: how many vowel groups come before it, and whether vowels flank it. */
-internal data class LetterSlot(val vowelGroupsBefore: Int, val intervocalic: Boolean, val vowelGroups: Int)
+internal data class LetterSlot(val vowelGroupsBefore: Int, val intervocalic: Boolean, val vowelGroups: Int, val wordFinal: Boolean = false)
 
 internal fun letterSlots(text: String, letter: Char): List<LetterSlot> {
     val t = romanian(text)
@@ -149,7 +160,7 @@ internal fun letterSlots(text: String, letter: Char): List<LetterSlot> {
         if (c == letter && (i == 0 || t[i - 1] != letter)) {
             val v1 = i > 0 && t[i - 1] in vowels
             val v2 = i + 1 < t.length && t[i + 1] in vowels
-            out.add(LetterSlot(before, v1 && v2, groups))
+            out.add(LetterSlot(before, v1 && v2, groups, wordFinal = i + 1 == t.length || !t[i + 1].isLetter()))
         }
     }
     return out
@@ -270,6 +281,12 @@ internal class Measurer(private val population: PopulationThresholds, private va
                 f[Features.BURST] = c.burstDb
                 f[Features.RISE] = c.riseMs
                 f[Features.VOICE_BAR] = c.voiceBarDb
+                // The onset over the refined ∪ detector span: a burst over weak voiced frication cuts the refined one short.
+                val onset = affricateOnset(env, minOf(start, d.start), maxOf(end, d.end), t.voiced, if (c.gapValid) c.gapMs else Float.NaN)
+                f[Features.ONSET_ATTACK] = onset.attackDb
+                f[Features.ONSET_SPIKE] = onset.spikeDb
+                f[Features.VOICE_LEAD] = onset.leadMs
+                f[Features.STOP_ONSET] = onset.stopOnset
                 if (initial) f[Features.ONSET_FRIC] = onsetFricationMs(env, summary.speechStart - 0.1, end + 0.05)
                 f[Features.S_NESS] = d.sNess
                 val toward = if (t.place == SibilantPlace.S) d.sNess else 1f - d.sNess
@@ -362,6 +379,12 @@ internal class Measurer(private val population: PopulationThresholds, private va
         val observable = slots.count { it.intervocalic }
         f[Features.R_EVENTS] = events.toFloat()
         f[Features.R_OBSERVABLE] = observable.toFloat()
+        f[Features.WORD_FINAL] = when {
+            request.level == Level.Isolated -> 0f
+            request.position == Position.Final || slots.all { it.wordFinal } -> 1f
+            slots.none { it.wordFinal } -> 0f
+            else -> Float.NaN
+        }
         val hasR = romanian(request.text).contains('r')
         if (isR) {
             f[Features.R_TAP] = when {

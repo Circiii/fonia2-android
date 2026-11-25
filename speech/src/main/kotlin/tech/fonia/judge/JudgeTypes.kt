@@ -165,6 +165,8 @@ data class PhoneEvidence(
     val notes: List<String> = emptyList(),
     /** Wall clock of the phone model on this take, microseconds (0 when not measured). */
     val micros: Long = 0,
+    /** Whether the occurrence that speaks for the take ends its word (L in „val”); null when the scorer does not say. */
+    val wordFinal: Boolean? = null,
 )
 
 /** Optional sentence/pair evidence from Whisper. It never proves the sound (it repairs a lateral S). */
