@@ -140,7 +140,7 @@ Ce nu s-a făcut în tura asta:
 - „Spui odată cu vocea” rămâne la lecțiile de melodie din engleză, ca pe iOS.
 - Textele cu voce înregistrată din `sounds.json` nu s-au schimbat (nici pe iOS).
 
-### A cincea tură (25 noiembrie 2026)
+### A cincea tură: verdict adaptiv la automatizare (25 noiembrie 2026)
 
 Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md` §5, punctul 4: la automatizare, verdictul apare doar la circa jumătate din rostiri.
 
