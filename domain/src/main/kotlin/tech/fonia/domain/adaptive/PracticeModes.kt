@@ -112,7 +112,7 @@ object PracticeModes {
  * summary.
  */
 object FeedbackFading {
-    /** "KR pe ~50% din încercări, alese aleator" (T3; Lowe & Buchwald 2017: 50 % gave the best retention, G [77]) ... */
+    /** "KR pe ~50% din încercări, alese aleator" (T3; anchored on Preston et al. 2023, 3 of 6 at the top level) ... */
     const val KR_START = 0.50
 
     /** ... fading to 20 % (P5, J §1.3: "feedback pe 50% → 20% dintre încercări"). */

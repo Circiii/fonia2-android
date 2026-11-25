@@ -6,9 +6,9 @@ Nota adună ce spun studiile deja strânse în hub (`rapoarte/B`, `rapoarte/G`, 
 
 | Principiu | Dovada | Ce cere de la aplicație |
 |---|---|---|
-| **Doza: multă practică, distribuită** | Maas 2019 („Bang for your buck”): mai multă practică și practica distribuită ajută majoritatea copiilor (B [38]); principiile învățării motorii, Maas 2008 (B [41], G [75]) | Sesiuni scurte, zilnice; multe rostiri pe sesiune; repetiție în zile diferite |
+| **Doza: multă practică** | Maas 2019 („Bang for your buck”): mai multă practică ajută; practica comasată a mers mai bine decât cea distribuită la 4 din 6 copii (B [38]; corectat în §6); principiile învățării motorii, Maas 2008 (B [41], G [75]) | Sesiuni scurte, zilnice; multe rostiri pe sesiune; repetiție în zile diferite |
 | **Feedback simplu (corect / nu încă) e suficient acasă** | RCT McKechnie 2020: KR singur de pe tabletă, 3 zile din 4, plus KP de la logoped o zi pe săptămână = rezultate echivalente la 4 luni (G [78]) | Aplicația dă KR; logopedul / părintele dă KP (ce să schimbe) |
-| **Frecvența feedback-ului se reduce pe măsură ce reușește** | Lowe & Buchwald 2017: KR 50 % > 100 % la retenție; Maas 2012: efecte mixte la copii (G [76][77]) | Adaptiv, nu fix: KP la achiziție, KR mai rar la automatizare |
+| **Frecvența feedback-ului se reduce pe măsură ce reușește** | Preston et al. 2023 (Speech Motor Chaining): feedbackul scade la 3 din 6 rostiri pe nivelul de sus; Lowe & Buchwald 2017 nu arată că 50 % bate 100 % (vezi §6); Maas 2012: efecte mixte la copii (G [76][77]) | Adaptiv, nu fix: KP la achiziție; la automatizare verdictul la circa jumătate din rostiri; treptele dintre ele la 100 % |
 | **Dificultatea la punctul de provocare** | Ținta: 60–80 % reușită pe bloc (G §6, de validat cu logopezii) | Motorul `ChallengePoint` (există în `domain/adaptive`) |
 | **Judecătorul automat greșește mai ales pe rostirile CORECTE** | Ahmed 2018: acord ASR–om pe producții corecte doar 47–51 % la copii (față de 71 % la logopezi); Apraxia World a mers totuși, acasă, cu câștiguri semnificative (G [85][86]); MORA 2025 se abține când nu e sigur (G [74]) | Toleranță: mai bine „mai spune o dată” sau „aproape” decât un „greșit” fals; abținere, nu verdict, când e nesigur |
 | **Biofeedback vizual ajută în ședință, generalizează greu** | staRt (McAllister 2017): câștiguri în ședință, fără generalizare fără biofeedback; RCT 2026 susține biofeedback-ul acustic (G §7.2) | Litera vie și curba sunetului ca KP la achiziție; probe fără ajutor vizual ca să vedem generalizarea |
@@ -32,10 +32,18 @@ Cauza la CE și GE, văzută în `cases.csv`: modelul de foneme (ZIPA-small, ~13
 ## 4. Ce urmează pentru ca aplicația chiar să corecteze
 
 1. **Judecătorul:** acceptarea pe rostirile corecte ≥ 85 % la fiecare sunet, cu lauda falsă ≤ 5 %. Pârghiile: grila potrivirii (bias, GOP pe sunet), regula de propoziție (cuvintele auzite de recunoaștere), încălzirea modelului înainte de prima rostire.
-2. **Programul de feedback adaptiv** (G §6 punctul 4): la automatizare, KR doar la ~50 % din rostiri; probe fără ajutor vizual pentru generalizare.
+2. **Programul de feedback adaptiv** (G §6 punctul 4): la automatizare, KR la circa jumătate din rostiri (ancora: Preston et al. 2023, vezi §6); treptele intermediare rămân la 100 %; probe fără ajutor vizual pentru generalizare.
 3. **Logopedul în buclă:** raportul săptămânal pentru adult cu rostirile ascultabile, ca KP-ul să vină de la om (modelul RCT McKechnie).
 4. **Date reale:** pilotul cu copii și acordul părinților. Fără ele, toate cifrele de mai sus sunt despre voci sintetice de adult.
 
 ## 5. După reglajul din 25 noiembrie (v29, `77ba943`)
 
 Configurația livrată, pe aceleași 8 voci: rostiri corecte acceptate **83,3 %** (de la 78,1 %), laude pe greșeli **2,3 %** (de la 2,1 %). R 96 %, L 90 %, S 90 %, Ș 88 %, Z 84 %, Ț 78 %, J 72 %, GE 64 %, **CE 52 %**. CE nu se repară din constante: are nevoie de greșeli reale de CE (pilot) sau de un model de foneme mai bun pe română. Detalii: `spec/fusion/EVAL_v2.md` §v3.
+
+## 6. Corecturi la citări (2026-11-25)
+
+- **Lowe & Buchwald 2017** a testat 32 de adulți tipici pe pseudocuvinte noi (nonwords). Toate frecvențele de feedback, inclusiv 0 %, au dus la învățare. Studiul nu arată că feedbackul la 50 % din încercări e mai bun decât la 100 %. Tabelul din §1 spunea „KR 50 % > 100 % la retenție”; nu e așa.
+- **Ancora pentru „verdict la circa jumătate din rostiri” la automatizare** e Preston et al. 2023 (Speech Motor Chaining): pe nivelul cel mai înalt, feedbackul scade la 3 din 6 rostiri. E un protocol clinic pentru copii, nu un studiu care compară frecvențe.
+- **Treptele intermediare rămân la 100 %.** Nu există dovezi pentru reducerea feedbackului acolo, deci aplicația nu o face.
+- **Maas 2019** („Bang for your buck”) a favorizat practica comasată (massed) la 4 din 6 copii, nu pe cea distribuită. Tabelul din §1 spunea invers. Sesiunile scurte și zilnice rămân, dar nu pe baza acestui studiu.
+- Comentariile din cod care repetau vechea citare (`Curriculum.automatizareVerdicts`, `FeedbackFading.KR_START`) și `PENTRU_STEFAN.md` §5 punctul 4 sunt corectate la fel. Comportamentul nu s-a schimbat.

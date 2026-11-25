@@ -140,10 +140,12 @@ object FeedbackSchedule {
     }
 
     /**
-     * At automatizare the verdict shows on half the spoken takes and the others are only acknowledged. Knowledge of
-     * results on half the trials was retained better than on every trial (Lowe & Buchwald 2017), and the later stages
-     * of motor learning do better with less frequent feedback (Maas et al. 2008). Every take is still judged and
-     * stored: only what the learner is told changes.
+     * At automatizare the verdict shows on half the spoken takes and the others are only acknowledged. Speech Motor
+     * Chaining (Preston et al. 2023) fades feedback to 3 of 6 takes at its top level, and the later stages of motor
+     * learning do better with less frequent feedback (Maas et al. 2008). Lowe & Buchwald 2017 (32 typical adults,
+     * novel nonwords) saw learning at every frequency, 0 % included, so it does not show that half beats every take.
+     * The earlier rungs keep the verdict on every take. Every take is still judged and stored: only what the learner
+     * is told changes.
      *
      * One flag per spoken take of a session, in order, true where the verdict shows. Takes go in pairs and one take of
      * each pair shows it, the first or the second as `seed` draws. The session's first take always shows it. So half
