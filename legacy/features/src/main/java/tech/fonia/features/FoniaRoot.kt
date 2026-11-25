@@ -82,8 +82,12 @@ fun FoniaRoot(launchArguments: Bundle?, platform: FoniaPlatform = FoniaPlatform(
             DebugGallery(arguments.gallery ?: "guri")
             return@FoniaTheme
         }
+        val reduceMotion = LocalReduceMotion.current || arguments.reduceMotion
         CompositionLocalProvider(
-            LocalReduceMotion provides (LocalReduceMotion.current || arguments.reduceMotion),
+            LocalReduceMotion provides reduceMotion,
+            // The motion kit (the living letters, scenes, bursts) reads its own flag, false unless provided: it follows
+            // the same one everywhere, not only inside a session.
+            tech.fonia.designsystem.theme.LocalReduceMotion provides reduceMotion,
             LocalStillMeters provides arguments.reduceMotion,
         ) {
             AppRoot(arguments, platform)
