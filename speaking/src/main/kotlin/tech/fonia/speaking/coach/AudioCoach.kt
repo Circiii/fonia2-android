@@ -99,8 +99,7 @@ class AudioCoach(
     private var lastActiveHop = -1L
     private var phonationHops = 0L
     private val pauses = ArrayList<DoubleArray>()
-    private var goodPauses = 0
-    private var hesitations = 0
+    private val pauseCounts = IntArray(PauseKind.entries.size)
     private val allLevels = DecayingHistogram(-100.0, 0.0, 1.0, Double.POSITIVE_INFINITY)
     private val allPitch = DecayingHistogram(-24.0, 48.0, 0.25, Double.POSITIVE_INFINITY)
 
@@ -226,11 +225,10 @@ class AudioCoach(
         if (active) {
             if (lastActiveHop >= 0) {
                 val gap = h - lastActiveHop - 1
-                if (gap * hopSec >= pace.longPauseSeconds) pauses.add(doubleArrayOf((lastActiveHop + 1) * hopSec, h * hopSec))
-                // Short silences between phrases are good pauses; longer ones (inside the talk) are hesitations.
-                val gapSeconds = gap * hopSec
-                if (gapSeconds >= pace.pauseMinSeconds && gapSeconds <= pace.goodPauseMaxSeconds) goodPauses++
-                else if (gapSeconds > pace.goodPauseMaxSeconds) hesitations++
+                // Every silence inside the talk is counted by its kind; the long ones are kept for the strip.
+                val kind = PauseKind.of(gap * hopSec, spec.pauses)
+                if (kind != null) pauseCounts[kind.ordinal]++
+                if (kind == PauseKind.Long) pauses.add(doubleArrayOf((lastActiveHop + 1) * hopSec, h * hopSec))
                 if (gap < (pace.pauseMinSeconds / hopSec).roundToInt()) phonationHops += gap
             }
             phonationHops++
@@ -417,6 +415,12 @@ class AudioCoach(
     fun summary(): AudioSummary {
         publish()
         val speechSec = speechHops * hopSec
+        // The melody's range over the whole talk: p10 to p90, robust to a stray octave jump at either end.
+        val range = if (voicedHops * hopSec >= spec.pitch.minVoicedSeconds) {
+            allPitch.percentile(0.9) - allPitch.percentile(0.1)
+        } else {
+            Double.NaN
+        }
         return AudioSummary(
             seconds = seconds,
             speechSeconds = speechSec,
@@ -430,14 +434,14 @@ class AudioCoach(
             phonationSeconds = phonationHops * hopSec,
             medianLevelDb = allLevels.percentile(0.5),
             floorDb = floor,
-            pitchSpreadSt = if (voicedHops * hopSec >= spec.pitch.minVoicedSeconds) {
-                (allPitch.percentile(0.9) - allPitch.percentile(0.1)) / 2.56
-            } else {
-                Double.NaN
-            },
+            pitchSpreadSt = range / 2.56,
+            pitchRangeSt = range,
             longPauses = pauses.map { Span(it[0], it[1]) },
-            goodPauses = goodPauses,
-            hesitations = hesitations,
+            pauses = PauseCounts(
+                short = pauseCounts[PauseKind.Short.ordinal],
+                medium = pauseCounts[PauseKind.Medium.ordinal],
+                long = pauseCounts[PauseKind.Long.ordinal],
+            ),
         )
     }
 
@@ -467,12 +471,40 @@ data class AudioSummary(
     val medianLevelDb: Double,
     val floorDb: Double,
     val pitchSpreadSt: Double,
+    /** Long pauses (over [CoachSpec.Pauses.longFromSeconds]) inside the talk, where they were. */
     val longPauses: List<Span>,
-    /** Silences of a breath or a full stop (pauseMinSeconds … goodPauseMaxSeconds). */
-    val goodPauses: Int = 0,
-    /** Silences longer than goodPauseMaxSeconds inside the talk. */
-    val hesitations: Int = 0,
+    /** The melody's range over the talk, p10 to p90 of the voiced hops, in semitones; NaN with too little voice. */
+    val pitchRangeSt: Double = Double.NaN,
+    /** The silences inside the talk, by kind. */
+    val pauses: PauseCounts = PauseCounts(0, 0, 0),
 )
+
+/** How long a silence inside the talk was, in the three kinds of [CoachSpec.Pauses]. */
+enum class PauseKind {
+    Short,
+    Medium,
+    Long,
+    ;
+
+    companion object {
+        /** The kind of a silence of [seconds]; null when it is too short to be a pause. */
+        fun of(seconds: Double, spec: CoachSpec.Pauses): PauseKind? {
+            // Gap lengths are whole hops: a little slack so 20 × 10 ms is 0.2 s.
+            val s = seconds + 1e-9
+            return when {
+                s < spec.countFromSeconds -> null
+                s < spec.mediumFromSeconds -> Short
+                seconds > spec.longFromSeconds + 1e-9 -> Long
+                else -> Medium
+            }
+        }
+    }
+}
+
+/** How many silences of each kind a talk had. */
+data class PauseCounts(val short: Int, val medium: Int, val long: Int) {
+    val total: Int get() = short + medium + long
+}
 
 /** A stretch of the attempt, seconds from its start. */
 data class Span(val start: Double, val end: Double) {

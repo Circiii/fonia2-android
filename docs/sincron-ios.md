@@ -152,6 +152,15 @@ Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md
 - **Pentru adult.** În pagina pentru părinți, sub etapă, la sunetul aflat la automatizare: `AdultCards.AUTOMATIZARE_NOTE`, același text ca pe iOS.
 - **Teste.** `SessionBuilderTests` (ritmul pe cele trei trepte, 3 din 6 în blocurile A și B, prima cu verdict, niciodată trei la rând fără, ritmul de referință). `SessionRunTests` (o sesiune întreagă la propoziții salvează toate rostirile, cu tot cu cele fără verdict, și umple blocurile de șase). `TakeFeedbackTests` (`hidesVerdict`, durata lui „Te-am auzit”, fără contoare la automatizare).
 
+### Antrenorul de vorbit în public (25 noiembrie 2026)
+
+Făcut deodată pe ambele platforme, cu aceleași praguri (`spec/thresholds/speech-coach.json`, `coach-2`) și aceleași texte. Detaliile sunt în `speaking/COACH.md`.
+
+- **Pauzele pe trei feluri.** Scurte (0,13–0,2 s), medii (0,2–1 s), lungi (peste 1 s), numărate în `AudioCoach`. Raportul le arată sub bandă, cu un rând despre ele. Câmpurile vechi `pace.longPauseSeconds` și `pace.goodPauseMaxSeconds` au ieșit din spec.
+- **Obiceiul lui (`SpeakerBaseline`).** Mediana ritmului și a plajei vocii pe ultimele 10 discursuri întregi, de la 3 în sus. Raportul are „Față de obiceiul tău”, iar exercițiul de 30 s ține cont de el. Fiecare discurs salvează acum și `pitchRangeSt`; cele vechi, fără el, contează doar la ritm.
+- **Banda „Pauze și umpluturi” (`FluencyStrip`).** Pauzele lungi și „ăăă” pe lungimea discursului, cu legenda și o propoziție pentru TalkBack. Pe Android, cuvintele de umplutură intră doar din Whisper; ce scrie recunoașterea românească din APK nu intră (`CoachController.fillerMarks`). Pe iOS, Whisper e în aplicație, deci intră și cuvintele.
+- **Teste.** `SpeakerBaselineTest` (aceleași cazuri ca `SpeakerBaselineTests` pe iOS) și `CoachFillersTests`.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.

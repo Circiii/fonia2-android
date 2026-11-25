@@ -263,7 +263,7 @@ class CoachEngineTest {
         }
         assertTrue(Cue.Slower in cues, "cues $cues")
         assertTrue(Cue.Look in cues, "cues $cues")
-        val report = CoachReportBuilder.build(session.timeline(), 24.0, coach.summary(), listOf(Span(5.0, 5.4)), previous = null, spec = spec)
+        val report = CoachReportBuilder.build(session.timeline(), 24.0, coach.summary(), listOf(FillerMark(5.0, 5.4)), previous = null, spec = spec)
         assertTrue(report.moments.any { it.kind == MomentKind.TooFast })
         assertTrue(report.moments.any { it.kind == MomentKind.LookedAway && it.start in 7.0..11.0 })
         assertTrue(report.moments.any { it.kind == MomentKind.Filler })

@@ -118,7 +118,7 @@ internal fun CoachSetup(coach: CoachController, onClose: () -> Unit, onStart: ()
                 FoniaText("Vorbești, te vezi, afli pe loc.", style = ui(18, UIWeight.medium, TextRole.body), color = Palette.nightSoft)
             }
             tech.fonia.speaking.coach.weakestArea(coach.history)?.let { area ->
-                DrillCard(area, coach.history) {
+                DrillCard(area, coach.history, coach.baseline, coach.spec) {
                     coach.drill = area
                     coach.seconds = 30
                     onStart()
@@ -181,18 +181,20 @@ internal fun CoachSetup(coach: CoachController, onClose: () -> Unit, onStart: ()
 }
 
 /**
- * What to practise next, from his last talks: the area with the lowest average, its one tip, how it moved, and a
+ * What to practise next, from his last talks: the area with the lowest average, its one tip (for pace, the way his
+ * habit leans: faster or slower than the middle of the band), his usual pace or pitch range, how it moved, and a
  * 30-second drill where only that area's cues show.
  */
 @Composable
-private fun DrillCard(area: tech.fonia.speaking.coach.Area, history: List<tech.fonia.speaking.coach.CoachScores>, onDrill: () -> Unit) {
-    val tip = when (area) {
-        tech.fonia.speaking.coach.Area.Pace -> tech.fonia.speaking.coach.CoachText.tooFast
-        tech.fonia.speaking.coach.Area.Voice -> tech.fonia.speaking.coach.CoachText.voice
-        tech.fonia.speaking.coach.Area.Gaze -> tech.fonia.speaking.coach.CoachText.gaze
-        tech.fonia.speaking.coach.Area.Calm -> tech.fonia.speaking.coach.CoachText.calm
-        tech.fonia.speaking.coach.Area.Lively -> tech.fonia.speaking.coach.CoachText.lively
-    }.tip
+private fun DrillCard(
+    area: tech.fonia.speaking.coach.Area,
+    history: List<tech.fonia.speaking.coach.CoachScores>,
+    baseline: tech.fonia.speaking.coach.SpeakerBaseline?,
+    spec: tech.fonia.speaking.coach.CoachSpec,
+    onDrill: () -> Unit,
+) {
+    val tip = tech.fonia.speaking.coach.CoachText.drill(area, baseline, spec).tip
+    val habit = tech.fonia.speaking.coach.CoachText.drillHabit(area, baseline)
     val values = history.takeLast(5).mapNotNull { it[area] }
     val moved = if (values.size >= 2) values.last() - values.first() else 0
     Row(
@@ -212,6 +214,7 @@ private fun DrillCard(area: tech.fonia.speaking.coach.Area, history: List<tech.f
                 color = Palette.nightText,
             )
             FoniaText(tip, style = ui(15, UIWeight.medium, TextRole.footnote), color = Palette.nightSoft)
+            habit?.let { FoniaText(it, style = ui(14, UIWeight.medium, TextRole.caption), color = Palette.nightSoft) }
         }
         StyledButton(
             onClick = onDrill,
