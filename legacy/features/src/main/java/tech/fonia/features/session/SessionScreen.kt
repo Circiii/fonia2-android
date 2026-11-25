@@ -29,6 +29,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import tech.fonia.features.home.isWarmup
+import tech.fonia.features.app.shortLetter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -151,6 +153,9 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     var nextStep by remember { mutableStateOf<tech.fonia.features.home.NextStep?>(null) }
     var nextTitle by remember { mutableStateOf<String?>(null) }
     var nextDrill by remember { mutableStateOf<Int?>(null) }
+    var nextSound by remember { mutableStateOf<String?>(null) }
+    // Whether the look for what comes next has finished, so the goodbye waits until it's known there is no more.
+    var nextKnown by remember { mutableStateOf(false) }
     val drillKind = ticket.custom?.kind as? tech.fonia.features.app.CustomRun.Kind.Drill
     val drill = remember { drillKind?.let { app.drills(it.sound).getOrNull(it.index) } }
     val finished = run?.phase == SessionRun.Phase.Finished
@@ -170,15 +175,26 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
             val goTo = if (following < all.size && tech.fonia.features.diction.DictionDrills.isOpen(following, best)) following else drillKind.index
             nextDrill = goTo
             nextTitle = all.getOrNull(goTo)?.title
+            nextKnown = true
             return@LaunchedEffect
         }
         ended.awaitSaves()
         val now = app.profiles.firstOrNull { it.id == profile.id } ?: profile
         val path = tech.fonia.features.home.PathModel(now, app.content)
         path.reload(app.repository, app.checks)
-        val step = path.continuing ?: path.warmingUp
+        // The next lesson of the unit just practised, or today's sound once that unit has nothing left to open. Null
+        // when there's nothing more, so „Încă una” only shows when another one exists.
+        val practised = path.catalog.allUnits(path.soundOrder).firstOrNull { unit ->
+            unit.lessons.any { it.focus.key == ended.ticket.focus.key }
+        }
+        val step = practised?.lessons
+            ?.firstOrNull { !it.isWarmup && path.state(it, practised) != tech.fonia.features.home.LessonState.done && path.canOpen(it, practised) }
+            ?.let { tech.fonia.features.home.NextStep(practised, it) }
+            ?: path.continuing
         nextStep = step
-        nextTitle = step.lesson.title
+        nextTitle = step?.lesson?.title
+        nextSound = step?.unit?.sound?.let { app.content.sound(it).shortLetter }
+        nextKnown = true
     }
 
     fun more() {
@@ -207,7 +223,7 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         if (current.phase == SessionRun.Phase.Finished && current.isCheck) {
             tech.fonia.features.check.CheckResultScreen(current, app, onDone = { finish() })
         } else if (current.phase == SessionRun.Phase.Finished) {
-            RecapScreen(current, app, next = nextTitle, onMore = { more() }, onDone = { finish() })
+            RecapScreen(current, app, next = nextTitle, nextSound = nextSound, nextKnown = nextKnown, isDrill = drillKind != null, onMore = { more() }, onDone = { finish() })
         } else {
             Column(
                 Modifier
