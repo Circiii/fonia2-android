@@ -124,6 +124,24 @@ class ZipaHost(
         null
     }
 
+    /**
+     * The live spotter's question ([tech.fonia.phones.LiveSpotter]): how sure the model is that [sound] was said in the
+     * last moments of [samples] (the last second of the microphone, any rate). Null when the model is not loaded (it
+     * is never loaded for this) or fails. Runs on the host thread, between verdicts.
+     */
+    suspend fun spot(samples: FloatArray, sampleRate: Double, sound: tech.fonia.phones.TargetSound): Float? = try {
+        scope.async {
+            val model = acoustic ?: return@async null
+            if (samples.isEmpty() || sampleRate <= 0) return@async null
+            val samples16k = if (sampleRate == 16_000.0) samples else ZipaPhoneScorer.to16k(Clip(samples, sampleRate))
+            tech.fonia.phones.LiveSpotter.score(model.posteriors(ZipaPhoneScorer.pad(samples16k)), sound)
+        }.await()
+    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+        throw cancelled
+    } catch (_: Throwable) {
+        null
+    }
+
     override suspend fun run(input: ZipaInput): PhoneEvidence? = scope.async { score(input) }.await()
 
     /** On the host thread. */

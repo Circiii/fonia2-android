@@ -107,6 +107,8 @@ fun FeedLetter(
     placeBias: Float = 0f,
     /** What lights the letter: the target sound heard live. */
     aim: LiveAim = LiveAim.None,
+    /** The phoneme model's live answer for the target, when a take spots one. */
+    spot: LiveSpot? = null,
 ) {
     LaunchedEffect(link, listening, modelVoice, placeBias, aim) {
         val d = link.drive
@@ -138,19 +140,24 @@ fun FeedLetter(
                     rawTrill = levels.trillStrength,
                     rawBlow = levels.blowStrength,
                     aim = aim,
+                    fricativeVoiced = levels.isFricativeVoiced,
+                    spotted = spot?.value() ?: Float.NaN,
+                    hissFlatness = levels.hissFlatness,
                 )
                 val envelope = smooth.level
+                // With a target the letter is still until that sound is heard; the "Te aud" ring answers the voice.
+                val share = if (aim == LiveAim.None) 1f else smooth.glow
                 d.feed(
-                    level = (envelope * 1.6f).coerceAtMost(1f) * pacing.letterBuzzShare,
-                    speaking = HearRules.hears(envelope) || smooth.fricative > 0.12f,
+                    level = (envelope * 1.6f).coerceAtMost(1f) * pacing.letterBuzzShare * share,
+                    speaking = if (aim == LiveAim.None) HearRules.hears(envelope) || smooth.fricative > 0.12f else smooth.hit,
                     sNess = smooth.place,
-                    fricative = smooth.fricative,
-                    voicing = smooth.voicing,
-                    trill = smooth.trill,
-                    blow = smooth.blow,
+                    fricative = smooth.fricative * share,
+                    voicing = smooth.voicing * share,
+                    trill = smooth.trill * share,
+                    blow = smooth.blow * share,
                     holdSeconds = holdSeconds(),
                 )
-                d.inflation = smooth.inflation(baseInflation())
+                d.inflation = smooth.inflation(baseInflation(), voiceMoves = aim == LiveAim.None)
                 d.trembling = 0f
                 link.glow.floatValue = smooth.glow
                 if (link.hit != smooth.hit) link.hit = smooth.hit

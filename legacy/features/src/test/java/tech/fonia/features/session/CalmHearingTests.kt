@@ -114,11 +114,27 @@ class CalmHearingTests {
     }
 
     @Test
-    fun lHasNoLiveLightButStillGrowsWithTheVoice() {
+    fun theLetterStaysStillUntilItsOwnSoundIsHeard() {
+        // A voice with no hiss on an S target: nothing lights and the letter keeps its resting size.
         val s = LiveSmoother()
-        s.run(400, 0.7f, aim = LiveAim.of(SoundID.L))
+        s.run(400, 0.7f, aim = LiveAim.of(SoundID.S))
         assertFalse(s.hit)
-        assertTrue(s.inflation(REST_INFLATION) > REST_INFLATION + 0.2f)
+        assertEquals(REST_INFLATION, s.inflation(REST_INFLATION), 1e-3f)
+        // Without a target the letter still follows the voice.
+        assertTrue(s.inflation(REST_INFLATION, voiceMoves = true) > REST_INFLATION + 0.2f)
+
+        // When the phoneme model answers, it decides: "not heard" keeps the letter dark even under a hiss on the
+        // right side, "heard" lights it at once.
+        val m = LiveSmoother()
+        val aim = LiveAim.of(SoundID.S)
+        repeat(30) { m.step(0.016f, 0.6f, 0.2f, true, 0.8f, 0.9f, 0f, 0f, aim, spotted = 0f) }
+        assertFalse("the model heard no S", m.hit)
+        repeat(2) { m.step(0.016f, 0.6f, 0.2f, true, 0.8f, 0.9f, 0f, 0f, aim, spotted = 1f) }
+        assertTrue("the model heard S", m.hit)
+        // L: no acoustic place, but the model's answer lights it too.
+        val l = LiveSmoother()
+        repeat(2) { l.step(0.016f, 0.6f, 0.9f, false, 0f, Float.NaN, 0f, 0f, LiveAim.of(SoundID.L), spotted = 1f) }
+        assertTrue(l.hit)
     }
 }
 

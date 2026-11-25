@@ -148,6 +148,8 @@ private class AnalyzerProcessor(
             trillStrength = frame.trillStrength,
             blowStrength = frame.blowStrength,
             isFricative = frame.fricativePresent,
+            isFricativeVoiced = frame.fricativeVoiced,
+            hissFlatness = frame.hissFlatness,
         )
     }
 }
@@ -174,6 +176,9 @@ class AudioHub(
 ) {
     val levels = LiveLevels()
     val gate = SpeechGate()
+
+    /** Is the target sound being said now? The phoneme model on the last second ([tech.fonia.features.session.LiveSpot]). */
+    val spot = tech.fonia.features.session.LiveSpot()
 
     /** What the take running now (or the last one) has heard; null before the first take. */
     @Volatile
@@ -365,6 +370,8 @@ class AudioHub(
         tap: ((sampleRate: Double) -> HopTap)? = null,
         /** His calibrated room and voice („Calibrare”): the live floor starts at his room, the level spans his voice. */
         room: tech.fonia.judge.PersonalReference.Room? = null,
+        /** The Romanian sound this take practises: the live spotter listens for it. */
+        spotSound: tech.fonia.phones.TargetSound? = null,
     ) {
         prepare()
         stopSpeaking()
@@ -392,6 +399,7 @@ class AudioHub(
         FoniaSfx.log("capture open t=${FoniaSfx.gate.clock()}")
         capture = engine
         val gate = gate
+        spot.begin(spotSound)
         analysisThresholds = DSPThresholds.v1
         val sourceName = when (source) {
             is TakeSource.Fixture -> if (micFile != null) "micFile:${source.clip.name}" else "fixture:${source.clip.name}"
@@ -410,10 +418,14 @@ class AudioHub(
                         "rate=${rate.toInt()} device=${info?.deviceType ?: "-"} narrowBand=${info?.isNarrowBand ?: "-"} " +
                         "effectsOff=${info?.platformEffectsSwitchedOff ?: "-"} group=${group.rawValue}",
                 )
-                AnalyzerProcessor(rate, group, calibration, live(thresholds, room), gate, stats, tap?.invoke(rate))
+                val own = tap?.invoke(rate)
+                val spotTap = spot.tap(rate)
+                val both = if (own != null && spotTap != null) HopTap { s, o, c, f -> own.hop(s, o, c, f); spotTap.hop(s, o, c, f) } else own ?: spotTap
+                AnalyzerProcessor(rate, group, calibration, live(thresholds, room), gate, stats, both)
             }
         } catch (e: Exception) {
             capture = null
+            spot.end()
             captureClosed()
             log("take start failed: $e")
             throw e
@@ -435,6 +447,7 @@ class AudioHub(
     suspend fun stopListening(): CapturedClip? {
         val engine = capture ?: return null
         capture = null
+        spot.end()
         val clip = try {
             engine.stop()
         } finally {
@@ -448,6 +461,7 @@ class AudioHub(
     }
 
     suspend fun cancelListening() {
+        spot.end()
         try {
             capture?.discard()
         } finally {

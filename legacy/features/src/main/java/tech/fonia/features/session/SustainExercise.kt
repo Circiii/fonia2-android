@@ -191,7 +191,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
             // The group heard in his voice so far; before any voiced take, the one most favourable to the target (a hiss
             // alone cannot tell a man's S from a child's Ș).
             val personal = app.voice.personal(run.profile.id)
-            val (own, room) = synchronized(personal) { personal.calibration() to personal.room }
+            val (own, room) = synchronized(personal) { personal.calibration() to personal.usableRoom }
             app.audio.startListening(
                 group = app.talkers.holdGroup(run.profile, sound), calibration = own ?: run.profile.calibration,
                 fixtureText = sound?.hero?.says, room = room,
@@ -214,7 +214,14 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
             val now = System.nanoTime()
             val dt = ((now - tick) / 1e9).coerceIn(0.0, 0.2)
             tick = now
-            val credit = if (isBreath) (if (levels.blowStrength > 0.25f) 1f else 0f) else holdCredit(levels)
+            // A sound held alone is judged by the acoustic rule (the phoneme model needs a syllable around the sound:
+            // on a bare "ssss" it answers nothing, tools/eval/out/live_probe.txt). A flat hiss is a noise (a vacuum
+            // cleaner, paper, running water), not S or Ș: it fills nothing.
+            val credit = when {
+                isBreath -> if (levels.blowStrength > 0.25f) 1f else 0f
+                levels.isFricative && levels.hissFlatness > HISS_FLAT_MAX -> 0f
+                else -> holdCredit(levels)
+            }
             held.value = (held.value + dt * credit).coerceAtMost(goal)
             if (held.value >= goal) {
                 machine = Rating.yes

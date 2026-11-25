@@ -27,7 +27,7 @@ cd fonia2-android
 - Pentru emulator: adaugă `-Pfonia.abi=x86_64`. Microfonul emulatorului trebuie pornit din Extended controls › Microphone.
 - APK-ul iese în `legacy/app/build/outputs/apk/debug/`.
 
-Unde a rămas lucrul și ce e de îmbunătățit: **`docs/PENTRU_STEFAN.md`** (25 noiembrie, versiunea 29). Starea mai veche: `docs/STARE.md`.
+Unde a rămas lucrul și ce e de îmbunătățit: **`docs/PENTRU_STEFAN.md`** (25 noiembrie, versiunea 30; ascultarea live e în `docs/LIVE.md`). Starea mai veche: `docs/STARE.md`.
 
 ## Structură
 

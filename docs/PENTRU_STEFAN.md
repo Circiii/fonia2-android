@@ -103,3 +103,13 @@ Pentru 1–3 există porți construite, dar oprite, și un raport în `EvalV2Run
 - **Pragurile** se schimbă în `spec/` (prin `make_v2.py` la fuziune), cu versiunea crescută, și se trec în `EVAL_v2.md` cu cifrele înainte și după.
 - **`versionCode`** din `legacy/app/build.gradle.kts` crește la fiecare build dat mai departe.
 - **Nu urca** `spec/fusion/__pycache__` și nici fișiere `.pyc`.
+
+## 7. Versiunea 30 (aceeași zi): litera reacționează doar la sunetul ei
+
+Detaliile, măsurătorile și limitele sunt în `docs/LIVE.md`. Pe scurt:
+- la silabe, cuvinte și propoziții, modelul de foneme ascultă live și litera se aprinde doar la sunetul-țintă (`LiveSpotter`, `LiveSpot`);
+- la sunetul ținut singur decide măsurătoarea acustică, cu o gardă contra zgomotelor plate (aspirator, hârtie, apă);
+- calibrarea vocii respinge zgomotul și ignoră o referință stricată deja salvată;
+- la un singur cuvânt, recunoașterea de cuvinte refuză lauda când s-a spus alt cuvânt.
+
+De făcut întâi: curățarea setului de test la CE și GE (multe clipuri sintetice sunt citite ca în engleză) și măsurarea costului pe un telefon real.

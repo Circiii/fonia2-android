@@ -710,7 +710,8 @@ class AppModel(
                 ml = ml,
                 reading = ReadingStore(File(home, "Fonia/Reading")),
                 adaptive = AdaptiveStore(File(home, "Fonia/Adaptive")),
-                judge = runCatching { tech.fonia.features.session.SoundJudge.live(context, scope) }.getOrNull(),
+                judge = runCatching { tech.fonia.features.session.SoundJudge.live(context, scope) }.getOrNull()
+                    .also { audio.spot.host = it?.zipa },
                 talkers = tech.fonia.features.session.TalkerMemory.preferences(context),
                 voice = tech.fonia.features.session.VoiceStore(File(home, "Fonia/Voice"), persist = !fixtures && arguments.micFile == null),
                 checks = FileCheckStore(File(home, "Fonia/Check")),

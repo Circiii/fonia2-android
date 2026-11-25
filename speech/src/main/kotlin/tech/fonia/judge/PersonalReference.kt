@@ -82,10 +82,19 @@ class PersonalReference(
     var takes: Int = 0
         private set
 
-    /** True once the person's own S/Ș boundary is in use. */
+    /**
+     * True once the person's own S/Ș boundary is in use: enough anchors of each place, and the two places really are
+     * two different hisses ([separated]). A reference taken from noise (a dead or very quiet microphone: S and Ș come
+     * out the same) is never used, also when it is already saved.
+     */
     val active: Boolean
         get() = calibration.anchors.count { it.place == SibilantPlace.S } >= thresholds.minPerPlace &&
-            calibration.anchors.count { it.place == SibilantPlace.SH } >= thresholds.minPerPlace
+            calibration.anchors.count { it.place == SibilantPlace.SH } >= thresholds.minPerPlace &&
+            separated(calibration.anchors)
+
+    /** The calibrated room when it can be trusted: a voice was really heard ([audible]); else null. */
+    val usableRoom: Room?
+        get() = room?.takeIf { audible(it) }
 
     /** The person's anchors for the DSP, or null before [active]. */
     fun calibration(): TalkerCalibration? = if (active) calibration.copy() else null
@@ -168,6 +177,12 @@ class PersonalReference(
      * now [active].
      */
     fun calibrate(room: Room, sAnchors: List<SibilantAnchor>, shAnchors: List<SibilantAnchor>): Boolean {
+        // A calibration that heard no voice, or whose S and Ș are the same hiss, measured the room, not the person:
+        // nothing of it is kept, and what was there before stays.
+        val fresh = sAnchors.map { it.copy(place = SibilantPlace.S) } + shAnchors.map { it.copy(place = SibilantPlace.SH) }
+        if (!audible(room) || !separated(fresh)) return false
+        // An older reference that cannot be used (saved before this check) makes room for the new one.
+        if (!separated(calibration.anchors)) calibration.anchors = emptyList()
         this.room = room
         for (a in sAnchors) calibration.add(a.copy(place = SibilantPlace.S))
         for (a in shAnchors) calibration.add(a.copy(place = SibilantPlace.SH))
@@ -211,6 +226,23 @@ class PersonalReference(
             ref.room = state.room
             return ref
         }
+
+        /** S anchors sit clearly above Ș anchors: at least [MIN_CENTROID_GAP_HZ] in centroid or [MIN_TILT_GAP_DB] in tilt. */
+        fun separated(anchors: List<SibilantAnchor>): Boolean {
+            val s = anchors.filter { it.place == SibilantPlace.S }
+            val sh = anchors.filter { it.place == SibilantPlace.SH }
+            if (s.isEmpty() || sh.isEmpty()) return false
+            return median(s.map { it.centroidHz }) - median(sh.map { it.centroidHz }) >= MIN_CENTROID_GAP_HZ ||
+                median(s.map { it.tiltDb }) - median(sh.map { it.tiltDb }) >= MIN_TILT_GAP_DB
+        }
+
+        /** A voice was heard: not near digital silence, and well above the room. */
+        fun audible(room: Room): Boolean = room.speechDb >= MIN_SPEECH_DB && room.speechDb - room.floorDb >= MIN_ABOVE_ROOM_DB
+
+        const val MIN_CENTROID_GAP_HZ = 700f
+        const val MIN_TILT_GAP_DB = 5f
+        const val MIN_SPEECH_DB = -50f
+        const val MIN_ABOVE_ROOM_DB = 15f
 
         private fun median(v: List<Float>): Float {
             if (v.isEmpty()) return Float.NaN

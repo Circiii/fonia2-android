@@ -487,9 +487,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         FoniaSfx.play(SfxCue.TakeStart)
         try {
             val personal = app.voice.personal(profile.id)
-            val (own, room) = synchronized(personal) { personal.calibration() to personal.room }
+            val (own, room) = synchronized(personal) { personal.calibration() to personal.usableRoom }
             // His own S/Ș boundary and room once he has them („Calibrare”, or enough good takes); else the old anchors.
-            app.audio.startListening(app.talkers.group(profile), own ?: profile.calibration, fixtureText, fixtureLanguage, room = room)
+            app.audio.startListening(
+                app.talkers.group(profile), own ?: profile.calibration, fixtureText, fixtureLanguage, room = room,
+                spotSound = sound?.id?.takeIf { exercise.isRomanianSoundTake }?.let { tech.fonia.phones.TargetSound.fromRawValue(it.rawValue) },
+            )
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: Exception) {
@@ -609,6 +612,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it },
         placeBias = placeBias(app.talkers.group(profile), app.voice.calibrated(profile.id)),
         aim = if (exercise.isRomanianSoundTake) LiveAim.of(sound?.id) else LiveAim.None,
+        spot = app.audio.spot,
     )
 
     val showsPanel = phase == SpeakPhase.Result && verdict != null

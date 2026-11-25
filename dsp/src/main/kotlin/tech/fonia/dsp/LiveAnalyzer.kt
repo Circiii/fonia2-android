@@ -27,6 +27,10 @@ data class LiveFrame(
     var trillDetected: Boolean,
     var trillStrength: Float,
     var blowStrength: Float,
+    /** Spectral flatness of the hiss frame (0 without a hiss): a sibilant has a peak, broadband noise is flat. */
+    var hissFlatness: Float = 0f,
+    /** Share of the frame's energy in the low band (0 without a hiss): breath and machines carry more than a sibilant. */
+    var hissLfShare: Float = 0f,
 ) {
     /** Copies every field of `other` into this instance. */
     fun set(other: LiveFrame): LiveFrame {
@@ -44,6 +48,8 @@ data class LiveFrame(
         trillDetected = other.trillDetected
         trillStrength = other.trillStrength
         blowStrength = other.blowStrength
+        hissFlatness = other.hissFlatness
+        hissLfShare = other.hissLfShare
         return this
     }
 
@@ -197,6 +203,8 @@ class LiveAnalyzer(
         latest.trillDetected = trillResult.isTrill
         latest.trillStrength = trillResult.strength
         latest.blowStrength = max(airBlow, hissBlow)
+        latest.hissFlatness = if (frication.present) features.flatness else 0f
+        latest.hissLfShare = if (frication.present) features.lfShare else 0f
     }
 
     private val minTrillSamples: Int get() = trill.windowCount * envelope.hop

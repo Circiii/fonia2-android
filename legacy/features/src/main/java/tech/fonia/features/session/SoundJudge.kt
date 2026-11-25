@@ -144,8 +144,10 @@ class SoundJudge(
         var hint: HintKey? = null
         val seconds = take.samples.size / take.sampleRate
         val budget = fullBudgetMs(seconds)
-        // Sentences: the word recogniser listens to the same take on its own thread while the sound heads work.
-        val heardWords = words?.takeIf { request.level == tech.fonia.judge.Level.Sentence }?.let { host ->
+        // Sentences and single words: the word recogniser listens to the same take on its own thread while the sound
+        // heads work. In a sentence it checks the words were said; for one word it refuses another word.
+        val isSentence = request.level == tech.fonia.judge.Level.Sentence
+        val heardWords = words?.takeIf { isSentence || request.level == tech.fonia.judge.Level.Word }?.let { host ->
             scope.async { host.hear(take.samples, take.sampleRate, timeoutMs = (2_000 + 400 * seconds).toLong()) }
         }
         val result: TakeResult = withContext(Dispatchers.Default) {
@@ -193,8 +195,26 @@ class SoundJudge(
         }
         val dot = if (result.head == Head.Gate) null else TakeDot.of(result.visual, request.sound.raw, result.verdict, System.currentTimeMillis())
         val bySound = map(result, sound).copy(visual = result.visual, hint = hint, joinedReference = joined, dot = dot)
-        val check = heardWords?.await()?.let { WordMatcher.check(request.text, it) }
-        val judged = if (check == null) bySound else withWords(bySound, check)
+        val heardNow = heardWords?.await()
+        val check = heardNow?.takeIf { isSentence }?.let { WordMatcher.check(request.text, it) }
+        val judged = when {
+            check != null -> withWords(bySound, check)
+            // One word, praised by the sound heads, but the recogniser is sure another word was said („val” for
+            // „pară”): not praised, said again. The practised sound itself is never the recogniser's business.
+            heardNow != null && !isSentence && bySound.cue == Cue.Correct &&
+                tech.fonia.words.OtherWord.isOther(request.text, request.sound.raw, heardNow) -> {
+                Log.i(WORDS_TAG, "take '${request.text}' heard '${heardNow.text}' conf=${"%.2f".format(heardNow.confidence)}: another word, not praised")
+                bySound.copy(
+                    verdict = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Mai spune o dată", keepsTake = false),
+                    cue = Cue.Retake, kind = null, hint = null, dot = null, joinedReference = false,
+                    trace = "${bySound.trace} otherWord(asr='${heardNow.text}')",
+                )
+            }
+            else -> {
+                if (heardNow != null && !isSentence) Log.i(WORDS_TAG, "take '${request.text}' heard '${heardNow.text}' conf=${"%.2f".format(heardNow.confidence)}")
+                bySound
+            }
+        }
         if (check != null) {
             val t = words?.lastTimings
             Log.i(

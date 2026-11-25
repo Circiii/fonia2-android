@@ -28,6 +28,10 @@ class LiveLevels {
 
     @Volatile private var fricativeFlag = false
 
+    @Volatile private var fricativeVoicedFlag = false
+
+    @Volatile private var hissFlatnessValue = 0f
+
     /** 0...1 loudness above the room floor, for meters. */
     val level: Float get() = levelValue
 
@@ -54,6 +58,12 @@ class LiveLevels {
 
     val isFricative: Boolean get() = fricativeFlag
 
+    /** The hiss heard now carries voice (Z, J) rather than breath only (S, Ș). False without a hiss. */
+    val isFricativeVoiced: Boolean get() = fricativeVoicedFlag
+
+    /** Spectral flatness of the hiss heard now, 0 without one: a sibilant has a peak, a machine or paper is flat. */
+    val hissFlatness: Float get() = hissFlatnessValue
+
     /** Publishes one analysis frame. Omitted fields go back to their resting value. `talk` is not touched. */
     fun publish(
         level: Float = 0f,
@@ -65,6 +75,8 @@ class LiveLevels {
         trillStrength: Float = 0f,
         blowStrength: Float = 0f,
         isFricative: Boolean = false,
+        isFricativeVoiced: Boolean = false,
+        hissFlatness: Float = 0f,
     ) {
         levelValue = level
         rmsValue = rms
@@ -75,6 +87,8 @@ class LiveLevels {
         trillValue = trillStrength
         blowValue = blowStrength
         fricativeFlag = isFricative
+        fricativeVoicedFlag = isFricative && isFricativeVoiced
+        hissFlatnessValue = if (isFricative) hissFlatness else 0f
     }
 
     fun publishTalk(value: Float) {
