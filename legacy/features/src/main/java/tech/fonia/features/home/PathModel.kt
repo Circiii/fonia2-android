@@ -24,6 +24,7 @@ import tech.fonia.features.app.index
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.orderedSounds
 import tech.fonia.features.app.progressionState
+import tech.fonia.features.session.WeakJudgeGate
 import tech.fonia.features.session.key
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
@@ -84,6 +85,8 @@ class PathModel(profile: Profile, val content: FoniaContent) {
 
     suspend fun reload(repository: FoniaRepository, checkStore: CheckStore? = null) {
         if (checkStore != null) checks = orEmpty { checkStore.history(profile.id) }
+        // Before the next session: an adult's „Sună bine” may have moved a sound the phone hears poorly.
+        orEmpty { WeakJudgeGate.apply(repository, profile) }
         progress = orEmpty { repository.soundProgress(profile.id) }
         sessions = orEmpty { repository.sessions(profile.id) }
         val ended = sessions.filter { it.endedAt != null }

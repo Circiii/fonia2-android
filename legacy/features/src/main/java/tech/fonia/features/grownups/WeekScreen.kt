@@ -59,6 +59,7 @@ import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
 import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.session.Settings
+import tech.fonia.features.session.WeakJudgeGate
 import tech.fonia.store.Profile
 import java.time.LocalDate
 import java.util.UUID
@@ -114,7 +115,11 @@ fun WeekScreen(profile: Profile, app: AppModel) {
         val outcome = ear.outcome(take.attempt.adultOutcome)
         if (outcome == take.attempt.adultOutcome) return
         report = report?.marking(take.id, outcome)
-        app.scope.launch { runCatching { app.repository.setAdultOutcome(take.id, outcome) } }
+        app.scope.launch {
+            runCatching { app.repository.setAdultOutcome(take.id, outcome) }
+            // On the sounds the phone still hears poorly, two „Sună bine” on two days can move the child on.
+            runCatching { WeakJudgeGate.apply(app.repository, app.profiles.firstOrNull { it.id == profile.id } ?: profile) }
+        }
     }
 
     LaunchedEffect(monday) {
