@@ -28,6 +28,7 @@ import tech.fonia.features.app.SessionTicket
 import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.calibration
 import tech.fonia.features.app.index
+import tech.fonia.features.app.progressionState
 import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
@@ -35,6 +36,9 @@ import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
 import java.io.File
 import java.nio.file.Files
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * `SessionRunTests.swift` (suites "SessionRun" and "Calibration bridge"), test for test, with the same inputs and
@@ -55,16 +59,60 @@ class SessionRunTests {
         )
     }
 
-    private fun child(band: Profile.AgeBand = Profile.AgeBand.SixToSeven, confirmed: List<String> = listOf("s")): Profile =
+    private fun child(band: Profile.AgeBand = Profile.AgeBand.SixToSeven, confirmed: List<String> = listOf("s"), sound: String = "s"): Profile =
         Profile(
             kind = Profile.Kind.Child,
             ageBand = band,
             voiceGroup = Profile.VoiceGroup.Child,
             color = "cold",
-            targetSounds = listOf("s"),
+            targetSounds = listOf(sound),
             confirmedSounds = confirmed,
             track = Profile.Track.Ro,
         )
+
+    private val zone: ZoneId = ZoneId.of("Europe/Bucharest")
+
+    private fun day(day: Int, hour: Int = 10): Instant = LocalDateTime.of(2026, 11, day, hour, 0).atZone(zone).toInstant()
+
+    /** A good full block on [rung] that ended on an earlier day than the sessions below. */
+    private fun goodBlockYesterday(profile: Profile, sound: String = "s", rung: Rung): SoundProgress =
+        SoundProgress(
+            profileId = profile.id,
+            sound = sound,
+            rung = rung.index,
+            blockHistory = listOf(SoundProgress.Block(rung = rung.index, good = 6, total = 6, endedAt = day(19))),
+        )
+
+    /** Runs one whole session of [sound] at [rung] on the given day, with what the store holds, and returns the saved rung. */
+    private suspend fun session(
+        app: AppModel,
+        profile: Profile,
+        sound: SoundID = SoundID.S,
+        rung: Rung,
+        on: Instant,
+        machine: Attempt.Outcome,
+        adult: Attempt.Outcome? = null,
+        selfRating: Rating? = null,
+    ): Int {
+        val saved = app.repository.soundProgress(profile.id).firstOrNull { it.sound == sound.rawValue }
+        val ticket = SessionTicket(focus = SessionFocus.Sound(sound, rung), title = "test", sound = sound)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), now = { on }, zone = zone)
+        play(run, machine, adult = adult, selfRating = selfRating)
+        assertEquals(SessionRun.Phase.Finished, run.phase)
+        delay(50)
+        run.awaitSaves()
+        return app.repository.soundProgress(profile.id).firstOrNull { it.sound == sound.rawValue }?.rung ?: -1
+    }
+
+    private fun adultProfile(sound: String): Profile = Profile(
+        kind = Profile.Kind.Adult,
+        ageBand = Profile.AgeBand.Adult,
+        voiceGroup = Profile.VoiceGroup.Female,
+        color = "cold",
+        targetSounds = listOf(sound),
+        confirmedSounds = listOf(sound),
+        track = Profile.Track.Ro,
+    )
 
     private fun makeRun(app: AppModel, profile: Profile, rung: Rung, focus: SessionFocus? = null): SessionRun {
         val ticket = SessionTicket(focus = focus ?: SessionFocus.Sound(SoundID.S, rung), title = "test", sound = if (focus == null) SoundID.S else null)
@@ -72,7 +120,13 @@ class SessionRunTests {
     }
 
     /** Plays every trial with the same answer. Returns how many trials were seen. */
-    private fun play(run: SessionRun, machine: Attempt.Outcome, adult: Attempt.Outcome? = null, retryFirst: Boolean = false): Int {
+    private fun play(
+        run: SessionRun,
+        machine: Attempt.Outcome,
+        adult: Attempt.Outcome? = null,
+        selfRating: Rating? = null,
+        retryFirst: Boolean = false,
+    ): Int {
         var seen = 0
         var retried = false
         while (run.phase == SessionRun.Phase.Trial && seen < 500) {
@@ -83,7 +137,7 @@ class SessionRunTests {
                     retried = true
                     run.finishAttempt(trial.exercise, machine = Attempt.Outcome.Almost, adult = null, take = null, retry = true)
                 }
-                run.finishAttempt(trial.exercise, machine = machine, adult = adult, take = null)
+                run.finishAttempt(trial.exercise, machine = machine, adult = adult, selfRating = selfRating, take = null)
             } else {
                 run.advance()
             }
@@ -104,10 +158,127 @@ class SessionRunTests {
         val app = makeApp()
         val profile = child()
         app.repository.saveProfile(profile)
-        val run = makeRun(app, profile, Rung.Syllables)
+        val saved = goodBlockYesterday(profile, rung = Rung.Syllables)
+        app.repository.saveSoundProgress(saved)
+        val ticket = SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Syllables), title = "test", sound = SoundID.S)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), now = { day(20) }, zone = zone)
         play(run, Attempt.Outcome.Good)
         assertEquals(SessionRun.Phase.Finished, run.phase)
         assertEquals(Rung.WordsInitial.index, savedRung(app, profile, run))
+    }
+
+    /** one good session moves a child nowhere yet */
+    @Test
+    fun oneGoodDayIsNotEnough() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        app.repository.saveSoundProgress(SoundProgress(profileId = profile.id, sound = "s", rung = Rung.Syllables.index))
+        val rung = session(app, profile, rung = Rung.Syllables, on = day(20), machine = Attempt.Outcome.Good)
+        assertEquals(Rung.Syllables.index, rung)
+    }
+
+    /** good sessions on two days move a child one rung */
+    @Test
+    fun twoGoodDaysMoveUp() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        app.repository.saveSoundProgress(SoundProgress(profileId = profile.id, sound = "s", rung = Rung.Syllables.index))
+        assertEquals(Rung.Syllables.index, session(app, profile, rung = Rung.Syllables, on = day(19), machine = Attempt.Outcome.Good))
+        assertEquals(Rung.WordsInitial.index, session(app, profile, rung = Rung.Syllables, on = day(20), machine = Attempt.Outcome.Good))
+    }
+
+    /** two good sessions on the same day don't move a child */
+    @Test
+    fun twoSessionsOneDayStay() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        app.repository.saveSoundProgress(SoundProgress(profileId = profile.id, sound = "s", rung = Rung.Syllables.index))
+        session(app, profile, rung = Rung.Syllables, on = day(20, hour = 8), machine = Attempt.Outcome.Good)
+        assertEquals(Rung.Syllables.index, session(app, profile, rung = Rung.Syllables, on = day(20, hour = 19), machine = Attempt.Outcome.Good))
+    }
+
+    /** an adult still moves up after one good session */
+    @Test
+    fun adultPacesThemselves() = runBlocking {
+        val app = makeApp()
+        val adult = adultProfile("s")
+        app.repository.saveProfile(adult)
+        app.repository.saveSoundProgress(SoundProgress(profileId = adult.id, sound = "s", rung = Rung.Syllables.index))
+        assertEquals(Rung.WordsInitial.index, session(app, adult, rung = Rung.Syllables, on = day(20), machine = Attempt.Outcome.Good))
+    }
+
+    /** an adult's own rating still counts when the phone abstains */
+    @Test
+    fun adultSelfRatingCounts() = runBlocking {
+        val app = makeApp()
+        val adult = adultProfile("l")
+        app.repository.saveProfile(adult)
+        val rung = session(app, adult, sound = SoundID.L, rung = Rung.Syllables, on = day(20), machine = Attempt.Outcome.NotJudged, selfRating = Rating.yes)
+        assertEquals(Rung.WordsInitial.index, rung)
+    }
+
+    /** a child's own ratings on L never move a rung, over any number of days */
+    @Test
+    fun childSelfRatingNeverAdvances() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("l"), sound = "l")
+        app.repository.saveProfile(profile)
+        for (date in listOf(day(18), day(19), day(20))) {
+            val rung = session(app, profile, sound = SoundID.L, rung = Rung.Syllables, on = date, machine = Attempt.Outcome.NotJudged, selfRating = Rating.yes)
+            assertTrue("rung $rung", rung == -1 || rung == Rung.Syllables.index)
+        }
+    }
+
+    /** a child's own rating is still praised as a good take */
+    @Test
+    fun childSelfRatingStillCountsAsPractice() {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("l"), sound = "l")
+        val run = makeRun(app, profile, Rung.Syllables, focus = SessionFocus.Sound(SoundID.L, Rung.Syllables))
+        while (true) {
+            val trial = run.current ?: break
+            if (trial.countsAsAttempt) break
+            run.advance()
+        }
+        val trial = assertNotNullAndGet(run.current)
+        run.finishAttempt(trial.exercise, machine = Attempt.Outcome.NotJudged, adult = null, selfRating = Rating.yes, take = null)
+        assertEquals(1, run.attempts)
+        assertEquals(1, run.goodAttempts)
+        assertFalse(SessionRun.countsTowardBlock(isChild = true, machineJudged = false, adult = null))
+        assertTrue(SessionRun.countsTowardBlock(isChild = true, machineJudged = false, adult = Attempt.Outcome.Good))
+        assertTrue(SessionRun.countsTowardBlock(isChild = false, machineJudged = false, adult = null))
+    }
+
+    /** an adult who listens to L on two days still moves the child up */
+    @Test
+    fun adultRatingsOnLStillAdvance() = runBlocking {
+        val app = makeApp()
+        val profile = child(confirmed = listOf("l"), sound = "l")
+        app.repository.saveProfile(profile)
+        session(app, profile, sound = SoundID.L, rung = Rung.Syllables, on = day(19), machine = Attempt.Outcome.NotJudged, adult = Attempt.Outcome.Good, selfRating = Rating.yes)
+        val rung = session(app, profile, sound = SoundID.L, rung = Rung.Syllables, on = day(20), machine = Attempt.Outcome.NotJudged, adult = Attempt.Outcome.Good)
+        assertEquals(Rung.WordsInitial.index, rung)
+    }
+
+    /** progress saved before the two-day rule still loads where it was */
+    @Test
+    fun earlierProgressStays() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val saved = SoundProgress(
+            profileId = profile.id,
+            sound = "s",
+            rung = Rung.Clusters.index,
+            blockHistory = listOf(SoundProgress.Block(rung = Rung.WordsFinal.index, good = 5, total = 6, endedAt = day(1))),
+        )
+        app.repository.saveSoundProgress(saved)
+        val loaded = app.repository.soundProgress(profile.id).firstOrNull { it.sound == "s" }
+        assertEquals(Rung.Clusters.index, loaded?.rung)
+        assertEquals(Rung.Clusters, profile.progressionState(SoundID.S, loaded).rung)
     }
 
     /** going back over an earlier rung moves nothing */
@@ -131,7 +302,10 @@ class SessionRunTests {
         val app = makeApp()
         val profile = child()
         app.repository.saveProfile(profile)
-        val run = makeRun(app, profile, Rung.Syllables)
+        val saved = goodBlockYesterday(profile, rung = Rung.Syllables)
+        app.repository.saveSoundProgress(saved)
+        val ticket = SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Syllables), title = "test", sound = SoundID.S)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), now = { day(20) }, zone = zone)
         play(run, Attempt.Outcome.Good, retryFirst = true)
         assertEquals(Rung.WordsInitial.index, savedRung(app, profile, run))
     }

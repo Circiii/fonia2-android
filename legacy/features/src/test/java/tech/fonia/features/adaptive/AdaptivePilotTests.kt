@@ -22,6 +22,7 @@ import tech.fonia.domain.AttemptsSummary
 import tech.fonia.domain.ContentSource
 import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.FoniaContent
+import tech.fonia.domain.Progression
 import tech.fonia.domain.Rung
 import tech.fonia.domain.SessionBlock
 import tech.fonia.domain.SessionFocus
@@ -97,10 +98,16 @@ class AdaptivePilotTests {
         track = Profile.Track.Ro,
     )
 
-    private suspend fun setUp(app: AppModel, rung: Rung): SoundProgress {
+    private suspend fun setUp(app: AppModel, rung: Rung, goodYesterday: Boolean = false): SoundProgress {
         app.repository.saveProfile(child)
         pilot.profiles(listOf(child))
-        val progress = SoundProgress(profileId = child.id, sound = "s", rung = rung.index)
+        var progress = SoundProgress(profileId = child.id, sound = "s", rung = rung.index)
+        if (goodYesterday) {
+            // A child moves up on good blocks from two days, so the usual step needs one from yesterday.
+            val yesterday = java.time.Instant.now().minus(java.time.Duration.ofDays(1))
+            val block = SoundProgress.Block(rung = rung.index, good = Progression.blockSize, total = Progression.blockSize, endedAt = yesterday)
+            progress = progress.copy(blockHistory = listOf(block))
+        }
         app.repository.saveSoundProgress(progress)
         return progress
     }
@@ -127,7 +134,7 @@ class AdaptivePilotTests {
     fun offTheRunIsIOSs() = runBlocking {
         for (saved in listOf(null, AdaptiveProfile(enabled = false, sounds = mapOf(SoundID.S to SoundAdaptive(setting = ModeSetting.Generalization))))) {
             val app = makeApp()
-            val progress = setUp(app, Rung.Syllables)
+            val progress = setUp(app, Rung.Syllables, goodYesterday = true)
             if (saved != null) store.update(child.id) { saved }
             val run = makeRun(app, Rung.Syllables, progress)
             val built = run.session

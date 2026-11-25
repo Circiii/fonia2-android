@@ -15,6 +15,8 @@ import tech.fonia.audio.RecordingWriter
 import tech.fonia.design.Field
 import tech.fonia.design.Rating
 import tech.fonia.domain.AttemptsSummary
+import tech.fonia.domain.BlockResult
+import tech.fonia.domain.DaySpread
 import tech.fonia.domain.Exercise
 import tech.fonia.domain.Language
 import tech.fonia.domain.FeedbackLevel
@@ -39,6 +41,7 @@ import tech.fonia.features.app.domainAge
 import tech.fonia.features.app.field
 import tech.fonia.features.app.ignoringFailure
 import tech.fonia.features.app.index
+import tech.fonia.features.app.at
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.progressionState
 import tech.fonia.features.adaptive.AdaptiveRun
@@ -53,6 +56,7 @@ import tech.fonia.store.Recording
 import tech.fonia.store.SessionRecord
 import tech.fonia.store.SoundProgress
 import java.time.Instant
+import java.time.ZoneId
 import java.util.UUID
 import kotlin.math.max
 import kotlin.random.Random
@@ -73,6 +77,9 @@ class SessionRun(
     history: AttemptsSummary,
     /** Where the saving runs: the app's lifetime, as a `Task { }` outlives its screen. */
     private val writes: CoroutineScope = app.scope,
+    /** The clock and the time zone that date blocks, so the two-day rule can be tested. */
+    private val now: () -> Instant = Instant::now,
+    private val zone: ZoneId = ZoneId.systemDefault(),
 ) {
     enum class Phase { Trial, Finished }
 
@@ -305,7 +312,7 @@ class SessionRun(
                 lastSaidWell = exercise
             }
             // A retry is the same item again: it adds to the dose but must not change a block's size.
-            if (!retry) {
+            if (!retry && countsTowardBlock(isChild = profile.isChild, machineJudged = machineJudged, adult = adult)) {
                 blockTotal += 1
                 if (decided == Attempt.Outcome.Good) blockGood += 1
             }
@@ -413,13 +420,21 @@ class SessionRun(
             val sound = ticket.sound
             if (trial.block.kind != SessionBlock.Kind.TargetA || isReview || sound == null || blockTotal <= 0) return
             var updated = progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue)
+            val endedAt = now()
+            val earlier = (progress?.blockHistory ?: emptyList()).map { it.result }
             updated = updated.copy(
-                blockHistory = updated.blockHistory + SoundProgress.Block(rung = rungOfSession.index, good = blockGood, total = blockTotal, endedAt = Instant.now()),
+                blockHistory = updated.blockHistory + SoundProgress.Block(rung = rungOfSession.index, good = blockGood, total = blockTotal, endedAt = endedAt),
             )
             // Later target blocks still practise this session's rung, so once one block has moved the learner, the
             // rest of the session can't move them again.
             if (state.rung == rungOfSession) {
-                val outcome = OwnSuccess.afterBlock(correct = blockGood, attempted = blockTotal, state = state)
+                // A child moves up on good blocks from two different days; an adult paces themselves.
+                val daySpread = if (profile.isChild) {
+                    DaySpread.Required(earlierGoodDay = Progression.hasGoodBlockOnEarlierDay(earlier, state.rung, endedAt, zone))
+                } else {
+                    DaySpread.NotRequired
+                }
+                val outcome = OwnSuccess.afterBlock(correct = blockGood, attempted = blockTotal, state = state, daySpread = daySpread)
                 state = outcome.state
                 when (val step = outcome.step) {
                     is ProgressionStep.Advance -> {
@@ -453,7 +468,7 @@ class SessionRun(
         if (isReview || sound == null || blockTotal <= 0) return
         val current = progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue)
         val updated = current.copy(
-            blockHistory = current.blockHistory + SoundProgress.Block(rung = ended.rung.index, good = blockGood, total = blockTotal, endedAt = Instant.now()),
+            blockHistory = current.blockHistory + SoundProgress.Block(rung = ended.rung.index, good = blockGood, total = blockTotal, endedAt = now()),
         )
         progress = updated
         val repository = app.repository
@@ -550,6 +565,13 @@ class SessionRun(
     }
 
     companion object {
+        /**
+         * A child's own "mi-a ieșit" is praised like any take, but only the phone or an adult can fill a block that
+         * moves a rung. An adult's own rating counts, as it always has.
+         */
+        fun countsTowardBlock(isChild: Boolean, machineJudged: Boolean, adult: Attempt.Outcome?): Boolean =
+            !isChild || machineJudged || adult != null
+
         /** A child is told a part of the lesson is done, never how many came out right. An adult gets the count. */
         fun blockNote(good: Int, total: Int, isChild: Boolean): String = when {
             isChild -> "Încă o parte gata. Bravo!"
@@ -595,3 +617,6 @@ class SessionRun(
         }
     }
 }
+
+private val SoundProgress.Block.result: BlockResult
+    get() = BlockResult(rung = Rung.at(rung), good = good, total = total, endedAt = endedAt)
