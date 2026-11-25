@@ -87,7 +87,7 @@ class FoniaUITests : Journeys() {
 
         for ((door, inside) in listOf(
             "Sunete" to "Sunetele tale",
-            "Încălzirea" to "Începem",
+            "Încălzirea" to "Suflăm lumânările",
             "Cum spun?" to "Cum spun S?",
             "Povești" to "Sâsâilă",
         )) {

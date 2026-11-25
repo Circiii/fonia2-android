@@ -114,10 +114,14 @@ abstract class Journeys {
         tap(button("Înapoi"))
     }
 
-    /** The voice welcome, left for later, then the page for the adult next to the child. */
+    /** The voice welcome, left for later. */
     protected fun passWelcome() {
         assertTrue(waitFor(button("Pornește microfonul"), 15))
         tap(button("Mai târziu"))
+    }
+
+    /** The page for the adult next to a child: it comes right after "Un copil". */
+    protected fun passAdultNote() {
         assertTrue(waitFor(staticText("Pentru adultul de lângă copil")))
         tap(button("Mai departe"))
     }
@@ -128,8 +132,11 @@ abstract class Journeys {
 
         assertTrue(waitFor(button("Un copil, R, S, Ș și celelalte, pas cu pas")))
         tap(button("Un copil, R, S, Ș și celelalte, pas cu pas"))
+        passAdultNote()
 
         assertTrue(waitFor(staticText("Cum îl cheamă pe copil?")))
+        // "Gata" waits for an age.
+        tap(button("6-7 ani"))
         tap(button("Sunetul S"))
         tap(button("Gata"))
     }
