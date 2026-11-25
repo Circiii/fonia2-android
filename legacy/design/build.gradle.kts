@@ -17,6 +17,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { compose = true }
+    testOptions {
+        unitTests {
+            all { test ->
+                // ArtTests read the shared content (images/catalog.json, the fonts) from the submodule at the root, like :legacy:features.
+                test.systemProperty("fonia.content", rootDir.resolve("content").absolutePath)
+            }
+        }
+    }
 }
 
 kotlin {
