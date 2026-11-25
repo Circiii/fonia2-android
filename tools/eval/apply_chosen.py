@@ -41,6 +41,7 @@ def main() -> None:
     d["source"] = (d["source"].split(" | v2:")[0] + " | v2: judge2 fitted by leave-one-voice-out on 8 synthetic voices "
                    "(tools/eval, spec/fusion/EVAL_v2.md), word gate -4.5 from the correct takes' 1st percentile; not children")
     d["word"]["minFitPerLabel"] = -4.5
+    old = d.get("judge2", {})
     d["judge2"] = {
         "version": "2026-11-24.v2",
         "contextShift": chosen["contextShift"],
@@ -50,6 +51,10 @@ def main() -> None:
         "visual": {},
         "personal": {},
     }
+    # The opt-in gates (EvalGates, docs/JUDECATOR_AFRICATE.md) are set by hand from gates.json: a refit keeps them.
+    for key in ("affricate", "finalL"):
+        if key in old:
+            d["judge2"][key] = old[key]
     with open(pop, "w", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(d, ensure_ascii=False, indent=1) + "\n")
     print("applied", tag, chosen)
