@@ -66,6 +66,7 @@ import tech.fonia.features.app.NavigationHost
 import tech.fonia.features.grownups.AdaptiveScreen
 import tech.fonia.features.grownups.CalibrationScreen
 import tech.fonia.features.grownups.HowItGoesScreen
+import tech.fonia.features.grownups.WeekScreen
 import tech.fonia.features.grownups.NotesScreen
 import tech.fonia.features.grownups.ParentsScreen
 import tech.fonia.features.grownups.ProfileDetail
@@ -326,6 +327,7 @@ fun DestinationScreen(destination: Destination, app: AppModel, path: PathModel?,
         is Destination.Route -> if (path != null) RouteScreen(destination.route, app, path, onShowGrownups) else EmptyPage()
         is Destination.ProfileDetail -> ProfileDetail(destination.profileID, app)
         is Destination.HowItGoes -> app.profiles.firstOrNull { it.id == destination.profileID }?.let { HowItGoesScreen(it, app) } ?: EmptyPage()
+        is Destination.Week -> app.profiles.firstOrNull { it.id == destination.profileID }?.let { WeekScreen(it, app) } ?: EmptyPage()
         is Destination.Notes -> NotesScreen(destination.profileID, app)
         is Destination.SoundChoice -> SoundChoiceScreen(destination.profileID, app)
         is Destination.Calibration -> CalibrationScreen(destination.profileID, app)

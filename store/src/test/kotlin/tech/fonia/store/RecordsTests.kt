@@ -137,6 +137,39 @@ class RecordsTests {
     }
 
     @Test
+    @DisplayName("a span of days gives that person's takes on every sound, oldest first, and nobody else's")
+    fun attemptsBetweenDays() = runTest {
+        TestStore().use { store ->
+            val profile = store.addChild()
+            val other = store.addChild()
+            val session = store.addSession(profile)
+            suspend fun take(who: Profile, day: Int, hour: Int, sound: String): Attempt {
+                val attempt = Attempt(
+                    sessionId = session.id,
+                    profileId = who.id,
+                    ts = bucharest(2026, 11, day, hour),
+                    exerciseKind = "repeat",
+                    sound = sound,
+                    target = "sare",
+                    machineOutcome = Attempt.Outcome.Good,
+                    timeZone = Bucharest,
+                )
+                store.repository.addAttempt(attempt)
+                return attempt
+            }
+            take(profile, 15, 10, sound = "s")
+            val monday = take(profile, 16, 0, sound = "r")
+            val later = take(profile, 18, 9, sound = "s")
+            val sunday = take(profile, 22, 23, sound = "s")
+            take(profile, 23, 0, sound = "s")
+            take(other, 18, 10, sound = "s")
+
+            val week = store.repository.attempts(profileId = profile.id, fromLocalDay = "2026-11-16", throughLocalDay = "2026-11-22")
+            assertEquals(listOf(monday.id, later.id, sunday.id), week.map { it.id })
+        }
+    }
+
+    @Test
     @DisplayName("the adult's verdict sits beside the machine's and can be withdrawn")
     fun adultVerdictIsSeparate() = runTest {
         TestStore().use { store ->

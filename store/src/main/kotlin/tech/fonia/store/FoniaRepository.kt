@@ -132,6 +132,15 @@ class FoniaRepository(
         Attempt.fetchAll(db, "SELECT * FROM attempt WHERE sessionId = ? ORDER BY ts", listOf(sessionId))
     }
 
+    /** Every take by one person between two days (`YYYY-MM-DD`, both included), on any sound, oldest first. */
+    suspend fun attempts(profileId: UUID, fromLocalDay: String, throughLocalDay: String): List<Attempt> = writer.read { db ->
+        Attempt.fetchAll(
+            db,
+            "SELECT * FROM attempt WHERE profileId = ? AND localDay >= ? AND localDay <= ? ORDER BY ts",
+            listOf(profileId, fromLocalDay, throughLocalDay),
+        )
+    }
+
     // MARK: Recordings
 
     /** Where to write a new take, or read an existing one. Creates the protected folder if needed. */

@@ -197,6 +197,10 @@ class AudioHub(
     private var capture: CaptureEnginePort? = null
     private var isSessionReady = false
 
+    /** iOS `isListening`: the microphone is open, so nothing else should play. */
+    val isListening: Boolean
+        get() = capture != null
+
     /**
      * The analysis settings of the take running now, or of the last one: [DSPThresholds.v1], with S/Ș switched off
      * when the microphone is narrow band ([sibilantsOff]). The judge reads the clip with the same settings.

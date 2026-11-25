@@ -152,24 +152,7 @@ Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md
 - **Pentru adult.** În pagina pentru părinți, sub etapă, la sunetul aflat la automatizare: `AdultCards.AUTOMATIZARE_NOTE`, același text ca pe iOS.
 - **Teste.** `SessionBuilderTests` (ritmul pe cele trei trepte, 3 din 6 în blocurile A și B, prima cu verdict, niciodată trei la rând fără, ritmul de referință). `SessionRunTests` (o sesiune întreagă la propoziții salvează toate rostirile, cu tot cu cele fără verdict, și umple blocurile de șase). `TakeFeedbackTests` (`hidesVerdict`, durata lui „Te-am auzit”, fără contoare la automatizare).
 
-## Deciziile și de ce
-
-- **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.
-- **Lacătul după sunetul singur.** Lecțiile se deschid în continuare prin reușita copilului (5 reușite). Pasul spre silabe așteaptă totuși ca un adult să asculte și să apese „Am ascultat, e bine” în Setări. Așa cere „Lacătul” din `docs/v2/06`, iar la copii e implicit pornit. Cu lacătul oprit, sau după confirmarea adultului, cele 5 reușite îl duc mai departe. Pragul de 12 din plan rămâne doar în `Progression`.
-- **Ecranul de final.** Copilul nu mai vede „N au ieșit bine din M” și nici „N din M în zonă”. Vede cuvântul („Bravo!”, „Ai exersat!”) și cel mai lung sunet. Adultul vede în continuare numărătoarea.
-- **Ciornele.** Se văd în debug sau cu flag, cum cere decizia proprietarului. Pe iOS flagul e cerut și în debug.
-- **ZIPA.** Aplicația livrată nu are permisiunea INTERNET, așa că descărcarea nu poate merge. Secțiunea e ascunsă cât timp modelul lipsește.
-
-## Ce nu s-a făcut
-
-- Oprirea descărcării unui model. Nu are sens fără internet.
-- Modelele Whisper copiate din APK nu se șterg la „Șterge tot”, pentru că fac parte din aplicație.
-- Conturul intonației din „Compară” (iOS bd3be47). Cere mult cod nou de analiză și desen. „Compară” pune exemplul și înregistrarea una după alta.
-- Anunțul vocal „gata” de la finalul unui discurs. Android nu are `SessionVoice`.
-- Butonul „Pentru adult” din ghidul sunetului (`SoundGuide`). Ghidul de pe Android nu are secțiunea aceea. Fișele se găsesc în Setări și în ecranul de start.
-- Alegerea momentului zilei („După cină” etc.) la primul start. Ora se alege din Setări. Momentele există în cod (`PracticeMoment`).
-
-## Polish după v29 (25 noiembrie 2026)
+### A șasea tură: polish după v29 (25 noiembrie 2026)
 
 - **Ținte de atingere.** Pe ecranele copilului orice buton ia atingeri pe cel puțin 56 dp, la adult rămâne 48 (`TouchFloor.kt`, `ProvideTouchFloor`). Desenul nu se schimbă: Compose lărgește zona de atingere după `minimumTouchTargetSize`. Butoanele din sistemul de design (`FoniButton`, `ChoicePill`, `Pill`, `IconTile`, `MiniPill`) au la copil și înălțimea desenată de 56. Foile (`FoniaSheet`) dau pragul mai departe, pentru că un dialog are configurația lui. Pastila „30 s” din antrenorul de vorbit se apasă acum pe toată suprafața.
 - **Contrast.** `starTint` e `#BA8000` (3,4:1 pe alb, 3,2:1 pe hârtie; era 2,2 și 2,1). Inelul care respiră sub butonul galben păstrează galbenul vechi, ca `startHalo`.
@@ -186,3 +169,37 @@ Rămas pentru proprietar:
 - Pe Android, ușa „Vorbit în public” apare și copilului (pe iOS doar adultului).
 - Raportul pentru logoped: iOS scrie „Fonia nu pune diagnostice”, Android „Fonia doar numără încercările, nu trage concluzii”. Trebuie ales un text.
 - Testele `ArtTests` din `:legacy:design` caută `legacy/content/images`, care nu există în worktree. Nu au legătură cu schimbările de aici.
+
+### A șaptea tură: raportul săptămânal pentru adult (25 noiembrie 2026)
+
+Sursa: `docs/port-android.md` §29 din aplicația iOS. Răspunde la §5.5 din `PENTRU_STEFAN.md` (modelul McKechnie din `CERCETARE_DISLALIE.md`: aplicația spune „bine / încă nu”, iar un om ascultă o dată pe săptămână).
+
+- **Pagina „Săptămâna pe scurt”** (`grownups/WeekScreen.kt`, `Destination.Week`). Rând nou sub „Cum merge”, la fiecare copil, în spatele verificării adultului. Se deschide pe săptămâna curentă; săgețile (48 dp) duc la „Săptămâna trecută” și mai înapoi, până la prima săptămână cu exerciții.
+- **Ce arată.** Zilele și minutele săptămânii; pe fiecare sunet litera, treapta, etapa, zilele, minutele, încercările și ce s-a mișcat; apoi cel mult cinci înregistrări păstrate, fiecare cu butonul de ascultat, ziua și ora, ce a zis telefonul și „Sună bine” / „Mai lucrăm” (cel puțin 48 dp).
+- **Alegerea** (`WeekReport.pick`, funcție pură, ca pe iOS): întâi prima și ultima rostire a aceluiași cuvânt, perechea cea mai depărtată în timp; apoi cele la care telefonul a zis „aproape” sau nu a judecat și la care adultul nu a răspuns; apoi orice altă rostire fără răspuns; apoi restul. Cele mai noi întâi, afișate de la cea mai veche. După un răspuns lista nu se reordonează.
+- **Ce scrie un răspuns.** „Sună bine” pune `adultOutcome = Good`; „Mai lucrăm” pune `NotYet` și lasă un „aproape” al adultului cum era. Se vede în „Cum merge” și în raportul PDF. Treapta, blocurile și motorul adaptiv nu se schimbă: un răspuns nu urcă niciodată copilul.
+- **Ascultarea** trece prin playerul existent (`ClipDecoder` + `audio.play`). Nu pornește cât e microfonul deschis (`AudioHub.isListening`, nou) și se oprește la ieșirea din pagină.
+- **Cu „Păstrează înregistrările copiilor” oprit** apare un singur rând sub săptămână, cu locul comutatorului.
+- **Nimic nu pleacă de pe telefon.** Nu s-a adăugat export sau partajare de înregistrări.
+- **Store:** `FoniaRepository.attempts(profileId, fromLocalDay, throughLocalDay)`, cu testul `attemptsBetweenDays`.
+- **Mostra de debug:** `foniaWeekSample` (sau `-foniaWeekSample` în `arguments`) dă unui copil fără exerciții două săptămâni pe primul sunet, cu trei înregistrări făcute din vocile aplicației. Cu `keepChildRecordings` pornit se vede și lista.
+- **Teste:** `WeekReportTests` (aceleași cazuri ca pe iOS).
+
+Diferență față de iOS: Android nu fixează primele încercări la cuvinte noi, deci pe fiecare sunet rămân doar ultimele trei înregistrări. Perechea „prima / cea mai nouă” apare rar, iar săptămânile vechi rămân de obicei fără înregistrări. Rândul de jos spune doar „La fiecare sunet rămân ultimele trei.”.
+
+## Deciziile și de ce
+
+- **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.
+- **Lacătul după sunetul singur.** Lecțiile se deschid în continuare prin reușita copilului (5 reușite). Pasul spre silabe așteaptă totuși ca un adult să asculte și să apese „Am ascultat, e bine” în Setări. Așa cere „Lacătul” din `docs/v2/06`, iar la copii e implicit pornit. Cu lacătul oprit, sau după confirmarea adultului, cele 5 reușite îl duc mai departe. Pragul de 12 din plan rămâne doar în `Progression`.
+- **Ecranul de final.** Copilul nu mai vede „N au ieșit bine din M” și nici „N din M în zonă”. Vede cuvântul („Bravo!”, „Ai exersat!”) și cel mai lung sunet. Adultul vede în continuare numărătoarea.
+- **Ciornele.** Se văd în debug sau cu flag, cum cere decizia proprietarului. Pe iOS flagul e cerut și în debug.
+- **ZIPA.** Aplicația livrată nu are permisiunea INTERNET, așa că descărcarea nu poate merge. Secțiunea e ascunsă cât timp modelul lipsește.
+
+## Ce nu s-a făcut
+
+- Oprirea descărcării unui model. Nu are sens fără internet.
+- Modelele Whisper copiate din APK nu se șterg la „Șterge tot”, pentru că fac parte din aplicație.
+- Conturul intonației din „Compară” (iOS bd3be47). Cere mult cod nou de analiză și desen. „Compară” pune exemplul și înregistrarea una după alta.
+- Anunțul vocal „gata” de la finalul unui discurs. Android nu are `SessionVoice`.
+- Butonul „Pentru adult” din ghidul sunetului (`SoundGuide`). Ghidul de pe Android nu are secțiunea aceea. Fișele se găsesc în Setări și în ecranul de start.
+- Alegerea momentului zilei („După cină” etc.) la primul start. Ora se alege din Setări. Momentele există în cod (`PracticeMoment`).
