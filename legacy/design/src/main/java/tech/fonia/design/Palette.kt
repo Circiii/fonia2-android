@@ -36,7 +36,11 @@ object Palette {
     val accentText = Color.hex(0x036A34)
     val accentSoft = Color.hex(0xD1F2D7)
 
-    val progress = Color.hex(0x4FC974)
+    /**
+     * What is done on a bar, a bead or a step, on [progressTrack]: 3:1 against it, so the share reads without a
+     * number.
+     */
+    val progress = Color.hex(0x039A48)
     val progressTrack = Color.hex(0xDFECE1)
     val today = Color.hex(0xDF6C32)
     /** Deep enough for a star icon on white or paper (3.4:1). */
@@ -47,7 +51,11 @@ object Palette {
     val startHalo = Color.hex(0xE5A000)
     val startGlint = Color.hex(0xFFE38D)
     val startSkirt = Color.hex(0xB17000)
-    val chipEdge = Color.hex(0xB2BAB2)
+    /**
+     * The edge under a white control. A white face on the pale page is almost invisible (1.1:1), so this edge is what
+     * shows the control is there: 3:1 against [paper].
+     */
+    val chipEdge = Color.hex(0x8A918A)
     val pillShadow = Color.hex(0x102E52).opacity(0.1)
 
     val sage = Color.hex(0xD3EDD7)
@@ -67,7 +75,11 @@ object Palette {
     val warmDeep = Color.hex(0x73202E)
     val warmSoft = Color.hex(0xFFE8E9)
 
-    val tip = Color.hex(0xF0C543)
+    /**
+     * The tip family's solid colour. The speaking coach draws the pace with it: a dot, a bar and marks on the timeline,
+     * so it keeps 3:1 on [progressTrack], and on [cloud] when a timeline mark is drawn at 0.9.
+     */
+    val tip = Color.hex(0x9C7C00)
     val tipDeep = Color.hex(0x744C00)
     val tipSoft = Color.hex(0xFCF2CD)
 
@@ -75,7 +87,8 @@ object Palette {
     val rightDeep = Color.hex(0x005121)
     val rightSoft = Color.hex(0xDCF7E1)
 
-    val almost = Color.hex(0x8CAC4B)
+    /** A warm olive green, never red. On the coach's timeline it marks a flat voice: 3:1 on [cloud] at 0.9. */
+    val almost = Color.hex(0x6C8A26)
     val almostDeep = Color.hex(0x495E16)
     val almostSoft = Color.hex(0xEAF8D4)
 

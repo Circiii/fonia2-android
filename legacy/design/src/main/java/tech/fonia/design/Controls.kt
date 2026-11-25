@@ -304,7 +304,7 @@ class ChoiceTileStyle(val isOn: Boolean, val radius: Dp = Radius.card) : ButtonS
         Box(
             modifier
                 .semantics { selected = isOn }
-                .raised(shape, if (isOn) Palette.accentSoft else Palette.sheet, Palette.chipEdge.copy(alpha = 0.75f), 3.dp, configuration.isPressed),
+                .raised(shape, if (isOn) Palette.accentSoft else Palette.sheet, Palette.chipEdge, 3.dp, configuration.isPressed),
         ) {
             Box(
                 Modifier.then(if (isOn) Modifier.border(2.dp, Palette.accent, shape) else Modifier),
