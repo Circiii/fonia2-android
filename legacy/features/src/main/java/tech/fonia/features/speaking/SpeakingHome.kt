@@ -935,7 +935,7 @@ private fun ReportView(
                     }
                     if (drill != null) {
                         StyledButton(onClick = { onDrill(drill) }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
-                            FoniaLabel("Exercițiul potrivit", FoniaIcon.arrow, iconSize = 16f)
+                            FoniaLabel("Exersează asta", FoniaIcon.arrow, iconSize = 16f)
                         }
                     }
                 }
@@ -1106,7 +1106,7 @@ data class TalkReport(
                 headline = "Vocea a stat mai mult pe loc. În fiecare frază, alege un cuvânt și apasă pe el."
             } else {
                 focus = TalkFocus.None
-                headline = "A curs bine, deci putem ridica ștacheta: spune același lucru în mai puțin timp."
+                headline = "A curs bine. Acum spune același lucru în mai puțin timp."
             }
 
             val paceSentence = if (!enoughForPace) {
@@ -1183,7 +1183,7 @@ data class TalkReport(
             val counted = "Am numărat $count."
             return when (trend) {
                 FillerTrend.TooShort -> "$counted E prea puțin timp ca să le compar cu alte dăți."
-                FillerTrend.FirstTalks -> "${rateText.ifEmpty { counted }} După câteva vorbiri îți arăt cum se schimbă la tine."
+                FillerTrend.FirstTalks -> "${rateText.ifEmpty { counted }} După câteva încercări îți arăt cum se schimbă la tine."
                 is FillerTrend.Fewer -> "$rateText Mai rar decât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."
                 is FillerTrend.Same -> "$rateText Cam cât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."
                 is FillerTrend.More -> "$rateText Mai des decât de obicei la tine, cam ${roundedHalfAway(trend.usual)} pe minut."

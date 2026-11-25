@@ -144,7 +144,7 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
             }
             ListSection(
                 header = "Pentru probă",
-                footer = "Ține minte, ca numere, câte încercări au fost în fiecare zi, pentru logoped. Fără voce. Pornit doar dacă îl pornești tu.",
+                footer = "Notează pentru logoped câte încercări au fost în fiecare zi, doar ca numere. Fără voce. Pornit doar dacă îl pornești tu.",
             ) {
                 row { ToggleRow("Jurnalul de exersare", app.isPilotLogOn) { app.setPilotLog(it) } }
             }

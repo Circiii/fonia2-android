@@ -54,7 +54,7 @@ class Catalog(private val content: FoniaContent) {
             art = sound.hero.picture,
             lessons = listOf(
                 Lesson(id = "${id.rawValue}-meet", title = "Facem cunoștință", detail = "O poveste scurtă și câteva cuvinte", focus = SessionFocus.Meet(id), art = "art-bubble"),
-                Lesson(id = "${id.rawValue}-warmup", title = "Încălzirea gurii", detail = "Mișcăm limba și buzele", focus = SessionFocus.Warmups(sound.warmups, breath = false), art = "art-tongue"),
+                Lesson(id = "${id.rawValue}-warmup", title = "Încălzirea gurii", detail = "Câteva mișcări pentru limbă și buze", focus = SessionFocus.Warmups(sound.warmups, breath = false), art = "art-tongue"),
                 onLadder(Rung.Isolated, "Doar sunetul", "Spunem $letter, nimic altceva", "art-speaker"),
                 onLadder(Rung.Syllables, "Silabe", "Silabe care încep cu $letter", "art-letters-small"),
                 Lesson(id = "${id.rawValue}-back", title = "Silabe pe dos", detail = "$letter la sfârșit și la mijloc", focus = SessionFocus.SyllablesBack(id), art = "art-letters"),
@@ -160,15 +160,15 @@ class Catalog(private val content: FoniaContent) {
                     id = "d-rhythm", title = "Ritmul", subtitle = "Nici prea repede, nici prea rar", track = Track.Diction, mark = "Ri", art = "art-drum",
                     lessons = listOf(
                         named(DictionLesson.Pace, "Viteza potrivită", "Citești într-un ritm bun", "art-drum"),
-                        named(DictionLesson.Pauses, "Pauza de aur", "Te oprești unde trebuie", "art-hourglass"),
-                        named(DictionLesson.Shadow, "Ca un actor", "Spui odată cu vocea", "art-clapper"),
+                        named(DictionLesson.Pauses, "Pauzele", "Te oprești la fiecare linie", "art-hourglass"),
+                        named(DictionLesson.Shadow, "Odată cu vocea", "Asculți și spui în același timp", "art-clapper"),
                     ),
                 ),
                 CourseUnit(
                     id = "d-articulation", title = "Articulația", subtitle = "Trezim buzele, limba și maxilarul", track = Track.Diction, mark = "A", art = "art-lips",
                     lessons = listOf(
                         named(DictionLesson.Warmup, "Încălzirea", "Patru mișcări pentru gură", "art-tongue"),
-                        named(DictionLesson.FinalWords, "Finalurile care se pierd", "Cuvinte terminate în i", "art-finish"),
+                        named(DictionLesson.FinalWords, "Sfârșitul cuvintelor", "Cuvinte terminate în i", "art-finish"),
                         named(DictionLesson.Twisters, "Frământări pe viteze", "Întâi rar, apoi mai repede", "art-start"),
                     ),
                 ),
@@ -179,7 +179,7 @@ class Catalog(private val content: FoniaContent) {
                     ),
                 ),
                 CourseUnit(
-                    id = "d-pitch", title = "Tonul", subtitle = "Vocea care urcă și coboară", track = Track.Diction, mark = "T", art = "art-coaster",
+                    id = "d-pitch", title = "Tonul", subtitle = "Cum urcă și coboară vocea", track = Track.Diction, mark = "T", art = "art-coaster",
                     lessons = listOf(
                         named(DictionLesson.Glide, "Sus și jos", "Vocea urcă și coboară", "art-coaster"),
                         named(DictionLesson.StatementOrQuestion, "Întrebare sau afirmație?", "Aceleași cuvinte, alt ton", "art-question"),

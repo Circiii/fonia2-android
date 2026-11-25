@@ -257,7 +257,7 @@ class AdultFlowTests {
     fun theReportSaysHowTheHesitationsCompareWithTheSpeakersUsual() {
         assertNull(TalkReport.fillerSentence(0, FillerTrend.FirstTalks, 0.0))
         assertEquals("Am numărat 3. E prea puțin timp ca să le compar cu alte dăți.", TalkReport.fillerSentence(3, FillerTrend.TooShort, null))
-        assertEquals("Cam 6 pe minut. După câteva vorbiri îți arăt cum se schimbă la tine.", TalkReport.fillerSentence(6, FillerTrend.FirstTalks, 5.6))
+        assertEquals("Cam 6 pe minut. După câteva încercări îți arăt cum se schimbă la tine.", TalkReport.fillerSentence(6, FillerTrend.FirstTalks, 5.6))
         assertEquals("Cam 3 pe minut. Mai rar decât de obicei la tine, cam 7 pe minut.", TalkReport.fillerSentence(8, FillerTrend.Fewer(7.4), 3.2))
         assertEquals("Cam 7 pe minut. Cam cât de obicei la tine, cam 7 pe minut.", TalkReport.fillerSentence(8, FillerTrend.Same(7.4), 7.0))
         assertEquals("Cam 9 pe minut. Mai des decât de obicei la tine, cam 2 pe minut.", TalkReport.fillerSentence(8, FillerTrend.More(2.2), 9.1))

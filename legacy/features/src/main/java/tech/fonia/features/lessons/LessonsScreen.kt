@@ -230,7 +230,7 @@ fun EnglishScreen(path: PathModel) {
     val push = rememberPush()
     CardPage("Engleză") {
         FoniaText(
-            "Întâi accentul și vocalele. Câte 12 minute, de 4 ori pe săptămână.",
+            "Ca să fii înțeles, contează cel mai mult accentul și vocalele, așa că începem cu ele. Merge cel mai bine câte 12 minute, de 4 ori pe săptămână.",
             Modifier.padding(horizontal = 4.dp),
             style = fBody,
             color = Palette.inkSoft,
@@ -253,7 +253,7 @@ fun WarmupScreen(path: PathModel, app: AppModel) {
     ScenePage(
         scene = SceneName.warmup,
         title = "Încălzirea",
-        sentence = "Gura se încălzește, ca un sportiv. Tragi aer pe nas, apoi sufli încet.",
+        sentence = "Înainte de sunete, încălzim gura. Tragi aer pe nas, apoi sufli încet.",
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(
