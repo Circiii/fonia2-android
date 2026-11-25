@@ -76,7 +76,7 @@ Pentru 1–3 există porți construite, dar oprite, și un raport în `EvalV2Run
 
 ### Pedagogie (vezi `docs/CERCETARE_DISLALIE.md`)
 
-4. **Feedback adaptiv.** La automatizare, verdictul se arată doar la circa jumătate din rostiri (Preston et al. 2023, Speech Motor Chaining: 3 din 6 pe nivelul de sus). Treptele dintre ele rămân la 100 %. Lowe & Buchwald 2017 nu susține că 50 % bate 100 % (vezi `CERCETARE_DISLALIE.md` §6).
+4. **Feedback adaptiv.** La automatizare, verdictul se arată doar la circa jumătate din rostiri (Preston et al. 2023, Speech Motor Chaining: 3 din 6 pe nivelul de sus). Pe treptele dintre ele rămâne reducerea treptată de acum și autoevaluarea de la grupurile de consoane („Cum ți s-a părut?”), care se potrivesc cu Speech Motor Chaining. Lowe & Buchwald 2017 nu susține că 50 % bate 100 % (vezi `CERCETARE_DISLALIE.md` §6).
 5. **Raportul săptămânal pentru adult**, cu rostirile ascultabile, ca indicațiile fine să vină de la logoped (modelul RCT McKechnie 2020).
 
 ### Polish

@@ -212,7 +212,7 @@ A doua parte a turei (deciziile proprietarului, 25 noiembrie seara):
 
 - **Propozițiile și repovestirea așteaptă adultul, ca pe iOS.** `Progression.afterBlock` dă „NeedsAdult” la propoziții și repovestire când adultul n-a deschis drumul, înaintea regulii celor două zile. `OwnSuccess.withoutAdult` a ieșit, deci pasul nu se mai transformă în urcare. Copilul vede rândul de așteptare de până acum. Teste: `OwnSuccessTests`, `SessionRunTests`.
 - **„Mai lucrăm” anulează zilele bune de până atunci.** Un „Mai lucrăm” pe o rostire de pe treapta curentă face ca blocurile bune încheiate în ziua lui sau înainte să nu mai conteze la regula celor două zile (`Progression.hasGoodBlockOnEarlierDay`, parametrul `notBefore`; citirea în `AdultMarks`). Doar la copil, doar pe treapta curentă, niciodată o coborâre. O rostire nu își ține treapta, așa că o primește de la blocurile ședinței ei. „Aproape” ales de adult în lecție nu contează. Pilotul adaptiv nu citește semnele. Teste: `TwoDayProgressionTests`, `AdultMarksTests`, `SessionRunTests`.
-- **Pe CE, GE, J și Ț urechea adultului trece copilul mai departe (doar pe Android).** Sunt sunetele pe care telefonul le aude încă slab: sub 80 % rostiri corecte acceptate la v29. Două „Sună bine” în două zile diferite pe treapta curentă, fără „Mai lucrăm” acolo din ziua primului încolo, urcă un copil o treaptă (`WeakJudgeGate`). Doar sub propoziții. Lacătul de după sunetul singur rămâne. Regula se aplică după un răspuns în „Săptămâna pe scurt” și la încărcarea drumului. Teste: `WeakJudgeGateTests`.
+- **Pe CE, GE, J și Ț urechea adultului trece copilul mai departe (doar pe Android).** Sunt sunetele pe care telefonul le aude încă slab: sub 80 % rostiri corecte acceptate la v29. Două „Sună bine” în două zile diferite pe treapta curentă, fără „Mai lucrăm” acolo din ziua primului încolo, urcă un copil o treaptă (`WeakJudgeGate`). Doar sub propoziții. Lacătul de după sunetul singur rămâne. Regula se aplică după un răspuns în „Săptămâna pe scurt” și la încărcarea drumului. Teste: `WeakJudgeGateTests`. iOS primește același drum al adultului, dar din prudență doar pentru J și GE: clipurile lui de silabe acceptă J la 63 % și GE la 71 % (voci sintetice, neverificate).
 - **Camera trece la „Experimental”, oprită, ca pe iOS.** „Ghidaje pe față în oglindă” și „Vorbit în public în fața camerei”, cu textele de pe iOS, sunt în Setări › Alte setări. Cât sunt oprite, oglinda nu desenează ghidajul buzelor, iar antrenorul nu are pasul cu camera. Copilul nu vede pasul cu camera nici cu comutatorul pornit. Ușa „Vorbit în public” a adultului deschide pagina „Vorbit în public”, ca pe iOS, iar legătura „Alte exerciții” din antrenor a ieșit. Teste: `HomeDoorsTests`.
 - **Ușile adultului în ordinea de pe iOS:** Sunete, Engleză, Vorbit în public. Test: `HomeDoorsTests`.
 - **Cod fără apeluri.** `effortLine` și `ShrinkToFit` au ieșit.
@@ -223,9 +223,10 @@ A doua parte a turei (deciziile proprietarului, 25 noiembrie seara):
 
 Ce nu s-a adoptat:
 
-- **Autoevaluarea „Cum a sunat?”.** Dovezile sunt slabe, RCT-ul din 2020 n-a arătat niciun câștig, iar copiii mici își judecă propriile greșeli aproape la întâmplare.
+- **Autoevaluarea „Cum a sunat?” pe mai multe trepte.** Dovezile sunt slabe, RCT-ul din 2020 n-a arătat niciun câștig, iar copiii mici își judecă propriile greșeli aproape la întâmplare.
 - **Feedbackul rezumat** (un singur verdict pentru un șir de rostiri).
-- **Reducerea verdictului pe treptele intermediare.** Rămân la 100 %, pentru că nu sunt dovezi pentru reducere acolo.
+
+Ce există deja rămâne, la fel ca pe iOS: reducerea treptată de acum (`FeedbackSchedule.levels`: 5, apoi 4 din 6 la începutul consolidării; 4, apoi 3 din 6 la sfârșitul ei, cu 3 din 6 judecate de copil la grupurile de consoane, „Cum ți s-a părut?”, pe care telefonul nu le notează). Se potrivesc cu Speech Motor Chaining. „Neadoptat” înseamnă doar că nu se extind la alte trepte și că nu se adaugă feedback rezumat.
 
 Ce rămâne așa, cu intenție:
 
