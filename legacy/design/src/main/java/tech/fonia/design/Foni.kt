@@ -143,26 +143,37 @@ fun Foni(
     }
 
     val pose = remember { mutableStateOf(compute(System.nanoTime(), 1.0 / 60), neverEqualPolicy()) }
-    LaunchedEffect(reduceMotion, seed) {
-        // Reduce Motion: the timeline is paused and the bird holds one pose.
-        if (reduceMotion) {
+    val running = LocalAmbientMotion.current
+    LaunchedEffect(reduceMotion, seed, running) {
+        // Reduce Motion, or a page out of view: the timeline is paused and the bird holds one pose.
+        if (reduceMotion || !running) {
             pose.value = compute(System.nanoTime(), 1.0 / 60)
             return@LaunchedEffect
         }
         var last = 0L
+        var shownAt = 0L
+        var shownBeat = Long.MIN_VALUE
+        var shown = pose.value
         while (true) {
             withFrameNanos { now ->
-                // A calm bird (no voice to follow, no hop, settled in its mood) breathes at 30 frames a second: the
-                // eye can't tell, and a 120 Hz phone no longer repaints it four times as often (Home used ~90 % of
-                // a core). A voice, a hop or a new mood bring every frame back.
+                val dt = if (last == 0L) 1.0 / 60 else (now - last) / 1e9
+                last = now
+                val next = compute(now, dt)
+                // A calm bird (no voice to follow, no hop, settled in its mood) mostly holds still and breathes. Its
+                // breath steps on the ambient beat with the rest of the page; a turn of the head, a blink or a flick
+                // still gets 30 frames a second. A voice, a hop or a new mood bring every frame back.
                 val hop = hopStart
                 val calm = currentLevel == null &&
                     (hop == null || now - hop > 1_500_000_000L) &&
                     now - currentMoodStart > 2_000_000_000L
-                if (calm && last != 0L && now - last < 31_000_000L) return@withFrameNanos
-                val dt = if (last == 0L) 1.0 / 60 else (now - last) / 1e9
-                last = now
-                pose.value = compute(now, dt)
+                val beat = AmbientBeat.of(now)
+                val due = !calm || beat != shownBeat || (next.movesFrom(shown) && now - shownAt >= 31_000_000L)
+                if (due) {
+                    shown = next
+                    shownAt = now
+                    shownBeat = beat
+                    pose.value = next
+                }
             }
         }
     }
@@ -201,6 +212,19 @@ data class ParrotPose(
 ) {
     @Suppress("EnumEntryName")
     enum class Eyes { open, calm, smile }
+
+    /** Whether anything quicker than the breath and the slow sway moved since [shown]: the head, a blink, a flick. */
+    fun movesFrom(shown: ParrotPose): Boolean =
+        eyes != shown.eyes ||
+            abs(head - shown.head) > 0.05 ||
+            abs(wing - shown.wing) > 0.05 ||
+            abs(wingLift - shown.wingLift) > 0.005 ||
+            abs(tail - shown.tail) > 0.05 ||
+            abs(beak - shown.beak) > 0.05 ||
+            abs(blink - shown.blink) > 0.01 ||
+            abs(rise - shown.rise) > 0.0005 ||
+            abs(squash - shown.squash) > 0.0005 ||
+            abs(sleepy - shown.sleepy) > 0.01
 }
 
 /** All motion is a pure function of time, so nothing needs storing and nothing can drift. */

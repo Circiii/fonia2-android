@@ -119,17 +119,23 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
         app.takePendingRoute()?.let { AppRoute.parse(it) }?.let { stack.push(it) }
     }
 
+    // Once, when the first run ends: the quick check, which sets what to practise.
+    val offering = app.offerCheck && !app.calibrating && profile.track == Profile.Track.Ro && app.ticket == null
+    val calibrating = app.calibrating && app.ticket == null
     Box(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().then(if (showStart) Modifier.clearAndSetSemantics {} else Modifier)) {
-            NavigationHost(stack) { destination ->
-                if (destination == Destination.Root) {
-                    // His yellow button: one tap continues today's sound. The sheet only shows when nothing is left.
-                    TabPages(profile, app, path, pager, onStart = {
-                        val step = path.continuing
-                        if (step != null) app.start(step.lesson, step.unit) else showStart = true
-                    })
-                } else {
-                    DestinationScreen(destination, app, path, onShowGrownups)
+            // Under a cover the pages stand still.
+            tech.fonia.design.AmbientMotion(running = !showStart && !offering && !calibrating) {
+                NavigationHost(stack) { destination ->
+                    if (destination == Destination.Root) {
+                        // His yellow button: one tap continues today's sound. The sheet only shows when nothing is left.
+                        TabPages(profile, app, path, pager, onStart = {
+                            val step = path.continuing
+                            if (step != null) app.start(step.lesson, step.unit) else showStart = true
+                        })
+                    } else {
+                        DestinationScreen(destination, app, path, onShowGrownups)
+                    }
                 }
             }
         }
@@ -158,14 +164,12 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
                 },
             )
         }
-        // Once, when the first run ends: the quick check, which sets what to practise.
-        val offering = app.offerCheck && !app.calibrating && profile.track == Profile.Track.Ro && app.ticket == null
         FullScreenCover(isPresented = offering) {
             BackHandler { app.offerCheck = false }
             tech.fonia.features.check.CheckOffer(onStart = { app.startCheck() }, onLater = { app.offerCheck = false })
         }
         // „Calibrare”: offered once when the first run ends, and from Setări.
-        FullScreenCover(isPresented = app.calibrating && app.ticket == null) {
+        FullScreenCover(isPresented = calibrating) {
             tech.fonia.features.session.VoiceCalibrationScreen(profile, app, onDone = { app.calibrating = false })
         }
     }
@@ -190,9 +194,12 @@ private fun TabPages(profile: Profile, app: AppModel, path: PathModel, pager: Pa
         HorizontalPager(pager, Modifier.fillMaxSize(), beyondViewportPageCount = 1) { page ->
             val value = MainTab.entries[page]
             Box(Modifier.fillMaxSize().then(if (value != tab) Modifier.clearAndSetSemantics {} else Modifier)) {
-                when (value) {
-                    MainTab.home -> HomeScreen(profile, app, path, bottomInset = bottom)
-                    MainTab.progress -> ProgressScreen(profile, app, path, bottomInset = bottom)
+                // The page next door stays composed, but still.
+                tech.fonia.design.AmbientMotion(running = value == tab) {
+                    when (value) {
+                        MainTab.home -> HomeScreen(profile, app, path, bottomInset = bottom)
+                        MainTab.progress -> ProgressScreen(profile, app, path, bottomInset = bottom)
+                    }
                 }
             }
         }
@@ -231,17 +238,15 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
             Spacer(Modifier.width(96.dp))
             TabItem(MainTab.progress, "Progres", "tab-progress", tab, onSelect, Modifier.weight(1f))
         }
-        // The yellow button invites: a soft ring breathes out from under it and it swells a little, forever.
+        // The yellow button invites: a soft ring breathes out from under it and it swells a little, while the bar
+        // is in view. It steps on the ambient beat with the clouds and the bird, so they repaint the screen together;
+        // an infinite transition would repaint at the screen's full 120 Hz forever.
         val reduceStart = LocalReduceMotion.current
-        // 30 updates a second are plenty for a slow breath; an infinite transition would repaint at the screen's full
-        // 120 Hz forever, on every screen that shows the bar.
+        val breathes = tech.fonia.design.LocalAmbientMotion.current
         val startPulse = androidx.compose.runtime.remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
-        androidx.compose.runtime.LaunchedEffect(reduceStart) {
-            if (reduceStart) return@LaunchedEffect
-            while (true) {
-                startPulse.floatValue = ((System.nanoTime() / 1_000_000L) % 2000L) / 2000f
-                kotlinx.coroutines.delay(33)
-            }
+        androidx.compose.runtime.LaunchedEffect(reduceStart, breathes) {
+            if (reduceStart || !breathes) return@LaunchedEffect
+            tech.fonia.design.ambientBeats { now -> startPulse.floatValue = ((now / 1_000_000L) % 2000L) / 2000f }
         }
         StyledButton(
             onClick = onStart,
@@ -253,7 +258,7 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
                     if (!reduceStart) {
                         val t = startPulse.value
                         drawCircle(
-                            Palette.starTint.copy(alpha = 0.32f * (1f - t)),
+                            Palette.startHalo.copy(alpha = 0.32f * (1f - t)),
                             radius = size.minDimension / 2f * (0.85f + 0.6f * t),
                             center = center.copy(y = center.y - size.height * 0.08f),
                         )

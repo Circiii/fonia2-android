@@ -513,7 +513,11 @@ private fun DrawScope.wave(c: Offset, r: Float, v: Float, t: Float, color: Color
 @Composable
 private fun Trend(talks: List<tech.fonia.speaking.coach.CoachScores>) {
     val shown = talks.takeLast(5)
-    if (shown.size < 2) return
+    if (shown.size < 2) {
+        // The first talk has nothing to stand next to yet: one quiet line says when the trend shows up.
+        FoniaText("După încă o încercare vezi aici cum se schimbă.", style = ui(15, UIWeight.medium, TextRole.footnote), color = Palette.inkSoft)
+        return
+    }
     Section("Ultimele ${shown.size}")
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         for (area in Area.entries) {

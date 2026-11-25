@@ -168,3 +168,21 @@ Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md
 - Anunțul vocal „gata” de la finalul unui discurs. Android nu are `SessionVoice`.
 - Butonul „Pentru adult” din ghidul sunetului (`SoundGuide`). Ghidul de pe Android nu are secțiunea aceea. Fișele se găsesc în Setări și în ecranul de start.
 - Alegerea momentului zilei („După cină” etc.) la primul start. Ora se alege din Setări. Momentele există în cod (`PracticeMoment`).
+
+## Polish după v29 (25 noiembrie 2026)
+
+- **Ținte de atingere.** Pe ecranele copilului orice buton ia atingeri pe cel puțin 56 dp, la adult rămâne 48 (`TouchFloor.kt`, `ProvideTouchFloor`). Desenul nu se schimbă: Compose lărgește zona de atingere după `minimumTouchTargetSize`. Butoanele din sistemul de design (`FoniButton`, `ChoicePill`, `Pill`, `IconTile`, `MiniPill`) au la copil și înălțimea desenată de 56. Foile (`FoniaSheet`) dau pragul mai departe, pentru că un dialog are configurația lui. Pastila „30 s” din antrenorul de vorbit se apasă acum pe toată suprafața.
+- **Contrast.** `starTint` e `#BA8000` (3,4:1 pe alb, 3,2:1 pe hârtie; era 2,2 și 2,1). Inelul care respiră sub butonul galben păstrează galbenul vechi, ca `startHalo`.
+- **Acasă în repaus.** Toate animațiile fără sfârșit (Foni, norii, stelele de noapte, inelul butonului galben, litera de pe Acasă) merg pe un singur ritm, de 12 pe secundă (`AmbientBeat`). Se opresc sub o lecție, sub foaia de start, la calibrare și pe pagina de tab care nu se vede (`AmbientMotion`). Foni își calculează poza la fiecare cadru, dar o desenează doar când se vede ceva mișcându-se. Pe emulator (Pixel 7, GPU de pe gazdă), după 30 s fără atingere: procesul de la 36–49 % la 19–23 % dintr-un nucleu, `RenderThread` de la 31 % la 18 %, firul principal de la 12 % la 4 %.
+- **Minute.** O zi cu exerciții sub un minut numără un minut și în grafic, și în totalul din plăcuța „Minute”. Înainte graficul arăta 1 și plăcuța 0.
+- **Fără numere pentru copil.** Bara lecției se citește cu TalkBack în cuvinte („Peste jumătate”), nu în procente. Cardul „Antrenament” nu mai spune „N din M” unui copil. Pe pagina „Vorbit în public”, copilul vede doar durata, fără „Pasul N din M”.
+- **Stări goale.** Înainte de prima lecție, „Progres” arată un singur rând („După prima lecție, aici se adună zilele, stelele și minutele tale.”) în locul celor patru plăcuțe cu 0. Jurnalul spune „Aici apar zilele în care exersezi.”. O zi care n-a venit încă spune „Ziua asta n-a venit încă.”. Raportul antrenorului de vorbit, după prima încercare: „După încă o încercare vezi aici cum se schimbă.”.
+- **Verificare rapidă.** Copilul nu mai vede pe card literele cu verdict de după o verificare, ci „Hai să vedem ce s-a schimbat”, ca pe iOS.
+- **Tranziții.** Foile urcă cu arc, iar paginile de tab alunecă (sărite cu „Elimină animațiile”). Compose ține cont de scara animațiilor din sistem. Nu s-a adăugat nicio animație nouă.
+- `versionCode` 30. „Merge bine așa” și nota din `pacing.json`, ca pe iOS.
+
+Rămas pentru proprietar:
+
+- Pe Android, ușa „Vorbit în public” apare și copilului (pe iOS doar adultului).
+- Raportul pentru logoped: iOS scrie „Fonia nu pune diagnostice”, Android „Fonia doar numără încercările, nu trage concluzii”. Trebuie ales un text.
+- Testele `ArtTests` din `:legacy:design` caută `legacy/content/images`, care nu există în worktree. Nu au legătură cu schimbările de aici.

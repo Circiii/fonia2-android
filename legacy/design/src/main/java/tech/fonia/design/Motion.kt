@@ -1,17 +1,13 @@
 package tech.fonia.design
 
-import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.StartOffset
-import androidx.compose.animation.core.StartOffsetType
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -27,8 +23,8 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 
 /**
  * Sparkles in the parrot's colours that burst once from the middle, fall a little and fade. Drawn in one
@@ -112,8 +108,54 @@ internal object CelebrationBurstSpec {
 }
 
 /**
+ * Whether slow, endless motion runs here: drifting clouds, a calm bird, the start button's breath. A page under a
+ * cover, or a tab out of view, stays composed but stands still, so it doesn't repaint the screen under a lesson.
+ */
+val LocalAmbientMotion = compositionLocalOf { true }
+
+/** Stops slow, endless motion in [content] while [running] is false; it never restarts what an outer page stopped. */
+@Composable
+fun AmbientMotion(running: Boolean, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAmbientMotion provides (running && LocalAmbientMotion.current), content = content)
+}
+
+/**
+ * The beat slow, endless motion steps on. Every loop reads the same frame time, so they all land on the same
+ * frames: the screen repaints a dozen times a second for all of them together, not once for each at its own
+ * moment. Home left untouched used most of a core while the clouds, the bird and the start button each kept
+ * their own clock.
+ */
+object AmbientBeat {
+    const val PER_SECOND = 12
+    const val NANOS: Long = 1_000_000_000L / PER_SECOND
+
+    fun of(frameNanos: Long): Long = frameNanos / NANOS
+}
+
+/**
+ * Calls [onBeat] on the first frame of every beat and sleeps in between. It runs on frames, so it stops with
+ * the app in the background.
+ */
+suspend fun ambientBeats(onBeat: (frameNanos: Long) -> Unit): Nothing {
+    var last = Long.MIN_VALUE
+    while (true) {
+        val now = withFrameNanos { now ->
+            val beat = AmbientBeat.of(now)
+            if (beat != last) {
+                last = beat
+                onBeat(now)
+            }
+            now
+        }
+        // Wake two frames before the next beat, so every loop is waiting on the frame that starts it.
+        val wait = ((last + 1) * AmbientBeat.NANOS - now) / 1_000_000L - 34
+        if (wait > 0) delay(wait)
+    }
+}
+
+/**
  * Pale clouds crossing a scene very slowly, or stars breathing at night. It's what keeps a page from looking
- * like a poster, and it's slow enough that nobody watches it. The moves are infinite transitions read only
+ * like a poster, and it's slow enough that nobody watches it. Both step on the ambient beat and are read only
  * while drawing, so the page doesn't recompose while they play.
  */
 @Composable
@@ -122,42 +164,28 @@ fun SkyLife(isNight: Boolean = false, modifier: Modifier = Modifier) {
         Box(modifier)
         return
     }
-    val transition = rememberInfiniteTransition(label = "sky")
+    val running = LocalAmbientMotion.current
+    val born = remember { System.nanoTime() }
+    val clock = remember { mutableLongStateOf(0L) }
+    LaunchedEffect(running) {
+        if (!running) return@LaunchedEffect
+        ambientBeats { now -> clock.longValue = (now - born) / 1_000_000L }
+    }
     if (isNight) {
-        val stars = (0 until 14).map { index ->
-            val seed = index.toDouble()
-            transition.animateFloat(
-                initialValue = 0.35f,
-                targetValue = 1f,
-                animationSpec = InfiniteRepeatableSpec(
-                    animation = easeInOut((2 + SkyNoise.noise(seed + 60) * 2.5)),
-                    repeatMode = RepeatMode.Reverse,
-                    initialStartOffset = StartOffset((SkyNoise.noise(seed + 20) * 2 * 1000).roundToInt(), StartOffsetType.Delay),
-                ),
-                label = "star$index",
-            )
-        }
         Canvas(modifier) {
+            val seconds = clock.longValue / 1000.0
             platform { canvas ->
                 for (index in 0 until 14) {
                     val seed = index.toDouble()
                     val radius = (1 + SkyNoise.noise(seed + 90) * 1.5) * density
                     val x = SkyNoise.noise(seed) * size.width
                     val y = SkyNoise.noise(seed + 30) * size.height * 0.42
-                    canvas.drawCircle(x.toFloat(), y.toFloat(), radius.toFloat(), fillPaint(Color.hex(0xFFF6CF), stars[index].value.toDouble()))
+                    canvas.drawCircle(x.toFloat(), y.toFloat(), radius.toFloat(), fillPaint(Color.hex(0xFFF6CF), starGlow(seed, seconds)))
                 }
             }
         }
     } else {
-        // The clouds cross the screen in minutes: 20 steps a second look the same as 120 and cost a sixth.
-        val born = remember { System.nanoTime() }
-        val clock = remember { androidx.compose.runtime.mutableLongStateOf(0L) }
-        LaunchedEffect(Unit) {
-            while (true) {
-                clock.longValue = (System.nanoTime() - born) / 1_000_000L
-                kotlinx.coroutines.delay(50)
-            }
-        }
+        // The clouds cross the screen in minutes.
         Canvas(modifier) {
             val d = density.toDouble()
             val ms = clock.longValue
@@ -169,6 +197,18 @@ fun SkyLife(isNight: Boolean = false, modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+/** A star breathing between 0.35 and 1, each at its own pace and after its own pause, eased both ways. */
+private fun starGlow(seed: Double, seconds: Double): Double {
+    val pause = SkyNoise.noise(seed + 20) * 2
+    val span = 2 + SkyNoise.noise(seed + 60) * 2.5
+    if (seconds <= pause) return 0.35
+    val run = (seconds - pause) / span
+    val leg = floor(run)
+    val along = (run - leg).toFloat()
+    val eased = EaseInOutCurve.transform(if (leg.toLong() % 2 == 0L) along else 1 - along)
+    return 0.35 + 0.65 * eased
 }
 
 /** Two copies a full lap apart: when the lap ends, the second stands exactly where the first began. */

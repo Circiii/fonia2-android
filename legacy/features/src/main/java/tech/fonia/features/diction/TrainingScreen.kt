@@ -61,9 +61,12 @@ private fun rememberBest(app: AppModel, profileID: UUID, sound: SoundID): Map<In
     return best
 }
 
-/** On a sound's page, next to the lessons: the second path, „Antrenament”. */
+/**
+ * On a sound's page, next to the lessons: the second path, „Antrenament”. A child hears no count of the steps that
+ * went well ([showsCount] false), as on iOS.
+ */
 @Composable
-fun TrainingCard(sound: SoundID, app: AppModel, profileID: UUID, push: (AppRoute) -> Unit, modifier: Modifier = Modifier) {
+fun TrainingCard(sound: SoundID, app: AppModel, profileID: UUID, push: (AppRoute) -> Unit, modifier: Modifier = Modifier, showsCount: Boolean = true) {
     val drills = remember(sound) { app.drills(sound) }
     if (drills.isEmpty()) return
     val best = rememberBest(app, profileID, sound)
@@ -75,7 +78,7 @@ fun TrainingCard(sound: SoundID, app: AppModel, profileID: UUID, push: (AppRoute
         style = PressableStyle(),
         modifier = modifier.semantics {
             contentDescription = "Antrenament de dicție"
-            stateDescription = "$passed din ${drills.size}"
+            if (showsCount) stateDescription = "$passed din ${drills.size}"
         },
     ) {
         Row(

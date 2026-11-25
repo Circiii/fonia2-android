@@ -36,6 +36,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
 import kotlin.math.ceil
+import kotlin.math.max
 
 @Suppress("EnumEntryName")
 enum class LessonState { done, current, later, locked }
@@ -262,19 +263,28 @@ class PathModel(profile: Profile, val content: FoniaContent) {
                     id = day,
                     letter = letter,
                     attempts = ofDay.sumOf { it.attempts },
-                    minutes = minutes(ofDay),
+                    minutes = dayMinutes(ofDay),
                     isToday = day == today,
-                    hasPractice = ofDay.any { it.endedAt != null || it.attempts > 0 },
+                    hasPractice = practised(ofDay),
                 )
             }
         }
 
-    val totalMinutes: Int get() = minutes(sessions)
+    /** Counted day by day, the same way as the week's bars, so the total never shows less than the bars add up to. */
+    val totalMinutes: Int get() = sessions.groupBy { it.localDay }.values.sumOf { dayMinutes(it) }
     val totalAttempts: Int get() = sessions.sumOf { it.attempts }
     val totalLessons: Int get() = sessions.count { it.endedAt != null }
     val totalDays: Int get() = sessions.filter { it.endedAt != null || it.attempts > 0 }.map { it.localDay }.toSet().size
 
     private companion object {
+        fun practised(ofDay: List<SessionRecord>): Boolean = ofDay.any { it.endedAt != null || it.attempts > 0 }
+
+        /**
+         * A day's minutes: the finished lessons' time, a started minute counted whole, and at least one on a day with
+         * any practice, even a lesson left halfway.
+         */
+        fun dayMinutes(ofDay: List<SessionRecord>): Int = if (practised(ofDay)) max(minutes(ofDay), 1) else 0
+
         fun minutes(sessions: List<SessionRecord>): Int {
             val seconds = sessions.fold(0.0) { sum, session ->
                 val end = session.endedAt ?: return@fold sum

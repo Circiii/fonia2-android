@@ -59,7 +59,7 @@ import tech.fonia.features.app.shortLetter
  * last result as small stickers and opens the check again, to see what moved.
  */
 @Composable
-fun CheckCard(last: CheckRecord?, app: AppModel, modifier: Modifier = Modifier) {
+fun CheckCard(last: CheckRecord?, app: AppModel, modifier: Modifier = Modifier, isChild: Boolean = false) {
     val card = remember { ContinuousRoundedRectangle(24.dp) }
     StyledButton(
         onClick = { app.startCheck() },
@@ -77,8 +77,9 @@ fun CheckCard(last: CheckRecord?, app: AppModel, modifier: Modifier = Modifier) 
         ) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 FoniaText("Verificare rapidă", style = ui(18, UIWeight.bold, TextRole.headline), color = Palette.ink, maxLines = 1)
-                if (last == null) {
-                    FoniaText("Hai să vedem ce sunete exersăm", style = ui(15, UIWeight.medium, TextRole.subheadline), color = Palette.inkSoft, maxLines = 2)
+                // A child sees no verdicts, only the invitation, as on iOS.
+                if (last == null || isChild) {
+                    FoniaText(if (last == null) "Hai să vedem ce sunete exersăm" else "Hai să vedem ce s-a schimbat", style = ui(15, UIWeight.medium, TextRole.subheadline), color = Palette.inkSoft, maxLines = 2)
                 } else {
                     Row(
                         Modifier.clearAndSetSemantics {},

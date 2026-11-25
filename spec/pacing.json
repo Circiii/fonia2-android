@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "version": "2026-11-24.v1",
- "note": "How fast the practice screens move and how calm the live letter is (owner 2026-11-24: 'totul se mișcă prea repede, să nu mai tremure'). Read by legacy/features session/Pacing.kt; the Kotlin defaults must equal these numbers (PacingTest). Times in milliseconds; shares 0..1.",
+ "note": "How fast the practice screens move and how calm the live letter is (owner 2026-11-24: 'totul se mișcă prea repede, să nu mai tremure'). Read by Android's legacy/features session/Pacing.kt and iOS's FoniaDomain/Pacing.swift. Both sets of defaults must equal these numbers (tests on both sides). Times in milliseconds, shares 0..1.",
 
  "verdictGoodMs": 1900,
  "verdictAlmostMs": 2600,

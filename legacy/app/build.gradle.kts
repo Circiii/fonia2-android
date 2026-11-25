@@ -32,7 +32,7 @@ android {
         applicationId = "tech.fonia.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 29
+        versionCode = 30
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["foniaZipaModel"] = zipaDeviceFile

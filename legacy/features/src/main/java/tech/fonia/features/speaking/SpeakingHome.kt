@@ -114,6 +114,7 @@ import tech.fonia.features.app.SheetDetent
 import tech.fonia.features.app.SystemColors
 import tech.fonia.features.app.calibration
 import tech.fonia.features.app.dspGroup
+import tech.fonia.features.app.isChild
 import tech.fonia.features.app.rememberStoredInt
 import tech.fonia.features.app.rememberStoredString
 import tech.fonia.features.home.CardRow
@@ -189,10 +190,11 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                 Heading("Azi")
                 if (todaysPrompt != null) {
                     // Today's topic, where it sits on the ladder and how long it takes: one source for the time.
+                    // A child sees only the time: a step out of a total reads as a score.
                     TalkRow(
                         ArtTileMark.Art("art-megaphone"),
                         todaysPrompt.title,
-                        "Pasul ${todaysStep + 1} din ${prompts.size} · ${todaysPrompt.shortDuration}",
+                        if (profile.isChild) todaysPrompt.shortDuration else "Pasul ${todaysStep + 1} din ${prompts.size} · ${todaysPrompt.shortDuration}",
                         isNext = true,
                     ) { talk = Talk(todaysPrompt, step = todaysStep) }
                     LadderRow(todaysStep, prompts.size) {

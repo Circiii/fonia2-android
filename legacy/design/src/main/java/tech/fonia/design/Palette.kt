@@ -39,9 +39,12 @@ object Palette {
     val progress = Color.hex(0x4FC974)
     val progressTrack = Color.hex(0xDFECE1)
     val today = Color.hex(0xDF6C32)
-    val starTint = Color.hex(0xE5A000)
+    /** Deep enough for a star icon on white or paper (3.4:1). */
+    val starTint = Color.hex(0xBA8000)
 
     val startLid = Color.hex(0xFDC436)
+    /** The soft ring that breathes out from under the yellow button. */
+    val startHalo = Color.hex(0xE5A000)
     val startGlint = Color.hex(0xFFE38D)
     val startSkirt = Color.hex(0xB17000)
     val chipEdge = Color.hex(0xB2BAB2)

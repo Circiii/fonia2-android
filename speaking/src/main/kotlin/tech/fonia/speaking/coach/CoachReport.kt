@@ -210,7 +210,7 @@ object CoachText {
     val gaze = Focus(Area.Gaze, "Privirea: în lentilă", "Privește lentila la finalul fiecărei fraze.")
     val calm = Focus(Area.Calm, "Corpul: mai liniștit", "Picioarele fixe, capul liniștit, mâinile libere.")
     val lively = Focus(Area.Lively, "Vocea: mai vie", "Urcă vocea pe cuvântul cel mai important.")
-    val keep = Focus(null, "Ține-o tot așa", "Păstrează asta. Încearcă un subiect nou.")
+    val keep = Focus(null, "Merge bine așa", "Păstrează asta. Încearcă un subiect nou.")
 
     const val SAME = "Cam la fel ca data trecută."
 

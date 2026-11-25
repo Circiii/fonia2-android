@@ -38,12 +38,15 @@ import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import tech.fonia.design.AmbientMotion
 import tech.fonia.design.FoniaText
 import tech.fonia.design.FoniaTheme
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MascotPose
 import tech.fonia.design.MascotView
+import tech.fonia.design.ProvideTouchFloor
 import tech.fonia.design.SceneCache
+import tech.fonia.design.TouchFloor
 import tech.fonia.design.fBody
 import tech.fonia.design.fTitle
 import tech.fonia.features.app.AppModel
@@ -54,6 +57,7 @@ import tech.fonia.features.app.LaunchArguments
 import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.MicrophonePermission
 import tech.fonia.features.app.SessionTicket
+import tech.fonia.features.app.isChild
 import tech.fonia.features.grownups.GrownupsHome
 import tech.fonia.features.grownups.ProfileExport
 import tech.fonia.features.guide.AdultCardGate
@@ -177,27 +181,33 @@ private fun AppContent(app: AppModel) {
     SideEffect { if (ticket != null) lastTicket = ticket }
     val covering = ticket != null && profile != null
     tech.fonia.design.SfxHost()
-    Box(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize().then(if (covering) Modifier.clearAndSetSemantics {} else Modifier)) {
-            when {
-                !app.hasLoadedProfiles -> Launching()
-                app.profiles.isEmpty() -> FirstRunFlow(app)
-                profile != null -> key(profile.id) {
-                    // `.id(profile.id)`: another profile gets new tabs, a new stack and a new PathModel.
-                    MainTabs(profile, app, showGrownups = showGrownups, onShowGrownups = { showGrownups = it })
+    // A child's screens and lessons take touches over a wider area than an adult's.
+    ProvideTouchFloor(if (profile?.isChild == true) TouchFloor.child else TouchFloor.adult) {
+        Box(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().then(if (covering) Modifier.clearAndSetSemantics {} else Modifier)) {
+                // Under a lesson the pages stand still, so they don't repaint the screen while it listens.
+                AmbientMotion(running = !covering) {
+                    when {
+                        !app.hasLoadedProfiles -> Launching()
+                        app.profiles.isEmpty() -> FirstRunFlow(app)
+                        profile != null -> key(profile.id) {
+                            // `.id(profile.id)`: another profile gets new tabs, a new stack and a new PathModel.
+                            MainTabs(profile, app, showGrownups = showGrownups, onShowGrownups = { showGrownups = it })
+                        }
+                        else -> WhoView(app, onShowGrownups = { showGrownups = true })
+                    }
                 }
-                else -> WhoView(app, onShowGrownups = { showGrownups = true })
             }
-        }
-        FullScreenCover(isPresented = covering) {
-            val shown = ticket ?: lastTicket
-            if (shown != null && profile != null) {
-                key(shown.id) {
-                    // After a day with a mission, the next lesson first asks the adult how it went, once.
-                    MissionCheckGate(profile, app, asks = shown.custom == null, onClose = { app.ticket = null }) {
-                        // A child's first lesson of each kind opens with a card for the adult beside them.
-                        AdultCardGate(profile, FirstTimeCard.lesson(shown.focus, profile, app), app, onClose = { app.ticket = null }) {
-                            SessionScreen(ticket = shown, profile = profile, app = app, onDone = { app.ticket = null })
+            FullScreenCover(isPresented = covering) {
+                val shown = ticket ?: lastTicket
+                if (shown != null && profile != null) {
+                    key(shown.id) {
+                        // After a day with a mission, the next lesson first asks the adult how it went, once.
+                        MissionCheckGate(profile, app, asks = shown.custom == null, onClose = { app.ticket = null }) {
+                            // A child's first lesson of each kind opens with a card for the adult beside them.
+                            AdultCardGate(profile, FirstTimeCard.lesson(shown.focus, profile, app), app, onClose = { app.ticket = null }) {
+                                SessionScreen(ticket = shown, profile = profile, app = app, onDone = { app.ticket = null })
+                            }
                         }
                     }
                 }

@@ -159,7 +159,7 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             TodayCard(app, path, Modifier.arrives(hasArrived, 2))
             // The quick check: what to practise, and later what moved (sounds track only).
             if (profile.track == Profile.Track.Ro) {
-                tech.fonia.features.check.CheckCard(path.lastCheck, app, Modifier.arrives(hasArrived, 3))
+                tech.fonia.features.check.CheckCard(path.lastCheck, app, Modifier.arrives(hasArrived, 3), isChild = path.profile.isChild)
             }
             val list = doors(profile)
             if (!profile.isChild) {
@@ -287,12 +287,17 @@ private fun HeroLetter(app: AppModel, sound: SoundDef, hasArrived: Boolean) {
     val link = rememberLetterLink(sound.id)
     val scope = rememberCoroutineScope()
     val letter = sound.shortLetter.take(1)
-    LaunchedEffect(hasArrived, sound.id) {
+    val running = tech.fonia.design.LocalAmbientMotion.current
+    var dropped by remember(sound.id) { mutableStateOf(false) }
+    LaunchedEffect(hasArrived, sound.id, running) {
         if (!hasArrived) return@LaunchedEffect
-        delay(260)
-        link.state.cue(LetterCue.DropIn)
-        // Never frozen: a little beat now and then.
-        while (true) {
+        if (!dropped) {
+            delay(260)
+            link.state.cue(LetterCue.DropIn)
+            dropped = true
+        }
+        // Never frozen while in view: a little beat now and then.
+        while (running) {
             delay(5200)
             link.state.cue(LetterCue.Stretch)
         }

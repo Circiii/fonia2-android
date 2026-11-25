@@ -127,7 +127,7 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 TodayCard(today)
-                if (profile.track == Profile.Track.Ro) tech.fonia.features.check.CheckCard(path.lastCheck, app)
+                if (profile.track == Profile.Track.Ro) tech.fonia.features.check.CheckCard(path.lastCheck, app, isChild = profile.isChild)
                 StyledButton(onClick = { push(AppRoute.Journal) }, style = PressableStyle(), onClickLabel = "Deschide jurnalul") {
                     WeekCard(path.week)
                 }
@@ -167,7 +167,17 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                     Triple(FoniaIcon.target, Palette.accent, "${path.totalAttempts}") to "Încercări",
                     Triple(FoniaIcon.hourglass, Palette.accent, "${path.totalMinutes}") to Plural.word(path.totalMinutes, Plural.Noun.Minut).capitalizedFirstLetter,
                 )
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // Before anything is done the four counts would all read 0, so one calm line says what gathers here.
+                if (path.totalDays == 0) {
+                    StatCard {
+                        FoniaText(
+                            "După prima lecție, aici se adună zilele, stelele și minutele tale.",
+                            Modifier.padding(16.dp),
+                            style = fBody,
+                            color = Palette.inkSoft,
+                        )
+                    }
+                } else Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     for (pair in tiles.chunked(2)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             for ((look, label) in pair) {
@@ -260,8 +270,11 @@ fun AppModel.play(recording: Recording) {
     }
 }
 
-/** Bars stand for minutes, the one count every kind of lesson has. A day with practice under a minute still shows. */
-private fun minutes(day: DayActivity): Int = if (day.hasPractice) max(day.minutes, 1) else 0
+/**
+ * Bars stand for minutes, the one count every kind of lesson has. A day with practice under a minute still counts one,
+ * in the bars and in the total alike.
+ */
+private fun minutes(day: DayActivity): Int = day.minutes
 
 /** How much happened on each day this week, as columns. A day with nothing is just low, never red. */
 @Composable
