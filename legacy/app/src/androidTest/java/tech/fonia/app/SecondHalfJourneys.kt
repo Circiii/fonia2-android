@@ -35,16 +35,17 @@ class SecondHalfJourneys : Journeys() {
             putExtra("foniaSpeakOnly", true)
             putExtra("foniaShort", true)
         }
-        makeChild()
-        assertTrue(waitFor(button("Mă opresc"), 10))
+        // A debug launch with `foniaStart` makes its own child (S, 6-7 ani) and skips the first run.
+        assertTrue(waitFor(button("Mă opresc"), 15))
 
-        val end = button("Gata pe azi")
+        // The recap: "Gata" next to "Încă una" when more is waiting, otherwise the session's own end button.
+        val end = button("Gata") or button("Gata pe azi")
         val deadline = System.currentTimeMillis() + 60_000
         while (!exists(end) && System.currentTimeMillis() < deadline) {
             if (!waitFor(end, 3)) answerIfAsked()
         }
         assertTrue(exists(end))
-        assertTrue(exists(staticText("Bravo, ai reușit!")) || exists(staticText("Ne vedem mâine")))
+        assertTrue(exists(staticText("Bravo!")) || exists(staticText("Ai exersat!")))
         tap(end)
         assertTrue(waitFor(button("Acasă"), 10))
         assertFalse(exists(button("Mă opresc")))
@@ -56,12 +57,12 @@ class SecondHalfJourneys : Journeys() {
             putExtra("foniaStart", "s:syllables")
             putExtra("foniaSpeakOnly", true)
         }
-        makeChild()
-        assertTrue(waitFor(button("Mă opresc"), 10))
-        // Nothing counted yet: the bar is empty. Once a take is judged, it moves.
+        assertTrue(waitFor(button("Mă opresc"), 15))
+        // Nothing counted yet: the bar is empty and says so in words („Abia începem”, no percentages for a child).
+        // Once a take is judged, it moves.
         val moved = SemanticsMatcher("the bar has moved") { node ->
             node.config.getOrNull(SemanticsProperties.ContentDescription)?.contains("Cât am lucrat azi") == true &&
-                node.config.getOrNull(SemanticsProperties.StateDescription).let { it != null && it != "0 la sută" }
+                node.config.getOrNull(SemanticsProperties.StateDescription).let { it != null && it != "Abia începem" }
         }
         val deadline = System.currentTimeMillis() + 40_000
         while (!exists(moved) && System.currentTimeMillis() < deadline) {
@@ -79,7 +80,9 @@ class SecondHalfJourneys : Journeys() {
 
     @Test
     fun testTheSoundGuideShowsEachStepAndLeadsToTheMirror() {
-        launch()
+        // The mirror at the end asks for the camera; a face held still stands in for it, as everywhere in these journeys,
+        // so the system's permission dialog never covers the app.
+        launch { putExtra("foniaFace", "jawOpen=0.1") }
         reachChildHome()
         tap(button("Cum spun?"))
         assertTrue(waitFor(buttonStartingWith("Cum spun S?")))
@@ -109,7 +112,10 @@ class SecondHalfJourneys : Journeys() {
             putExtra("foniaFace", "smile=0.8,jawOpen=0.1")
             putExtra("foniaRoute", "mirror:s")
         }
+        // The page opens once the first run is over.
         makeChild()
+        passCalibration()
+        leaveCheckOffer()
         assertTrue(waitFor(staticText("Încearcă S"), 10))
         assertTrue(waitFor(element("Pasul 1 din 4")))
         // Smile, then teeth: the camera checks them.

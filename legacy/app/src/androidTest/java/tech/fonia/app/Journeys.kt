@@ -141,12 +141,27 @@ abstract class Journeys {
         tap(button("Gata"))
     }
 
-    /** A child's first run ends on the quick check's invitation; these journeys leave it for later. */
-    protected fun reachChildHome() {
-        makeChild()
+    /**
+     * A child's first run goes on to the voice calibration: quiet, then a held "aaa", "sss" and "șșș" from the recorded
+     * clips, about 20 seconds with no way out while the microphone is open. It ends on its result, left with "Gata".
+     */
+    protected fun passCalibration() {
+        assertTrue("calibration result", waitFor(button("Încă o dată"), 45))
+        tap(button("Gata"))
+    }
+
+    /** The quick check's invitation, which ends a child's first run, left for later. */
+    protected fun leaveCheckOffer() {
         assertTrue(waitFor(staticText("Hai să vedem ce sunete exersăm"), 10))
         tap(button("Mai târziu"))
         rule.waitUntil(5_000) { !exists(staticText("Hai să vedem ce sunete exersăm")) }
+    }
+
+    /** A child's first run ends on the calibration, then the quick check's invitation; these journeys leave it for later. */
+    protected fun reachChildHome() {
+        makeChild()
+        passCalibration()
+        leaveCheckOffer()
         assertTrue(waitFor(button("Acasă")))
     }
 
