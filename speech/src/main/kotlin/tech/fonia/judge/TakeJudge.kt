@@ -8,6 +8,7 @@ import tech.fonia.dsp.analyzeClip
 import tech.fonia.dsp.heardSpeech
 import tech.fonia.live.Clip
 import tech.fonia.model.ErrorKind
+import tech.fonia.model.SoundId
 import tech.fonia.model.Verdict
 
 /**
@@ -198,7 +199,8 @@ class TakeJudge(
         // Several occurrences (sentences): the one least likely correct speaks for the take. v2 bursts ("ț-ț-ț"): the
         // median burst speaks when enough bursts were found (one blurred burst is not a wrong sound).
         val scored = measured.occurrences.map { occ ->
-            val features = trustPlace(withContext(measured.global + occ.features + zipa, request, v2), fusion, v2)
+            val placed = trustPlace(withContext(measured.global + occ.features + zipa, request, v2), fusion, v2)
+            val features = maskFinalGlide(trustStop(placed, request, v2), request, fusion, phones, v2)
             features to Probs(fusion, head.probabilities(features, which.raw))
         }
         val burst = isBurst(request) && v2.burst.minFound > 0
@@ -209,12 +211,28 @@ class TakeJudge(
         } else scored.minBy { it.second.correct }
         val fastCorrect = if (which == Head.Fast) probs.correct else head.probabilities(features, Head.Fast.raw)[0]
         var decision = DecisionPolicy.decide(probs, which, request.sound, unlock, runtime, blocked, measured.capture)
-        // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself.
+        // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself. With an opt-in
+        // gate on (off by default), the candidates it set aside do not count.
+        val gated = features["stopTrusted"] == 1f || features["finalGlideMasked"] == 1f
+        val candidates = if (gated) features.filterKeys { it.startsWith(Features.LPR_PREFIX) }.values else phones?.lpr?.values.orEmpty()
         if (useFull && decision.verdict != Verdict.Correct && probs.correct >= v2.praise.full && fastCorrect >= v2.praise.fast &&
-            phones!!.lpr.values.all { it >= 0f }
+            candidates.all { it >= 0f }
         ) {
             decision = decision.copy(verdict = Verdict.Correct, confidence = probs.correct, withheld = null, adultNote = null)
             notes += "praiseAgree"
+        }
+        // v2 affricate veto (off by default): a CE/GE whose frication swells in like a fricative's is not praised.
+        val stop = features[Features.STOP_ONSET] ?: Float.NaN
+        val vetoAt = v2.affricate[request.sound.raw]?.vetoAt ?: -1f
+        if (decision.verdict == Verdict.Correct && !stop.isNaN() && stop <= vetoAt) {
+            decision = decision.copy(verdict = Verdict.Almost)
+            notes += "stopVeto"
+        }
+        // v2 word-final L (off by default): lToGlide named on weak glide evidence becomes Almost, with no kind.
+        val named = decision.verdict
+        if (named is Verdict.NamedError && named.kind == ErrorKind.LtoGlide && !v2.finalL.mask && weakFinalGlide(features, request, phones, v2)) {
+            decision = Decision(Verdict.Almost, probs.correct, null, 0f, null, null)
+            notes += "finalGlideWeak"
         }
         // Safety net from the parity-locked judge (plan 03 §1, head v0): a lateral hint on an S-family target never
         // passes as correct without the phoneme model. There is no adult to ask any more, so it is "almost" (the take
@@ -268,6 +286,58 @@ class TakeJudge(
         val out = HashMap(features)
         for (k in keys) out.remove(k)
         out["placeTrusted"] = 1f
+        return out
+    }
+
+    /**
+     * v2 affricate trust (`judge2.affricate`, off by default): with a clear stop onset (`stopOnset` ≥ trustAt) the
+     * phoneme model's fricative candidates of an affricate target are set aside and the GOP recomputed without them.
+     * Note `stopTrusted` in the trace.
+     */
+    private fun trustStop(features: Map<String, Float>, request: JudgeRequest, v2: Judge2Thresholds): Map<String, Float> {
+        val gate = v2.affricate[request.sound.raw] ?: return features
+        val stop = features[Features.STOP_ONSET] ?: return features
+        if (stop.isNaN() || stop < gate.trustAt) return features
+        return masked(features, gate.trust)?.also { it["stopTrusted"] = 1f } ?: features
+    }
+
+    /**
+     * Word-final L whose glide evidence is under the margin (`judge2.finalL`, off by default): ZIPA has no dark-L
+     * token and moves a good final L towards [w]/[u]. Only a reliable full head's evidence counts.
+     */
+    private fun weakFinalGlide(features: Map<String, Float>, request: JudgeRequest, phones: PhoneEvidence?, v2: Judge2Thresholds): Boolean {
+        val margin = v2.finalL.minGlideNats
+        if (margin <= 0f || request.sound != SoundId.L || phones == null || !phones.reliable) return false
+        val final = phones.wordFinal ?: (features[Features.WORD_FINAL] == 1f)
+        if (!final) return false
+        val glide = phones.lpr["j+w"] ?: listOfNotNull(phones.lpr["j"], phones.lpr["w"]).minOrNull() ?: return false
+        return glide > -margin
+    }
+
+    /** [FinalLThresholds.mask]: the glide candidates of a weak word-final glide are masked before the head. */
+    private fun maskFinalGlide(
+        features: Map<String, Float>, request: JudgeRequest, fusion: FusionSpec, phones: PhoneEvidence?, v2: Judge2Thresholds,
+    ): Map<String, Float> {
+        if (!v2.finalL.mask || !weakFinalGlide(features, request, phones, v2)) return features
+        val glides = fusion.phoneMap.filterKeys { FusionSpec.kindOf(it) == ErrorKind.LtoGlide }.values.flatMap { listOf(it) + it.split('+') }
+        return masked(features, glides)?.also { it["finalGlideMasked"] = 1f } ?: features
+    }
+
+    /**
+     * [features] without the phone-model candidates [candidates] (`lpr.<key>`), and `zipa.gop` recomputed over the
+     * single candidates left: −ln(1 + Σ exp(−lpr)), as `RestrictedGop` gives it (lpr clipped at ±12 nats there, so
+     * the GOP is clipped at −12 here). Null when none of them is present.
+     */
+    private fun masked(features: Map<String, Float>, candidates: List<String>): MutableMap<String, Float>? {
+        val keys = candidates.map { Features.LPR_PREFIX + it }.filter { it in features }
+        if (keys.isEmpty()) return null
+        val out = HashMap(features)
+        for (k in keys) out.remove(k)
+        if (Features.ZIPA_GOP in out) {
+            var sum = 1.0
+            for ((k, v) in out) if (k.startsWith(Features.LPR_PREFIX) && '+' !in k && !v.isNaN()) sum += kotlin.math.exp(-v.toDouble())
+            out[Features.ZIPA_GOP] = (-kotlin.math.ln(sum)).toFloat().coerceIn(-12f, 0f)
+        }
         return out
     }
 

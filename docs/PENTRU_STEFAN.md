@@ -72,6 +72,8 @@ Ce s-a făcut în ultimele versiuni (24–29):
 2. **GE (64 %, laude pe greșeli 16 %) și J (72 %).** Aceeași cauză: [ʒ] aude în loc de [dʒ].
 3. **L final („val”).** Capul complet vede `lToGlide` și dă „Lipește limba sus” la o rostire bună. Merită un prag pe poziție sau clipuri în plus.
 
+Pentru 1–3 există porți construite, dar oprite, și un raport în `EvalV2Runner` (`gates.md`). Ce rulezi și ce clipuri trebuie: `docs/JUDECATOR_AFRICATE.md`.
+
 ### Pedagogie (vezi `docs/CERCETARE_DISLALIE.md`)
 
 4. **Feedback adaptiv.** La automatizare, verdictul se arată doar la ~50 % din rostiri (Lowe & Buchwald 2017).

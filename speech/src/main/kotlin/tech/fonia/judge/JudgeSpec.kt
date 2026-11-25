@@ -43,7 +43,36 @@ data class Judge2Thresholds(
     val burst: BurstThresholds = BurstThresholds(),
     val visual: VisualThresholds = VisualThresholds(),
     val personal: PersonalThresholds = PersonalThresholds(),
+    /** Affricate onset gates, keyed by sound ("ce", "ge"); a sound not listed is off. */
+    val affricate: Map<String, AffricateGate> = emptyMap(),
+    val finalL: FinalLThresholds = FinalLThresholds(),
 )
+
+/**
+ * Affricate onset gates for one sound (`Features.STOP_ONSET`, `docs/JUDECATOR_AFRICATE.md`): ZIPA-small has no
+ * [tʃ]/[dʒ] token and hears [s]/[ʃ] in good CE and [ʒ] in good GE (EVAL_v2), while the DSP can hear the closure and
+ * release. Off until real takes give before/after numbers: [trustAt] 2, [vetoAt] −1.
+ */
+@Serializable
+data class AffricateGate(
+    /**
+     * Trust: the phoneme-model candidates [trust] ("ʃ", "s") are set aside, and the GOP recomputed without them, when
+     * `stopOnset` ≥ [trustAt]. It raises acceptance, so it ships only if praised errors stay ≤ 5 %.
+     */
+    val trustAt: Float = 2f,
+    val trust: List<String> = emptyList(),
+    /** Veto: a take whose `stopOnset` ≤ [vetoAt] (the frication swells in like a fricative's) is not praised. */
+    val vetoAt: Float = -1f,
+)
+
+/**
+ * Word-final L („val”, „cal”): ZIPA has no dark-L token, so a good final L loses mass to [w]/[u] and the full head names
+ * lToGlide on it. With [minGlideNats] > 0, at a word-final L lToGlide stands only when `lpr.j+w` ≤ −[minGlideNats];
+ * weaker glide evidence is set aside: [mask] false → a named lToGlide becomes Almost (never praise); [mask] true → the
+ * glide candidates are masked before the head, which may then praise. 0 = off.
+ */
+@Serializable
+data class FinalLThresholds(val minGlideNats: Float = 0f, val mask: Boolean = false)
 
 /**
  * Praise when both heads agree (owner 2026-11-24: "when he says a sound right the app must say so"): with a reliable

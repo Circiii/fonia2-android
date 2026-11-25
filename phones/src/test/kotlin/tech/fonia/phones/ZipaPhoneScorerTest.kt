@@ -93,6 +93,12 @@ class ZipaPhoneScorerTest {
         assertTrue(initial.lpr.getValue("ʃ") > 0f)
         assertTrue(final.lpr.getValue("ʃ") < -2f)
         assertEquals(final.lpr, any.lpr, "Any: the occurrence least likely correct")
+        // Whether the occurrence that speaks ends its word (the judge's word-final L gate reads it).
+        assertEquals(false, initial.wordFinal)
+        assertEquals(true, final.wordFinal)
+        assertEquals(true, any.wordFinal)
+        assertEquals(true, evidence("v a l", "val", SoundId.L).wordFinal)
+        assertEquals(false, evidence("l l l", "llll", SoundId.L, level = Level.Isolated).wordFinal)
     }
 
     @Test

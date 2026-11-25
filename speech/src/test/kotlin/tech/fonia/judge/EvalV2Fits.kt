@@ -21,22 +21,24 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
     private val items = runner.items.filter { scored(it.expected) }
     private val voices = items.map { it.voice }.distinct().sorted()
 
-    private fun scored(e: String) = !e.startsWith("retake") && !e.startsWith("n/a") && !e.startsWith("info")
-    private fun kindOf(l: String) = l.substringBefore("(")
-    private fun named(l: String) = l != "correct" && l != "almost" && l != "unsure" && !l.startsWith("retake")
+    companion object {
+        fun scored(e: String) = !e.startsWith("retake") && !e.startsWith("n/a") && !e.startsWith("info")
+        private fun kindOf(l: String) = l.substringBefore("(")
+        private fun named(l: String) = l != "correct" && l != "almost" && l != "unsure" && !l.startsWith("retake")
 
-    private fun cost(expected: String, label: String): Double =
-        if (expected == "correct") when {
-            label == "correct" -> 0.0
-            label == "almost" -> 1.2
-            named(label) -> 6.0
-            else -> 2.0
-        } else when {
-            named(label) && kindOf(label) == kindOf(expected) -> 0.0
-            named(label) -> 3.0
-            label == "correct" -> 5.0
-            else -> 1.0
-        }
+        fun cost(expected: String, label: String): Double =
+            if (expected == "correct") when {
+                label == "correct" -> 0.0
+                label == "almost" -> 1.2
+                named(label) -> 6.0
+                else -> 2.0
+            } else when {
+                named(label) && kindOf(label) == kindOf(expected) -> 0.0
+                named(label) -> 3.0
+                label == "correct" -> 5.0
+                else -> 1.0
+            }
+    }
 
     data class Config(
         val shift: Map<String, Float> = emptyMap(),

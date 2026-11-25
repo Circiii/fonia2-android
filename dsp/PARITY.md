@@ -49,3 +49,13 @@ vowel-band dips of `analyzeStress`): peak vowel-band level, how long the vowel s
 median. Each word is compared with the mean of up to two measured neighbours on each side (other key words left out when
 possible). Stressed = 2 of 3 cues: ≥ +30 % duration, ≥ +3 dB, ≥ +2 st; a weighted prominence (1.5 / 1.5 / 1) ranks words.
 All thresholds are `EmphasisThresholds` [S] values, uncalibrated. `EmphasisTests` (12) run on synthetic speech.
+
+## Not on iOS: affricate onset (`AffricateOnset.kt`)
+
+New pure analysis for the judge's opt-in affricate gates (`judge2.affricate`, off by default); nothing above it changed.
+On the frication span the judge already has (refined ∪ detector), it reads how the > 2 kHz envelope starts: `attackDb`
+(rise over the 10 ms ending 6 dB under the plateau, capped at 40), `spikeDb` (first 10 ms minus the median of 15–45 ms
+after), `leadMs` (voice bar under 1 kHz while > 2 kHz stays 20 dB under the plateau, only when silence bounds it), and
+`stopOnset` in [0, 1], a mean of clamped ramps (closure `gapMs`, only when one of 10 ms or more was found, and, voiced,
+`leadMs` double weight). Ramps are where the
+synthetic cases split, not a fit. `AffricateOnsetTests` (7) run on synthetic releases, ramps and voice bars.

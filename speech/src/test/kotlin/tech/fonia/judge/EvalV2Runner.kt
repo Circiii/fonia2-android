@@ -23,7 +23,8 @@ import kotlin.math.sqrt
 /**
  * OPT-IN evaluation v2 (`tools/eval/`): judges every line of `tools/eval/out/manifest.jsonl` (built by
  * `tools/eval/build_manifest.py` from local, never-committed audio) with the real judge, fast and full head, and writes
- * `tools/eval/out/<tag>/cases.csv` (+ `fit.md` with the leave-one-voice-out fits). `tools/eval/summarize.py` makes the
+ * `tools/eval/out/<tag>/cases.csv` (+ `fit.md` with the leave-one-voice-out fits, + `gates.md` with the opt-in
+ * affricate and word-final L gates, [EvalGates]). `tools/eval/summarize.py` makes the
  * tables. Skipped unless the environment variable FONIA_EVAL_MANIFEST names the manifest:
  *
  * ```
@@ -216,6 +217,7 @@ class EvalV2Runner {
         fit += ""
         EvalV2Fits(this).run(fit, out)
         File(out, "fit.md").writeText(fit.joinToString("\n") + "\n")
+        EvalGates(this).run(out)
     }
 
     fun labelOf(judge: TakeJudge, item: Item, full: Boolean): String =
@@ -225,7 +227,8 @@ class EvalV2Runner {
         val header = listOf("id", "voice", "group", "sound", "text", "said", "level", "position", "context", "role", "expected",
             "talker", "talkerF0", "dspF0", "fast", "full", "head", "fastShipped", "fullShipped", "pFast", "pFull", "topFast", "topFull",
             "sNess", "toward", "m1Hz", "fricDurMs", "voicing", "rTap", "dipDb", "lprTop", "zipaReliable", "notes", "centroidHz", "peakHz",
-            "zipaFit", "zipaGop", "relLevelDb", "gapMs", "burstDb", "lpr")
+            "zipaFit", "zipaGop", "relLevelDb", "gapMs", "burstDb", "lpr", "stopOnset", "onsetAttackDb", "onsetSpikeDb", "voiceLeadMs",
+            "riseMs", "wordFinal")
         val lines = ArrayList<String>()
         lines += header.joinToString(",")
         fun f(v: Float?) = if (v == null || v.isNaN()) "" else String.format(Locale.ROOT, "%.3f", v)
@@ -246,6 +249,8 @@ class EvalV2Runner {
                 full.evidence.notes.joinToString(" "), f(feats[Features.CENTROID]), f(feats[Features.PEAK]),
                 f(it.phones?.fitPerLabel), f(it.phones?.gop), f(feats[Features.REL_LEVEL]), f(feats[Features.GAP_RAW]), f(feats[Features.BURST]),
                 it.phones?.lpr?.entries?.joinToString(" ") { e -> "${e.key}=${"%.1f".format(Locale.ROOT, e.value)}" } ?: "",
+                f(feats[Features.STOP_ONSET]), f(feats[Features.ONSET_ATTACK]), f(feats[Features.ONSET_SPIKE]), f(feats[Features.VOICE_LEAD]),
+                f(feats[Features.RISE]), it.phones?.wordFinal?.toString() ?: f(feats[Features.WORD_FINAL]),
             ).joinToString(",") { v -> if (v.contains(',') || v.contains('"')) "\"" + v.replace("\"", "\"\"") + "\"" else v }
         }
         file.writeText(lines.joinToString("\n") + "\n")
