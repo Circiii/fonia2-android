@@ -28,11 +28,11 @@ prezentare, cu capturile din `screenshots/` puse lângă cadrele iOS din `fonia-
 | `Journal/JournalScreen.swift` | `journal/JournalScreen.kt` | |
 | `Progress/ProgressScreen.swift` | `progress/ProgressScreen.kt` | |
 | `Grownups/*.swift` (3) | `grownups/Grownups.kt`, `ParentsScreen.kt`, `Calibration.kt` | |
-| `Session/SessionScreen.swift` | `session/SessionScreen.kt` | ecranul ședinței, dialogul de ieșire, `EndScreen` |
+| `Session/SessionScreen.swift` | `session/SessionScreen.kt`, `session/Recap.kt` | ecranul ședinței, dialogul de ieșire; finalul ședinței e `Recap`, iar vechiul `EndScreen`, pe care nu-l mai deschidea nimic, s-a șters |
 | `Session/SessionRun.swift` | `session/SessionRun.kt`, `session/SessionKeys.kt` | starea ședinței, regulile blocurilor și ale dozei, salvarea; `isVerdict`, `soundID`, `key`, `Settings` |
 | `Session/ExerciseHost.swift` | `session/ExerciseHost.kt`, `session/MouthCard.kt` | `ExerciseHost`, `IntroExercise`, `HowExercise`, `WarmupExercise`, `MissionExercise`, `MouthCard`, `StepList`, `talkDriver` |
 | `Session/ListenExercise.swift` | `session/ListenExercise.kt` | |
-| `Session/SpeakExercise.swift` | `session/SpeakExercise.kt` | `SpeakExercise`, `ListeningBar`, `ResultPanel`, `LiveLevels.heardColour`, `Prosody.cue` |
+| `Session/SpeakExercise.swift` | `session/SpeakExercise.kt` | `SpeakExercise`, `ListeningBar`, `ResultPanel`, `LiveLevels.heardColour`, `Prosody.cue`; `FittingRow`, nefolosit, s-a șters |
 | `Session/PromptView.swift` | `session/PromptView.kt` | |
 | `Session/SustainExercise.swift` | `session/SustainExercise.kt` | cu `HeldTime` |
 | `Session/TakeJudge.swift` | `session/TakeJudge.kt` | |

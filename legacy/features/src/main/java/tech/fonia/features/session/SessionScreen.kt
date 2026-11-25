@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterExitState
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,56 +35,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.animation.core.spring
 import tech.fonia.designsystem.motion.FoniaOverlayHost
-import tech.fonia.designsystem.motion.staggeredEntrance
-import tech.fonia.design.CTALabel
-import tech.fonia.design.FoniButtonStyle
-import tech.fonia.design.Foni
-import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.Palette
-import tech.fonia.design.RisingPanel
 import tech.fonia.design.SceneBackdrop
-import tech.fonia.design.SceneName
 import tech.fonia.design.SessionBar
 import tech.fonia.design.StyledButton
 import tech.fonia.design.ToolButtonStyle
-import tech.fonia.design.WordPicture
-import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fHeadline
-import tech.fonia.design.fPrompt
 import tech.fonia.design.scene
 import tech.fonia.design.swiftSpring
 import tech.fonia.domain.AttemptsSummary
 import tech.fonia.domain.Plural
-import tech.fonia.domain.Session
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaConfirmationDialog
 import tech.fonia.features.app.SessionTicket
 import tech.fonia.features.app.ViewTask
-import tech.fonia.features.app.capitalizedFirstLetter
-import tech.fonia.features.app.isChild
-import tech.fonia.features.home.StatTile
 import tech.fonia.store.Profile
 import java.time.Duration
 import java.time.Instant
@@ -352,185 +328,6 @@ private val density: androidx.compose.ui.unit.Density
     get() = androidx.compose.ui.unit.Density(android.content.res.Resources.getSystem().displayMetrics.density)
 
 private data class ExerciseIdentity(val index: Int, val retry: Int)
-
-/**
- * The fixed end of a session: Foni hops in a burst of sparkles, a panel rises with what was done, and there's one
- * button. No "one more".
- */
-@Composable
-fun EndScreen(run: SessionRun, app: AppModel, onDone: () -> Unit) {
-    val reduceMotion = LocalReduceMotion.current
-    val isChild = run.profile.isChild
-    val settled = remember { Animatable(0f) }
-    var hasSettled by remember { mutableStateOf(false) }
-    val star = remember { Animatable(if (reduceMotion) 1f else 0.5f) }
-    ViewTask(Unit) {
-        // Foni says goodbye in its own words. The device voice may say it until the clip is recorded: a goodbye heard
-        // matters more here than the sound of the voice.
-        if (isChild && run.attempts > 0) app.audio.say(Session.goodbye)
-    }
-    LaunchedEffect(Unit) {
-        // `withAnimation(.spring(duration: 0.55, bounce: 0.3).delay(0.1)) { settled = true }`.
-        hasSettled = true
-        launch {
-            if (!reduceMotion) {
-                delay(250)
-                star.animateTo(1f, swiftSpring(0.45, 0.35))
-            }
-        }
-        delay(100)
-        settled.animateTo(1f, swiftSpring(0.55, 0.3))
-    }
-    Box(Modifier.fillMaxSize()) {
-        SceneBackdrop(SceneName.lesson)
-        Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.systemBars)) {
-            Spacer(Modifier.weight(1f).heightIn(min = 12.dp))
-            // `.padding(.bottom, -6)`: the panel rises over Foni's feet.
-            Box(Modifier.fillMaxWidth().overhangBelow(6.dp), contentAlignment = Alignment.Center) {
-                Foni(
-                    Modifier
-                        .height(230.dp)
-                        .graphicsLayer {
-                            val value = settled.value
-                            val scale = 0.8f + 0.2f * value
-                            scaleX = scale
-                            scaleY = scale
-                            transformOrigin = TransformOrigin(0.5f, 1f)
-                            alpha = value.coerceIn(0f, 1f)
-                        },
-                    mood = if (run.attempts == 0) FoniMood.idle else FoniMood.happy,
-                    reactsToTap = true,
-                )
-                // The end of a session: a fountain of confetti and stars from Foni (the motion kit).
-                if (run.attempts > 0) {
-                    tech.fonia.designsystem.motion.CelebrationBurst(
-                        trigger = if (hasSettled) run.sessionID else null,
-                        modifier = Modifier.fillMaxWidth().height(340.dp),
-                        style = tech.fonia.designsystem.motion.BurstStyle.Confetti,
-                        origin = androidx.compose.ui.geometry.Offset(0.5f, 0.55f),
-                        power = 1.2f,
-                    )
-                }
-            }
-            RisingPanel(color = Palette.sheet) {
-                Column(
-                    Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 24.dp, bottom = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    val title = if (run.attempts == 0) "Ne vedem mâine" else if (isChild) "Ai exersat până la capăt!" else "Ai terminat"
-                    if (run.attempts > 0 && isChild) {
-                        EndPraise(title)
-                    } else {
-                        WaveTitle(title, fPrompt, Palette.ink)
-                    }
-                    if (run.attempts > 0) {
-                        Row(
-                            Modifier
-                                .graphicsLayer {
-                                    val value = star.value
-                                    val scale = if (reduceMotion) 1f else value
-                                    scaleX = scale
-                                    scaleY = scale
-                                    alpha = if (reduceMotion) 1f else ((value - 0.5f) / 0.5f).coerceIn(0f, 1f)
-                                }
-                                .clearAndSetSemantics { contentDescription = "O stea nouă" },
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            WordPicture("icon-star", Modifier.size(26.dp))
-                            FoniaText("O stea nouă", style = fHeadline, color = Palette.accentText)
-                        }
-                        // A child's end counts the trying, never what came out right: no numbers in tiles.
-                        if (isChild) {
-                            effortLine(run.attempts, onlyListening = run.identified > 0 && run.attempts == run.identified)?.let {
-                                FoniaText(it, Modifier.staggeredEntrance(1), style = fBodyStrong, color = Palette.ink, textAlign = TextAlign.Center)
-                            }
-                        } else Row(Modifier.fillMaxWidth().staggeredEntrance(1), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            if (run.identified > 0 && run.attempts == run.identified) {
-                                StatTile(FoniaIcon.ear, Palette.accent, "${run.identifiedRight} din ${run.identified}", "Recunoscute", Modifier.weight(1f))
-                            } else {
-                                StatTile(
-                                    FoniaIcon.target,
-                                    Palette.accent,
-                                    "${run.attempts}",
-                                    Plural.word(run.attempts, Plural.Noun.Incercare).capitalizedFirstLetter,
-                                    Modifier.weight(1f),
-                                )
-                            }
-                            StatTile(
-                                FoniaIcon.hourglass,
-                                Palette.accent,
-                                "${run.minutes}",
-                                Plural.word(run.minutes, Plural.Noun.Minut).capitalizedFirstLetter,
-                                Modifier.weight(1f),
-                            )
-                        }
-                    }
-                    StyledButton(onClick = onDone, style = FoniButtonStyle(), modifier = Modifier.padding(top = 4.dp).staggeredEntrance(2)) {
-                        CTALabel(run.session.endButton)
-                    }
-                }
-            }
-        }
-    }
-}
-
-/** SwiftUI's negative bottom padding: the view takes [amount] less room below, and its content runs over what follows. */
-private fun Modifier.overhangBelow(amount: Dp): Modifier = layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints)
-    val shift = amount.roundToPx()
-    layout(placeable.width, (placeable.height - shift).coerceAtLeast(0)) { placeable.place(0, 0) }
-}
-
-/** "Bravo, ai reușit!" as a sticker in his green that drops in, squashes and settles, then breathes once. */
-@Composable
-private fun EndPraise(title: String) {
-    val reduce = LocalReduceMotion.current
-    val p = remember { Animatable(if (reduce) 1f else 0f) }
-    LaunchedEffect(Unit) {
-        if (reduce) return@LaunchedEffect
-        delay(350)
-        p.animateTo(1f, spring(dampingRatio = 0.4f, stiffness = 260f))
-    }
-    // A long praise ("Ai exersat până la capăt!") ran off both edges of the panel (QA 2026-11-21): it breaks into two
-    // sticker lines at the space nearest its middle, and each line shrinks to the panel's width if it still has to.
-    val lines = stickerLines(title)
-    Column(
-        Modifier
-            .semantics(mergeDescendants = true) { heading() }
-            .graphicsLayer {
-                val v = p.value
-                alpha = (v * 2f).coerceIn(0f, 1f)
-                translationY = (1f - v) * -120f
-                scaleX = 0.6f + 0.4f * v
-                scaleY = 0.6f + 0.4f * v
-                rotationZ = (1f - v) * 8f
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        for (line in lines) {
-            ShrinkToFit {
-                tech.fonia.designsystem.letter.StickerText(
-                    line,
-                    tech.fonia.designsystem.tokens.FoniaClassicSticker.Good,
-                    fontSize = 30.sp,
-                    weight = 900f,
-                )
-            }
-        }
-    }
-}
-
-/** One line up to 16 letters; longer, two lines split at the space closest to the middle. */
-internal fun stickerLines(title: String): List<String> {
-    if (title.length <= 16 || ' ' !in title) return listOf(title)
-    val mid = title.length / 2
-    val cut = title.indices.filter { title[it] == ' ' }.minByOrNull { kotlin.math.abs(it - mid) } ?: return listOf(title)
-    return listOf(title.substring(0, cut), title.substring(cut + 1))
-}
 
 /** The child's end screen counts effort, never what came out right (iOS `SessionVoice.effort`). */
 internal fun effortLine(attempts: Int, onlyListening: Boolean): String? {

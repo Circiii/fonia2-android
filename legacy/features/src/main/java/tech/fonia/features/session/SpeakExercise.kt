@@ -38,7 +38,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -49,7 +48,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -1063,42 +1061,6 @@ private fun Pill(title: String, icon: FoniaIcon, minHeight: Dp, onClick: () -> U
 @Composable
 private fun Tile(title: String, icon: FoniaIcon, minHeight: Dp, onClick: () -> Unit, modifier: Modifier) {
     StyledButton(onClick = onClick, style = IconTileButtonStyle(minHeight), modifier = modifier) { IconOverTitle(title, icon) }
-}
-
-/**
- * `ViewThatFits(in: .horizontal) { HStack(spacing:) { items }; VStack(spacing:) { items } }` for items that each take
- * all the width offered: side by side, sharing the row, when their natural widths fit; else one under the other.
- */
-@Composable
-internal fun FittingRow(spacing: Dp, content: @Composable () -> Unit) {
-    Layout(content, Modifier.fillMaxWidth()) { measurables, constraints ->
-        val gap = spacing.roundToPx()
-        val width = constraints.maxWidth
-        val natural = measurables.sumOf { it.maxIntrinsicWidth(Constraints.Infinity) } + gap * (measurables.size - 1).coerceAtLeast(0)
-        if (measurables.isEmpty()) return@Layout layout(width, 0) {}
-        if (natural <= width) {
-            val each = (width - gap * (measurables.size - 1)) / measurables.size
-            val placeables = measurables.map { it.measure(Constraints.fixedWidth(each.coerceAtLeast(0))) }
-            val height = placeables.maxOf { it.height }
-            layout(width, height) {
-                var x = 0
-                for (placeable in placeables) {
-                    placeable.place(x, (height - placeable.height) / 2)
-                    x += each + gap
-                }
-            }
-        } else {
-            val placeables = measurables.map { it.measure(Constraints.fixedWidth(width)) }
-            val height = placeables.sumOf { it.height } + gap * (placeables.size - 1)
-            layout(width, height) {
-                var y = 0
-                for (placeable in placeables) {
-                    placeable.place(0, y)
-                    y += placeable.height + gap
-                }
-            }
-        }
-    }
 }
 
 /** Mixed practice asks for the same word in different ways. Neutral says nothing. */
