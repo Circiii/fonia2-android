@@ -1,5 +1,8 @@
 package tech.fonia.domain
 
+import java.time.Instant
+import java.time.ZoneId
+
 /** Where one learner stands on one sound. Swift's `var` fields become `val`s; `Progression` returns updated copies. */
 data class ProgressionState(
     val rung: Rung = Rung.Isolated,
@@ -14,6 +17,23 @@ data class ProgressionState(
     /** Blocks under 3 of 6 on the isolated rung. */
     val weakEstablishBlocks: Int = 0,
 )
+
+/** One finished block of the current rung, as a sound's history keeps it. */
+data class BlockResult(
+    val rung: Rung,
+    val good: Int,
+    val total: Int,
+    val endedAt: Instant,
+)
+
+/** Whether a good block must be backed by one on an earlier day before the rung moves. */
+sealed interface DaySpread {
+    /** One good block is enough. Adults pace themselves. */
+    data object NotRequired : DaySpread
+
+    /** A child moves up only when an earlier calendar day also had a good block on this rung. */
+    data class Required(val earlierGoodDay: Boolean) : DaySpread
+}
 
 sealed interface ProgressionStep {
     data object Stay : ProgressionStep
@@ -46,7 +66,12 @@ object Progression {
         rung > Rung.Isolated && state.lockEnabled && !state.openedByParent && !state.adultConfirmed
 
     /** Applies one finished block of the current rung. A block cut short decides nothing. */
-    fun afterBlock(correct: Int, attempted: Int = blockSize, state: ProgressionState): BlockOutcome {
+    fun afterBlock(
+        correct: Int,
+        attempted: Int = blockSize,
+        state: ProgressionState,
+        daySpread: DaySpread = DaySpread.NotRequired,
+    ): BlockOutcome {
         if (attempted != blockSize) return BlockOutcome(state, ProgressionStep.Stay)
         var updated = state
         if (state.rung == Rung.Isolated) {
@@ -69,8 +94,21 @@ object Progression {
         if (adultDecides(leaving = state.rung) && !state.openedByParent) {
             return BlockOutcome(updated, ProgressionStep.NeedsAdult(next = next))
         }
+        // One lucky block is not enough: a second good one on another day shows the sound holds.
+        if (daySpread == DaySpread.Required(earlierGoodDay = false)) return BlockOutcome(updated, ProgressionStep.Stay)
         updated = updated.copy(rung = next)
         return BlockOutcome(updated, ProgressionStep.Advance(to = next))
+    }
+
+    /** A whole block of six with at least five good. */
+    fun isGood(block: BlockResult): Boolean = block.total == blockSize && block.good >= advanceAt
+
+    /** True when a good block on [rung] ended on a calendar day (in [zone]) before the one [now] falls on. */
+    fun hasGoodBlockOnEarlierDay(history: List<BlockResult>, rung: Rung, now: Instant, zone: ZoneId): Boolean {
+        val today = now.atZone(zone).toLocalDate()
+        return history.any { block ->
+            block.rung == rung && isGood(block) && block.endedAt < now && block.endedAt.atZone(zone).toLocalDate() != today
+        }
     }
 
     /** The adult or logoped said it is good: opens the lock and moves up one rung. */
