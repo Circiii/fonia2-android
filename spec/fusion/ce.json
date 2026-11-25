@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "sound": "ce",
- "version": "2026-11-24.v2",
+ "version": "2026-11-25.v3",
  "source": "fast: hand-set v0, not trained; full: fast head pooled with ZIPA lpr (FullHead.build), constants per sound chosen by leave-one-voice-out on 8 synthetic voices (EVAL_v2.md), not trained on children",
  "featureVersion": "e2.v0",
  "trainedOn": null,

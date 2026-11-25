@@ -18,6 +18,25 @@
    "attribution": "ZIPA-small CR-CTC (500k), (c) the ZIPA authors (Jian Zhu et al.), licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Source: https://huggingface.co/anyspeech/zipa-small-crctc-500k. Used unmodified (int8 export by the authors). Paper: Zhu et al., \"ZIPA: A family of efficient models for multilingual phone recognition\", ACL 2025.",
    "warm": "LESSON",
    "thread": "ml-zipa"
+  },
+  {
+   "id": "roasr",
+   "name": "SpeD Parakeet-Ro 110M, CTC branch, int8",
+   "version": "sped-110m-ctc-int8",
+   "runtime": "onnxruntime-android 1.31.1",
+   "asset": "models/roasr-parakeet-ro-110m/ctc.int8.onnx",
+   "cache": "roasr-parakeet-ro-110m/ctc.int8.onnx",
+   "bytes": 131652338,
+   "sha256": "76d3e51bd411ee36164bbe52cb716b871b07be7cc62c5832f34f6dc21f14ef40",
+   "source": "https://huggingface.co/gabrielpirlo/Sped_ParakeetRomanian_110M_TDT-CTC (exported and quantised with tools/asr/export.py)",
+   "license": "Apache-2.0",
+   "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+   "licenseCheck": "Model card declares Apache-2.0 (base nvidia/parakeet-tdt_ctc-110m). The card does not name its training corpora; a research note says part may be non-commercial data, not verified in the paper. Kept optional and out of the public repo until the authors confirm in writing (docs/ASR.md).",
+   "attribution": "SpeD Parakeet-Ro 110M TDT-CTC, (c) its authors (SpeeD lab, UPB), Apache-2.0. Source: https://huggingface.co/gabrielpirlo/Sped_ParakeetRomanian_110M_TDT-CTC. CTC branch exported to ONNX and quantised to int8.",
+   "optional": true,
+   "property": "fonia.roasr",
+   "warm": "NEVER",
+   "thread": "ml-roasr"
   }
  ]
 }

@@ -1,6 +1,6 @@
 # Fonia 2: planul de implementare (document-mamă)
 
-Scris pe 20 noiembrie 2026, pe baza a 18 rapoarte de research (`Fonia_Research_Hub/redesign/`, M–Z și AA–AD), a auditului codului Android (`fonia-brain/notes/android-inventory.md`) și a cărții „Șase sași în șase saci”, citită integral de patru agenți (`redesign/carte_ivanov/`).
+Scris pe 20 noiembrie 2026 de Fable, pe baza a 18 rapoarte de research (`Fonia_Research_Hub/redesign/`, M–Z și AA–AD), a auditului codului Android (`fonia-brain/notes/android-inventory.md`) și a cărții „Șase sași în șase saci”, citită integral de patru agenți (`redesign/carte_ivanov/`).
 
 Acest document fixează deciziile, numele și ordinea. Capitolele 01–08 detaliază fiecare zonă și **nu au voie să schimbe** un nume sau o decizie de aici fără o notă în `09_DECIZII_NOI.md`.
 

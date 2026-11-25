@@ -124,6 +124,14 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         return AttemptsSummary(sessionsCompleted = same.size, attemptsThisWeek = thisWeek, recentItems = recent)
     }
 
+    /** What the last three runs on this focus played (listening items included), so the next one draws others. */
+    suspend fun recentListening(): Set<String> {
+        val sessions = orNull { app.repository.sessions(profile.id) } ?: emptyList()
+        return sessions.filter { it.focus == ticket.focus.key }.sortedByDescending { it.startedAt }.take(3)
+            .flatMap { s -> (orNull { app.repository.attempts(s.id) } ?: emptyList()).mapNotNull { it.target } }
+            .toSet()
+    }
+
     fun leave(current: SessionRun) {
         app.scope.launch {
             current.leaveEarly()
@@ -141,7 +149,7 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     ViewTask(Unit) {
         if (run != null) return@ViewTask
         val progress = orNull { app.repository.soundProgress(profile.id) }?.firstOrNull { it.sound == ticket.sound?.rawValue }
-        val made = SessionRun(ticket, profile, app, progress, history())
+        val made = SessionRun(ticket, profile, app, progress, history(), recentListening())
         made.start()
         run = made
     }

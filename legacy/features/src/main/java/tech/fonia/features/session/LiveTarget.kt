@@ -6,10 +6,18 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
@@ -46,6 +54,15 @@ class LetterLink {
     /** The grapheme drawn alive (for instruction cues that need it); set by whoever draws the letter. */
     var target: String = ""
 
+    /** The calm live values ([FeedLetter]); one per letter. */
+    val smoother = LiveSmoother()
+
+    /** 0..1 light behind the letter while the target sound is heard (read only in the draw phase). */
+    val glow = mutableFloatStateOf(0f)
+
+    /** The target sound is heard now: the letter wears the "good" sticker. */
+    var hit by mutableStateOf(false)
+
     fun correct() = state.cue(LetterCue.Correct)
     fun almost() = state.cue(LetterCue.Almost)
     fun retake() = state.cue(LetterCue.Retake)
@@ -66,12 +83,16 @@ fun stickerFor(field: Field): StickerSet = when (field) {
 
 /**
  * Feeds [link]'s drive from his live levels once per frame while [listening] (the child's voice) or [modelVoice] (the
- * model's voice, which makes the letter beat along, gently). Reads only volatile fields: no recomposition.
+ * model's voice, which makes the letter beat along, gently). Reads only volatile fields: no recomposition, except
+ * [LetterLink.hit] flipping (at most a few times a second, with hysteresis).
  *
- * While listening every sound shows at once (owner, 2026-11-23: "nu se întâmplă nimic"): the letter swells with the
- * loudness envelope over the measured room floor ([HearRules.letterInflation], on within ~30 ms), wobbles with voicing,
- * sharpens for S / rounds for Ș on a hiss, ripples for R, leans away when blown. [baseInflation] is its resting size
- * (the held share in the sustain exercise). [heard] receives the envelope each frame, for the "Te aud" ring.
+ * While listening every sound shows at once (owner, 2026-11-23: "nu se întâmplă nimic"), calmly (2026-11-24: "totul se
+ * mișcă prea repede, să nu mai tremure"): the raw 10 ms values go through a [LiveSmoother] (attack ~70 ms, release
+ * ~320 ms, dead zone, from `spec/pacing.json`); the letter swells with the voice up to [Pacing.voiceInflationTop] and
+ * the rest of the way, plus its light and the "good" sticker, only while the target sound itself is heard
+ * ([LiveAim]). Nothing noisy reaches its outline: no voicing boil, a third of the 11 Hz energy buzz.
+ * [baseInflation] is its resting size (the held share in the sustain exercise). [heard] receives the envelope each
+ * frame, for the "Te aud" ring.
  */
 @Composable
 fun FeedLetter(
@@ -84,41 +105,59 @@ fun FeedLetter(
     heard: ((Float) -> Unit)? = null,
     /** Log-odds added to the live S-ness before the letter and the meters see it (see [placeBias]). */
     placeBias: Float = 0f,
+    /** What lights the letter: the target sound heard live. */
+    aim: LiveAim = LiveAim.None,
 ) {
-    LaunchedEffect(link, listening, modelVoice, placeBias) {
+    LaunchedEffect(link, listening, modelVoice, placeBias, aim) {
         val d = link.drive
+        val smooth = link.smoother
+        val pacing = Pacing.current
         d.listening = listening
         if (!listening && !modelVoice) {
             d.quiet()
+            smooth.reset()
+            link.glow.floatValue = 0f
+            link.hit = false
             d.inflation = baseInflation()
             heard?.invoke(0f)
             return@LaunchedEffect
         }
-        var envelope = 0f
         var last = 0L
         while (isActive) {
             val now = withFrameNanos { it }
             val dt = if (last == 0L) 0.016f else ((now - last) / 1e9f)
             last = now
             if (listening) {
-                envelope = HearRules.envelope(envelope, levels.level, dt)
-                val hears = HearRules.hears(envelope) || levels.isFricative
-                d.feed(
-                    level = (envelope * 1.6f).coerceAtMost(1f),
-                    speaking = hears,
+                smooth.step(
+                    dtSeconds = dt,
+                    rawLevel = levels.level,
+                    rawVoicing = levels.clarity,
+                    isFricative = levels.isFricative,
+                    rawFricative = levels.fricativeStrength,
                     sNess = if (levels.isFricative) recentred(levels.sNess, placeBias) else Float.NaN,
-                    fricative = levels.fricativeStrength,
-                    voicing = levels.clarity,
-                    trill = levels.trillStrength,
-                    blow = levels.blowStrength,
+                    rawTrill = levels.trillStrength,
+                    rawBlow = levels.blowStrength,
+                    aim = aim,
+                )
+                val envelope = smooth.level
+                d.feed(
+                    level = (envelope * 1.6f).coerceAtMost(1f) * pacing.letterBuzzShare,
+                    speaking = HearRules.hears(envelope) || smooth.fricative > 0.12f,
+                    sNess = smooth.place,
+                    fricative = smooth.fricative,
+                    voicing = smooth.voicing,
+                    trill = smooth.trill,
+                    blow = smooth.blow,
                     holdSeconds = holdSeconds(),
                 )
-                d.inflation = HearRules.letterInflation(baseInflation(), envelope)
-                d.trembling = HearRules.letterWobble(envelope, levels.clarity)
+                d.inflation = smooth.inflation(baseInflation())
+                d.trembling = 0f
+                link.glow.floatValue = smooth.glow
+                if (link.hit != smooth.hit) link.hit = smooth.hit
                 heard?.invoke(envelope)
             } else {
                 val talk = levels.talk
-                d.feed(level = talk * 0.6f, speaking = talk > 0.12f)
+                d.feed(level = talk * 0.6f * pacing.letterBuzzShare, speaking = talk > 0.12f)
                 d.inflation = baseInflation()
                 d.trembling = 0f
             }
@@ -131,9 +170,11 @@ fun FeedLetter(
  * on the man's test clips (output/aude/clips held_s5/held_sh5, tmp/test_audio roger_s/roger_sh) a held S reads a median
  * 0.34-0.59 and a held Ș 0.01-0.02 with the MALE group, so the bead stayed in the middle for a good S. Shifting the
  * log-odds by 2.2 puts that S at about 0.84-0.94 and that Ș at 0.07-0.13. Children and women are left as they are.
- * Display only: no verdict reads it.
+ * No judge verdict reads it (the held bar does). Once his own S/Ș are calibrated ("Calibrare", or enough good takes), the live
+ * analysis measures against them and no shift is applied.
  */
-fun placeBias(group: tech.fonia.dsp.VoiceGroup): Float = if (group == tech.fonia.dsp.VoiceGroup.MALE) 2.2f else 0f
+fun placeBias(group: tech.fonia.dsp.VoiceGroup, calibrated: Boolean = false): Float =
+    if (group == tech.fonia.dsp.VoiceGroup.MALE && !calibrated) 2.2f else 0f
 
 internal fun recentred(sNess: Float, bias: Float): Float {
     if (bias == 0f || sNess.isNaN()) return sNess
@@ -212,28 +253,70 @@ private fun LetterSlot(letter: String, link: LetterLink, field: Field, emPx: Flo
     LiveLetter(
         letter,
         link.state,
-        modifier.layout { measurable, _ ->
-            val p = measurable.measure(Constraints.fixed(slotW.toInt().coerceAtLeast(1), boxH.toInt()))
-            layout(slotW.toInt().coerceAtLeast(1), lineH.toInt()) { p.place(0, (emPx * 1.0f - baselineInBox).toInt()) }
-        },
+        modifier
+            .layout { measurable, _ ->
+                val p = measurable.measure(Constraints.fixed(slotW.toInt().coerceAtLeast(1), boxH.toInt()))
+                layout(slotW.toInt().coerceAtLeast(1), lineH.toInt()) { p.place(0, (emPx * 1.0f - baselineInBox).toInt()) }
+            }
+            .targetGlow(link),
         drive = link.drive,
-        sticker = stickerFor(field),
+        sticker = if (link.hit) FoniaClassicSticker.Good else stickerFor(field),
         height = boxHdp,
         verdicts = VerdictStickers.Classic,
     )
 }
 
-/** The big held letter of the sustain exercise. */
+/**
+ * The light behind a living letter while the target sound is heard: a soft disc in the "good" colour that comes up in
+ * ~90 ms and fades in ~380 ms ([LetterLink.glow], read only while drawing). Seen at arm's length; never red.
+ */
+fun Modifier.targetGlow(link: LetterLink): Modifier = drawBehind {
+    val g = link.glow.floatValue
+    if (g < 0.02f) return@drawBehind
+    val r = size.minDimension * 0.62f
+    val c = Offset(size.width / 2f, size.height * HERO_CAP_CENTER)
+    drawCircle(
+        Brush.radialGradient(
+            0f to Palette.progress.copy(alpha = 0.55f * g),
+            0.6f to Palette.progress.copy(alpha = 0.28f * g),
+            1f to Palette.progress.copy(alpha = 0f),
+            center = c,
+            radius = r,
+        ),
+        radius = r,
+        center = c,
+    )
+}
+
+/** The big held letter of the sustain exercise (and the hero letter over a sentence). */
 @Composable
-fun HeldLetter(letter: String, link: LetterLink, field: Field, modifier: Modifier = Modifier) {
+fun HeldLetter(letter: String, link: LetterLink, field: Field, modifier: Modifier = Modifier, height: Dp = 200.dp) {
     link.target = letter
     LiveLetter(
         letter,
         link.state,
-        modifier,
+        modifier.targetGlow(link),
         drive = link.drive,
-        sticker = stickerFor(field),
-        height = 200.dp,
+        sticker = if (link.hit) FoniaClassicSticker.Good else stickerFor(field),
+        height = height,
+        verdicts = VerdictStickers.Classic,
+    )
+}
+
+/**
+ * A second living letter on the same voice ([LetterLink.drive], light and sticker) but with its own cues: shown where
+ * the practised letter is hidden while he speaks (naming a picture), so something always answers his voice.
+ */
+@Composable
+fun EchoLetter(letter: String, link: LetterLink, field: Field, modifier: Modifier = Modifier, height: Dp = 150.dp) {
+    val own = remember(link) { LiveLetterState() }
+    LiveLetter(
+        letter,
+        own,
+        modifier.targetGlow(link),
+        drive = link.drive,
+        sticker = if (link.hit) FoniaClassicSticker.Good else stickerFor(field),
+        height = height,
         verdicts = VerdictStickers.Classic,
     )
 }

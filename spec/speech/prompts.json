@@ -1,0 +1,31 @@
+{
+  "version": "prompts-1",
+  "note": "Original prompts for the speech coach (Fonia 2). Kinds: intro, pitch, explain, story, free.",
+  "prompts": [
+    { "id": "intro.three", "kind": "intro", "title": "Tu, în trei lucruri", "hint": "Cum te cheamă, ce te pasionează, ce vrei să faci." },
+    { "id": "intro.jury", "kind": "intro", "title": "Prezintă-te unui juriu", "hint": "Ai un minut să le rămâi în minte." },
+    { "id": "intro.secret", "kind": "intro", "title": "Ceva ce nu știe nimeni despre tine", "hint": "Un lucru mic, dar adevărat." },
+    { "id": "intro.morning", "kind": "intro", "title": "Ce te scoate din pat dimineața", "hint": "Spune-ne ce te pune în mișcare." },
+    { "id": "intro.future", "kind": "intro", "title": "Tu, peste zece ani", "hint": "Unde ești, ce faci, cine e lângă tine." },
+    { "id": "pitch.app", "kind": "pitch", "title": "O aplicație care lipsește", "hint": "Ce problemă rezolvă și pentru cine." },
+    { "id": "pitch.tree", "kind": "pitch", "title": "Convinge-ți clasa să planteze un copac", "hint": "Un motiv bun e mai tare decât trei slabe." },
+    { "id": "pitch.object", "kind": "pitch", "title": "Vinde-ne un obiect de pe birou", "hint": "Pixul, cana, lampa: fă-ne să-l vrem." },
+    { "id": "pitch.school", "kind": "pitch", "title": "Școala de mâine, după tine", "hint": "Un singur lucru pe care l-ai schimba." },
+    { "id": "pitch.club", "kind": "pitch", "title": "Un club nou în școală", "hint": "De ce ar veni lumea joi după ore?" },
+    { "id": "pitch.project", "kind": "pitch", "title": "Proiectul tău, într-un minut", "hint": "Problema, ideea, de ce tu." },
+    { "id": "pitch.mayor", "kind": "pitch", "title": "Dacă ai fi primar o zi", "hint": "Ce faci până seara?" },
+    { "id": "explain.passion", "kind": "explain", "title": "Pasiunea ta, pe înțelesul tuturor", "hint": "Explic-o cuiva care n-a auzit de ea." },
+    { "id": "explain.everyday", "kind": "explain", "title": "Cum funcționează un lucru de zi cu zi", "hint": "Frigiderul, bicicleta, semaforul." },
+    { "id": "explain.game", "kind": "explain", "title": "Jocul tău preferat, explicat bunicii", "hint": "Fără cuvinte pe care ea nu le știe." },
+    { "id": "explain.learned", "kind": "explain", "title": "Ceva ce ți-a schimbat părerea", "hint": "Ce credeai înainte și ce crezi acum." },
+    { "id": "explain.book", "kind": "explain", "title": "O carte sau un film, fără final", "hint": "Fă-ne curioși, nu ne spune cum se termină." },
+    { "id": "explain.hard", "kind": "explain", "title": "De ce merită să înveți ceva greu", "hint": "Un exemplu din viața ta." },
+    { "id": "story.brave", "kind": "story", "title": "Ziua în care ai avut curaj", "hint": "Unde erai, ce s-a întâmplat, ce ai simțit în corp." },
+    { "id": "story.trip", "kind": "story", "title": "Cea mai ciudată călătorie", "hint": "Începe cu momentul cel mai neașteptat." },
+    { "id": "story.changed", "kind": "story", "title": "Un moment care te-a schimbat", "hint": "Ce era înainte, ce a fost după." },
+    { "id": "story.first", "kind": "story", "title": "Prima zi într-un loc nou", "hint": "Primul lucru pe care l-ai observat." },
+    { "id": "story.friend", "kind": "story", "title": "O întâmplare amuzantă cu un prieten", "hint": "Spune-o ca s-o vedem." },
+    { "id": "story.person", "kind": "story", "title": "Un om care te-a inspirat", "hint": "Un lucru pe care l-a făcut, nu doar cine e." },
+    { "id": "free", "kind": "free", "title": "Liber", "hint": "Pitch-ul tău, discursul tău, ce vrei tu." }
+  ]
+}

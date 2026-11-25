@@ -119,3 +119,27 @@ model (`assets/models/…/model.int8.onnx`, uncompressed) and `libonnxruntime.so
 the **full head decided 20/20 takes**; warm-up 4.3 s; per take measure p50 115 ms, ZIPA p50 330 ms (max 707 ms),
 decide 0.8 ms, talker estimate 8 ms; total p50 463 ms, max 1.1 s. The emulator was shared with another agent's
 session at the time (v1 measured ZIPA at 52 ms on an idle emulator); above 600 ms the app falls back to the fast head.
+
+## v3 (2026-11-25): wider fit grid, R/L at 0.72, two judge rules
+
+Same 8 synthetic voices, 1 918 judgments (`tools/eval/out/v28`, `v28g`, `v29`; not committed). `EvalV2Fits` grid widened:
+`correctBias` up to 3 (it sat at the old edge, 1, on several sounds) and the GOP weight `g` ∈ {0, 0.25, 0.5}.
+CE keeps its v2 constants: the new choice praised 6 of 16 held-out CE errors without accepting more good CE takes.
+
+| shipped config | correct takes accepted | errors praised |
+|---|---|---|
+| v2 (+ R/L 0.72) | 78.1 % | 2.1 % |
+| **v3** | **83.3 %** | **2.3 %** |
+
+Per sound (accepted / praised errors), v2 → v3: S 90/2 → 90/2; Ș 82/5 → 88/6; Z 84/1 → 84/1; J 67/1 → 72/1;
+Ț 78/0 → 78/0; **CE 52/0 → 52/0**; GE 42/12 → 64/16; R 89/0 → 96/0; L 86/0 → 90/0.
+
+CE stays the weakest: ZIPA-small hears [s] for good [tʃ] (and [ʒ] for good [dʒ]), so the GOP is low on correct takes;
+the DSP closure/burst cues do not separate good CE from the few error takes in this set (10 deaffrication, 3
+affricatePlace). Needs real CE errors (pilot) or a better phone model, not constants.
+
+App rules added with v3 (`legacy/features/.../SoundJudge.kt`, `speech/.../TakeJudge.kt`):
+- sentences: `weakOrShort` / `omission` with every word heard by the Romanian recogniser → correct (a sound inside a
+  sentence is short by nature; seen on „Păpușa are o șapcă.”);
+- words and sentences: an unreliable ZIPA alignment never lets the fast head praise (L words in an R drill were praised);
+- the first take waits (≤ 8 s) for ZIPA to finish loading, so the full head's budget counts judging only.

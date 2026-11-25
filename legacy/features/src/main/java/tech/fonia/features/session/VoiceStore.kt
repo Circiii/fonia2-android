@@ -114,7 +114,14 @@ data class SoundProgress(
  * of his takes (`dots-<id>.csv`, newest [MAX_DOTS] kept). Everything of a profile goes with [keepOnly] (a deleted
  * profile, "Șterge tot"). Thread-safe; [dir] null keeps everything in memory (JVM tests).
  */
-class VoiceStore(private val dir: File?) {
+class VoiceStore(
+    private val dir: File?,
+    /**
+     * False while the takes are not his voice (recorded clips, a microphone file): the reference and the dots are
+     * read but nothing is written, so a test run never teaches the app somebody else's voice.
+     */
+    private val persist: Boolean = true,
+) {
     private val lock = Any()
     private val personal = HashMap<UUID, PersonalReference>()
     private val dots = HashMap<UUID, MutableList<TakeDot>>()
@@ -173,6 +180,7 @@ class VoiceStore(private val dir: File?) {
     }
 
     private fun write(file: File?, text: String) {
+        if (!persist) return
         file ?: return
         runCatching {
             file.parentFile?.mkdirs()

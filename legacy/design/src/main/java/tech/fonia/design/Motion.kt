@@ -149,13 +149,23 @@ fun SkyLife(isNight: Boolean = false, modifier: Modifier = Modifier) {
             }
         }
     } else {
-        val near = transition.animateFloat(0f, 1f, infiniteRepeatable(tween(96_000, easing = LinearEasing)), label = "cloud1")
-        val far = transition.animateFloat(0f, 1f, infiniteRepeatable(tween(150_000, easing = LinearEasing)), label = "cloud2")
+        // The clouds cross the screen in minutes: 20 steps a second look the same as 120 and cost a sixth.
+        val born = remember { System.nanoTime() }
+        val clock = remember { androidx.compose.runtime.mutableLongStateOf(0L) }
+        LaunchedEffect(Unit) {
+            while (true) {
+                clock.longValue = (System.nanoTime() - born) / 1_000_000L
+                kotlinx.coroutines.delay(50)
+            }
+        }
         Canvas(modifier) {
             val d = density.toDouble()
+            val ms = clock.longValue
+            val near = (ms % 96_000L) / 96_000f
+            val far = (ms % 150_000L) / 150_000f
             platform { canvas ->
-                drawCloud(canvas, y = 0.11, scale = 1.0, progress = near.value, opacity = 0.55, start = 0.1, width = size.width / d, height = size.height / d, density = d)
-                drawCloud(canvas, y = 0.2, scale = 0.68, progress = far.value, opacity = 0.4, start = 0.55, width = size.width / d, height = size.height / d, density = d)
+                drawCloud(canvas, y = 0.11, scale = 1.0, progress = near, opacity = 0.55, start = 0.1, width = size.width / d, height = size.height / d, density = d)
+                drawCloud(canvas, y = 0.2, scale = 0.68, progress = far, opacity = 0.4, start = 0.55, width = size.width / d, height = size.height / d, density = d)
             }
         }
     }

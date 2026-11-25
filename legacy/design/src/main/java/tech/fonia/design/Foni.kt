@@ -152,6 +152,14 @@ fun Foni(
         var last = 0L
         while (true) {
             withFrameNanos { now ->
+                // A calm bird (no voice to follow, no hop, settled in its mood) breathes at 30 frames a second: the
+                // eye can't tell, and a 120 Hz phone no longer repaints it four times as often (Home used ~90 % of
+                // a core). A voice, a hop or a new mood bring every frame back.
+                val hop = hopStart
+                val calm = currentLevel == null &&
+                    (hop == null || now - hop > 1_500_000_000L) &&
+                    now - currentMoodStart > 2_000_000_000L
+                if (calm && last != 0L && now - last < 31_000_000L) return@withFrameNanos
                 val dt = if (last == 0L) 1.0 / 60 else (now - last) / 1e9
                 last = now
                 pose.value = compute(now, dt)

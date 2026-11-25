@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "sound": "l",
- "version": "2026-11-24.v2",
+ "version": "2026-11-25.v3",
  "source": "fast: hand-set v0, not trained; full: fast head pooled with ZIPA lpr (FullHead.build), constants per sound chosen by leave-one-voice-out on 8 synthetic voices (EVAL_v2.md), not trained on children",
  "featureVersion": "e2.v0",
  "trainedOn": null,
@@ -83,9 +83,9 @@
  },
  "fullFrom": {
   "alpha": 0.25,
-  "c": 0.75,
-  "g": 0.5,
-  "correctBias": 1.0
+  "c": 1.25,
+  "g": 0.0,
+  "correctBias": 3.0
  },
  "heads": {
   "fast": {
@@ -101,18 +101,18 @@
   },
   "full": {
    "uses": "dsp+zipa",
-   "bias": [0.6154, -0.1923, -0.0962, -0.3846],
+   "bias": [2.6154, -0.1923, -0.0962, -0.3846],
    "weights": [
-    [-0.1923, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5],
-    [0.0, -0.1538, 0.0, 0.0, 0.0, 0.0, -2.25, 0.0, 0.0],
-    [0.0, -0.1923, 0.0, 0.0, 0.0, 0.0, 0.0, -2.25, 0.0],
-    [0.3846, 0.1923, -0.1923, 0.0, 0.0, -2.25, 0.0, 0.0, 0.0]
+    [-0.1923, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, -0.1538, 0.0, 0.0, 0.0, 0.0, -3.75, 0.0, 0.0],
+    [0.0, -0.1923, 0.0, 0.0, 0.0, 0.0, 0.0, -3.75, 0.0],
+    [0.3846, 0.1923, -0.1923, 0.0, 0.0, -3.75, 0.0, 0.0, 0.0]
    ],
    "temperature": 1.0
   }
  },
  "decision": {
-  "tauOk": 0.8,
+  "tauOk": 0.72,
   "tauOkFast": 0.9,
   "tauAlmost": 0.35,
   "delta": 0.2,

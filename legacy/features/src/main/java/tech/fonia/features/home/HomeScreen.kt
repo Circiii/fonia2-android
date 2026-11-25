@@ -46,6 +46,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -103,21 +104,24 @@ private data class Door(val id: String, val scene: SceneName, val title: String,
 /** The first door is the main one and gets the whole width. */
 private fun doors(profile: Profile): List<Door> {
     val sounds = Door("sounds", SceneName.sounds, "Sunete", AppRoute.AllSounds)
+    // „Vorbit în public” opens the speech coach (the camera, live cues, the report). The older exercises („Tu, fără
+    // ăăă”, the minute) are reached from the coach's setup. For a child it takes the place of „Cum spun?”, whose
+    // guides open from every sound anyway.
+    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.SpeechCoach())
     if (profile.isChild) {
         return listOf(
             sounds,
-            Door("guides", SceneName.guide, "Cum spun?", AppRoute.Guides),
+            speaking,
             Door("warmup", SceneName.warmup, "Încălzirea", AppRoute.Warmup),
             Door("play", SceneName.play, "Jocuri", AppRoute.Play),
             Door("stories", SceneName.stories, "Povești", AppRoute.Stories),
         )
     }
     val english = Door("english", SceneName.english, "Engleză", AppRoute.English)
-    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.Speaking)
     return when (profile.track) {
         Profile.Track.En -> listOf(english, speaking)
         Profile.Track.Dictie -> listOf(speaking, english)
-        Profile.Track.Ro -> listOf(sounds, english, speaking)
+        Profile.Track.Ro -> listOf(sounds, speaking, english)
     }
 }
 
@@ -157,7 +161,8 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
                 list.forEachIndexed { index, item -> DoorButton(item, 2.3f, large = true, index + 3, hasArrived, push) }
             } else {
                 list.firstOrNull()?.let { DoorButton(it, 2.15f, large = true, 3, hasArrived, push) }
-                list.drop(1).chunked(2).forEachIndexed { row, pair ->
+                val grid = list.drop(1)
+                grid.chunked(2).forEachIndexed { row, pair ->
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                         pair.forEachIndexed { column, item ->
                             DoorButton(item, 1.12f, large = false, row * 2 + column + 4, hasArrived, push, Modifier.weight(1f))
@@ -288,7 +293,9 @@ private fun DoorButton(
     modifier: Modifier = Modifier,
 ) {
     StyledButton(onClick = { push(item.route) }, style = PressableStyle(), modifier = modifier.arrives(hasArrived, order)) {
-        DoorTile(item.scene, item.title, aspect, large, Modifier.zoomSource(item.route))
+        Box {
+            DoorTile(item.scene, item.title, aspect, large, Modifier.zoomSource(item.route))
+        }
     }
 }
 

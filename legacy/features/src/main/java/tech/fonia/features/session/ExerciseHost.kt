@@ -187,7 +187,7 @@ fun WarmupExercise(warmup: Warmup?, run: SessionRun, app: AppModel) {
         app.audio.say(warmup.say)
         if (warmup.poseB == null) return@ExerciseTask
         while (isActive) {
-            delay(900)
+            delay(Pacing.current.warmupPoseMs)
             useSecondPose = !useSecondPose
         }
     }

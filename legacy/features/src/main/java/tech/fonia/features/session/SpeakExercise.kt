@@ -233,7 +233,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 phase = SpeakPhase.Result
                 // The quick check is never blocked by a dead microphone: the cue shows, then the next word comes.
                 if (run.isCheck) {
-                    delay(2600)
+                    delay(Pacing.current.noMicCheckMs)
                     if (adult != null || waitingForChoice) return true
                     run.finishAttempt(exercise, machine = Attempt.Outcome.Unclear, adult = null, take = take)
                 } else {
@@ -247,7 +247,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 app.audio.sayIfRecorded(SoundJudge.retake.title)
                 for (n in HearRules.retakeCountdown) {
                     countdown = n
-                    delay(450)
+                    delay(Pacing.current.retakeCountStepMs)
                 }
                 run.retakeSameTrial()
             }
@@ -257,7 +257,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 letter.almost()
                 app.audio.effect(SoundEffect.Almost)
                 phase = SpeakPhase.Result
-                delay(1500)
+                delay(Pacing.current.almostMoveOnMs)
                 if (adult != null || waitingForChoice) return true
                 run.finishAttempt(exercise, machine = kind.outcome, adult = null, take = take)
             }
@@ -269,8 +269,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     fun stripExtraMs(): Long {
         val j = judged ?: return 0
         return when {
-            j.hint != null -> 3000
-            j.visual?.placeAxis != null || j.visual?.voicing != null || j.visual?.trill != null || j.visual?.closure != null -> 900
+            j.hint != null -> Pacing.current.hintExtraMs
+            j.visual?.placeAxis != null || j.visual?.voicing != null || j.visual?.trill != null || j.visual?.closure != null -> Pacing.current.stripExtraMs
             else -> 0
         }
     }
@@ -297,7 +297,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 phase = SpeakPhase.Result
                 // The letter and one word say how it went, then the next one comes by itself; a tap on "Încă o dată"
                 // (or any other button) stops the flow there.
-                delay(if (result.rating == Rating.yes) 850 + stripExtraMs() else AUTO_NEXT_MS + stripExtraMs())
+                delay((if (result.rating == Rating.yes) Pacing.current.verdictGoodMs else Pacing.current.verdictAlmostMs) + stripExtraMs())
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
@@ -309,7 +309,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 val shown = System.nanoTime()
                 announce(result)
                 val said = (System.nanoTime() - shown) / 1_000_000
-                delay(max(1300 + stripExtraMs() - said, 350))
+                delay(max(Pacing.current.verdictGoodMs + stripExtraMs() - said, 600))
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
@@ -320,7 +320,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 val shown = System.nanoTime()
                 announce(result)
                 val said = (System.nanoTime() - shown) / 1_000_000
-                delay(max(AUTO_NEXT_MS + 500 + stripExtraMs() - said, 600))
+                delay(max(Pacing.current.verdictAlmostMs + stripExtraMs() - said, 900))
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
@@ -400,7 +400,10 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         // "Your turn" BEFORE the microphone: startListening waits until it has ended + 150 ms (the quiet rule).
         FoniaSfx.play(SfxCue.TakeStart)
         try {
-            app.audio.startListening(app.talkers.group(profile), profile.calibration, fixtureText, fixtureLanguage)
+            val personal = app.voice.personal(profile.id)
+            val (own, room) = synchronized(personal) { personal.calibration() to personal.room }
+            // His own S/Ș boundary and room once he has them („Calibrare”, or enough good takes); else the old anchors.
+            app.audio.startListening(app.talkers.group(profile), own ?: profile.calibration, fixtureText, fixtureLanguage, room = room)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: Exception) {
@@ -415,7 +418,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             phase = SpeakPhase.Result
             // The quick check never stops on a microphone that will not open: the next word comes.
             if (run.isCheck) {
-                delay(2600)
+                delay(Pacing.current.noMicCheckMs)
                 if (adult == null && !waitingForChoice) run.finishAttempt(exercise, machine = Attempt.Outcome.Unclear, adult = null, take = null)
             }
             return
@@ -497,7 +500,8 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     }
     FeedLetter(
         letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it },
-        placeBias = placeBias(app.talkers.group(profile)),
+        placeBias = placeBias(app.talkers.group(profile), app.voice.calibrated(profile.id)),
+        aim = if (exercise.isRomanianSoundTake) LiveAim.of(sound?.id) else LiveAim.None,
     )
 
     val showsPanel = phase == SpeakPhase.Result && verdict != null
@@ -609,9 +613,6 @@ private val tech.fonia.domain.Exercise.isRomanianSoundTake: Boolean
         is tech.fonia.domain.Exercise.Twister -> language == Language.Ro && sound != null
         else -> false
     }
-
-/** How long a result that is not yet right stays before the next trial comes by itself. */
-private const val AUTO_NEXT_MS = 1700L
 
 /** What the session knows at decision time: no adult in the loop; calibrated once there are ten anchors. */
 internal fun runtimeFor(run: SessionRun): RuntimeContext =

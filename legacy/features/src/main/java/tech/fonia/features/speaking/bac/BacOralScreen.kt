@@ -1,5 +1,6 @@
 package tech.fonia.features.speaking.bac
 
+import tech.fonia.features.app.wordsTranscriber
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -191,7 +192,7 @@ fun BacOralScreen(
             val recordings = pending.map { it.await() }.associateBy { it.part }
             // The reading at 16 kHz is what the report plays back; the 48 kHz takes are already let go.
             readingClip = recordings[BacPart.Reading]?.let { CapturedClip(it.samples16k, SpeechResampler.WHISPER_RATE) }
-            val transcriber = app.speech.transcriber
+            val transcriber = app.wordsTranscriber
             if (transcriber == null) {
                 phase = BacPhase.Unavailable
                 return@launch

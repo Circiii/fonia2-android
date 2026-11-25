@@ -92,6 +92,11 @@ class TakeStats(val sampleRate: Double, val source: String) {
 }
 
 /** Feeds the DSP from the capture thread. One instance per take, so nothing is shared across threads. */
+/** A listener on the capture: the samples of one hop and the live analyser's reading after it. Audio thread; keep nothing. */
+fun interface HopTap {
+    fun hop(samples: FloatArray, offset: Int, count: Int, frame: LiveFrame)
+}
+
 private class AnalyzerProcessor(
     sampleRate: Double,
     group: VoiceGroup,
@@ -99,6 +104,8 @@ private class AnalyzerProcessor(
     thresholds: DSPThresholds,
     private val gate: SpeechGate,
     private val stats: TakeStats,
+    /** Sees every hop and the live reading after it (the speech coach), on the audio thread. */
+    private val tap: HopTap? = null,
 ) : HopProcessor {
     private val analyzer = LiveAnalyzer(sampleRate, group, calibration, thresholds)
 
@@ -117,6 +124,7 @@ private class AnalyzerProcessor(
         stats.peak = peak
         stats.samples += count
         val frame = analyzer.process(samples, offset, count, frame)
+        tap?.hop(samples, offset, count, frame)
         // A new analysis hop (the analyzer returns its last reading between hops): one pitch per hop.
         if (frame.pitchHz > 0f && frame.pitchHz != lastPitch) stats.addPitch(frame.pitchHz)
         if (frame.fricativePresent && frame.sNess != lastHiss) stats.addHiss(frame.sNess)
@@ -349,6 +357,10 @@ class AudioHub(
         calibration: TalkerCalibration?,
         fixtureText: String? = null,
         fixtureLanguage: Language = Language.Ro,
+        /** Made once the stream's rate is known; it then sees every hop (the speech coach). */
+        tap: ((sampleRate: Double) -> HopTap)? = null,
+        /** His calibrated room and voice („Calibrare”): the live floor starts at his room, the level spans his voice. */
+        room: tech.fonia.judge.PersonalReference.Room? = null,
     ) {
         prepare()
         stopSpeaking()
@@ -394,7 +406,7 @@ class AudioHub(
                         "rate=${rate.toInt()} device=${info?.deviceType ?: "-"} narrowBand=${info?.isNarrowBand ?: "-"} " +
                         "effectsOff=${info?.platformEffectsSwitchedOff ?: "-"} group=${group.rawValue}",
                 )
-                AnalyzerProcessor(rate, group, calibration, live(thresholds), gate, stats)
+                AnalyzerProcessor(rate, group, calibration, live(thresholds, room), gate, stats, tap?.invoke(rate))
             }
         } catch (e: Exception) {
             capture = null
@@ -475,12 +487,15 @@ class AudioHub(
          * hops heard). The floor now starts at -55 dB and learns fast only 0.5 s at 12 dB/s, and a voice is 9 dB above
          * it: an immediate hiss stays heard (362 of 362), a -45 dB room is still learnt as the floor.
          */
-        fun live(thresholds: DSPThresholds): DSPThresholds = thresholds.copy(
+        fun live(thresholds: DSPThresholds, room: tech.fonia.judge.PersonalReference.Room? = null): DSPThresholds = thresholds.copy(
             live = thresholds.live.copy(
-                initialFloorDb = -55f,
-                floorLearnSeconds = 0.5f,
+                // With „Calibrare” the floor starts just over his measured room, and 0…1 spans his room to his voice.
+                initialFloorDb = room?.let { (it.floorDb + 3f).coerceIn(-90f, -45f) } ?: -55f,
+                // A measured room needs no fast learning: a held "aaa" or "sss" must not become the floor.
+                floorLearnSeconds = if (room != null) 0.1f else 0.5f,
                 floorLearnRiseDbPerSecond = 12f,
                 vadMarginDb = 9f,
+                levelRangeDb = room?.let { (it.speechDb - it.floorDb - 4f).coerceIn(18f, 40f) } ?: thresholds.live.levelRangeDb,
             ),
         )
 

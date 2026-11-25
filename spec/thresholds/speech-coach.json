@@ -1,0 +1,138 @@
+{
+  "version": "coach-1",
+  "hopSeconds": 0.01,
+  "pace": {
+    "vowelLowHz": 300.0,
+    "vowelHighHz": 2500.0,
+    "minProminenceDb": 2.0,
+    "belowPeakDb": 30.0,
+    "minGapSeconds": 0.08,
+    "lookAheadSeconds": 0.12,
+    "valleyLookSeconds": 0.12,
+    "voicedReachSeconds": 0.03,
+    "peakForgetSeconds": 20.0,
+    "windowSeconds": 4.0,
+    "minSpeechInWindowSeconds": 1.5,
+    "pauseMinSeconds": 0.25,
+    "longPauseSeconds": 2.0,
+  "goodPauseMaxSeconds": 1.0,
+    "envelopeRecall": 0.75,
+    "modelStaleSeconds": 6.0,
+    "vowelGapCapSeconds": 0.6,
+    "minVowelGaps": 6,
+    "bandLow": 3.3,
+    "bandHigh": 6.6,
+    "gaugeMin": 2.0,
+    "gaugeMax": 8.0
+  },
+  "voice": {
+    "initialFloorDb": -60.0,
+    "floorRiseDbPerSecond": 3.0,
+    "floorFallRate": 0.3,
+    "vadMarginDb": 10.0,
+    "vadHangSeconds": 0.2,
+    "levelWindowSeconds": 1.5,
+    "referenceAfterSpeechSeconds": 4.0,
+    "referenceForgetSeconds": 120.0,
+    "referencePercentile": 0.8,
+    "quietBelowReferenceDb": 6.0,
+    "minSnrDb": 4.0,
+    "gaugeBelowReferenceDb": 15.0,
+    "gaugeAboveReferenceDb": 6.0
+  },
+  "pitch": {
+    "windowSeconds": 8.0,
+    "minVoicedSeconds": 2.0,
+    "referenceHz": 100.0,
+    "flatSpreadSt": 1.5,
+    "livelySpreadSt": 3.0
+  },
+  "gaze": {
+    "irisGainDeg": 60.0,
+    "lookGainDeg": 25.0,
+    "verticalOffsetDeg": 5.0,
+    "baselineClampDeg": 0.0,
+    "baselineSeconds": 2.0,
+    "toleranceYawDeg": 11.0,
+    "tolerancePitchUpDeg": 10.0,
+    "tolerancePitchDownDeg": 7.0,
+    "fallbackToleranceScale": 1.0,
+    "enterBelow": 0.85,
+    "leaveAbove": 1.15,
+    "smoothingSeconds": 0.25,
+    "windowSeconds": 2.5,
+    "awayFractionCue": 0.6
+  },
+  "quality": {
+    "minEyeSpan": 0.10,
+    "maxEyeSpan": 0.42,
+    "edgeMargin": 0.12,
+    "minLuma": 45.0,
+    "maxNoiseDb": -38.0,
+    "hintAfterSeconds": 1.5,
+    "minCoverage": 0.5
+  },
+  "calibration": {
+    "stepSeconds": 2.0,
+    "minFrames": 8,
+    "minSeparationDeg": 3.0,
+    "downShare": 0.6,
+    "upShare": 0.8,
+    "minToleranceDeg": 4.0,
+    "maxToleranceDeg": 14.0,
+    "maxCentreDeg": 10.0
+  },
+  "motion": {
+    "windowSeconds": 3.0,
+    "positionToleranceEyes": 0.22,
+    "angleToleranceDeg": 6.0,
+    "cueIndex": 1.6,
+    "gaugeMaxIndex": 2.4
+  },
+  "face": {
+    "windowSeconds": 5.0,
+    "browWeight": 1.0,
+    "smileWeight": 0.7,
+    "nodWeight": 0.005,
+    "activityLow": 0.03,
+    "activityHigh": 0.18
+  },
+  "liveliness": {
+    "pitchWeight": 0.65,
+    "faceWeight": 0.35,
+    "cueBelow": 0.33
+  },
+  "cues": {
+    "warmupSeconds": 4.0,
+    "minShowSeconds": 2.2,
+    "maxShowSeconds": 8.0,
+    "cooldownSeconds": 12.0,
+    "gapSeconds": 4.0,
+    "onSeconds": {
+      "look": 2.5,
+      "louder": 3.0,
+      "slower": 2.0,
+      "faster": 2.5,
+      "calmer": 3.0,
+      "livelier": 5.0
+    },
+    "goodAfterSeconds": 3.0,
+    "goodShowSeconds": 2.4,
+    "goodCooldownSeconds": 20.0,
+    "silenceHoldsCueSeconds": 1.2
+  },
+  "smoothing": {
+    "attackSeconds": 0.08,
+    "releaseSeconds": 0.3
+  },
+  "report": {
+    "tickSeconds": 0.25,
+    "minMomentSeconds": 1.5,
+    "focusBelow": 80,
+    "fillerPenaltyPerMinute": 6.0,
+    "maxFillerPenalty": 30.0,
+    "changeWorthMentioning": 8,
+    "syllablesPerWord": 2.4,
+    "praiseFrom": 70
+  }
+}

@@ -32,7 +32,7 @@ android {
         applicationId = "tech.fonia.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 20
+        versionCode = 29
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["foniaZipaModel"] = zipaDeviceFile
@@ -50,6 +50,8 @@ android {
         debug {
             // `-Pfonia.abi=x86_64`: a debug build for one ABI only, small enough for an emulator with little storage.
             providers.gradleProperty("fonia.abi").orNull?.let { ndk { abiFilters += it } }
+            // `-Pfonia.appIdSuffix=.x`: a debug build that installs beside the usual one (two agents, one emulator).
+            providers.gradleProperty("fonia.appIdSuffix").orNull?.let { applicationIdSuffix = it }
         }
     }
 
@@ -132,6 +134,7 @@ val specAssets = tasks.register<SpecAssetsTask>("specAssets") {
         fileTree(spec.resolve("fusion")) { include("*.json") },
         spec.resolve("unlock.json"),
         spec.resolve("feedback.json"),
+        spec.resolve("pacing.json"),
         // The diction training (v2-flow): the original v2 texts and their generated voice clips (about 11 MB).
         fileTree(spec.resolve("content/v2")) { include("**/*.json") },
         spec.resolve("content/voice/index.json"),

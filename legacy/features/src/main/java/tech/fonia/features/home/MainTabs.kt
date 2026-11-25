@@ -156,10 +156,14 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
             )
         }
         // Once, when the first run ends: the quick check, which sets what to practise.
-        val offering = app.offerCheck && profile.track == Profile.Track.Ro && app.ticket == null
+        val offering = app.offerCheck && !app.calibrating && profile.track == Profile.Track.Ro && app.ticket == null
         FullScreenCover(isPresented = offering) {
             BackHandler { app.offerCheck = false }
             tech.fonia.features.check.CheckOffer(onStart = { app.startCheck() }, onLater = { app.offerCheck = false })
+        }
+        // „Calibrare”: offered once when the first run ends, and from Setări.
+        FullScreenCover(isPresented = app.calibrating && app.ticket == null) {
+            tech.fonia.features.session.VoiceCalibrationScreen(profile, app, onDone = { app.calibrating = false })
         }
     }
 }
@@ -221,12 +225,16 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
         }
         // The yellow button invites: a soft ring breathes out from under it and it swells a little, forever.
         val reduceStart = LocalReduceMotion.current
-        val startPulse = androidx.compose.animation.core.rememberInfiniteTransition(label = "start").animateFloat(
-            0f,
-            1f,
-            androidx.compose.animation.core.infiniteRepeatable(androidx.compose.animation.core.tween(2000, easing = androidx.compose.animation.core.LinearEasing)),
-            label = "startPulse",
-        )
+        // 30 updates a second are plenty for a slow breath; an infinite transition would repaint at the screen's full
+        // 120 Hz forever, on every screen that shows the bar.
+        val startPulse = androidx.compose.runtime.remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+        androidx.compose.runtime.LaunchedEffect(reduceStart) {
+            if (reduceStart) return@LaunchedEffect
+            while (true) {
+                startPulse.floatValue = ((System.nanoTime() / 1_000_000L) % 2000L) / 2000f
+                kotlinx.coroutines.delay(33)
+            }
+        }
         StyledButton(
             onClick = onStart,
             style = StartButtonStyle(),
@@ -329,6 +337,7 @@ private fun RouteScreen(route: AppRoute, app: AppModel, path: PathModel, onShowG
         AppRoute.Stories -> StoriesScreen(path, app)
         AppRoute.English -> EnglishScreen(path)
         AppRoute.Speaking -> SpeakingHome(path.profile, app, path)
+        is AppRoute.SpeechCoach -> tech.fonia.features.speaking.coach.SpeechCoachScreen(path.profile, app, route.launch)
         AppRoute.Settings -> ParentsScreen(path.profile, app, path, onShowGrownups)
         is AppRoute.Training -> tech.fonia.features.diction.TrainingScreen(route.sound, app, path.profile.id)
     }

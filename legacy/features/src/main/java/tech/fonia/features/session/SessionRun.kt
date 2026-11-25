@@ -71,6 +71,8 @@ class SessionRun(
     private val app: AppModel,
     progress: SoundProgress?,
     history: AttemptsSummary,
+    /** Items the listening blocks of the last runs on this focus played: drawn last ([ListeningVariety]). */
+    recentListening: Set<String> = emptySet(),
     /** Where the saving runs: the app's lifetime, as a `Task { }` outlives its screen. */
     private val writes: CoroutineScope = app.scope,
 ) {
@@ -164,6 +166,13 @@ class SessionRun(
         ticket.custom?.let { custom ->
             val trials = if (app.arguments.short) custom.trials.take(4) else custom.trials
             built = Session(trials = trials, targetAttempts = 0, timeLimitSeconds = 3600)
+        }
+        // Listening items differ from run to run (the builder's own draw is kept for iOS parity; see ListeningVariety).
+        if (ticket.custom == null) {
+            built = runCatching {
+                ListeningVariety(app.content, app.lessonContent, { app.audio.hasClip(it, Language.Ro) }, app.hasPicture)
+                    .vary(built, ticket.focus, recentListening, kotlin.random.Random(seed.toLong()))
+            }.getOrDefault(built)
         }
         // A hero with a story is for children. Adults start at the mouth.
         if (!profile.isChild && ticket.custom == null) {
