@@ -128,6 +128,7 @@ Din §24 (așezare):
 - **Vorbit în public** stă pe hârtie.
 - **Rândurile de lecție.** Detaliul are cel mult două rânduri (era trei). De la scara de text 1,3 în sus nu mai e tăiat.
 - **„Ascultă-te”, „Așa se spune”, „Mai rar”.** Conținutul pornește de sus, cu 10 dp deasupra.
+- Titlurile de pagină (`fTitle`) se rup în rânduri echilibrate (`LineBreak.Heading`), ca pe iOS: „TH, sunetul cu / limba afară”, nu „TH, sunetul cu limba / afară”.
 
 Ce nu s-a făcut în tura asta:
 

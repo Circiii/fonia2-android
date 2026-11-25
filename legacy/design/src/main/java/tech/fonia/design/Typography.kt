@@ -13,6 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
@@ -208,7 +209,8 @@ val isLargeText: Boolean
 fun TextStyle.monospacedDigit(): TextStyle = copy(fontFeatureSettings = "tnum")
 
 val fDisplay: TextStyle get() = ui(30, UIWeight.black, TextRole.largeTitle)
-val fTitle: TextStyle get() = ui(26, UIWeight.bold, TextRole.title)
+/** Page titles break into balanced lines, so a two-line title never leaves one word alone, as on iOS. */
+val fTitle: TextStyle get() = ui(26, UIWeight.bold, TextRole.title).copy(lineBreak = LineBreak.Heading)
 val fPrompt: TextStyle get() = ui(26, UIWeight.black, TextRole.title2)
 val fHeadline: TextStyle get() = ui(18, UIWeight.bold, TextRole.title3)
 val fLead: TextStyle get() = ui(18, UIWeight.medium, TextRole.title3)
