@@ -126,7 +126,7 @@ internal fun doors(profile: Profile): List<Door> {
     return when (profile.track) {
         Profile.Track.En -> listOf(english, speaking)
         Profile.Track.Dictie -> listOf(speaking, english)
-        Profile.Track.Ro -> listOf(sounds, speaking, english)
+        Profile.Track.Ro -> listOf(sounds, english, speaking)
     }
 }
 

@@ -40,4 +40,12 @@ class HomeDoorsTests {
             assertFalse(track.name, doors.any { it.route == AppRoute.Guides })
         }
     }
+
+    @Test
+    fun anAdultsDoorsComeInTheIosOrder() {
+        fun titles(track: Profile.Track) = doors(profile(Profile.Kind.Adult, track)).map { it.title }
+        assertEquals(listOf("Sunete", "Engleză", "Vorbit în public"), titles(Profile.Track.Ro))
+        assertEquals(listOf("Engleză", "Vorbit în public"), titles(Profile.Track.En))
+        assertEquals(listOf("Vorbit în public", "Engleză"), titles(Profile.Track.Dictie))
+    }
 }
