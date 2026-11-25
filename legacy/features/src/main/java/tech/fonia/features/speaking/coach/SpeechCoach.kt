@@ -37,6 +37,7 @@ import tech.fonia.features.app.dspGroup
 import tech.fonia.features.speaking.HubSpeakingAudio
 import tech.fonia.features.speaking.NoUmTake
 import tech.fonia.speaking.SpanKind
+import tech.fonia.speaking.SpanSource
 import tech.fonia.speaking.coach.Area
 import tech.fonia.speaking.coach.CoachPrompt
 import tech.fonia.speaking.coach.CoachPrompts
@@ -46,7 +47,9 @@ import tech.fonia.speaking.coach.CoachScores
 import tech.fonia.speaking.coach.CoachSession
 import tech.fonia.speaking.coach.CoachSpec
 import tech.fonia.speaking.coach.Cue
-import tech.fonia.speaking.coach.Span
+import tech.fonia.speaking.coach.FillerMark
+import tech.fonia.speaking.coach.SpeakerBaseline
+import tech.fonia.speaking.coach.TalkLandmarks
 import tech.fonia.speech.SpeechLanguage
 import tech.fonia.speech.SpeechResampler
 import tech.fonia.store.JSONValue
@@ -246,11 +249,19 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
     var history by mutableStateOf<List<CoachScores>>(emptyList())
         private set
 
+    /** His usual pace and pitch range, from his last talks; null before three of them. */
+    var baseline by mutableStateOf<SpeakerBaseline?>(null)
+        private set
+    private var talks: List<TalkLandmarks> = emptyList()
+
     suspend fun loadPrevious() {
         val all = runCatching { withContext(Dispatchers.IO) { app.repository.speeches(profile.id) } }.getOrNull() ?: return
-        val last = all.filter { (it.metrics["mode"] as? JSONValue.String)?.value == MODE }.maxByOrNull { it.ts } ?: return
+        val coach = all.filter { (it.metrics["mode"] as? JSONValue.String)?.value == MODE }.sortedBy { it.ts }
+        val last = coach.lastOrNull() ?: return
         previous = PreviousAttempt(scoresOf(last), (last.metrics["levelDb"] as? JSONValue.Number)?.value ?: Double.NaN)
-        history = all.filter { (it.metrics["mode"] as? JSONValue.String)?.value == MODE }.sortedBy { it.ts }.takeLast(5).map { scoresOf(it) }
+        history = coach.takeLast(5).map { scoresOf(it) }
+        talks = coach.map { landmarksOf(it) }
+        baseline = SpeakerBaseline.of(talks, spec)
     }
 
     /** `speech:<seconds>:<promptId>[:go]`. */
@@ -366,11 +377,10 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         }
         // The recogniser holds about 130 MB (more after a long talk): free it until the next talk or sentence.
         app.judge?.words?.trim()
-        val fillers = take?.analysis?.spans
-            ?.filter { it.kind == SpanKind.HESITATION || it.kind == SpanKind.MARKER }
-            ?.map { Span(it.start, it.end) } ?: emptyList()
+        val fillers = take?.analysis?.spans?.let { fillerMarks(it, wordsArePermissive = app.speech.transcriber != null) }
+            ?: emptyList()
         val built = withContext(Dispatchers.Default) {
-            CoachReportBuilder.build(s.timeline(), talked.coerceAtLeast(1.0), summary, fillers, previous?.scores, spec)
+            CoachReportBuilder.build(s.timeline(), talked.coerceAtLeast(1.0), summary, fillers, previous?.scores, spec, baseline)
         }
         save(built, summary?.medianLevelDb ?: Double.NaN)
         report = built
@@ -389,6 +399,7 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         drill?.let { metrics["drill"] = JSONValue.String(it.key) }
         metrics["fillers"] = JSONValue.Number(r.fillers.toDouble())
         if (!r.rate.isNaN()) metrics["syllablesPerSecond"] = JSONValue.Number(r.rate)
+        if (r.pitchRangeSt.isFinite()) metrics["pitchRangeSt"] = JSONValue.Number(r.pitchRangeSt)
         r.eyeContact?.let { metrics["eyeContact"] = JSONValue.Number(it) }
         if (!levelDb.isNaN()) metrics["levelDb"] = JSONValue.Number(levelDb)
         for (a in Area.entries) r.scores[a]?.let { metrics["score.${a.key}"] = JSONValue.Number(it.toDouble()) }
@@ -406,6 +417,8 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         previous = PreviousAttempt(r.scores, levelDb)
         // The setup screen's "De lucrat" follows at once.
         history = (history + r.scores).takeLast(5)
+        talks = talks + TalkLandmarks(r.rate, r.pitchRangeSt, drill != null)
+        baseline = SpeakerBaseline.of(talks, spec)
     }
 
     /** "Gata": ends the talk now and makes the report. */
@@ -486,6 +499,28 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         fun scoresOf(record: SpeechRecord): CoachScores = CoachScores(
             Area.entries.associateWith { a -> (record.metrics["score.${a.key}"] as? JSONValue.Number)?.value?.toInt() },
         )
+
+        /** What a stored talk leaves for his habit; talks saved before the range was kept have only the pace. */
+        fun landmarksOf(record: SpeechRecord): TalkLandmarks = TalkLandmarks(
+            syllablesPerSecond = (record.metrics["syllablesPerSecond"] as? JSONValue.Number)?.value ?: Double.NaN,
+            pitchRangeSt = (record.metrics["pitchRangeSt"] as? JSONValue.Number)?.value ?: Double.NaN,
+            drill = record.metrics.containsKey("drill"),
+        )
+
+        /**
+         * The fillers of the take for the strip. The sound detector's „ăăă” always count; filler words only when the
+         * words came from a recogniser whose licence allows it (Whisper). Otherwise only what the sound itself showed.
+         */
+        fun fillerMarks(spans: List<tech.fonia.speaking.FlaggedSpan>, wordsArePermissive: Boolean): List<FillerMark> =
+            spans.mapNotNull { span ->
+                when {
+                    span.kind == SpanKind.HESITATION && (wordsArePermissive || span.source != SpanSource.TRANSCRIPT) ->
+                        FillerMark(span.start, span.end)
+                    span.kind == SpanKind.MARKER && wordsArePermissive ->
+                        FillerMark(span.start, span.end, span.label.trim().lowercase().ifEmpty { null })
+                    else -> null
+                }
+            }
     }
 }
 

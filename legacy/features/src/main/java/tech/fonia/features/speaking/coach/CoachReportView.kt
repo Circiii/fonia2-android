@@ -63,8 +63,12 @@ import tech.fonia.design.UIWeight
 import tech.fonia.design.ui
 import tech.fonia.features.app.HeaderButton
 import tech.fonia.features.speaking.NoUmBlock
+import tech.fonia.speaking.coach.AgainstUsual
 import tech.fonia.speaking.coach.Area
 import tech.fonia.speaking.coach.CoachReport
+import tech.fonia.speaking.coach.CoachSpec
+import tech.fonia.speaking.coach.FluencyStrip
+import tech.fonia.speaking.coach.UsualText
 import tech.fonia.speaking.coach.Moment
 import tech.fonia.speaking.coach.MomentKind
 import kotlin.math.PI
@@ -93,8 +97,9 @@ internal fun Area.color(): Color = when (this) {
 
 /**
  * The report: first the ONE thing to work on next (its living picture, a title, a tip of at most 8 words) and
- * „Încă o dată”; then the timeline of the talk with its moments (tap one to hear it); the five scores as living
- * pictures, with the change since last time; „fără ăăă”.
+ * „Încă o dată”; then the timeline of the talk with its moments (tap one to hear it); the strip of „ăăă” and long
+ * pauses with the pauses counted by length; this talk against his habit; the five scores as living pictures, with the
+ * change since last time; „fără ăăă”.
  */
 @Composable
 internal fun CoachReportView(coach: CoachController, onClose: () -> Unit) {
@@ -132,6 +137,12 @@ internal fun CoachReportView(coach: CoachController, onClose: () -> Unit) {
             FocusCard(report, onAgain = { coach.again() })
             Section("Cum a mers")
             Timeline(report, onMoment = { coach.playMoment(it.start, it.end) })
+            Section("Pauze și umpluturi")
+            PauseStrip(report, coach.spec, onMoment = { coach.playMoment(it.start, it.end) })
+            report.usual?.let { usual ->
+                Section("Față de obiceiul tău")
+                UsualCard(usual, coach.spec)
+            }
             Section("Cele cinci")
             Scores(report)
             report.changeLine?.let {
@@ -146,15 +157,6 @@ internal fun CoachReportView(coach: CoachController, onClose: () -> Unit) {
                     style = ui(15, UIWeight.medium, TextRole.footnote),
                     color = Palette.inkSoft,
                 )
-            }
-            if (report.goodPauses >= 0) {
-                val pauses = when {
-                    report.hesitations == 0 && report.goodPauses >= 3 -> "Pauze: ${report.goodPauses} scurte, la locul lor."
-                    report.hesitations == 0 -> "Pauze: puține. Respiră după fiecare idee."
-                    report.goodPauses >= 2 * report.hesitations -> "Pauze: ${report.goodPauses} scurte și ${report.hesitations} mai lungi."
-                    else -> "Pauze: ${report.hesitations} lungi. Încearcă pauze scurte, după idei."
-                }
-                FoniaText(pauses, style = ui(16, UIWeight.semibold, TextRole.body), color = Palette.ink)
             }
             Trend(if (coach.history.lastOrNull() === report.scores) coach.history else coach.history + listOf(report.scores))
             // Coverage: a number is never shown as if it stood on the whole talk when it does not.
@@ -269,8 +271,9 @@ private fun FocusCard(report: CoachReport, onAgain: () -> Unit) {
 }
 
 /**
- * The talk from start to end: two lanes (the voice; the camera) with the moments as soft bars, pauses and „ăăă” as
- * marks above. A tap plays that moment of his take. The legend below names what was found, with counts.
+ * The talk from start to end: three lanes (pace; the voice; the camera) with the moments as soft bars. A tap plays
+ * that moment of his take. The legend below names what was found, with counts. The „ăăă” and the long pauses have
+ * their own strip ([PauseStrip]).
  */
 @Composable
 private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
@@ -278,7 +281,7 @@ private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
     val small = remember { ui(12, UIWeight.semibold, TextRole.caption2).copy(color = Palette.inkSoft) }
     val shape = remember { ContinuousRoundedRectangle(24.dp) }
     val total = max(report.seconds, 1.0)
-    val moments = report.moments
+    val moments = remember(report) { report.moments.filter { it.kind !in FluencyStrip.KINDS } }
     Column(
         Modifier.fillMaxWidth().background(Palette.sheet, shape).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -286,7 +289,7 @@ private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
         Canvas(
             Modifier
                 .fillMaxWidth()
-                .height(136.dp)
+                .height(122.dp)
                 .pointerInput(moments) {
                     detectTapGestures { p ->
                         val left = 52.dp.toPx()
@@ -302,9 +305,8 @@ private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
             val width = size.width - left
             fun x(t: Double) = left + (t / total).toFloat().coerceIn(0f, 1f) * width
             val laneH = 18.dp.toPx()
-            val markY = 8.dp.toPx()
             val lanes = listOf("ritm", "voce", "cameră")
-            fun laneY(i: Int) = 20.dp.toPx() + i * (laneH + 10.dp.toPx())
+            fun laneY(i: Int) = 6.dp.toPx() + i * (laneH + 10.dp.toPx())
             val axisY = laneY(3) + 4.dp.toPx()
             lanes.forEachIndexed { i, name ->
                 val l = measurer.measure(name, small)
@@ -319,14 +321,7 @@ private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
                     MomentKind.LookedAway, MomentKind.Moving -> 2
                 }
                 val y = laneY(lane)
-                if (m.kind == MomentKind.Filler) {
-                    val cx = x((m.start + m.end) / 2)
-                    drawCircle(color, 4.5.dp.toPx(), Offset(cx, markY))
-                    drawLine(color.copy(alpha = 0.5f), Offset(cx, markY + 4.dp.toPx()), Offset(cx, y), 2.dp.toPx())
-                    continue
-                }
-                val alpha = if (m.kind == MomentKind.LongPause) 0.45f else 0.92f
-                drawRoundRect(color.copy(alpha = alpha), Offset(x(m.start), y), Size(max(x(m.end) - x(m.start), 6.dp.toPx()), laneH), CornerRadius(laneH / 2))
+                drawRoundRect(color.copy(alpha = 0.92f), Offset(x(m.start), y), Size(max(x(m.end) - x(m.start), 6.dp.toPx()), laneH), CornerRadius(laneH / 2))
             }
             // Time axis.
             drawLine(Palette.line, Offset(left, axisY), Offset(size.width, axisY), 2.dp.toPx(), StrokeCap.Round)
@@ -360,6 +355,143 @@ private fun Timeline(report: CoachReport, onMoment: (Moment) -> Unit) {
                     }
                 }
             }
+        }
+    }
+}
+
+/** The colour of a mark on the strip: the „ăăă” the sound showed, a filler word, a long pause. */
+private fun Moment.stripColor(): Color = when {
+    kind == MomentKind.LongPause -> Palette.lineStrong
+    word != null -> Palette.cold
+    else -> Palette.today
+}
+
+/**
+ * One strip the length of the talk: the long pauses as soft bars on it, the „ăăă” (and the filler words, when the
+ * words were written down) as dots above, where they happened. A tap plays that moment. Below: the legend, the pauses
+ * counted by length, and one line on them. TalkBack reads the strip as a sentence ([FluencyStrip.describe]).
+ */
+@Composable
+private fun PauseStrip(report: CoachReport, spec: CoachSpec, onMoment: (Moment) -> Unit) {
+    val measurer = rememberTextMeasurer()
+    val small = remember { ui(12, UIWeight.semibold, TextRole.caption2).copy(color = Palette.inkSoft) }
+    val shape = remember { ContinuousRoundedRectangle(24.dp) }
+    val total = max(report.seconds, 1.0)
+    val marks = remember(report) { FluencyStrip.marks(report) }
+    val groups = remember(report) { FluencyStrip.groups(report) }
+    val spoken = remember(report) { FluencyStrip.describe(report) }
+    Column(
+        Modifier.fillMaxWidth().background(Palette.sheet, shape).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Canvas(
+            Modifier
+                .fillMaxWidth()
+                .height(62.dp)
+                .pointerInput(marks) {
+                    detectTapGestures { p ->
+                        val t = p.x / size.width * total
+                        marks.minByOrNull { m -> if (t in m.start..m.end) 0.0 else minOf(abs(t - m.start), abs(t - m.end)) }
+                            ?.takeIf { m -> t in (m.start - 2)..(m.end + 2) }
+                            ?.let(onMoment)
+                    }
+                }
+                .semantics { contentDescription = spoken },
+        ) {
+            fun x(t: Double) = (t / total).toFloat().coerceIn(0f, 1f) * size.width
+            val dotY = 7.dp.toPx()
+            val trackY = 22.dp.toPx()
+            val trackH = 14.dp.toPx()
+            drawRoundRect(Palette.cloud, Offset(0f, trackY), Size(size.width, trackH), CornerRadius(trackH / 2))
+            for (m in marks.filter { it.kind == MomentKind.LongPause }) {
+                drawRoundRect(
+                    m.stripColor().copy(alpha = 0.55f),
+                    Offset(x(m.start), trackY),
+                    Size(max(x(m.end) - x(m.start), 6.dp.toPx()), trackH),
+                    CornerRadius(trackH / 2),
+                )
+            }
+            for (m in marks.filter { it.kind == MomentKind.Filler }) {
+                val color = m.stripColor()
+                val cx = x((m.start + m.end) / 2)
+                drawLine(color.copy(alpha = 0.45f), Offset(cx, dotY), Offset(cx, trackY + trackH / 2), 2.dp.toPx(), StrokeCap.Round)
+                drawCircle(color, 5.dp.toPx(), Offset(cx, dotY))
+            }
+            val start = measurer.measure(clockText(0.0), small)
+            val end = measurer.measure(clockText(report.seconds), small)
+            drawText(start, topLeft = Offset(0f, trackY + trackH + 6.dp.toPx()))
+            drawText(end, topLeft = Offset(size.width - end.size.width, trackY + trackH + 6.dp.toPx()))
+        }
+        if (groups.isEmpty()) {
+            FoniaText(spoken, style = ui(17, UIWeight.semibold, TextRole.body), color = Palette.accentText)
+        } else {
+            tech.fonia.design.WrapLayout(spacing = 8.dp, lineSpacing = 8.dp) {
+                for ((label, list) in groups) {
+                    Row(
+                        Modifier
+                            .background(Palette.cloud, RoundedCornerShape(50))
+                            .clickable(role = Role.Button) { onMoment(list.first()) }
+                            .padding(horizontal = 12.dp, vertical = 7.dp)
+                            .clearAndSetSemantics { contentDescription = "$label, ${UsualText.times(list.size)}. Atinge ca să asculți." },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(7.dp),
+                    ) {
+                        Box(Modifier.size(10.dp).background(list.first().stripColor(), CircleShape))
+                        FoniaText(if (list.size > 1) "$label ×${list.size}" else label, style = ui(14, UIWeight.medium, TextRole.footnote), color = Palette.ink)
+                    }
+                }
+            }
+        }
+        report.pauses?.let { p ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                val counts = listOf(p.short, p.medium, p.long)
+                UsualText.pauseKinds(spec).forEachIndexed { i, (name, limits) ->
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .background(Palette.cloud, RoundedCornerShape(16.dp))
+                            .padding(vertical = 8.dp)
+                            .clearAndSetSemantics { contentDescription = "Pauze $name, $limits: ${counts[i]}" },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        FoniaText("${counts[i]}", style = ui(22, UIWeight.black, TextRole.title2), color = Palette.ink)
+                        FoniaText(name, style = ui(14, UIWeight.semibold, TextRole.footnote), color = Palette.ink)
+                        FoniaText(limits, style = ui(12, UIWeight.medium, TextRole.caption2), color = Palette.inkSoft, maxLines = 1, minimumScaleFactor = 0.8f)
+                    }
+                }
+            }
+            UsualText.pauses(p)?.let { FoniaText(it, style = ui(16, UIWeight.semibold, TextRole.body), color = Palette.ink) }
+        }
+    }
+}
+
+/** This talk against his own habit: one line per measure, with his numbers and the general reference. */
+@Composable
+private fun UsualCard(usual: AgainstUsual, spec: CoachSpec) {
+    val shape = remember { ContinuousRoundedRectangle(24.dp) }
+    Column(
+        Modifier.fillMaxWidth().background(Palette.sheet, shape).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        usual.pace?.let { v ->
+            UsualLine(Area.Pace.color(), UsualText.pace(v), UsualText.paceDetail(usual.nowPace, usual.usualPace, spec))
+        }
+        usual.pitchRange?.let { v ->
+            UsualLine(Area.Lively.color(), UsualText.pitchRange(v), UsualText.pitchRangeDetail(usual.nowPitchRangeSt, usual.usualPitchRangeSt))
+        }
+    }
+}
+
+@Composable
+private fun UsualLine(color: Color, line: String, detail: String) {
+    Row(
+        Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = "$line $detail" },
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Box(Modifier.padding(top = 7.dp).size(10.dp).background(color, CircleShape))
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            FoniaText(line, style = ui(17, UIWeight.semibold, TextRole.body), color = Palette.ink)
+            FoniaText(detail, style = ui(14, UIWeight.medium, TextRole.footnote), color = Palette.inkSoft)
         }
     }
 }

@@ -34,7 +34,14 @@ enum class MomentKind(val key: String, val label: String) {
     Filler("filler", "„ăăă”"),
 }
 
-data class Moment(val kind: MomentKind, val start: Double, val end: Double)
+/** [word]: for a filler, the filler word a recogniser wrote down („deci”); null for a sound („ăăă”) and the rest. */
+data class Moment(val kind: MomentKind, val start: Double, val end: Double, val word: String? = null)
+
+/**
+ * A filler of the talk, for the report: a „ăăă” the sound detector heard ([word] null) or a filler word a recogniser
+ * wrote down ([word] = what it wrote).
+ */
+data class FillerMark(val start: Double, val end: Double, val word: String? = null)
 
 /** The one thing to work on next: the area, a short title and a tip of at most 8 words. */
 data class Focus(val area: Area?, val title: String, val tip: String, val fillers: Boolean = false)
@@ -58,9 +65,12 @@ data class CoachReport(
     val best: Area? = null,
     /** Words per minute over the whole talk, pauses included, estimated from the syllables; NaN when unknown. */
     val wordsPerMinute: Double = Double.NaN,
-    /** Short pauses between phrases (good) and long silences (hesitations); -1 when there was no audio. */
-    val goodPauses: Int = -1,
-    val hesitations: Int = -1,
+    /** The silences inside the talk by kind (short, medium, long); null when there was no audio. */
+    val pauses: PauseCounts? = null,
+    /** p10 to p90 of the melody over the talk, in semitones; NaN when too little voice. */
+    val pitchRangeSt: Double = Double.NaN,
+    /** This talk against his own habit (pace, pitch range); null before he has enough talks. */
+    val usual: AgainstUsual? = null,
     val fillers: Int,
     val fillersPerMinute: Double,
     val specVersion: String,
@@ -72,9 +82,11 @@ object CoachReportBuilder {
         ticks: List<CoachTick>,
         seconds: Double,
         audio: AudioSummary?,
-        fillers: List<Span>,
+        fillers: List<FillerMark>,
         previous: CoachScores?,
         spec: CoachSpec = CoachSpec.v1,
+        /** His habit from his earlier talks, or null: then nothing is said about it. */
+        baseline: SpeakerBaseline? = null,
     ): CoachReport {
         val speakingMinutes = max(audio?.speechSeconds ?: seconds, 1.0) / 60.0
         val fillersPerMinute = fillers.size / max(speakingMinutes, 0.25)
@@ -139,7 +151,7 @@ object CoachReportBuilder {
         runs(MomentKind.Moving) { !it.motion.isNaN() && it.motion > spec.motion.cueIndex }
         runs(MomentKind.Flat) { it.speaking && !it.liveliness.isNaN() && it.liveliness < spec.liveliness.cueBelow }
         audio?.longPauses?.forEach { moments += Moment(MomentKind.LongPause, it.start, it.end) }
-        fillers.forEach { moments += Moment(MomentKind.Filler, it.start, it.end) }
+        fillers.forEach { moments += Moment(MomentKind.Filler, it.start, it.end, it.word) }
         moments.sortBy { it.start }
 
         val focus = focus(scores, paceTicks.map { it.rate }, fillersPerMinute, spec)
@@ -169,8 +181,9 @@ object CoachReportBuilder {
             eyeContact = eyeContact,
             cameraCoverage = cameraCoverage,
             best = scores.values.filterValues { it != null && it >= spec.report.praiseFrom }.maxByOrNull { it.value!! }?.key,
-            goodPauses = audio?.goodPauses ?: -1,
-            hesitations = audio?.hesitations ?: -1,
+            pauses = audio?.pauses,
+            pitchRangeSt = audio?.pitchRangeSt ?: Double.NaN,
+            usual = AgainstUsual.of(audio?.articulationRate ?: Double.NaN, audio?.pitchRangeSt ?: Double.NaN, baseline, spec),
             wordsPerMinute = if (audio != null && audio.nuclei > 0 && seconds >= 10.0) audio.nuclei / spec.report.syllablesPerWord / (seconds / 60.0) else Double.NaN,
             fillers = fillers.size,
             fillersPerMinute = fillersPerMinute,
@@ -218,4 +231,33 @@ object CoachText {
 
     /** Every tip, for the length test. */
     val allFocus: List<Focus> = listOf(tooFast, tooSlow, fillers, voice, gaze, calm, lively, keep)
+
+    /**
+     * The 30-second drill's tip for [area]. For the pace it goes by his own habit: someone who usually speaks slowly
+     * is not told to slow down. Without a habit yet, the more common advice („mai rar”).
+     */
+    fun drill(area: Area, baseline: SpeakerBaseline?, spec: CoachSpec = CoachSpec.v1): Focus = when (area) {
+        Area.Pace -> {
+            val usual = baseline?.pace ?: Double.NaN
+            if (usual.isFinite() && usual < (spec.pace.bandLow + spec.pace.bandHigh) / 2) tooSlow else tooFast
+        }
+        Area.Voice -> voice
+        Area.Gaze -> gaze
+        Area.Calm -> calm
+        Area.Lively -> lively
+    }
+
+    /** What the drill card says about his habit for [area], or null when there is nothing to say. */
+    fun drillHabit(area: Area, baseline: SpeakerBaseline?): String? {
+        val b = baseline ?: return null
+        return when (area) {
+            Area.Pace -> if (b.pace.isFinite()) "De obicei: ${tech.fonia.speaking.SpeakingText.decimal(b.pace)} silabe pe secundă." else null
+            Area.Lively -> if (b.pitchRangeSt.isFinite()) {
+                "De obicei, tonul urcă și coboară pe ${tech.fonia.speaking.SpeakingText.plural(b.pitchRangeSt.roundToInt(), "semiton", "semitonuri")}."
+            } else {
+                null
+            }
+            else -> null
+        }
+    }
 }

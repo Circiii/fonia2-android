@@ -1,5 +1,5 @@
 {
-  "version": "coach-1",
+  "version": "coach-2",
   "hopSeconds": 0.01,
   "pace": {
     "vowelLowHz": 300.0,
@@ -14,8 +14,6 @@
     "windowSeconds": 4.0,
     "minSpeechInWindowSeconds": 1.5,
     "pauseMinSeconds": 0.25,
-    "longPauseSeconds": 2.0,
-  "goodPauseMaxSeconds": 1.0,
     "envelopeRecall": 0.75,
     "modelStaleSeconds": 6.0,
     "vowelGapCapSeconds": 0.6,
@@ -134,5 +132,16 @@
     "changeWorthMentioning": 8,
     "syllablesPerWord": 2.4,
     "praiseFrom": 70
+  },
+  "pauses": {
+    "countFromSeconds": 0.13,
+    "mediumFromSeconds": 0.2,
+    "longFromSeconds": 1.0
+  },
+  "baseline": {
+    "talks": 10,
+    "minTalks": 3,
+    "paceShare": 0.1,
+    "pitchRangeSt": 2.0
   }
 }

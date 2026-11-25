@@ -12,6 +12,9 @@ Pragurile sunt în `spec/thresholds/speech-coach.json` (un test pică dacă dife
 | Mișcare | Împrăștierea poziției capului (în distanțe dintre ochi) și a unghiurilor pe 3 s; indicația de la 1,6 în sus, ținută 3 s. | `FaceCoach.kt` |
 | Voce | Nivelul vorbirii față de al lui (percentila 80, care nu se actualizează cât e „încet”); „Mai tare” la 6 dB sub el, ținut 3 s. | `AudioCoach.kt` |
 | Viu | 65 % melodia (împrăștierea înălțimii în semitonuri: 1,5 plat, 3 viu; Hincks 2005), 35 % mișcarea feței (sprâncene, mușchii zâmbetului; 0,03–0,18). Doar mișcare și variație; nicio emoție nu e numită. | `CoachSession.kt` |
+| Pauze | Tăcerile dintre bucățile de vorbire (hop-uri peste prag, fără coada VAD-ului), pe trei feluri: scurte 0,13–0,2 s, medii 0,2–1 s, lungi peste 1 s (Campione & Véronis 2002; sub ~130 ms e doar închiderea unei consoane, Hieke, Kowal & O'Connell 1983). Cele lungi rămân cu locul lor, pentru bandă. | `AudioCoach.kt` (`PauseKind`) |
+| Plaja vocii | p10–p90 al înălțimii pe tot discursul, în semitonuri (`pitchRangeSt`), păstrat cu fiecare discurs. | `AudioCoach.kt` |
+| Obiceiul lui | Mediana ritmului și a plajei vocii pe ultimele 10 discursuri întregi (exercițiile de 30 s nu intră). Sub 3 discursuri nu spune nimic. „Mai repede / mai rar decât de obicei” de la ±10 % (de două ori pragul de 5 % pe care îl aude un ascultător, Quené 2007); plaja „mai largă / mai îngustă” de la ±2 semitonuri (o primă estimare, nepotrivită încă pe oameni). | `SpeakerBaseline.kt` |
 | Indicații | Una pe rând, ținută cel puțin 2,2 s; 4 s între două, 12 s până revine aceeași (Schneider et al., Presentation Trainer; Tanveer et al., Rhema: indicații rare). | `CoachCues.kt` |
 
 ## Bancul de filmări reale
@@ -44,10 +47,25 @@ privire sub 50 % acoperire și spune cât din timp a fost măsurat când e sub 9
 Întâi ce a mers cel mai bine (dacă a trecut de 70), apoi un singur lucru de lucrat. Cuvinte pe minut estimate din silabe
 (2,4 silabe pe cuvânt), marcate ca estimare. „Ultimele 5”: câte o bară pe discurs, pe fiecare arie.
 
+„Pauze și umpluturi”: o singură bandă pe lungimea discursului, cu pauzele lungi ca bare și „ăăă” ca puncte deasupra
+(atinge ca să asculți), legenda cu numărul fiecăruia, pauzele numărate pe cele trei feluri și un rând despre ele.
+TalkBack citește banda ca o propoziție: „«ăăă» de 2 ori: la 0:12 și 0:40. 1 pauză lungă: la 0:20.” (`FluencyStrip`).
+Umpluturile vin din detectorul pe sunet (`HesitationDetector`, prin `SpeakingAnalyzer`); cuvintele de umplutură
+(„deci”, „practic”) doar când le-a scris Whisper (MIT). Recunoașterea românească din APK nu are licență permisivă: din ea
+nu intră nimic pe bandă, rămâne doar în „Ce ai spus” (`CoachController.fillerMarks`).
+
+„Față de obiceiul tău” (de la 3 discursuri): ritmul și plaja vocii față de ale lui, cu cifrele lui și reperul general.
+Exercițiul de 30 s de pe ecranul de pregătire ține cont de obiceiul lui: cine vorbește de obicei rar nu e îndemnat la
+„mai rar”, și cardul îi arată ritmul sau plaja lui obișnuită.
+
 ## Nefăcut, de știut
 
-- Categoriile de pauze (sub 200 ms, 200–1000 ms, peste 1 s), ritmul și plaja de înălțime obișnuite ale lui ca bază,
-  un exercițiu concret pe aria cea mai slabă, tendința pe ecranul de pregătire.
+- Tendința pe ecranul de pregătire (ritmul și plaja de-a lungul timpului).
+- Pragul de ±2 semitonuri pentru plaja vocii nu e potrivit pe oameni reali.
+- Fără modelul Whisper pe telefon (cazul obișnuit pe Android), banda are doar „ăăă” găsite pe sunet, fără cuvinte de
+  umplutură.
+- Citirea cu voce tare și accentul pe recunoașterea nouă cer aliniere forțată CTC pe modelul românesc, a cărui licență nu
+  e lămurită.
 - Calibrarea privirii nu e probată pe un om real: pe o filmare nu învață nimic.
 - „Mai tare” legat de mărimea feței (s-a îndepărtat).
 - Mâinile (MediaPipe Hand Landmarker, Apache-2.0, 7,8 MB): doar după ce restul e măsurat pe oameni reali.

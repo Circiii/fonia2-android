@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
  */
 @Serializable
 data class CoachSpec(
-    val version: String = "coach-1",
+    val version: String = "coach-2",
     val hopSeconds: Double = 0.01,
     val pace: Pace = Pace(),
     val voice: Voice = Voice(),
@@ -24,6 +24,8 @@ data class CoachSpec(
     val cues: Cues = Cues(),
     val smoothing: Smoothing = Smoothing(),
     val report: Report = Report(),
+    val pauses: Pauses = Pauses(),
+    val baseline: Baseline = Baseline(),
 ) {
     /** Syllable nuclei (de Jong & Wempe 2009) on the vowel band, streaming, and the articulation rate over a window. */
     @Serializable
@@ -46,9 +48,6 @@ data class CoachSpec(
         /** Less speech than this in the window: the rate is unknown (NaN), no cue. */
         val minSpeechInWindowSeconds: Double = 1.5,
         val pauseMinSeconds: Double = 0.25,
-        val longPauseSeconds: Double = 2.0,
-        /** A silence up to this long is a breath or a full stop (good); longer ones count as hesitations. */
-        val goodPauseMaxSeconds: Double = 1.0,
         /**
          * The intensity peaks find about this share of the syllables of real speech (0.37–0.95 on the real-video
          * bench, COACH.md); their rate is divided by it so both sources read in syllables.
@@ -240,6 +239,43 @@ data class CoachSpec(
         val syllablesPerWord: Double = 2.4,
         /** The best area is named first when it scored at least this. */
         val praiseFrom: Int = 70,
+    )
+
+    /**
+     * Silences between stretches of speech (the hops above the floor, without the VAD's hang), in three kinds. Pause
+     * lengths fall in three groups in every language Campione & Véronis (2002) measured: brief (under 200 ms), medium
+     * (200–1000 ms, between phrases) and long (over a second).
+     */
+    @Serializable
+    data class Pauses(
+        /**
+         * Shorter gaps are not counted: the closure of a stop consonant also reads as silence. Hieke, Kowal &
+         * O'Connell (1983) put the floor of a real pause at about 130 ms.
+         */
+        val countFromSeconds: Double = 0.13,
+        /** From here a pause is medium: a breath or a full stop between ideas. */
+        val mediumFromSeconds: Double = 0.2,
+        /** Longer than this a pause is long: it is marked on the strip and counted apart. */
+        val longFromSeconds: Double = 1.0,
+    )
+
+    /** His own landmarks: his usual pace and pitch range, from his last whole talks (drills bend one thing on purpose). */
+    @Serializable
+    data class Baseline(
+        /** His habit is the median of this many of his last whole talks, so one odd talk does not move it. */
+        val talks: Int = 10,
+        /** With fewer talks than this, nothing is said about his habit. */
+        val minTalks: Int = 3,
+        /**
+         * A pace this share above or below his usual one is "faster / slower than usual": twice the smallest tempo
+         * change listeners notice (about 5 %, Quené 2007), so the measure's own noise does not speak.
+         */
+        val paceShare: Double = 0.1,
+        /**
+         * A pitch range (p10–p90 of the talk, in semitones) this far from his usual one is "more / less than usual". A
+         * first guess, a whole tone; not yet fitted on real talks.
+         */
+        val pitchRangeSt: Double = 2.0,
     )
 
     fun onSeconds(cue: Cue): Double = cues.onSeconds[cue.key] ?: 2.0
