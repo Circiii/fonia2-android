@@ -166,9 +166,9 @@ Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md
 
 Rămas pentru proprietar:
 
-- Pe Android, ușa „Vorbit în public” apare și copilului (pe iOS doar adultului).
-- Raportul pentru logoped: iOS scrie „Fonia nu pune diagnostice”, Android „Fonia doar numără încercările, nu trage concluzii”. Trebuie ales un text.
-- Testele `ArtTests` din `:legacy:design` caută `legacy/content/images`, care nu există în worktree. Nu au legătură cu schimbările de aici.
+- Pe Android, ușa „Vorbit în public” apare și copilului (pe iOS doar adultului). Rezolvat în a noua tură.
+- Raportul pentru logoped: iOS scrie „Fonia nu pune diagnostice”, Android „Fonia doar numără încercările, nu trage concluzii”. Trebuie ales un text. Rezolvat în a noua tură, cu un singur rând pentru toate rapoartele.
+- Testele `ArtTests` din `:legacy:design` caută `legacy/content/images`, care nu există în worktree. Nu au legătură cu schimbările de aici. Rezolvat în a noua tură.
 
 ### A șaptea tură: raportul săptămânal pentru adult (25 noiembrie 2026)
 
@@ -185,7 +185,7 @@ Sursa: `docs/port-android.md` §29 din aplicația iOS. Răspunde la §5.5 din `P
 - **Mostra de debug:** `foniaWeekSample` (sau `-foniaWeekSample` în `arguments`) dă unui copil fără exerciții două săptămâni pe primul sunet, cu trei înregistrări făcute din vocile aplicației. Cu `keepChildRecordings` pornit se vede și lista.
 - **Teste:** `WeekReportTests` (aceleași cazuri ca pe iOS).
 
-Diferență față de iOS: Android nu fixează primele încercări la cuvinte noi, deci pe fiecare sunet rămân doar ultimele trei înregistrări. Perechea „prima / cea mai nouă” apare rar, iar săptămânile vechi rămân de obicei fără înregistrări. Rândul de jos spune doar „La fiecare sunet rămân ultimele trei.”.
+Diferență față de iOS: Android nu fixează primele încercări la cuvinte noi, deci pe fiecare sunet rămân doar ultimele trei înregistrări. Perechea „prima / cea mai nouă” apare rar, iar săptămânile vechi rămân de obicei fără înregistrări. Rândul de jos spune doar „La fiecare sunet rămân ultimele trei.”. Rezolvat în a noua tură: primele încercări se fixează ca pe iOS.
 
 ### A opta tură: antrenorul de vorbit în public (25 noiembrie 2026)
 
@@ -195,6 +195,33 @@ Făcut deodată pe ambele platforme, cu aceleași praguri (`spec/thresholds/spee
 - **Obiceiul lui (`SpeakerBaseline`).** Mediana ritmului și a plajei vocii pe ultimele 10 discursuri întregi, de la 3 în sus. Raportul are „Față de obiceiul tău”, iar exercițiul de 30 s ține cont de el. Fiecare discurs salvează acum și `pitchRangeSt`; cele vechi, fără el, contează doar la ritm.
 - **Banda „Pauze și umpluturi” (`FluencyStrip`).** Pauzele lungi și „ăăă” pe lungimea discursului, cu legenda și o propoziție pentru TalkBack. Pe Android, cuvintele de umplutură intră doar din Whisper; ce scrie recunoașterea românească din APK nu intră (`CoachController.fillerMarks`). Pe iOS, Whisper e în aplicație, deci intră și cuvintele.
 - **Teste.** `SpeakerBaselineTest` (aceleași cazuri ca `SpeakerBaselineTests` pe iOS) și `CoachFillersTests`.
+
+### A noua tură: reparații v30 (25 noiembrie 2026)
+
+- **Ușile copilului pe Acasă.** Copilul are aceleași cinci uși ca pe iOS: Sunete, „Cum spun?”, Încălzirea, Jocuri, Povești. „Vorbit în public” rămâne doar la adult. Copilul nu ajunge la antrenor nici pe alt drum: `AppRoute.Speaking` se deschide doar din pagina de engleză a adultului și din antrenor, iar `foniaRoute` merge doar în debug. Test: `HomeDoorsTests`.
+- **Un singur rând pentru rapoartele adultului.** Raportul PDF, „Săptămâna pe scurt” și „Cum merge” spun același lucru: „Raportul arată ce s-a exersat și ce a auzit telefonul. Nu e o evaluare: concluziile le trage logopedul.” (`AdultCards.REPORT_DISCLAIMER`, lângă `STAGE_REPORT_NOTE`, care a rămas cum era). Rândul vechi „Fonia doar numără încercările…” a ieșit din PDF.
+- **Primele încercări rămân.** Prima rostire a unui cuvânt nou se fixează, cel mult 5 la fiecare sunet, ca pe iOS (`RecordingPairs`, `SessionRun.store`). Ștergerea celor vechi le sare, deci perechea „prima / cea mai nouă” rămâne. Rândul de jos din „Săptămâna pe scurt” spune acum, ca pe iOS, „… rămân ultimele trei și primele încercări la cuvinte noi.”. Test: `RecordingPairsTests`.
+- **Telefonul singur nu coboară copilul.** Un bloc al unui copil la care niciun adult n-a ales nimic nu-l mai coboară o treaptă (`SessionRun.phoneAloneWouldDrop`, ca pe iOS). În modul adaptiv, același bloc rămâne pe pas, cu motivul `phoneAlone`, dar pornește ajutorul pe fiecare încercare. Un pas „repede” încă poate încetini pe aceeași treaptă. Adultul care exersează singur coboară ca înainte. Teste: `SessionRunTests.phoneAloneDoesNotDrop`, `ChallengePointTests`, `AdaptiveSessionTests`, `AdaptivePilotTests`.
+- **„Șterge tot” ia și înregistrările.** O parte nouă, „înregistrările”, golește dosarul cu sunetul încercărilor, inclusiv primele încercări fixate. Merge și când rândurile din baza de date n-au putut fi șterse. Dosarul rămâne, gol, pentru că baza deschisă scrie în el. Copia făcută la o probă (`TestRun`: profiluri, încercări, voce, înregistrări) se șterge și ea. Antrenorul de vorbit ține sunetul doar în memorie, deci nu are fișiere de șters. Test: `FullWipeTests`.
+- **`ArtTests`.** `:legacy:design` dă testelor `fonia.content` spre `content/` din rădăcină, ca `:legacy:features`. Toate cele 8 trec.
+- **Cod mort.** `EndScreen` din `SessionScreen.kt` (finalul e `Recap`) și `FittingRow` din `SpeakExercise.kt` nu aveau niciun apel și s-au șters. `PARITY.md` e la zi.
+- **Setări.** Comutatoarele experimentale sunt oprite la început. Părerea modelului care schimbă lecția („Părerea pachetului” pe iOS) nu există pe Android, deci nu e nimic de oprit. „Ascultare pe sunete, în probă” doar notează în jurnal. „Acordul cu ZIPA în lecție” e doar în debug și pornește oprit. „Mod adaptiv (pilot)” pornește oprit. Calea principală de judecare n-a fost atinsă.
+- `versionCode` 31.
+
+Ce rămâne așa, cu intenție:
+
+- **Sunetul de pornire** rămâne oprit până aprobă echipa unul.
+- **Adultul are două alegeri** la o înregistrare, „Sună bine” și „Mai lucrăm”.
+- **Alegerile adultului nu urcă niciodată copilul.** Ele se văd în „Cum merge” și în raport; treapta nu se schimbă. Regula „două zile bune” din `PracticeBook`, din shell-ul `:app`, nu e în aplicația livrată.
+- **Telefonul singur nu coboară niciodată copilul** (vezi mai sus).
+
+Rămas pentru proprietar:
+
+- **Trecerea de propoziții și de repovestire.** Pe iOS, și în `AdaptiveEngine` (`adultDecides`), pasul de după propoziții și repovestire așteaptă adultul. În aplicația Android livrată nu așteaptă: `OwnSuccess.afterBlock` (cu regula celor două zile) și `OwnSuccess.withoutAdult` îl transformă în urcare. Copilul trece deci mai departe fără adult. Comportamentul nu s-a schimbat aici; trebuie decis dacă se aliniază cu iOS.
+- `reading/ReadingReport.kt` are rândul „Orientativ; diagnosticul se pune doar prin evaluarea complexă (art. 10–11).”, cu un cuvânt pe care textele îl evită. N-a fost în lista turei.
+- Pe Android, ghidajul buzelor din oglindă și antrenorul „La cameră” folosesc camera fără comutator. Pe iOS, „Ghidaje pe față în oglindă” și „Vorbit în public în fața camerei” sunt comutatoare oprite la început.
+- Ordinea ușilor adultului diferă: Android Sunete, Vorbit în public, Engleză; iOS Sunete, Engleză, Vorbit în public. A rămas cum era.
+- După ștergerea lui `EndScreen`, `effortLine` (testat, ca `SessionVoice.effort` pe iOS) și `ShrinkToFit` din `SessionMotion.kt` nu mai au apeluri în aplicație. Au rămas pe loc.
 
 ## Deciziile și de ce
 
