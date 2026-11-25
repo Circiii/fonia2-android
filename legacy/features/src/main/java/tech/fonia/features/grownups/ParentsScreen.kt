@@ -47,10 +47,12 @@ import tech.fonia.design.MascotPose
 import tech.fonia.design.MascotView
 import tech.fonia.design.Palette
 import tech.fonia.design.PracticeWeight
+import tech.fonia.design.ProvideTouchFloor
 import tech.fonia.design.RungStrip
 import tech.fonia.design.StyledButton
 import tech.fonia.design.Surface
 import tech.fonia.design.TextRole
+import tech.fonia.design.TouchFloor
 import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fCaption
@@ -115,7 +117,8 @@ fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, onShowGrownu
         if (app.needsAdultGate) {
             AdultGateBody(app.gate, onPass = {}, Modifier.weight(1f))
         } else {
-            Rooms(profile, app, path, onShowGrownups)
+            // The adult's page: an adult's touch floor, even with a child's profile on the phone.
+            ProvideTouchFloor(TouchFloor.adult) { Rooms(profile, app, path, onShowGrownups) }
         }
     }
 }

@@ -71,7 +71,9 @@ import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.ContinuousTopRoundedRectangle
 import tech.fonia.design.EaseInOutCurve
 import tech.fonia.design.FoniaText
+import tech.fonia.design.LocalTouchFloor
 import tech.fonia.design.Palette
+import tech.fonia.design.ProvideTouchFloor
 import tech.fonia.design.UIWeight
 import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
@@ -140,6 +142,7 @@ fun FoniaSheet(
     if (!shown) return
     val dismiss by rememberUpdatedState(onDismiss)
     val presented by rememberUpdatedState(isPresented)
+    val floor = LocalTouchFloor.current
     Dialog(
         onDismissRequest = { dismiss() },
         properties = DialogProperties(
@@ -200,7 +203,8 @@ fun FoniaSheet(
                     .nestedScroll(scrolls)
                     .pointerInput(Unit) { detectTapAnywhere { } },
             ) {
-                content()
+                // The dialog's window has a view configuration of its own: the touch floor is passed on again.
+                ProvideTouchFloor(floor) { content() }
                 if (showsDragIndicator) {
                     Box(
                         Modifier
@@ -355,7 +359,8 @@ private fun CapsuleButton(item: DialogAction, modifier: Modifier, onClick: () ->
     }
     Box(
         modifier
-            .heightIn(min = 48.dp)
+            // A dialog keeps the screen's touch floor, though its window has its own view configuration.
+            .heightIn(min = maxOf(48.dp, LocalTouchFloor.current))
             .clip(RoundedCornerShape(50))
             .background(SystemColors.fill.copy(alpha = 0.12f))
             .clickable(role = Role.Button, onClick = onClick),

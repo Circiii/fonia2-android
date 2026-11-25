@@ -216,12 +216,12 @@ private fun DrillCard(area: tech.fonia.speaking.coach.Area, history: List<tech.f
         StyledButton(
             onClick = onDrill,
             style = tech.fonia.design.PressableStyle(),
-            modifier = Modifier
-                .background(Palette.sheet, RoundedCornerShape(50))
-                .padding(horizontal = 14.dp, vertical = 10.dp)
-                .semantics { contentDescription = "Exercițiu de 30 de secunde: ${area.title}" },
+            modifier = Modifier.semantics { contentDescription = "Exercițiu de 30 de secunde: ${area.title}" },
         ) {
-            FoniaText("30 s", style = ui(16, UIWeight.bold, TextRole.headline), color = Palette.ink)
+            // The white pill is inside the button, so all of it takes the tap, not only the words.
+            Box(Modifier.background(Palette.sheet, RoundedCornerShape(50)).padding(horizontal = 14.dp, vertical = 10.dp)) {
+                FoniaText("30 s", style = ui(16, UIWeight.bold, TextRole.headline), color = Palette.ink)
+            }
         }
     }
 }

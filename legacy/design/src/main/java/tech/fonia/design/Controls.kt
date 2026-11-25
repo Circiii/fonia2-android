@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -190,7 +191,7 @@ class FoniButtonStyle(
                         outline = if (!primary && on) Palette.chipEdge.copy(alpha = 0.55f) else Color.Transparent,
                     )
                     .fillMaxWidth()
-                    .heightIn(min = minHeight ?: if (size == Size.large) 48.dp else 44.dp)
+                    .heightIn(min = maxOf(minHeight ?: if (size == Size.large) 48.dp else 44.dp, drawnFloor))
                     .padding(horizontal = 18.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
@@ -221,7 +222,7 @@ class ChoicePillStyle(val tone: Tone) : ButtonStyle {
                         isPressed = configuration.isPressed,
                     )
                     .fillMaxWidth()
-                    .heightIn(min = 48.dp)
+                    .heightIn(min = maxOf(48.dp, drawnFloor))
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
@@ -336,7 +337,7 @@ class PillButtonStyle(val minHeight: Dp = 44.dp) : ButtonStyle {
                 modifier
                     .raised(Capsule, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
                     .fillMaxWidth()
-                    .heightIn(min = minHeight)
+                    .heightIn(min = maxOf(minHeight, drawnFloor))
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
@@ -362,7 +363,7 @@ class IconTileButtonStyle(val minHeight: Dp = 54.dp) : ButtonStyle {
                     .raised(shape, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
                     .border(1.5.dp, Palette.line, shape)
                     .fillMaxWidth()
-                    .heightIn(min = maxOf(44.dp, minHeight))
+                    .heightIn(min = maxOf(44.dp, minHeight, drawnFloor))
                     .padding(horizontal = 6.dp, vertical = 10.dp),
                 // Tiles in a row share one height. Hung from the top, a two-line title only grows down, so the icons
                 // and the first lines stay level with the tiles next to it.
@@ -399,6 +400,8 @@ class MiniPillStyle : ButtonStyle {
                 modifier
                     .graphicsLayer { scaleX = scale; scaleY = scale }
                     .background(Palette.accentSoft, Capsule)
+                    // A pill for one syllable is no narrower than a finger.
+                    .widthIn(min = drawnFloor)
                     .heightIn(min = 34.dp)
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,
@@ -407,7 +410,10 @@ class MiniPillStyle : ButtonStyle {
     }
 }
 
-/** Round white button for the top of a screen: back, close, help, settings. */
+/**
+ * Round white button for the top of a screen: back, close, help, settings. On a child's screen it takes touches out
+ * to the touch floor and stays the same size.
+ */
 class ToolButtonStyle(
     val field: Field = Field.paper,
     val diameter: Dp = 40.dp,
