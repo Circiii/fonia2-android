@@ -10,23 +10,18 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.fonia.domain.Plural
 import tech.fonia.features.ml.MlHub
 import tech.fonia.features.ml.ModelCatalog
 import tech.fonia.features.ml.ModelManager
-import tech.fonia.features.pilot.PilotEnvironment
 import tech.fonia.features.pilot.PilotLog
-import tech.fonia.features.pilot.PilotSnapshot
 import tech.fonia.features.pilot.PilotSwitch
 import tech.fonia.features.session.ShadowBadgeSettings
 import tech.fonia.speech.LocalFileFetcher
@@ -35,8 +30,11 @@ import java.io.File
 /**
  * A real session with the shadow scorer present (docs/PLAN.md §6, 03 §1.2 P13): ZIPA-small int8 installed through the
  * model manager, the takes from the recorded clips, everything else the app's own engines. The session runs to its end
- * as it does without shadow mode, the developer badge shows ZIPA's verdicts, and the pilot log holds every take's two
- * verdicts with the same verdict the session recorded, and no audio anywhere.
+ * as it does without shadow mode, the developer badge shows ZIPA's verdicts, and no audio is kept anywhere.
+ *
+ * A run on the recorded clips works on a copy of the data and keeps no pilot log, as on iOS: what the log keeps of a
+ * real session (each take's two verdicts, the verdict the child got, the dose) is covered by `ShadowModeTests` and
+ * `PilotLogTests`. Here the log has to stay away, even with its switch on.
  *
  * The model comes from `/data/local/tmp` (`./gradlew :app:zipaModelToDevice`, or `adb push`); without it the test is
  * skipped.
@@ -54,9 +52,10 @@ class ShadowSessionTests : Journeys() {
         val manager = ModelManager(MlHub.modelsFolder(context), listOf(local)) { LocalFileFetcher }
         if (!manager.isReady(local)) runBlocking { manager.download(local) }
         assertTrue(MlHub.manager(context).isReady(ModelCatalog.ZIPA))
-        // The pilot log is off until switched on; this test reads it.
+        // The pilot log is off until switched on: on, so that its absence after the run means something.
         context.getSharedPreferences("fonia", Context.MODE_PRIVATE).edit()
             .putBoolean(ShadowBadgeSettings.KEY, true).putBoolean(PilotSwitch.KEY, true).commit()
+        PilotLog.defaultFolder(context).deleteRecursively()
     }
 
     /** Answers whatever the session asks of a person, so the run reaches its end on its own. */
@@ -73,71 +72,40 @@ class ShadowSessionTests : Journeys() {
         node.config.getOrNull(SemanticsProperties.Text)?.any { it.text.startsWith("ZIPA ") } == true
     }
 
-    private fun readLog(): PilotSnapshot {
-        val log = PilotLog.open(PilotLog.defaultFolder(context), PilotEnvironment("test", "test", 0))
-        try {
-            return runBlocking { log.snapshot() }
-        } finally {
-            log.close()
-        }
-    }
-
     @Test
-    fun aSessionWithTheShadowScorerKeepsItsVerdictsAndLogsZipas() {
+    fun aSessionWithTheShadowScorerRunsToItsEndAndShowsZipas() {
         launch {
             putExtra("foniaStart", "s:syllables")
             putExtra("foniaSpeakOnly", true)
             putExtra("foniaShort", true)
         }
-        makeChild()
-        assertTrue(waitFor(button("Mă opresc"), 10))
+        // A debug launch with `foniaStart` makes its own child (S, 6-7 ani) and skips the first run.
+        assertTrue(waitFor(button("Mă opresc"), 15))
 
         // The session goes as it always does: shadow mode adds nothing to wait for.
-        val end = button("Gata pe azi")
+        // The recap: "Gata" next to "Încă una" when more is waiting, otherwise the session's own end button.
+        val end = button("Gata") or button("Gata pe azi")
         val deadline = System.currentTimeMillis() + 60_000
         while (!exists(end) && System.currentTimeMillis() < deadline) {
             if (!waitFor(end, 3)) answerIfAsked()
         }
         assertTrue(exists(end))
-        assertTrue(exists(staticText("Bravo, ai reușit!")) || exists(staticText("Ne vedem mâine")))
+        assertTrue(exists(staticText("Bravo!")) || exists(staticText("Ai exersat!")))
 
         // ZIPA's verdicts arrive on their own thread, after the child's; the developer badge shows them.
         assertTrue("the badge never showed a ZIPA verdict", waitFor(badgeVerdict, 90))
         screenshot("session-end")
 
-        // The pilot log: every spoken item TakeJudge judged is scored, next to the verdict the session recorded for it.
-        var snapshot = readLog()
-        val until = System.currentTimeMillis() + 60_000
-        while (System.currentTimeMillis() < until) {
-            snapshot = readLog()
-            val judged = snapshot.attempts.values.flatten().count { it["mode"] == "production" && it["exercise"] in judgedKinds && it["sound"] == "s" }
-            val logged = snapshot.shadow.values.flatten().size
-            if (judged > 0 && logged >= judged) break
-            runBlocking { delay(500) }
-        }
-        val profile = snapshot.profiles.single()
-        val attempts = snapshot.attempts.getValue(profile.profileId)
-        val shadow = snapshot.shadow.getValue(profile.profileId)
-        assertTrue("no production attempt logged: $attempts", attempts.any { it["mode"] == "production" && it["sound"] == "s" })
-        assertTrue("no shadow score logged", shadow.isNotEmpty())
-        for (row in shadow) {
-            assertEquals(row.toString(), "scored", row["status"])
-            assertNotNull(row.toString(), row["verdict"])
-            assertEquals(ModelCatalog.ZIPA.label, row["model"])
-            assertEquals("fixture", row["input"])
-            // The verdict the child got is the one the session saved for that take: shadow mode changed nothing.
-            val attempt = attempts.firstOrNull { it["take"] == row["take"] }
-            assertNotNull("no attempt for take ${row["take"]}: $attempts", attempt)
-            assertEquals(row.toString(), attempt!!["machine"], row["shown"])
-        }
+        // A test run keeps no pilot log: the shadow scores of the recorded clips never reach it.
+        assertFalse(File(PilotLog.defaultFolder(context), PILOT_DATABASE).exists())
 
-        // No audio anywhere new: the log is a database, the models folder holds the model, the child's takes aren't kept.
-        val pilotFiles = PilotLog.defaultFolder(context).listFiles().orEmpty().map { it.name }
-        assertTrue(pilotFiles.toString(), pilotFiles.all { it.startsWith(PILOT_DATABASE) })
+        // No audio anywhere new: the models folder holds the model, the child's takes aren't kept, on the copy either.
         val modelFiles = MlHub.modelsFolder(context).walkTopDown().filter { it.isFile }.map { it.name }.toList()
         assertEquals(listOf(ModelCatalog.ZIPA.mainFile), modelFiles)
-        val recordings = File(context.noBackupFilesDir, "Fonia/Recordings").walkTopDown().filter { it.isFile }.toList()
-        assertTrue(recordings.toString(), recordings.isEmpty())
+        for (home in listOf(context.noBackupFilesDir, File(context.noBackupFilesDir, "TestRun"))) {
+            val recordings = File(home, "Fonia/Recordings").walkTopDown().filter { it.isFile }.toList()
+            assertTrue(recordings.toString(), recordings.isEmpty())
+        }
 
         // One ONNX Runtime, the pinned one, and its telemetry provider gone from the app.
         assertEquals("1.31.1", OrtEnvironment.getEnvironment().version)
@@ -147,21 +115,12 @@ class ShadowSessionTests : Journeys() {
         tap(end)
         assertTrue(waitFor(button("Acasă"), 10))
 
-        // The dose counter, behind the adult check: today's takes of S, and the first of its five intensive days.
+        // The settings, behind the adult check: the model's size, its delete, and the developer switch of the badge.
+        // (The dose counter in „Cum merge” reads the pilot log, which a test run doesn't keep.)
         tap(button("Progres"))
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
         passAdultCheck()
-        assertTrue(waitFor(buttonStartingWith("Cum merge")))
-        tap(buttonStartingWith("Cum merge"))
-        assertTrue(waitFor(staticText("Încercări pe zi și pe săptămână")))
-        val counted = attempts.count { it["dose"] == true }
-        assertTrue(exists(staticText("Azi: ${Plural.format(counted, Plural.Noun.Incercare)}")))
-        assertTrue(exists(staticText("Primele 5 zile cu S: 1 din 5 cu exerciții.")))
-        screenshot("dose")
-
-        // The settings: the model's size, its delete, and the developer switch of the badge.
-        goBack()
         assertTrue(waitFor(button("Alte setări")))
         tap(button("Alte setări"))
         assertTrue(waitFor(staticText("Ascultare pe sunete, în probă"), 10))
@@ -184,8 +143,5 @@ class ShadowSessionTests : Journeys() {
     private companion object {
         const val DEFAULT_MODEL = "/data/local/tmp/fonia/zipa-small-crctc-500k/model.int8.onnx"
         const val PILOT_DATABASE = "pilot.sqlite"
-
-        /** The spoken items TakeJudge judges and shadow mode scores (sustained sounds have their own judge). */
-        val judgedKinds = setOf("repeat", "name", "twister")
     }
 }
