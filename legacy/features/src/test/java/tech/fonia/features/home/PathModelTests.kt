@@ -337,6 +337,20 @@ class PathModelTests {
         assertEquals(1, model.totalDays)
     }
 
+    /** the week's bars and the minutes in all agree, even for a lesson left halfway */
+    @Test
+    fun minutesAgree() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        app.repository.addSession(SessionRecord(profileId = profile.id, track = Profile.Track.Ro, focus = SessionFocus.Voicing.key, startedAt = Instant.now(), attempts = 3))
+        val model = path(profile, app)
+        val today = model.week.first { it.isToday }
+        assertTrue(today.hasPractice)
+        assertEquals(1, today.minutes)
+        assertEquals(model.week.sumOf { it.minutes }, model.totalMinutes)
+    }
+
     /** every unit can be found again by its id */
     @Test
     fun unitsAreFound() = runBlocking {

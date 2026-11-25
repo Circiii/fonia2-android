@@ -260,8 +260,11 @@ fun AppModel.play(recording: Recording) {
     }
 }
 
-/** Bars stand for minutes, the one count every kind of lesson has. A day with practice under a minute still shows. */
-private fun minutes(day: DayActivity): Int = if (day.hasPractice) max(day.minutes, 1) else 0
+/**
+ * Bars stand for minutes, the one count every kind of lesson has. A day with practice under a minute still counts one,
+ * in the bars and in the total alike.
+ */
+private fun minutes(day: DayActivity): Int = day.minutes
 
 /** How much happened on each day this week, as columns. A day with nothing is just low, never red. */
 @Composable
