@@ -14,7 +14,8 @@ import tech.fonia.domain.Rung
  * - The step after the isolated sound still waits for an adult who listened ("Am ascultat, e bine", in Setări),
  *   when the profile keeps the lock on (a child's default). Without it, a child could repeat a wrong sound for weeks.
  *   With the lock off, or once an adult confirmed, the dots alone move him on.
- * - Past sentences, where the phone used to wait for an adult, a good block moves on by itself.
+ * - Past sentences and retelling the phone stays quiet, so a good block waits for an adult (as on iOS), unless the
+ *   whole path was opened.
  *
  * Everything else is [Progression] unchanged: 5 of 6 to move up, under 3 of 6 to step down.
  */
@@ -58,26 +59,10 @@ object OwnSuccess {
         var before = state
         if (ownOpened && !locked) before = before.copy(adultConfirmed = true)
         val outcome = Progression.afterBlock(correct = correct, attempted = attempted, state = before, daySpread = daySpread)
-        val step = outcome.step
-        if (locked) {
-            val next = state.rung.next
-            if (ownOpened && next != null && step == ProgressionStep.Stay && attempted == Progression.blockSize) {
-                return Progression.BlockOutcome(outcome.state, ProgressionStep.NeedsAdult(next))
-            }
-            return outcome
-        }
-        if (step is ProgressionStep.NeedsAdult) {
-            // Where no adult is asked, the phone moves a child on only as the two-day rule allows.
-            if (daySpread == DaySpread.Required(earlierGoodDay = false)) return Progression.BlockOutcome(outcome.state, ProgressionStep.Stay)
-            return Progression.BlockOutcome(outcome.state.copy(rung = step.next), ProgressionStep.Advance(step.next))
+        val next = state.rung.next
+        if (locked && ownOpened && next != null && outcome.step == ProgressionStep.Stay && attempted == Progression.blockSize) {
+            return Progression.BlockOutcome(outcome.state, ProgressionStep.NeedsAdult(next))
         }
         return outcome
     }
-
-    /**
-     * A step from elsewhere (the adaptive pilot) that would wait for an adult moves on instead, except past the plain
-     * sound while the lock waits.
-     */
-    fun withoutAdult(step: ProgressionStep, state: ProgressionState): ProgressionStep =
-        if (step is ProgressionStep.NeedsAdult && !(state.rung == Rung.Isolated && waitsForAdult(state))) ProgressionStep.Advance(step.next) else step
 }

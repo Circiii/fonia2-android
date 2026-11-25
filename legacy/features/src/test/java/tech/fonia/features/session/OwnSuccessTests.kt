@@ -65,27 +65,23 @@ class OwnSuccessTests {
     }
 
     @Test
-    fun theAdaptiveStepKeepsTheLockAndOnlyThatOne() {
-        val waiting = ProgressionState(rung = Rung.Isolated)
-        assertEquals(ProgressionStep.NeedsAdult(Rung.Syllables), OwnSuccess.withoutAdult(ProgressionStep.NeedsAdult(Rung.Syllables), waiting))
-        val sentences = ProgressionState(rung = Rung.Sentences, adultConfirmed = true)
-        assertEquals(ProgressionStep.Advance(Rung.Retell), OwnSuccess.withoutAdult(ProgressionStep.NeedsAdult(Rung.Retell), sentences))
-    }
-
-    @Test
     fun fewerThanFiveGoodStillWaits_andAWeakBlockStillStaysDown() {
         val state = ProgressionState(rung = Rung.Isolated, establishCorrect = 1)
         assertEquals(ProgressionStep.Stay, OwnSuccess.afterBlock(correct = 3, attempted = 6, state = state).step)
         assertEquals(ProgressionStep.Stay, OwnSuccess.afterBlock(correct = 2, attempted = 6, state = state).step)
     }
 
+    /** past sentences and retelling the phone stays quiet: a good block waits for an adult, as on iOS */
     @Test
-    fun pastSentencesAGoodBlockMovesOnByItself() {
-        val state = ProgressionState(rung = Rung.Sentences, adultConfirmed = true)
-        assertTrue(Progression.afterBlock(correct = 6, attempted = 6, state = state).step is ProgressionStep.NeedsAdult)
-        val (after, step) = OwnSuccess.afterBlock(correct = 6, attempted = 6, state = state)
-        assertTrue(step is ProgressionStep.Advance)
-        assertEquals(Rung.Sentences.next, after.rung)
+    fun pastSentencesAGoodBlockWaitsForAnAdult() {
+        for (rung in listOf(Rung.Sentences, Rung.Retell)) {
+            val state = ProgressionState(rung = rung, adultConfirmed = true)
+            for (spread in listOf(DaySpread.NotRequired, DaySpread.Required(earlierGoodDay = true), DaySpread.Required(earlierGoodDay = false))) {
+                val (after, step) = OwnSuccess.afterBlock(6, Progression.blockSize, state, spread)
+                assertEquals(ProgressionStep.NeedsAdult(rung.next!!), step)
+                assertEquals(rung, after.rung)
+            }
+        }
     }
 
     @Test
@@ -103,10 +99,10 @@ class OwnSuccessTests {
         assertFalse((0..6).any { Regex("\\d").containsMatchIn(OwnSuccess.spokenDots(it)) })
     }
 
-    /** past sentences no adult is asked, so the phone moves a child on only after good blocks on two days */
+    /** once the whole path is open the adult isn't asked, and a child moves on only after good blocks on two days */
     @Test
-    fun pastSentencesTheTwoDayRuleStillHolds() {
-        val sentences = ProgressionState(rung = Rung.Sentences, adultConfirmed = true)
+    fun anOpenPathPastSentencesKeepsTheTwoDayRule() {
+        val sentences = ProgressionState(rung = Rung.Sentences, adultConfirmed = true, openedByParent = true)
         assertEquals(
             ProgressionStep.Stay,
             OwnSuccess.afterBlock(6, Progression.blockSize, sentences, DaySpread.Required(earlierGoodDay = false)).step,

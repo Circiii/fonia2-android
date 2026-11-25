@@ -185,14 +185,26 @@ class SessionRunTests {
         assertTrue(hidden > 0)
         assertTrue(hidden * 2 <= played + 1)
         assertEquals(played, run.attempts)
-        // So the two-good-days rule still moves the child on.
-        assertEquals(Rung.Retell.index, savedRung(app, profile, run))
+        // So the good block still counts towards moving on; past sentences an adult has the last word.
+        assertEquals(Rung.Sentences.index, savedRung(app, profile, run))
+        assertEquals(Rung.Retell, run.needsAdultNext)
+        assertNull(run.movedUpTo)
         assertEquals(played, app.repository.attempts(run.sessionID).size)
         // A block of six counts all six, the three answered and the three only heard.
         val progress = app.repository.soundProgress(profile.id).first { it.sound == "s" }
         val today = progress.blockHistory.filter { it.endedAt > day(19) }
         assertTrue(today.isNotEmpty())
         assertTrue(today.all { it.total == 6 && it.good == 6 })
+    }
+
+    /** a path the adult opened moves a child past sentences on two good days, with no one asked */
+    @Test
+    fun anOpenPathMovesOnPastSentences() = runBlocking {
+        val app = makeApp()
+        val profile = child().copy(openPath = true)
+        app.repository.saveProfile(profile)
+        app.repository.saveSoundProgress(goodBlockYesterday(profile, rung = Rung.Sentences))
+        assertEquals(Rung.Retell.index, session(app, profile, rung = Rung.Sentences, on = day(20), machine = Attempt.Outcome.Good))
     }
 
     /** only a sound at sentences, retelling or everyday speech is at automatizare */

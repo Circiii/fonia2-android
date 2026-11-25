@@ -515,7 +515,7 @@ class SessionRun(
     /** The adaptive session ended: the rung moves on, or waits for an adult, by T1 and the iOS locks. */
     private fun closeAdaptiveSession(engine: AdaptiveRun, finished: Boolean) {
         val sound = ticket.sound
-        when (val step = OwnSuccess.withoutAdult(engine.end(finished, state), state)) {
+        when (val step = engine.end(finished, state)) {
             is ProgressionStep.Advance -> if (sound != null) {
                 movedUpTo = step.to
                 val updated = (progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue)).copy(rung = step.to.index)
