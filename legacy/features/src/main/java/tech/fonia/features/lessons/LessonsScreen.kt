@@ -92,7 +92,6 @@ import tech.fonia.features.app.AppRoute
 import tech.fonia.features.app.HeaderPage
 import tech.fonia.features.app.PageHeader
 import tech.fonia.features.app.ScenePage
-import tech.fonia.features.app.ScenePanel
 import tech.fonia.features.app.characterCount
 import tech.fonia.features.app.field
 import tech.fonia.features.app.orderedSounds
@@ -369,7 +368,6 @@ fun PlayScreen(path: PathModel, app: AppModel) {
         scene = SceneName.play,
         title = "Jocuri",
         sentence = "Câteva minute de joacă cu sunetele.",
-        panel = ScenePanel.attached,
         heroHeight = 300.dp,
     ) {
         val cards = buildList {

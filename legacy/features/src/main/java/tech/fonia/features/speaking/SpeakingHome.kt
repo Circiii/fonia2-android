@@ -101,7 +101,6 @@ import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.FullScreenCover
 import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.ScenePage
-import tech.fonia.features.app.ScenePanel
 import tech.fonia.features.app.SegmentedPicker
 import tech.fonia.features.app.SheetDetent
 import tech.fonia.features.app.SystemColors
@@ -170,7 +169,6 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
             scene = SceneName.speaking,
             title = "Vorbit în public",
             sentence = "Spui, te asculți, apoi spui din nou, mai scurt.",
-            panel = ScenePanel.attached,
             heroHeight = 250.dp,
         ) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {

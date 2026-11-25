@@ -27,28 +27,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import tech.fonia.design.ContinuousTopRoundedRectangle
 import tech.fonia.design.FloatingPanel
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaImage
 import tech.fonia.design.FoniaText
+import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.Palette
 import tech.fonia.design.SceneName
 import tech.fonia.design.SkyLife
 import tech.fonia.design.StyledButton
-import tech.fonia.design.TextRole
 import tech.fonia.design.ToolButtonStyle
-import tech.fonia.design.UIWeight
 import tech.fonia.design.fTitle
 import tech.fonia.design.opacity
-import tech.fonia.design.ui
 
 /** SwiftUI's negative padding: the view moves up by [amount] and takes that much less room. */
 fun Modifier.pullUp(amount: Dp): Modifier = layout { measurable, constraints ->
@@ -135,23 +140,12 @@ fun HeaderPage(
     }
 }
 
-/** How a page with a scene carries its one sentence. */
-@Suppress("EnumEntryName")
-enum class ScenePanel {
-    /** A pale band joined to the bottom of the scene. */
-    attached,
-
-    /** A white card floating over the bottom of the scene. */
-    floating,
-}
-
 /** A page that opens on a painted scene, says one sentence about itself, then lists what's in it. */
 @Composable
 fun ScenePage(
     scene: SceneName,
     title: String,
     sentence: String,
-    panel: ScenePanel = ScenePanel.floating,
     isNight: Boolean = false,
     onPaper: Boolean = false,
     heroHeight: Dp = 340.dp,
@@ -175,7 +169,7 @@ fun ScenePage(
                 FoniaImage("scene-${scene.rawValue}-tall", Modifier.matchParentSize(), contentScale = ContentScale.Crop)
                 if (scene.hasSky) SkyLife(isNight = isNight, modifier = Modifier.matchParentSize())
                 Box(Modifier.matchParentSize(), contentAlignment = Alignment.Center, content = art)
-                if (panel == ScenePanel.floating && !isNight) {
+                if (!isNight) {
                     Box(
                         Modifier
                             .align(Alignment.BottomCenter)
@@ -195,55 +189,54 @@ fun ScenePage(
                     textAlign = TextAlign.Center,
                 )
             }
-            when (panel) {
-                ScenePanel.attached -> FoniaText(
-                    sentence,
-                    modifier = Modifier
-                        .pullUp(20.dp)
-                        .fillMaxWidth()
-                        .background(Palette.cloud, ContinuousTopRoundedRectangle(20.dp))
-                        .padding(horizontal = 20.dp, vertical = 16.dp),
-                    style = ui(15, UIWeight.medium, TextRole.subheadline),
-                    color = Palette.ink,
-                    textAlign = TextAlign.Center,
-                )
-                ScenePanel.floating -> FloatingPanel(
-                    sentence,
-                    Modifier
-                        .padding(horizontal = 16.dp)
-                        .pullUp(46.dp),
-                )
-            }
+            // Every scene page carries its sentence the same way: a white card floating over the bottom of the scene.
+            FloatingPanel(
+                sentence,
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .pullUp(46.dp),
+            )
             Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
-                    .padding(top = if (panel == ScenePanel.attached) 16.dp else 18.dp, bottom = 32.dp),
+                    .padding(top = 18.dp, bottom = 32.dp),
                 content = content,
             )
         }
-        // Once the list scrolls past the scene, the page colour veils the status bar and the back button's strip, so
-        // rows no longer run under the clock (QA 2026-11-21; iOS's scroll-edge effect).
+        // Set once the scene has scrolled up under the buttons: a bar in the page colour then holds them and the title,
+        // so they never float over the rows and the status bar never sits on text. It comes in just before the
+        // sentence under the scene reaches the buttons.
+        val reduceMotion = LocalReduceMotion.current
+        val threshold = with(LocalDensity.current) { (heroHeight - 110.dp).toPx() }
+        val showsBar by remember(threshold) { derivedStateOf { scroll.value > threshold } }
+        val barAlpha by animateFloatAsState(if (showsBar) 1f else 0f, if (reduceMotion) snap() else tween(180, easing = LinearOutSlowInEasing), label = "scene bar")
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(top + 64.dp)
-                .graphicsLayer {
-                    val start = (heroHeight + top).toPx() * 0.55f
-                    alpha = ((scroll.value - start) / 120.dp.toPx()).coerceIn(0f, 1f)
-                }
-                .background(Brush.verticalGradient(0f to pageColor, 0.7f to pageColor, 1f to pageColor.copy(alpha = 0f))),
-        )
-        Row(
-            Modifier
+                .background(pageColor.copy(alpha = pageColor.alpha * barAlpha))
                 .windowInsetsPadding(WindowInsets.statusBars)
-                .fillMaxWidth()
-                .padding(start = 14.dp, end = 14.dp, top = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(start = 14.dp, end = 14.dp, top = 6.dp, bottom = 8.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            HeaderButton()
-            Spacer(Modifier.weight(1f))
-            if (onHelp != null) HelpButton(onHelp)
+            if (barAlpha > 0f) {
+                FoniaText(
+                    title,
+                    modifier = Modifier
+                        .padding(horizontal = 44.dp)
+                        .graphicsLayer { alpha = barAlpha }
+                        .clearAndSetSemantics {},
+                    style = fTitle,
+                    color = titleColor,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                )
+            }
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                HeaderButton()
+                Spacer(Modifier.weight(1f))
+                if (onHelp != null) HelpButton(onHelp)
+            }
         }
     }
 }
