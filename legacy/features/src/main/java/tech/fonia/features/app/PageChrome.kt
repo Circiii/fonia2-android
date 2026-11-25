@@ -104,8 +104,10 @@ fun PageHeader(
                 .semantics { heading() },
             style = fTitle,
             color = titleColor,
-            maxLines = 1,
-            minimumScaleFactor = 0.6f,
+            // A long title takes a second line rather than shrinking below its siblings.
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+            minimumScaleFactor = 0.85f,
         )
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             HeaderButton(closes)
