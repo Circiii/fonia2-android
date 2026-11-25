@@ -127,7 +127,7 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 TodayCard(today)
-                if (profile.track == Profile.Track.Ro) tech.fonia.features.check.CheckCard(path.lastCheck, app)
+                if (profile.track == Profile.Track.Ro) tech.fonia.features.check.CheckCard(path.lastCheck, app, isChild = profile.isChild)
                 StyledButton(onClick = { push(AppRoute.Journal) }, style = PressableStyle(), onClickLabel = "Deschide jurnalul") {
                     WeekCard(path.week)
                 }

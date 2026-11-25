@@ -159,7 +159,7 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             TodayCard(app, path, Modifier.arrives(hasArrived, 2))
             // The quick check: what to practise, and later what moved (sounds track only).
             if (profile.track == Profile.Track.Ro) {
-                tech.fonia.features.check.CheckCard(path.lastCheck, app, Modifier.arrives(hasArrived, 3))
+                tech.fonia.features.check.CheckCard(path.lastCheck, app, Modifier.arrives(hasArrived, 3), isChild = path.profile.isChild)
             }
             val list = doors(profile)
             if (!profile.isChild) {
