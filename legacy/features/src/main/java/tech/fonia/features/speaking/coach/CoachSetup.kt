@@ -77,7 +77,6 @@ internal fun CoachSetup(coach: CoachController, onClose: () -> Unit, onStart: ()
     val prompts = coach.prompts
     val pager = rememberPagerState(initialPage = prompts.indexOf(coach.prompt).coerceAtLeast(0)) { prompts.size }
     val scope = rememberCoroutineScope()
-    val push = tech.fonia.features.home.rememberPush()
     LaunchedEffect(pager) {
         snapshotFlow { pager.settledPage }.collect { coach.prompt = prompts[it] }
     }
@@ -98,19 +97,13 @@ internal fun CoachSetup(coach: CoachController, onClose: () -> Unit, onStart: ()
                 Spacer(Modifier.weight(1f))
                 coach.previous?.let { LastTime(it) }
             }
-            // Small secondary entries: his gaze calibration, and the older exercises („Tu, fără ăăă”, the minute).
+            // A small secondary entry: his gaze calibration. The other exercises are the page this one opened from.
             Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(18.dp)) {
                 StyledButton(
                     onClick = { coach.calibrate(thenStart = false) },
                     style = tech.fonia.design.PressableStyle(),
                 ) {
                     FoniaText(if (coach.gaze != null) "Privirea mea ✓" else "Privirea mea", style = ui(15, UIWeight.semibold, TextRole.footnote), color = Palette.nightSoft)
-                }
-                StyledButton(
-                    onClick = { push(tech.fonia.features.app.AppRoute.Speaking) },
-                    style = tech.fonia.design.PressableStyle(),
-                ) {
-                    FoniaText("Alte exerciții", style = ui(15, UIWeight.semibold, TextRole.footnote), color = Palette.nightSoft)
                 }
             }
             Column(Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {

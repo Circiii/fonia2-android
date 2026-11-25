@@ -5,6 +5,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import tech.fonia.features.app.AppRoute
+import tech.fonia.features.session.CameraCoachSwitch
+import tech.fonia.features.session.Settings
 import tech.fonia.store.Profile
 
 /** The doors on Home, as iOS `HomeScreen.doors`: a child's five, and the adult's by track. */
@@ -36,7 +38,7 @@ class HomeDoorsTests {
     fun anAdultKeepsPublicSpeaking() {
         for (track in Profile.Track.entries) {
             val doors = doors(profile(Profile.Kind.Adult, track))
-            assertTrue(track.name, doors.any { it.title == "Vorbit în public" && it.route is AppRoute.SpeechCoach })
+            assertTrue(track.name, doors.any { it.title == "Vorbit în public" && it.route == AppRoute.Speaking })
             assertFalse(track.name, doors.any { it.route == AppRoute.Guides })
         }
     }
@@ -47,5 +49,16 @@ class HomeDoorsTests {
         assertEquals(listOf("Sunete", "Engleză", "Vorbit în public"), titles(Profile.Track.Ro))
         assertEquals(listOf("Engleză", "Vorbit în public"), titles(Profile.Track.En))
         assertEquals(listOf("Vorbit în public", "Engleză"), titles(Profile.Track.Dictie))
+    }
+
+    /** as on iOS, the camera coach is a row behind Setări → Experimental, off by default, and never for a child */
+    @Test
+    fun theCameraCoachWaitsBehindItsSwitch() {
+        assertFalse(CameraCoachSwitch.shows(stored = false, isChild = false))
+        assertTrue(CameraCoachSwitch.shows(stored = true, isChild = false))
+        assertFalse(CameraCoachSwitch.shows(stored = true, isChild = true))
+        // The keys iOS keeps them under.
+        assertEquals("fonia.lab.faceGuides", Settings.faceGuides)
+        assertEquals("fonia.lab.cameraCoach", Settings.cameraCoach)
     }
 }

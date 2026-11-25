@@ -101,6 +101,8 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
     val context = LocalContext.current
     var keepRecordings by rememberStoredBoolean(app.preferences, Settings.keepRecordings)
     var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
+    var faceGuides by rememberStoredBoolean(app.preferences, Settings.faceGuides)
+    var cameraCoach by rememberStoredBoolean(app.preferences, Settings.cameraCoach)
     var addingChild by remember { mutableStateOf(false) }
     var confirmWipe by remember { mutableStateOf(false) }
     /** What stayed on the phone after "Șterge tot" (null: no failure to show). */
@@ -147,6 +149,23 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
                 footer = "Notează pentru logoped câte încercări au fost în fiecare zi, doar ca numere. Fără voce. Pornit doar dacă îl pornești tu.",
             ) {
                 row { ToggleRow("Jurnalul de exersare", app.isPilotLogOn) { app.setPilotLog(it) } }
+            }
+            // As on iOS: what depends on the camera waits here, off, until it has been tried on a real phone.
+            ListSection(header = "Experimental") {
+                row {
+                    ToggleRow(
+                        "Ghidaje pe față în oglindă",
+                        faceGuides,
+                        detail = "Folosește camera din față. Nimic nu pleacă de pe telefon.",
+                    ) { faceGuides = it }
+                }
+                row {
+                    ToggleRow(
+                        "Vorbit în public în fața camerei",
+                        cameraCoach,
+                        detail = "Un pas nou la „Vorbit în public”: te vezi pe ecran și primești semne pe loc. Folosește camera din față. Nimic nu pleacă de pe telefon.",
+                    ) { cameraCoach = it }
+                }
             }
             ModelSections(app)
             ListSection {

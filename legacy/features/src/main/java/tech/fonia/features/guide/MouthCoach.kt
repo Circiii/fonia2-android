@@ -137,6 +137,7 @@ import tech.fonia.features.app.dspGroup
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.shape
 import tech.fonia.features.ml.shadowMirrorTake
+import tech.fonia.features.session.Settings
 import tech.fonia.features.session.TakeJudge
 import tech.fonia.features.session.TakeVerdict
 import tech.fonia.features.session.VerdictWriter
@@ -179,6 +180,12 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
     val target = remember(plan.key) { if (plan.language == Language.Ro) SoundId.of(plan.key) else null }
     CoachMouthLifetime(mouth, target, fixture)
     val selfView = remember { SelfViewState() }
+    // The drawings on the mirror wait behind their switch, read once (iOS `FaceGuideSwitch`); debug builds can turn
+    // them on with `--es foniaFaceGuides 1` for screenshots. The framing follows the mouth either way.
+    val guidesOn = remember {
+        (app.preferences?.bool(Settings.faceGuides) ?: false) ||
+            (tech.fonia.features.IS_DEBUG_BUILD && launchExtra(context, "foniaFaceGuides") != null)
+    }
     // Debug builds: `--es foniaCoachHint smile` shows one correction whatever the camera says (screenshots).
     val forcedHint = remember { if (tech.fonia.features.IS_DEBUG_BUILD) launchExtra(context, "foniaCoachHint")?.let { n -> Correction.entries.firstOrNull { it.name.equals(n, ignoreCase = true) } } else null }
     // The side view (the tongue) waits for a speech therapist in release builds; debug builds show it for review.
@@ -386,6 +393,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             mouth = mouth,
                             levels = levels,
                             reduceMotion = reduceMotion,
+                            guides = guidesOn,
                             cameraProblem = cameraProblem,
                             onCameraProblem = { cameraProblem = it },
                             micState = micState,
@@ -513,6 +521,7 @@ private fun CallSelfPane(
     mouth: MouthTracker?,
     levels: FaceLevels,
     reduceMotion: Boolean,
+    guides: Boolean,
     cameraProblem: String?,
     onCameraProblem: (String) -> Unit,
     micState: MicState,
@@ -597,6 +606,7 @@ private fun CallSelfPane(
             mouth = mouth,
             levels = levels,
             reduceMotion = reduceMotion,
+            guides = guides,
             modifier = pane,
             onFailure = { error ->
                 onCameraProblem(if (error == FaceSourceError.CameraDenied) "Camera e oprită. O pornești din Setări, la Fonia." else "Camera nu merge acum.")

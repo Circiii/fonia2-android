@@ -119,9 +119,9 @@ internal fun doors(profile: Profile): List<Door> {
             Door("stories", SceneName.stories, "Povești", AppRoute.Stories),
         )
     }
-    // „Vorbit în public” opens the speech coach. The older exercises („Tu, fără ăăă”, the minute) are reached from the
-    // coach's setup.
-    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.SpeechCoach())
+    // „Vorbit în public” opens its exercises, as on iOS; the speech coach in front of the camera is a row there, once
+    // an adult turns it on in Setări → Experimental.
+    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.Speaking)
     val english = Door("english", SceneName.english, "Engleză", AppRoute.English)
     return when (profile.track) {
         Profile.Track.En -> listOf(english, speaking)

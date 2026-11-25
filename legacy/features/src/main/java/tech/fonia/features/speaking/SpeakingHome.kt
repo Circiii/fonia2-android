@@ -1,5 +1,7 @@
 package tech.fonia.features.speaking
 
+import tech.fonia.features.app.AppRoute
+import tech.fonia.features.app.rememberStoredBoolean
 import tech.fonia.features.app.wordsTranscriber
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
@@ -121,6 +123,8 @@ import tech.fonia.features.home.CardRow
 import tech.fonia.features.home.ModelNotice
 import tech.fonia.features.home.NextStep
 import tech.fonia.features.home.PathModel
+import tech.fonia.features.session.CameraCoachSwitch
+import tech.fonia.features.session.Settings
 import tech.fonia.features.session.TakeJudge
 import tech.fonia.features.session.romanianDecimal
 import tech.fonia.speech.FillerHit
@@ -151,6 +155,8 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
     var editingMine by remember { mutableStateOf(false) }
     var myTitle by rememberStoredString(app.preferences, "fonia.myTalk.title", "")
     var myMinutes by rememberStoredInt(app.preferences, "fonia.myTalk.minutes", 5)
+    val cameraCoach by rememberStoredBoolean(app.preferences, Settings.cameraCoach)
+    val push = tech.fonia.features.home.rememberPush()
     var memory by remember(profile.id) { mutableStateOf(SpeakingMemory.load(profile.id, app.preferences)) }
     val prompts = app.content.diction.speechPrompts
     // The step after the last topic finished, starting from the most private one.
@@ -223,6 +229,15 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
                             FoniaText("Schimbă prezentarea")
                         }
                     }
+                }
+
+                if (CameraCoachSwitch.shows(cameraCoach, profile.isChild)) {
+                    Heading("În fața camerei")
+                    TalkRow(
+                        ArtTileMark.Art("art-mirror"),
+                        "Vorbește în fața camerei",
+                        "Te vezi pe ecran și primești câte un semn, pe loc. Nimic nu pleacă din telefon.",
+                    ) { push(AppRoute.SpeechCoach()) }
                 }
 
                 Heading("Exerciții scurte")

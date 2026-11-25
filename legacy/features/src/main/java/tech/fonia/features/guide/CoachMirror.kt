@@ -211,6 +211,8 @@ internal fun SelfView(
     mouth: MouthTracker?,
     levels: FaceLevels,
     reduceMotion: Boolean,
+    /** The lip guide's drawing (Setări → Experimental): off, the mirror still follows the mouth, without the guide. */
+    guides: Boolean,
     modifier: Modifier = Modifier,
     onFailure: (Throwable) -> Unit,
     overlay: @Composable BoxScope.() -> Unit,
@@ -247,7 +249,7 @@ internal fun SelfView(
                 else -> Unit
             }
         }
-        if (mouth != null) {
+        if (mouth != null && guides) {
             Box(framing) { LipTargetOverlay(mouth.levels, CoachMirrorColors, Modifier.fillMaxSize(), reducedMotion = reduceMotion, hintText = { null }) }
         }
         val corrections = remember { CorrectionPainter() }

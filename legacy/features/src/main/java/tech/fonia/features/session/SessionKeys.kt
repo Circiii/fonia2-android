@@ -51,4 +51,18 @@ val SessionFocus.key: String
 object Settings {
     const val keepRecordings = "keepChildRecordings"
     const val effectsOff = "effectsOff"
+
+    /** Setări → Experimental: the drawings on the live mirror (iOS `FaceGuideSwitch`). Off until an adult turns them on. */
+    const val faceGuides = "fonia.lab.faceGuides"
+
+    /** Setări → Experimental: „Vorbit în public” in front of the camera (iOS `CameraCoachSwitch`). Off by default. */
+    const val cameraCoach = "fonia.lab.cameraCoach"
+}
+
+/**
+ * The camera coach waits behind its switch, as on iOS, until it has been tried on a real phone. A child never sees it,
+ * switch or not: its report scores the talk.
+ */
+object CameraCoachSwitch {
+    fun shows(stored: Boolean, isChild: Boolean): Boolean = stored && !isChild
 }

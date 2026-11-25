@@ -224,7 +224,7 @@ fun ValueRow(title: String, value: String, onClick: (() -> kotlin.Unit)? = null,
 
 /** `Toggle(title, isOn:)`. */
 @Composable
-fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> kotlin.Unit) {
+fun ToggleRow(title: String, checked: Boolean, detail: String? = null, onCheckedChange: (Boolean) -> kotlin.Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -234,7 +234,7 @@ fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> kot
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        FoniaText(title, Modifier.weight(1f))
+        if (detail == null) FoniaText(title, Modifier.weight(1f)) else RowLabel(title, detail, Modifier.weight(1f))
         FoniaSwitch(checked)
     }
 }
