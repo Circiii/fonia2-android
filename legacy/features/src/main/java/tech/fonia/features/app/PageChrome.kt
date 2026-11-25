@@ -1,6 +1,15 @@
 package tech.fonia.features.app
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Constraints
+import kotlin.math.max
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -91,28 +100,58 @@ fun PageHeader(
     titleColor: Color = Palette.ink,
     onHelp: (() -> Unit)? = null,
 ) {
-    Box(
+    HeaderLine(
         modifier
             .fillMaxWidth()
             .padding(start = 14.dp, end = 14.dp, top = 6.dp, bottom = 8.dp),
-        contentAlignment = Alignment.Center,
+        title = {
+            FoniaText(
+                title,
+                modifier = Modifier
+                    .padding(horizontal = 58.dp)
+                    .semantics { heading() },
+                style = fTitle,
+                color = titleColor,
+                // A long title takes a second line rather than shrinking below its siblings.
+                maxLines = 2,
+                textAlign = TextAlign.Center,
+                minimumScaleFactor = 0.85f,
+            )
+        },
     ) {
-        FoniaText(
-            title,
-            modifier = Modifier
-                .padding(horizontal = 58.dp)
-                .semantics { heading() },
-            style = fTitle,
-            color = titleColor,
-            // A long title takes a second line rather than shrinking below its siblings.
-            maxLines = 2,
-            textAlign = TextAlign.Center,
-            minimumScaleFactor = 0.85f,
-        )
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             HeaderButton(closes)
             Spacer(Modifier.weight(1f))
             if (onHelp != null) HelpButton(onHelp)
+        }
+    }
+}
+
+/**
+ * A header's title over its row of round buttons. The buttons sit on the middle of the title's first line (Inter: about
+ * 0.62 of the first baseline), so a title on two lines grows downwards and the buttons stay where they are on every
+ * other page. The title is centred across the width; the buttons' row takes all of it.
+ */
+@Composable
+private fun HeaderLine(modifier: Modifier = Modifier, title: @Composable () -> Unit, buttons: @Composable () -> Unit) {
+    Layout(contents = listOf(title, buttons), modifier = modifier) { (titles, rows), constraints ->
+        val width = constraints.maxWidth
+        val loose = Constraints(maxWidth = width)
+        val titlePlaceable = titles.firstOrNull()?.measure(loose)
+        val rowPlaceable = rows.firstOrNull()?.measure(Constraints(minWidth = width, maxWidth = width))
+        val titleLine = titlePlaceable?.let {
+            val baseline = it[FirstBaseline]
+            if (baseline == AlignmentLine.Unspecified) it.height / 2 else (baseline * 0.62f).roundToInt()
+        } ?: 0
+        val rowHalf = (rowPlaceable?.height ?: 0) / 2
+        val line = max(titleLine, rowHalf)
+        val titleY = line - titleLine
+        val rowY = line - rowHalf
+        val height = max(titleY + (titlePlaceable?.height ?: 0), rowY + (rowPlaceable?.height ?: 0))
+            .coerceIn(constraints.minHeight, constraints.maxHeight)
+        layout(width, height) {
+            titlePlaceable?.place((width - titlePlaceable.width) / 2, titleY)
+            rowPlaceable?.place(0, rowY)
         }
     }
 }
@@ -157,8 +196,12 @@ fun ScenePage(
 ) {
     val pageColor = if (isNight) Palette.nightPage else if (onPaper) Palette.paper else Palette.sheet
     val titleColor = if (isNight) Palette.nightText else Palette.ink
-    val top = with(LocalDensity.current) { WindowInsets.statusBars.getTop(this).toDp() }
+    val density = LocalDensity.current
+    val topPx = WindowInsets.statusBars.getTop(density)
+    val top = with(density) { topPx.toDp() }
     val scroll = rememberScrollState()
+    // The scene's real height under the status bar, in pixels: it grows past `heroHeight` when the title needs it.
+    var heroExtent by remember { mutableStateOf<Int?>(null) }
     Box(Modifier.fillMaxSize().background(pageColor)) {
         Column(
             Modifier
@@ -166,11 +209,32 @@ fun ScenePage(
                 .verticalScroll(scroll)
                 .windowInsetsPadding(WindowInsets.navigationBars),
         ) {
-            // The scene, running up under the status bar.
-            Box(Modifier.fillMaxWidth().height(heroHeight + top).clipToBounds()) {
+            // The scene, running up under the status bar. The title and the art each get their own band, so a title on
+            // two lines, or at a large text size, pushes the art down (and the scene grows) instead of running into it.
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .clipToBounds()
+                    .onSizeChanged { heroExtent = it.height - topPx },
+            ) {
                 FoniaImage("scene-${scene.rawValue}-tall", Modifier.matchParentSize(), contentScale = ContentScale.Crop)
                 if (scene.hasSky) SkyLife(isNight = isNight, modifier = Modifier.matchParentSize())
-                Box(Modifier.matchParentSize(), contentAlignment = Alignment.Center, content = art)
+                SceneHero(
+                    topInset = top,
+                    minHeight = heroHeight + top,
+                    title = {
+                        FoniaText(
+                            title,
+                            modifier = Modifier.semantics { heading() },
+                            style = fTitle,
+                            color = titleColor,
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+                    art = { Box(contentAlignment = Alignment.Center, content = art) },
+                )
+                // Not a decoration: the scene's lower edge melts into the page under the floating sentence, so the
+                // picture has no hard cut behind the card.
                 if (!isNight) {
                     Box(
                         Modifier
@@ -180,23 +244,13 @@ fun ScenePage(
                             .background(Brush.verticalGradient(listOf(pageColor.opacity(0.0), pageColor))),
                     )
                 }
-                FoniaText(
-                    title,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = top + 12.dp, start = 60.dp, end = 60.dp)
-                        .semantics { heading() },
-                    style = fTitle,
-                    color = titleColor,
-                    textAlign = TextAlign.Center,
-                )
             }
             // Every scene page carries its sentence the same way: a white card floating over the bottom of the scene.
             FloatingPanel(
                 sentence,
                 Modifier
                     .padding(horizontal = 16.dp)
-                    .pullUp(46.dp),
+                    .pullUp(PanelOverlap),
             )
             Column(
                 Modifier
@@ -210,34 +264,71 @@ fun ScenePage(
         // so they never float over the rows and the status bar never sits on text. It comes in just before the
         // sentence under the scene reaches the buttons.
         val reduceMotion = LocalReduceMotion.current
-        val threshold = with(LocalDensity.current) { (heroHeight - 110.dp).toPx() }
-        val showsBar by remember(threshold) { derivedStateOf { scroll.value > threshold } }
+        val defaultExtent = with(density) { heroHeight.roundToPx() }
+        val margin = with(density) { 110.dp.roundToPx() }
+        val showsBar by remember(defaultExtent, margin) { derivedStateOf { scroll.value > (heroExtent ?: defaultExtent) - margin } }
         val barAlpha by animateFloatAsState(if (showsBar) 1f else 0f, if (reduceMotion) snap() else tween(180, easing = LinearOutSlowInEasing), label = "scene bar")
-        Box(
+        HeaderLine(
             Modifier
                 .fillMaxWidth()
                 .background(pageColor.copy(alpha = pageColor.alpha * barAlpha))
                 .windowInsetsPadding(WindowInsets.statusBars)
                 .padding(start = 14.dp, end = 14.dp, top = 6.dp, bottom = 8.dp),
-            contentAlignment = Alignment.Center,
+            title = {
+                // Same rule as `PageHeader`: a long title takes a second line instead of being cut.
+                if (barAlpha > 0f) {
+                    FoniaText(
+                        title,
+                        modifier = Modifier
+                            .padding(horizontal = 58.dp)
+                            .graphicsLayer { alpha = barAlpha }
+                            .clearAndSetSemantics {},
+                        style = fTitle,
+                        color = titleColor,
+                        maxLines = 2,
+                        textAlign = TextAlign.Center,
+                        minimumScaleFactor = 0.85f,
+                    )
+                }
+            },
         ) {
-            if (barAlpha > 0f) {
-                FoniaText(
-                    title,
-                    modifier = Modifier
-                        .padding(horizontal = 44.dp)
-                        .graphicsLayer { alpha = barAlpha }
-                        .clearAndSetSemantics {},
-                    style = fTitle,
-                    color = titleColor,
-                    maxLines = 1,
-                    textAlign = TextAlign.Center,
-                )
-            }
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 HeaderButton()
                 Spacer(Modifier.weight(1f))
                 if (onHelp != null) HelpButton(onHelp)
+            }
+        }
+    }
+}
+
+/** How far the sentence card climbs over the bottom of the scene. */
+private val PanelOverlap = 46.dp
+
+/**
+ * Lays out a scene's title under the status bar and its art centred in the room left between the title and the sentence
+ * card. The scene is at least [minHeight] tall and grows when the two would otherwise touch.
+ */
+@Composable
+private fun SceneHero(topInset: Dp, minHeight: Dp, title: @Composable () -> Unit, art: @Composable () -> Unit) {
+    Layout(contents = listOf(title, art), modifier = Modifier.fillMaxWidth()) { (titles, arts), constraints ->
+        val width = constraints.maxWidth
+        // Room for the round buttons on each side of the title.
+        val side = 60.dp.roundToPx()
+        val titleTop = topInset.roundToPx() + 12.dp.roundToPx()
+        val gap = 12.dp.roundToPx()
+        val overlap = PanelOverlap.roundToPx()
+        val titlePlaceable = titles.firstOrNull()?.measure(Constraints(maxWidth = (width - side * 2).coerceAtLeast(0)))
+        val artPlaceable = arts.firstOrNull()?.measure(Constraints(maxWidth = width))
+        val titleHeight = titlePlaceable?.height ?: 0
+        val artHeight = artPlaceable?.height ?: 0
+        val artRoom = if (artHeight > 0) gap + artHeight + gap else 0
+        val height = max(minHeight.roundToPx(), titleTop + titleHeight + artRoom + overlap)
+        layout(width, height) {
+            titlePlaceable?.place((width - titlePlaceable.width) / 2, titleTop)
+            if (artPlaceable != null) {
+                val bandTop = titleTop + titleHeight + gap
+                val bandBottom = height - overlap - gap
+                artPlaceable.place((width - artPlaceable.width) / 2, (bandTop + bandBottom - artHeight) / 2)
             }
         }
     }

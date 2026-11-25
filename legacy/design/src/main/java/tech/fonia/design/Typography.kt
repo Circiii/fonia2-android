@@ -198,6 +198,12 @@ fun letterPoster(size: Number, weight: PracticeWeight = PracticeWeight.bold): Te
     return practice(size, weight).copy(fontSize = px.sp, lineHeight = (px * 1.15f).sp)
 }
 
+/** iOS `dynamicTypeSize >= .xxLarge`: a font scale of 1.3 and up. */
+val isLargeText: Boolean
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalDensity.current.fontScale >= 1.3f
+
 /** `Font.monospacedDigit()`: Baloo's tabular figures. */
 fun TextStyle.monospacedDigit(): TextStyle = copy(fontFeatureSettings = "tnum")
 

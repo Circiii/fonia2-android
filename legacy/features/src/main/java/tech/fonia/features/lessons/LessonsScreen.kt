@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -385,7 +384,7 @@ fun UnitScreen(unit: CourseUnit, path: PathModel, app: AppModel) {
         sentence = sentence,
         onPaper = true,
         heroHeight = 250.dp,
-        art = { UnitArt(unit, Modifier.height(104.dp).offset(y = 16.dp)) },
+        art = { UnitArt(unit, Modifier.height(104.dp)) },
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (sound != null) Tools(sound, push)

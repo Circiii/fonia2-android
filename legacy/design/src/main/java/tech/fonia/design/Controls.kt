@@ -129,7 +129,15 @@ fun FoniaLabel(title: String, icon: FoniaIcon, iconSize: Float = 22f, modifier: 
  * layout around it.
  */
 @Composable
-internal fun Modifier.raised(shape: Shape, face: Color, edge: Color, depth: Dp, isPressed: Boolean): Modifier {
+internal fun Modifier.raised(
+    shape: Shape,
+    face: Color,
+    edge: Color,
+    depth: Dp,
+    isPressed: Boolean,
+    /** A hairline round the face, for a white button that may stand on a white sheet. */
+    outline: Color = Color.Transparent,
+): Modifier {
     val pressed by animateFloatAsState(if (isPressed) 1f else 0f, press, label = "raised")
     return this
         .drawBehind {
@@ -140,6 +148,7 @@ internal fun Modifier.raised(shape: Shape, face: Color, edge: Color, depth: Dp, 
         .padding(bottom = depth)
         .graphicsLayer { translationY = pressed * depth.toPx() }
         .background(face, shape)
+        .then(if (outline.alpha > 0f) Modifier.border(1.dp, outline, shape) else Modifier)
 }
 
 internal val Capsule: Shape = RoundedCornerShape(percent = 50)
@@ -177,6 +186,8 @@ class FoniButtonStyle(
                         edge = if (!on) Color.Transparent else if (primary) Palette.accentEdge else Palette.chipEdge,
                         depth = 3.3.dp,
                         isPressed = configuration.isPressed,
+                        // On the white end-of-lesson sheet a white face alone shows only its lower edge.
+                        outline = if (!primary && on) Palette.chipEdge.copy(alpha = 0.55f) else Color.Transparent,
                     )
                     .fillMaxWidth()
                     .heightIn(min = minHeight ?: if (size == Size.large) 48.dp else 44.dp)
@@ -352,8 +363,10 @@ class IconTileButtonStyle(val minHeight: Dp = 54.dp) : ButtonStyle {
                     .border(1.5.dp, Palette.line, shape)
                     .fillMaxWidth()
                     .heightIn(min = maxOf(44.dp, minHeight))
-                    .padding(6.dp),
-                contentAlignment = Alignment.Center,
+                    .padding(horizontal = 6.dp, vertical = 10.dp),
+                // Tiles in a row share one height. Hung from the top, a two-line title only grows down, so the icons
+                // and the first lines stay level with the tiles next to it.
+                contentAlignment = Alignment.TopCenter,
             ) { configuration.label() }
         }
     }

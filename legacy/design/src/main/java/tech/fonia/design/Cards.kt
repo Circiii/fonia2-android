@@ -275,14 +275,23 @@ fun RisingPanel(
 /** A white panel that floats over the bottom of a scene, holding one short sentence. */
 @Composable
 fun FloatingPanel(text: String, modifier: Modifier = Modifier) {
+    // One or two lines read well centred. A paragraph (the English cues run to five lines) is set flush left, so every
+    // line starts at the same edge.
+    val isParagraph = text.length > if (isLargeText) 70 else 120
     Box(
         modifier
             .fillMaxWidth()
             .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center,
+            .padding(horizontal = if (isParagraph) 18.dp else 16.dp, vertical = 16.dp),
+        contentAlignment = if (isParagraph) Alignment.CenterStart else Alignment.Center,
     ) {
-        FoniaText(text, style = fBody, color = Palette.ink, textAlign = TextAlign.Center)
+        FoniaText(
+            text,
+            Modifier.fillMaxWidth(),
+            style = fBody,
+            color = Palette.ink,
+            textAlign = if (isParagraph) TextAlign.Start else TextAlign.Center,
+        )
     }
 }
 

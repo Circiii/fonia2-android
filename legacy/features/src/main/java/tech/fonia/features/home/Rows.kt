@@ -36,6 +36,7 @@ import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fCaption
+import tech.fonia.design.isLargeText
 import tech.fonia.design.monospacedDigit
 import tech.fonia.design.ui
 import tech.fonia.features.app.SpeechHub
@@ -50,7 +51,8 @@ fun CardRow(tile: ArtTileMark, title: String, detail: String, modifier: Modifier
             ArtTile(tile, side = 56f)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 FoniaText(title, style = fBodyStrong, color = Palette.ink, textAlign = TextAlign.Start)
-                FoniaText(detail, style = fCaption, color = Palette.inkSoft, textAlign = TextAlign.Start, maxLines = 3)
+                // Two lines keep the rows even; with large text the detail runs on rather than being cut.
+                FoniaText(detail, style = fCaption, color = Palette.inkSoft, textAlign = TextAlign.Start, maxLines = if (isLargeText) Int.MAX_VALUE else 2)
             }
             Box(Modifier.padding(end = 6.dp)) { trailing() }
         }

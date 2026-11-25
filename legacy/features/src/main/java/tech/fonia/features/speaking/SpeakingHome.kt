@@ -176,6 +176,8 @@ fun SpeakingHome(profile: Profile, app: AppModel, path: PathModel) {
             scene = SceneName.speaking,
             title = "Vorbit în public",
             sentence = "Spui, te asculți, apoi spui din nou, mai scurt.",
+            // Rows are white cards: on the white sheet they lost their edges, so the page sits on paper.
+            onPaper = true,
             heroHeight = 250.dp,
         ) {
             Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
