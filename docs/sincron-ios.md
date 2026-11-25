@@ -105,6 +105,40 @@ Ce nu s-a făcut în tura asta:
 - Ghidul sunetului de pe Android nu are nota pentru adult, iar indiciile oglinzii noi au un singur rând. Acolo nu era nimic de legat.
 - Rândul „Se deschide când îți iese sunetul de 5 ori.” nu mai apare pe pagina sunetului. Punctele de reușită au rămas.
 
+### A patra tură (25 noiembrie 2026, seara)
+
+Sursa: `docs/port-android.md` §24 și §25 din aplicația iOS. Conținutul e fixat la `f5acae7` din fonia-content („clearer english and pitch subtitles”).
+
+Din §25 (texte):
+
+- **Conținutul.** `english.json` și `diction.json` vin direct din submodul, fără pas de generare: „Accentul în cuvânt”, cele două indicii noi la contrastele de accent și „Cum urcă și coboară vocea” la Ton. Prima propoziție din indiciu e și subtitlul unității din pagina „Engleză”.
+- **Cursul (`Course.kt`).** Încălzirea gurii: „Câteva mișcări pentru limbă și buze”. Dicția: „Pauzele” („Te oprești la fiecare linie”), „Odată cu vocea” („Asculți și spui în același timp”), „Sfârșitul cuvintelor”. Unitatea Tonul: „Cum urcă și coboară vocea”.
+- **Engleză.** Nota de sus are textul nou de pe iOS. Pe Android era deja una mai scurtă („Întâi accentul și vocalele. …”), dar s-a luat textul iOS, ca să fie la fel.
+- **Încălzirea.** „Înainte de sunete, încălzim gura. Tragi aer pe nas, apoi sufli încet.”
+- **Vorbit în public.** „Exersează asta”, „A curs bine. Acum spune același lucru în mai puțin timp.” și „După câteva încercări îți arăt cum se schimbă la tine.” Propoziția de sub scenă era deja cea scurtă.
+- **Setări.** Jurnalul de exersare: „Notează pentru logoped câte încercări au fost în fiecare zi, doar ca numere. Fără voce.”
+
+Din §24 (așezare):
+
+- **Scena paginilor cu scenă.** Titlul și desenul au fiecare banda lor: titlul la 12 dp sub bara de stare, cu 60 dp liberi pe laturi, iar desenul centrat între titlu și panoul cu propoziția, cu 12 dp de aer. Scena păstrează înălțimea de până acum și crește când titlul trece pe două rânduri. Desenul nu mai e coborât cu 16 dp. Bara apare după înălțimea reală a scenei.
+- **Bara de sus a paginilor cu scenă** ia titlul pe două rânduri, ca antetul paginilor simple.
+- **Butoanele rotunde** din antet și din bară stau la mijlocul primului rând al titlului (0,62 din linia de bază).
+- **Panoul cu propoziția.** Peste 120 de caractere (70 de la scara de text 1,3 în sus) textul stă la stânga, cu 18 dp pe laturi.
+- **Butonul secundar alb** are contur de 1 dp, `chipEdge` la 55%. Oprit, nu are.
+- **Vorbit în public** stă pe hârtie.
+- **Rândurile de lecție.** Detaliul are cel mult două rânduri (era trei). De la scara de text 1,3 în sus nu mai e tăiat.
+- **„Ascultă-te”, „Așa se spune”, „Mai rar”.** Conținutul pornește de sus, cu 10 dp deasupra.
+
+Ce nu s-a făcut în tura asta:
+
+- „Ce urmează alege un adult.”: rezultatul verificării rapide de pe Android nu are rândul acesta.
+- Intro-ul BAC și eticheta „alege ce simți tu”: Android nu are autoevaluarea pe competențe.
+- Textele cu momentul zilei de la primul start: Android nu are pasul acela.
+- Iconița din rândurile de setări: Setările de pe Android sunt o listă simplă, fără pătrate cu iconiță.
+- Rândul „Urmează la S: …” după dicție: pe Android, la finalul unui pas de dicție rândul spune deja pasul următor al antrenamentului („Urmează: …”, fără sunet), nu lecția din drumul pe sunete.
+- „Spui odată cu vocea” rămâne la lecțiile de melodie din engleză, ca pe iOS.
+- Textele cu voce înregistrată din `sounds.json` nu s-au schimbat (nici pe iOS).
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.
