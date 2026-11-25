@@ -116,13 +116,16 @@ fun MainTabs(profile: Profile, app: AppModel, showGrownups: Boolean, onShowGrown
         path.profile = profile
         path.reload(app.repository, app.checks)
     }
-    LaunchedEffect(Unit) {
-        app.takePendingRoute()?.let { AppRoute.parse(it) }?.let { stack.push(it) }
-    }
 
     // Once, when the first run ends: the quick check, which sets what to practise.
     val offering = app.offerCheck && !app.calibrating && profile.track == Profile.Track.Ro && app.ticket == null
     val calibrating = app.calibrating && app.ticket == null
+    // A debug `foniaRoute` page opens once the first run's covers have gone, as a page someone opened would: under the
+    // calibration it would speak and listen while the calibration's microphone is open.
+    LaunchedEffect(offering, calibrating) {
+        if (offering || calibrating) return@LaunchedEffect
+        app.takePendingRoute()?.let { AppRoute.parse(it) }?.let { stack.push(it) }
+    }
     Box(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize().then(if (showStart) Modifier.clearAndSetSemantics {} else Modifier)) {
             // Under a cover the pages stand still.
