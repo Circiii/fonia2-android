@@ -43,25 +43,25 @@ data class Judge2Thresholds(
     val burst: BurstThresholds = BurstThresholds(),
     val visual: VisualThresholds = VisualThresholds(),
     val personal: PersonalThresholds = PersonalThresholds(),
-    val affricate: AffricateThresholds = AffricateThresholds(),
+    /** Affricate onset gates, keyed by sound ("ce", "ge"); a sound not listed is off. */
+    val affricate: Map<String, AffricateGate> = emptyMap(),
     val finalL: FinalLThresholds = FinalLThresholds(),
 )
 
 /**
- * Affricate onset gates (`Features.STOP_ONSET`, `docs/JUDECATOR_AFRICATE.md`): ZIPA-small has no [tʃ]/[dʒ] token and
- * hears [s]/[ʃ] in good CE and [ʒ] in good GE (EVAL_v2), while the DSP can hear the closure and release. Off until
- * real takes give before/after numbers: no sounds listed, [trustAt] 2, [vetoAt] −1.
+ * Affricate onset gates for one sound (`Features.STOP_ONSET`, `docs/JUDECATOR_AFRICATE.md`): ZIPA-small has no
+ * [tʃ]/[dʒ] token and hears [s]/[ʃ] in good CE and [ʒ] in good GE (EVAL_v2), while the DSP can hear the closure and
+ * release. Off until real takes give before/after numbers: [trustAt] 2, [vetoAt] −1.
  */
 @Serializable
-data class AffricateThresholds(
+data class AffricateGate(
     /**
-     * Trust, keyed by sound ("ce", "ge"): these phoneme-model candidates ("ʃ", "s") are set aside, and the GOP recomputed
-     * without them, when `stopOnset` ≥ [trustAt]. It raises acceptance, so it ships only if praised errors stay ≤ 5 %.
+     * Trust: the phoneme-model candidates [trust] ("ʃ", "s") are set aside, and the GOP recomputed without them, when
+     * `stopOnset` ≥ [trustAt]. It raises acceptance, so it ships only if praised errors stay ≤ 5 %.
      */
-    val trust: Map<String, List<String>> = emptyMap(),
     val trustAt: Float = 2f,
-    /** Veto: on these sounds a take whose `stopOnset` ≤ [vetoAt] (the frication swells like a fricative) is not praised. */
-    val veto: List<String> = emptyList(),
+    val trust: List<String> = emptyList(),
+    /** Veto: a take whose `stopOnset` ≤ [vetoAt] (the frication swells in like a fricative's) is not praised. */
     val vetoAt: Float = -1f,
 )
 

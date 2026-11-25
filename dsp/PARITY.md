@@ -56,5 +56,6 @@ New pure analysis for the judge's opt-in affricate gates (`judge2.affricate`, of
 On the frication span the judge already has (refined ∪ detector), it reads how the > 2 kHz envelope starts: `attackDb`
 (rise over the 10 ms ending 6 dB under the plateau, capped at 40), `spikeDb` (first 10 ms minus the median of 15–45 ms
 after), `leadMs` (voice bar under 1 kHz while > 2 kHz stays 20 dB under the plateau, only when silence bounds it), and
-`stopOnset` in [0, 1], a mean of clamped ramps (closure `gapMs` and, voiced, `leadMs` double weight). Ramps are where the
+`stopOnset` in [0, 1], a mean of clamped ramps (closure `gapMs`, only when one of 10 ms or more was found, and, voiced,
+`leadMs` double weight). Ramps are where the
 synthetic cases split, not a fit. `AffricateOnsetTests` (7) run on synthetic releases, ramps and voice bars.

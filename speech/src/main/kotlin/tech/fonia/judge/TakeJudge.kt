@@ -211,16 +211,20 @@ class TakeJudge(
         } else scored.minBy { it.second.correct }
         val fastCorrect = if (which == Head.Fast) probs.correct else head.probabilities(features, Head.Fast.raw)[0]
         var decision = DecisionPolicy.decide(probs, which, request.sound, unlock, runtime, blocked, measured.capture)
-        // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself.
+        // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself. With an opt-in
+        // gate on (off by default), the candidates it set aside do not count.
+        val gated = features["stopTrusted"] == 1f || features["finalGlideMasked"] == 1f
+        val candidates = if (gated) features.filterKeys { it.startsWith(Features.LPR_PREFIX) }.values else phones?.lpr?.values.orEmpty()
         if (useFull && decision.verdict != Verdict.Correct && probs.correct >= v2.praise.full && fastCorrect >= v2.praise.fast &&
-            phones!!.lpr.values.all { it >= 0f }
+            candidates.all { it >= 0f }
         ) {
             decision = decision.copy(verdict = Verdict.Correct, confidence = probs.correct, withheld = null, adultNote = null)
             notes += "praiseAgree"
         }
         // v2 affricate veto (off by default): a CE/GE whose frication swells in like a fricative's is not praised.
         val stop = features[Features.STOP_ONSET] ?: Float.NaN
-        if (decision.verdict == Verdict.Correct && request.sound.raw in v2.affricate.veto && !stop.isNaN() && stop <= v2.affricate.vetoAt) {
+        val vetoAt = v2.affricate[request.sound.raw]?.vetoAt ?: -1f
+        if (decision.verdict == Verdict.Correct && !stop.isNaN() && stop <= vetoAt) {
             decision = decision.copy(verdict = Verdict.Almost)
             notes += "stopVeto"
         }
@@ -291,11 +295,10 @@ class TakeJudge(
      * Note `stopTrusted` in the trace.
      */
     private fun trustStop(features: Map<String, Float>, request: JudgeRequest, v2: Judge2Thresholds): Map<String, Float> {
-        val a = v2.affricate
-        val candidates = a.trust[request.sound.raw] ?: return features
+        val gate = v2.affricate[request.sound.raw] ?: return features
         val stop = features[Features.STOP_ONSET] ?: return features
-        if (stop.isNaN() || stop < a.trustAt) return features
-        return masked(features, candidates)?.also { it["stopTrusted"] = 1f } ?: features
+        if (stop.isNaN() || stop < gate.trustAt) return features
+        return masked(features, gate.trust)?.also { it["stopTrusted"] = 1f } ?: features
     }
 
     /**

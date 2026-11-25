@@ -26,8 +26,10 @@ data class AffricateOnset(
     val leadMs: Float,
     /**
      * 0 = fricative onset … 1 = stop onset: the mean of ramps on [attackDb] (10 → 30 dB), [spikeDb] (−2 → +3 dB),
-     * the closure `gapMs` when one was measured (10 → 40 ms, double weight) and, for voiced targets, [leadMs]
-     * (10 → 40 ms, double weight). Untuned: the ramps are where the synthetic cases split, not a fit on takes.
+     * the closure `gapMs` when one of 10 ms or more was found (10 → 40 ms, double weight) and, for voiced targets,
+     * [leadMs] (10 → 40 ms, double weight). A shorter or zero closure is not counted: on the eval's prompt voice the
+     * valid closure was 0 ms in most good CE and GE takes, so a zero says the closure was not found, not that there
+     * was none. Untuned: the ramps are where the synthetic cases split, not a fit on takes.
      */
     val stopOnset: Float,
     /** Where the frication first came within 6 dB of its plateau, seconds. */
@@ -89,7 +91,7 @@ fun affricateOnset(
     return AffricateOnset(attack, spike, lead, stopOnset(attack, spike, gapMs, if (voiced) lead else Float.NaN), h.time(r))
 }
 
-/** The [AffricateOnset.stopOnset] mix; NaN when neither the attack nor the spike was measured. */
+/** The [AffricateOnset.stopOnset] mix; NaN when neither the attack nor the spike was measured. A closure under 10 ms is left out. */
 internal fun stopOnset(attackDb: Float, spikeDb: Float, gapMs: Float, leadMs: Float): Float {
     if (attackDb.isNaN() && spikeDb.isNaN()) return Float.NaN
     fun ramp(x: Float, from: Float, to: Float): Float = ((x - from) / (to - from)).coerceIn(0f, 1f)
@@ -102,7 +104,7 @@ internal fun stopOnset(attackDb: Float, spikeDb: Float, gapMs: Float, leadMs: Fl
     }
     add(attackDb, 10f, 30f, 1f)
     add(spikeDb, -2f, 3f, 1f)
-    add(gapMs, 10f, 40f, 2f)
+    if (gapMs >= 10f) add(gapMs, 10f, 40f, 2f)
     add(leadMs, 10f, 40f, 2f)
     return sum / weight
 }

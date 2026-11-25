@@ -118,5 +118,9 @@ class AffricateOnsetTests {
         assertEquals(1f, stopOnset(40f, 3f, Float.NaN, Float.NaN), 1e-6f)
         assertEquals(0.6f, stopOnset(40f, Float.NaN, 40f, 0f), 1e-6f)
         assertEquals(0.5f, stopOnset(20f, Float.NaN, Float.NaN, Float.NaN), 1e-6f)
+        // A closure that was not found (under 10 ms) says nothing; the lead is a measurement either way.
+        assertEquals(1f, stopOnset(40f, 3f, 0f, Float.NaN), 1e-6f)
+        assertEquals(1f, stopOnset(40f, 3f, 9f, Float.NaN), 1e-6f)
+        assertEquals(0.5f, stopOnset(40f, 3f, Float.NaN, 0f), 1e-6f)
     }
 }

@@ -14,7 +14,7 @@ class AffricateGateTests {
     private val spec = loadSpec()
     private val detector = TakeJudge(spec, unlock = UnlockView.everythingUnlocked())
 
-    private fun with(affricate: AffricateThresholds = AffricateThresholds(), finalL: FinalLThresholds = FinalLThresholds()): TakeJudge {
+    private fun with(affricate: Map<String, AffricateGate> = emptyMap(), finalL: FinalLThresholds = FinalLThresholds()): TakeJudge {
         val j2 = spec.population.judge2.copy(affricate = affricate, finalL = finalL)
         return TakeJudge(JudgeSpec(spec.population.copy(judge2 = j2), spec.fusion, spec.unlock, spec.feedback), unlock = UnlockView.everythingUnlocked())
     }
@@ -47,13 +47,18 @@ class AffricateGateTests {
     @Test
     fun theShippedSpecHasBothGatesOff() {
         val j2 = spec.population.judge2
-        assertTrue(j2.affricate.trust.isEmpty() && j2.affricate.veto.isEmpty(), "${j2.affricate}")
-        assertTrue(j2.affricate.trustAt > 1f && j2.affricate.vetoAt < 0f, "${j2.affricate}")
+        assertTrue(j2.affricate.isEmpty(), "${j2.affricate}")
         assertEquals(0f, j2.finalL.minGlideNats)
+        // A gate read with no thresholds is off.
+        assertTrue(AffricateGate().trustAt > 1f && AffricateGate().vetoAt < 0f)
         // A spec without the sections reads as off.
         val parsed = JudgeSpec.json.decodeFromString(Judge2Thresholds.serializer(), """{"version": "x"}""")
-        assertEquals(AffricateThresholds(), parsed.affricate)
+        assertTrue(parsed.affricate.isEmpty())
         assertEquals(FinalLThresholds(), parsed.finalL)
+        val on = JudgeSpec.json.decodeFromString(Judge2Thresholds.serializer(),
+            """{"affricate": {"ce": {"trustAt": 0.7, "trust": ["ʃ", "s"], "vetoAt": 0.2}}, "finalL": {"minGlideNats": 8}}""")
+        assertEquals(AffricateGate(0.7f, listOf("ʃ", "s"), 0.2f), on.affricate["ce"])
+        assertEquals(FinalLThresholds(8f, mask = false), on.finalL)
     }
 
     @Test
@@ -70,7 +75,7 @@ class AffricateGateTests {
     @Test
     fun withTheGatesOffNothingChanges() {
         // Listed sounds but sentinel thresholds: the same as no section at all.
-        val sentinel = with(AffricateThresholds(trust = mapOf("ce" to listOf("ʃ", "s")), veto = listOf("ce")), FinalLThresholds(0f, mask = true))
+        val sentinel = with(mapOf("ce" to AffricateGate(trust = listOf("ʃ", "s"))), FinalLThresholds(0f, mask = true))
         for (take in listOf(release, fricative)) for (phones in listOf(null, heardFricative, heardTarget)) {
             val m = detector.measure(cer, take)
             val off = detector.decide(m, phones)
@@ -83,7 +88,7 @@ class AffricateGateTests {
 
     @Test
     fun trustSetsAsideTheFricativesZipaHeardOnlyAfterARelease() {
-        val trust = with(AffricateThresholds(trust = mapOf("ce" to listOf("ʃ", "s")), trustAt = 0.6f))
+        val trust = with(mapOf("ce" to AffricateGate(trustAt = 0.6f, trust = listOf("ʃ", "s"))))
         val m = detector.measure(cer, release)
         val off = detector.decide(m, heardFricative)
         val on = trust.decide(m, heardFricative)
@@ -92,6 +97,7 @@ class AffricateGateTests {
         // GOP over what is left (ts at 6, t and ∅ at 8): −ln(1 + e^−6 + 2·e^−8).
         assertEquals(-0.0031f, on.evidence.features.getValue(Features.ZIPA_GOP), 0.0005f)
         assertTrue(on.probabilities.getValue("correct") > off.probabilities.getValue("correct"), "${off.probabilities} → ${on.probabilities}")
+        assertEquals(Verdict.Correct, on.verdict, "$off → $on")
         // A swell keeps what ZIPA heard.
         val s = detector.measure(cer, fricative)
         assertEquals(detector.decide(s, heardFricative).probabilities, trust.decide(s, heardFricative).probabilities)
@@ -99,7 +105,7 @@ class AffricateGateTests {
 
     @Test
     fun vetoKeepsASwellFromPraiseAndLetsAReleaseThrough() {
-        val veto = with(AffricateThresholds(veto = listOf("ce"), vetoAt = 0.3f))
+        val veto = with(mapOf("ce" to AffricateGate(vetoAt = 0.3f)))
         for ((take, vetoed) in listOf(release to false, fricative to true)) {
             val m = detector.measure(cer, take)
             val off = detector.decide(m, heardTarget)
