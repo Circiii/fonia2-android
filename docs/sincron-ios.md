@@ -46,6 +46,40 @@ Aplicația livrată (`:legacy:app` → `:legacy:features`) a fost adusă la star
   - Alarma e inexactă (fereastră de 10 minute), deci nu cere permisiunea de alarme exacte. Revine după repornirea telefonului, după schimbarea orei și la deschiderea aplicației după o oprire forțată.
   - „Șterge tot” oprește alarma și notificarea afișată.
 
+### A treia tură (25 noiembrie 2026)
+
+Sursa: `docs/port-android.md` §21 și §22 din aplicația iOS.
+
+- **Partea de jos a unei încercări.** Jos e o singură foaie albă, cu aceeași mărime în „Ascultă”, „Acum tu”, „Te aud” și „Mă gândesc”.
+  - Linia Ș–S stă chiar deasupra rândului de jos. Rândul are înălțimea lui „Mai departe”: 64 dp la copil, 56 la adult.
+  - Pistele liniei stau pe loc tot timpul. Bila se vede doar cât e microfonul deschis.
+  - Pe o încercare fără linie (tăcută sau judecată de el), locul liniei rămâne gol, dacă alte încercări din lecție o au. Așa foaia nu-și schimbă mărimea.
+  - Cardul cu rezultatul e aceeași foaie. „Ascultă-te”, „Așa se spune” și „Mai rar” sunt trei butoane egale pe un rând, cu iconița deasupra. La text foarte mare trec unul sub altul. Dovada încercării (linia) stă chiar deasupra lui „Mai departe”.
+  - Cercul „Te aud” crește doar în pătratul lui de 56 dp, așa că nu acoperă cuvintele. Barele vocii au loc rezervat și se văd doar cât ascultă.
+  - Cuvintele se schimbă pe loc: cele vechi ies, apoi intră cele noi. Cardul intră după ce linia a ieșit. Pagina următoare intră după ce a ieșit cea veche. Cu „Reduce mișcarea”, doar se estompează.
+  - „Nu te aud” stă peste Foni, nu sub linie.
+  - La „Ține sunetul” e aceeași foaie, iar la final linia spune „Ai ținut până la capăt. Bravo!”, „Ai stins lumânarea. Bravo!” sau „Gata”.
+- **Fără vârste.** Propoziția cu vârsta a ieșit din notele pentru părinte, iar `typicalByAge` a ieșit din conținut și din cod. Notele sunt identice cu cele de pe iOS.
+- **Regula celor două zile.** Un copil urcă o treaptă doar dacă a avut un bloc bun și într-o zi de dinainte. Două lecții bune în aceeași zi nu ajung. Ce își notează copilul singur („Bine”, „Aproape”) nu umple un bloc. Adultul care exersează singur nu are regula asta.
+- **Butonul mare.** Un sunet ajuns la „Peste tot” (automatizare) lasă loc următorului. De la propoziții în sus, două sunete se iau pe rând, câte unul pe zi, chiar dacă exersează o zi da, una nu.
+- **Întrebarea despre misiune.** După o zi cu „Azi, peste zi”, următoarea lecție întreabă adultul o singură dată: „A folosit sunetul peste zi?”, cu „Da”, „Uneori”, „Încă nu” și „Nu acum”.
+  - Pagina se cheamă „Pentru adult” la copil și „Azi, peste zi” la adult.
+  - Nu apare la verificarea rapidă și nici cu `foniaNoAdultCards`. Pentru probă există `foniaMissionSample`.
+  - Răspunsul apare în Jurnal și în raportul PDF, pe un rând: „R: A folosit sunetul peste zi? Uneori.”
+  - E salvat în tabelul nou `missionCheck` (migrarea `v3-mission-checks`). Se șterge cu profilul și cu „Șterge tot”. Nu intră în exportul JSON, ca pe iOS.
+- **Numărătorile.** Copilul nu mai vede câte lecții are făcute: nici pe Acasă, nici la medalie, nici „N din M” pe cardurile din Lecții. A ieșit și promisiunea „6–8 săptămâni”.
+
+Decizii din tura asta:
+
+- **Regula celor două zile după propoziții.** Pe Android, de la propoziții în sus, copilul urcă prin reușita lui, fără să fie întrebat un adult. Regula celor două zile se aplică și acolo: o singură zi bună nu ajunge.
+- **„Mă gândesc”.** Linia spunea „Ascult” cât se judecă încercarea. Acum spune „Mă gândesc”, ca pe iOS, cu clepsidra.
+- **Linia pe încercările tăcute.** Android arăta linia Ș–S și pe încercările tăcute sau judecate de copil. Acum o arată doar unde iOS o arată (blocurile care răspund pe loc), iar pe celelalte îi ține locul gol.
+
+Ce nu s-a făcut în tura asta:
+
+- Pe iOS, cardurile din Lecții mai arată „N din M” și la copil. Pe Android nu le mai arată.
+- Ecranele de dicție, verificarea rapidă și oglinda nu folosesc foaia de jos. Au rămas cum erau.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.
