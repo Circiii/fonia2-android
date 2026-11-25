@@ -189,12 +189,16 @@ object AdultCards {
     /** In the box of the report that says how to read it. */
     const val STAGE_REPORT_NOTE = "Numele etapei (Emitere, Consolidare, Diferențiere, Automatizare) arată doar unde se află lecțiile în aplicație. Nu e o evaluare."
 
+    /** The one line every report for the adult says what it is with: the PDF report, „Săptămâna pe scurt”, „Cum merge”. */
+    const val REPORT_DISCLAIMER = "Raportul arată ce s-a exersat și ce a auzit telefonul. Nu e o evaluare: concluziile le trage logopedul."
+
     /** Every line above, for tests that look at all the wording at once. */
     val everyLine: List<String>
         get() {
             val fixed = listOf(
                 PAGE_TITLE, TARGET_HEADING, GOOD_TRY_HEADING, AFTER_MISS_HEADING, UNDERSTOOD, REOPEN_HINT,
-                SCREEN_TITLE, SCREEN_DETAIL, SCREEN_LEAD, START_SHEET_BUTTON, STAGE_REPORT_NOTE, AUTOMATIZARE_NOTE,
+                SCREEN_TITLE, SCREEN_DETAIL, SCREEN_LEAD, START_SHEET_BUTTON, STAGE_REPORT_NOTE, REPORT_DISCLAIMER,
+                AUTOMATIZARE_NOTE,
             )
             val cards = AdultCardKind.entries.flatMap { kind ->
                 val card = card(kind)

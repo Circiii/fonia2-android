@@ -162,6 +162,9 @@ class PracticeReportTests {
         // The text has the stage under the ladder, and the box that says how to read it explains the names.
         assertTrue(report.text.contains("${s.ladder}\n${s.stageLine}"))
         assertTrue(report.text.contains(AdultCards.STAGE_REPORT_NOTE))
+        // The same line as „Săptămâna pe scurt” and „Cum merge”.
+        assertTrue(report.text.contains(AdultCards.REPORT_DISCLAIMER))
+        assertTrue(PracticeReport.HOW_TO_READ.none { it.contains("concluzii") && it != AdultCards.REPORT_DISCLAIMER })
         assertEquals("La singura încercare la care au răspuns amândoi, telefonul și adultul au spus același lucru.", r.agreement)
     }
 

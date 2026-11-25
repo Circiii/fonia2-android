@@ -299,7 +299,7 @@ fun HowItGoesScreen(seed: Profile, app: AppModel) {
     LaunchedEffect(Unit) { app.repository.recordingsStream(profileID).collect { recordings = it } }
     val profile = app.profiles.firstOrNull { it.id == profileID } ?: return
     AdultPage("Cum merge") {
-        ListSection(header = "Până acum") {
+        ListSection(header = "Până acum", footer = AdultCards.REPORT_DISCLAIMER) {
             row { ValueRow("Zile cu exerciții", "${path.totalDays}") }
             row { ValueRow("Minute", "${path.totalMinutes}") }
             row { ValueRow("Lecții terminate", "${path.totalLessons}") }
@@ -313,7 +313,7 @@ fun HowItGoesScreen(seed: Profile, app: AppModel) {
         if (active.isNotEmpty()) {
             ListSection(
                 header = "Sunete",
-                footer = "„Se potrivește” arată cât de des ați spus același lucru, tu și telefonul. E pentru logoped, nu e o notă.",
+                footer = "„Se potrivește” arată cât de des ați spus același lucru, tu și telefonul.",
             ) {
                 for (sound in active) {
                     row {

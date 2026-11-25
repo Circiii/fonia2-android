@@ -57,6 +57,7 @@ import tech.fonia.features.app.orderedSounds
 import tech.fonia.features.app.rememberStoredBoolean
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
+import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.session.Settings
 import tech.fonia.store.Profile
 import java.time.LocalDate
@@ -176,11 +177,12 @@ fun WeekScreen(profile: Profile, app: AppModel) {
                         }
                     }
                 }
-                if (current.sounds.any { it.picked.isNotEmpty() }) {
-                    Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (current.sounds.any { it.picked.isNotEmpty() }) {
                         FoniaText(WeekCopy.WHAT_MARKS_DO, style = fCaption, color = SystemColors.secondaryLabel)
                         FoniaText(WeekCopy.STAYS_HERE, style = fCaption, color = SystemColors.secondaryLabel)
                     }
+                    FoniaText(AdultCards.REPORT_DISCLAIMER, style = fCaption, color = SystemColors.secondaryLabel)
                 }
             }
         }

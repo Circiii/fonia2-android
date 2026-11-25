@@ -207,7 +207,7 @@ data class PracticeReport(
         val HOW_TO_READ = listOf(
             "„Telefonul” arată ce a crezut telefonul la fiecare încercare. E o părere, nu o evaluare.",
             "„Adultul” arată ce a ales adultul care a ascultat. „Fără răspuns”: telefonul nu a auzit destul de clar sau adultul nu a ales nimic.",
-            "Fonia doar numără încercările, nu trage concluzii. Raportul e pentru logoped, nu e o notă.",
+            AdultCards.REPORT_DISCLAIMER,
             "Numele copilului nu apare. În notițe, numele e înlocuit cu [nume].",
             AdultCards.STAGE_REPORT_NOTE,
         )

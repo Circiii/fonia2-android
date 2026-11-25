@@ -98,6 +98,15 @@ class AdultCardsTests {
     }
 
     @Test
+    fun everyReportForTheAdultSaysWhatItIsWithTheSameLine() {
+        assertEquals(
+            "Raportul arată ce s-a exersat și ce a auzit telefonul. Nu e o evaluare: concluziile le trage logopedul.",
+            AdultCards.REPORT_DISCLAIMER,
+        )
+        assertTrue(AdultCards.REPORT_DISCLAIMER in AdultCards.everyLine)
+    }
+
+    @Test
     fun theAdultIsToldWhereToFindTheCardAgain() {
         assertTrue(AdultCards.REOPEN_HINT.contains("Setări"))
         assertTrue(AdultCards.REOPEN_HINT.contains(AdultCards.SCREEN_TITLE))
