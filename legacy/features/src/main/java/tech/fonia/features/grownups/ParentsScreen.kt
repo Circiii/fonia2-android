@@ -362,6 +362,9 @@ private fun SoundRow(
         }
         // The name Romanian speech therapists give to this stage of work on a sound; a label, not a grade.
         FoniaText(StageNames.line(rung), style = fCaption, color = Palette.inkSoft)
+        if (rung.stage.isAutomatizare) {
+            FoniaText(AdultCards.AUTOMATIZARE_NOTE, style = fCaption, color = Palette.inkSoft)
+        }
         RungStrip(total = Rung.entries.size, reached = rung.index + 1, color = Palette.ink, track = Palette.cloud)
         if (counts != null) {
             FoniaText("Bine ${counts.good}, aproape ${counts.almost}, încă nu ${counts.notYet}.", style = fCaption, color = Palette.inkSoft)

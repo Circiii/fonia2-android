@@ -16,6 +16,7 @@ import tech.fonia.domain.AttemptsSummary
 import tech.fonia.domain.ContentSource
 import tech.fonia.domain.EnglishFocus
 import tech.fonia.domain.Exercise
+import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.FoniaContent
 import tech.fonia.domain.Rung
 import tech.fonia.domain.SessionBlock
@@ -150,6 +151,57 @@ class SessionRunTests {
         delay(50)
         run.awaitSaves()
         return app.repository.soundProgress(profile.id).firstOrNull { it.sound == "s" }?.rung ?: -1
+    }
+
+    /** at automatizare a take whose verdict stays hidden is still judged, stored and counted */
+    @Test
+    fun hiddenVerdictsStillCount() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val saved = goodBlockYesterday(profile, rung = Rung.Sentences)
+        app.repository.saveSoundProgress(saved)
+        val ticket = SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Sentences), title = "test", sound = SoundID.S)
+        val run = SessionRun(ticket, profile, app, progress = saved, history = AttemptsSummary(), now = { day(20) }, zone = zone)
+        assertTrue(run.isAutomatizare)
+        run.start()
+        var played = 0
+        var hidden = 0
+        var seen = 0
+        while (run.phase == SessionRun.Phase.Trial && seen < 500) {
+            val trial = run.current ?: break
+            seen += 1
+            if (trial.countsAsAttempt) {
+                played += 1
+                if (trial.feedback == FeedbackLevel.Silent) hidden += 1
+                // What `SpeakExercise` does with a hidden take: the phone's outcome, no adult, no retry.
+                run.finishAttempt(trial.exercise, machine = Attempt.Outcome.Good, adult = null, take = null)
+            } else {
+                run.advance()
+            }
+        }
+        assertEquals(SessionRun.Phase.Finished, run.phase)
+        assertTrue(hidden > 0)
+        assertTrue(hidden * 2 <= played + 1)
+        assertEquals(played, run.attempts)
+        // So the two-good-days rule still moves the child on.
+        assertEquals(Rung.Retell.index, savedRung(app, profile, run))
+        assertEquals(played, app.repository.attempts(run.sessionID).size)
+        // A block of six counts all six, the three answered and the three only heard.
+        val progress = app.repository.soundProgress(profile.id).first { it.sound == "s" }
+        val today = progress.blockHistory.filter { it.endedAt > day(19) }
+        assertTrue(today.isNotEmpty())
+        assertTrue(today.all { it.total == 6 && it.good == 6 })
+    }
+
+    /** only a sound at sentences, retelling or everyday speech is at automatizare */
+    @Test
+    fun automatizareRuns() {
+        val app = makeApp()
+        for (rung in Rung.entries) {
+            assertEquals(rung in listOf(Rung.Sentences, Rung.Retell, Rung.Everyday), makeRun(app, child(), rung).isAutomatizare)
+        }
+        assertFalse(makeRun(app, child(), Rung.Sentences, focus = SessionFocus.Diction(tech.fonia.domain.DictionAreaID.Pitch)).isAutomatizare)
     }
 
     /** a whole good session moves one rung, not one per block */

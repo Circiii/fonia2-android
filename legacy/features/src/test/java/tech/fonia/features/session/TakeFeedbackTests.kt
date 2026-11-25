@@ -7,6 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import tech.fonia.domain.Exercise
+import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.Language
 import tech.fonia.domain.RepeatPrompt
 import tech.fonia.domain.Rung
@@ -180,5 +181,32 @@ class TakeFeedbackTests {
         assertEquals(0, q.firstGood)
         assertEquals(10, q.latestGood)
         assertEquals(10, q.latestTotal)
+    }
+
+    /** a silent slot hides the verdict, except the learner's question and a take nobody heard */
+    @Test
+    fun hiddenVerdicts() {
+        assertTrue(TakeFeedbackRules.hidesVerdict(FeedbackLevel.Silent, asks = false, notHeard = false))
+        assertFalse(TakeFeedbackRules.hidesVerdict(FeedbackLevel.Silent, asks = true, notHeard = false))
+        assertFalse(TakeFeedbackRules.hidesVerdict(FeedbackLevel.Silent, asks = false, notHeard = true))
+        for (level in listOf(FeedbackLevel.Teach, FeedbackLevel.Quick, FeedbackLevel.SelfJudge)) {
+            assertFalse(TakeFeedbackRules.hidesVerdict(level, asks = false, notHeard = false))
+        }
+    }
+
+    /** a hidden verdict's beat is shorter than a good take's */
+    @Test
+    fun heardBeat() {
+        assertTrue(TakeFeedbackRules.HEARD_BEAT_MS > 0)
+        assertTrue(TakeFeedbackRules.HEARD_BEAT_MS < Pacing.current.verdictGoodMs)
+    }
+
+    /** no live meter at automatizare, where a meter would tell which takes get an answer */
+    @Test
+    fun noMetersAtAutomatizare() {
+        assertTrue(MeterPlan.shows(FeedbackLevel.Teach))
+        assertTrue(MeterPlan.shows(FeedbackLevel.Quick))
+        assertFalse(MeterPlan.shows(FeedbackLevel.Silent))
+        for (level in FeedbackLevel.entries) assertFalse(MeterPlan.shows(level, automatizare = true))
     }
 }
