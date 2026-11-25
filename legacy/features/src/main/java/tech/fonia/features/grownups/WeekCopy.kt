@@ -27,8 +27,8 @@ object WeekCopy {
 
     const val WHAT_MARKS_DO = "Ce alegi la o înregistrare se vede în „Cum merge” și în raportul pentru logoped. Lecțiile copilului rămân cum sunt."
 
-    /** Android keeps the three newest takes of each sound; there are no kept first tries as on iOS. */
-    const val STAYS_HERE = "Înregistrările nu pleacă de pe telefon. Logopedul le poate asculta aici. La fiecare sunet rămân ultimele trei."
+    /** The three newest takes of each sound stay, and the first tries at new words ([tech.fonia.features.session.RecordingPairs]). */
+    const val STAYS_HERE = "Înregistrările nu pleacă de pe telefon. Logopedul le poate asculta aici. La fiecare sunet rămân ultimele trei și primele încercări la cuvinte noi."
 
     const val STOP = "Oprește"
 

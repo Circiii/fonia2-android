@@ -403,7 +403,11 @@ class SessionRun(
             withContext(Dispatchers.Default) {
                 var recordingID: UUID? = null
                 if (keepsAudio && take != null && machine != Attempt.Outcome.Unclear) {
-                    val recording = Recording(profileId = profileID, label = target ?: "", sound = sound, duration = take.duration)
+                    // The first try at a word stays, so someone can hear the difference later.
+                    val earlier = tech.fonia.features.grownups.orEmpty { repository.recordings(profileID) }
+                    val label = target ?: ""
+                    val pinned = RecordingPairs.pinsNewTake(earlier, label, sound)
+                    val recording = Recording(profileId = profileID, label = label, sound = sound, duration = take.duration, pinned = pinned)
                     val written = runCatching {
                         val file = repository.recordingFileURL(recording)
                         RecordingWriter.writeM4A(take, file)

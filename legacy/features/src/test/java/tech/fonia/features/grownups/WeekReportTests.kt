@@ -381,7 +381,7 @@ class WeekReportTests {
         }
         assertTrue(WeekCopy.KEEPING_OFF.contains("Păstrează înregistrările copiilor"))
         assertTrue(WeekCopy.STAYS_HERE.contains("nu pleacă de pe telefon"))
-        // Android keeps only the newest takes, so the line doesn't promise the first tries iOS keeps.
-        assertFalse(WeekCopy.STAYS_HERE.contains("primele"))
+        // The first tries at new words stay pinned, as on iOS, so the line says so.
+        assertTrue(WeekCopy.STAYS_HERE.endsWith("La fiecare sunet rămân ultimele trei și primele încercări la cuvinte noi."))
     }
 }
