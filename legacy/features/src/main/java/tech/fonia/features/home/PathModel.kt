@@ -71,6 +71,10 @@ class PathModel(profile: Profile, val content: FoniaContent) {
 
     private var finished: Set<String> by mutableStateOf(emptySet())
 
+    /** What "today" is: the button keeps one sound for a whole day. Tests set a fixed date and zone. */
+    var today: () -> Instant = Instant::now
+    var zone: ZoneId = ZoneId.systemDefault()
+
     /** The quick checks, oldest first (empty until the first one). */
     var checks: List<CheckRecord> by mutableStateOf(emptyList())
         private set
@@ -154,26 +158,67 @@ class PathModel(profile: Profile, val content: FoniaContent) {
     /** The plain sound's good takes so far, for the line under a shut lesson. */
     fun ownSuccessEstablished(sound: SoundID): Int = ladder(sound).establishCorrect
 
+    /**
+     * The plain sound came out enough times ([tech.fonia.features.session.OwnSuccess]), and the next step waits for
+     * an adult who listens.
+     */
+    fun isWaitingForAdult(sound: SoundID): Boolean {
+        val state = ladder(sound)
+        return state.rung == Rung.Isolated &&
+            tech.fonia.features.session.OwnSuccess.opened(state.establishCorrect) &&
+            tech.fonia.features.session.OwnSuccess.waitsForAdult(state)
+    }
+
+    /** At the everyday rung a sound is in automatizare: it is carried at home, and the path moves on. */
+    fun isAutomating(sound: SoundID): Boolean = ladder(sound).rung == Rung.Everyday
+
     // Picking up
 
     val hasStarted: Boolean get() = sessions.any { it.focus != null }
 
     /**
-     * What the big button continues with. With sounds chosen (by hand or by the quick check), today's sound: the first
-     * of them that still has a lesson to do, one sound at a time. Otherwise the next thing in the unit worked on last,
-     * or for someone new, the first thing on their track. Warming up is never the place to pick up from.
+     * What the big button continues with. With sounds chosen (by hand or by the quick check), today's sound (see
+     * [todaysSound]). Otherwise the next thing in the unit worked on last, or for someone new, the first thing on their
+     * track. Warming up is never the place to pick up from.
      */
     val continuing: NextStep?
         get() {
+            if (profile.track == Profile.Track.Ro && profile.targetSounds.isNotEmpty()) todaysSound?.let { return it }
             val units = catalog.allUnits(soundOrder)
             val last = sessions.lastOrNull { it.focus != null }?.focus
             val lastUnit = units.firstOrNull { unit -> unit.lessons.any { it.focus.key == last } }
                 .takeUnless { profile.track == Profile.Track.Ro && profile.targetSounds.isNotEmpty() }
             for (unit in listOfNotNull(lastUnit) + trackUnits) {
-                val lesson = unit.lessons.firstOrNull { !it.isWarmup && !isDone(it, unit) && canOpen(it, unit) }
-                if (lesson != null) return NextStep(unit, lesson)
+                nextStep(unit)?.let { return it }
             }
             return null
+        }
+
+    private fun nextStep(unit: CourseUnit): NextStep? =
+        unit.lessons.firstOrNull { !it.isWarmup && !isDone(it, unit) && canOpen(it, unit) }?.let { NextStep(unit, it) }
+
+    /**
+     * The chosen sound for today. The first chosen sound with a lesson left leads, and a sound in automatizare steps
+     * aside for the next one. Once the leading sound reaches sentences, or waits for the adult to listen, it takes turns
+     * with the next chosen sound: whichever was practised on the last day of practice rests today. A day off changes
+     * nothing, and a sound started today is kept all day. Null sends the button back to the whole track.
+     */
+    private val todaysSound: NextStep?
+        get() {
+            val chosen = chosenSounds.map { catalog.unit(it) }.mapNotNull { nextStep(it) }
+            val active = chosen.filter { step -> step.unit.sound?.let { !isAutomating(it) } ?: true }
+            val first = active.firstOrNull() ?: return null
+            val sound = first.unit.sound ?: return null
+            if (!(ladder(sound).rung >= Rung.Sentences || isWaitingForAdult(sound)) || active.size <= 1) return first
+            val pair = listOf(first, active[1])
+            val day = localDay(today(), zone)
+            val practised = sessions.filter { session ->
+                (session.attempts > 0 || session.endedAt != null) && pair.any { it.unit.sound?.rawValue == session.sound }
+            }
+            fun step(session: SessionRecord?): NextStep? = session?.let { s -> pair.firstOrNull { it.unit.sound?.rawValue == s.sound } }
+            step(practised.firstOrNull { it.localDay == day })?.let { return it }
+            val rested = step(practised.lastOrNull { it.localDay < day }) ?: return first
+            return if (rested == first) pair[1] else first
         }
 
     /** What "warm up first" opens: the warm-up of the sound being worked on, or a general one. */
