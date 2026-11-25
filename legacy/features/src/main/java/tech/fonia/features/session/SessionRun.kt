@@ -220,6 +220,12 @@ class SessionRun(
     /** The quick check: its takes stay in memory for the result screen and are never stored as practice. */
     val isCheck: Boolean get() = ticket.custom?.kind == tech.fonia.features.app.CustomRun.Kind.Check
 
+    /**
+     * A sound practised at automatizare: half its takes say how they sounded, the others are only heard
+     * (`FeedbackSchedule.automatizare`), and no live meter shows.
+     */
+    val isAutomatizare: Boolean get() = (ticket.focus as? SessionFocus.Sound)?.rung?.stage?.isAutomatizare == true
+
     /** How many times a trial is said again by itself before it moves on: once in the quick check, twice elsewhere. */
     val maxAutoRetakes: Int get() = if (isCheck) 1 else 2
 

@@ -37,8 +37,12 @@ internal data class MeterPlan(
     val trill: Boolean = false,
 ) {
     companion object {
-        /** Live meters only in a block that answers at once; a silent or self-judged take keeps its own counsel. */
-        fun shows(feedback: FeedbackLevel): Boolean = feedback == FeedbackLevel.Teach || feedback == FeedbackLevel.Quick
+        /**
+         * Live meters only in a block that answers at once; a silent or self-judged take keeps its own counsel. None at
+         * automatizare either, where a meter would also tell which takes are about to be answered.
+         */
+        fun shows(feedback: FeedbackLevel, automatizare: Boolean = false): Boolean =
+            !automatizare && (feedback == FeedbackLevel.Teach || feedback == FeedbackLevel.Quick)
 
         fun of(id: SoundID): MeterPlan = when (id) {
             SoundID.S -> MeterPlan(targetSharp = 1f, left = "Ș", right = "S")

@@ -180,6 +180,12 @@ object AdultCards {
     /** "Etapa: Consolidare.", under a sound where an adult follows progress, and in the report. */
     fun stageLine(name: String): String = "Etapa: $name."
 
+    /**
+     * Under the stage line of a sound at automatizare: why only some takes are answered there. No count, no source.
+     * iOS `AdultCards.automatizareNote`.
+     */
+    const val AUTOMATIZARE_NOTE = "La Automatizare, telefonul spune cum a sunat doar la unele încercări. E intenționat, ca sunetul să iasă și fără ajutor. Toate încercările apar în progres."
+
     /** In the box of the report that says how to read it. */
     const val STAGE_REPORT_NOTE = "Numele etapei (Emitere, Consolidare, Diferențiere, Automatizare) arată doar unde se află lecțiile în aplicație. Nu e o evaluare."
 
@@ -188,7 +194,7 @@ object AdultCards {
         get() {
             val fixed = listOf(
                 PAGE_TITLE, TARGET_HEADING, GOOD_TRY_HEADING, AFTER_MISS_HEADING, UNDERSTOOD, REOPEN_HINT,
-                SCREEN_TITLE, SCREEN_DETAIL, SCREEN_LEAD, START_SHEET_BUTTON, STAGE_REPORT_NOTE,
+                SCREEN_TITLE, SCREEN_DETAIL, SCREEN_LEAD, START_SHEET_BUTTON, STAGE_REPORT_NOTE, AUTOMATIZARE_NOTE,
             )
             val cards = AdultCardKind.entries.flatMap { kind ->
                 val card = card(kind)

@@ -68,6 +68,13 @@ enum class Stage(override val rawValue: String) : StringRawValue {
     Generalise("generalise"),
     ;
 
+    /**
+     * What an adult reads as "Automatizare": sentences, retelling and everyday speech. A session on such a rung shows
+     * the verdict on half its takes (`FeedbackSchedule.automatizare`).
+     */
+    val isAutomatizare: Boolean
+        get() = this == Automate || this == Generalise
+
     companion object {
         fun fromRawValue(rawValue: String): Stage? = entries.byRawValue(rawValue)
     }
@@ -103,6 +110,8 @@ object FeedbackSchedule {
      * | consolidateLate | 4, then 3 of 6 | three self-judged, the rest quick |
      * | differentiate | 3 of 6 | quick, with a contrast replay when wrong |
      * | automate, generalise | none | block summary |
+     *
+     * A whole session on a rung at automatizare is then set again by `automatizare(trials, seed)`.
      */
     fun levels(stage: Stage, blockIndex: Int, seed: ULong): List<FeedbackLevel> {
         val random = SeededRandom(seed)
@@ -127,6 +136,58 @@ object FeedbackSchedule {
                     listOf(FeedbackLevel.Quick, FeedbackLevel.Quick, FeedbackLevel.Quick, FeedbackLevel.Silent, FeedbackLevel.Silent, FeedbackLevel.Silent),
                 )
             Stage.Automate, Stage.Generalise -> List(6) { FeedbackLevel.Silent }
+        }
+    }
+
+    /**
+     * At automatizare the verdict shows on half the spoken takes and the others are only acknowledged. Knowledge of
+     * results on half the trials was retained better than on every trial (Lowe & Buchwald 2017), and the later stages
+     * of motor learning do better with less frequent feedback (Maas et al. 2008). Every take is still judged and
+     * stored: only what the learner is told changes.
+     *
+     * One flag per spoken take of a session, in order, true where the verdict shows. Takes go in pairs and one take of
+     * each pair shows it, the first or the second as `seed` draws. The session's first take always shows it. So half
+     * the takes show it, and never more than two in a row go without. Bit for bit the iOS rhythm.
+     */
+    fun automatizareVerdicts(takes: Int, seed: ULong): List<Boolean> {
+        val random = SeededRandom(seed)
+        val shown = mutableListOf<Boolean>()
+        while (shown.size < takes) {
+            val first = shown.isEmpty() || random.below(2) == 0
+            shown += listOf(first, !first)
+        }
+        return shown.take(takes)
+    }
+
+    /**
+     * The trials of a session on a rung at automatizare: each spoken take of practice answers at once (`Quick`) or
+     * says nothing about how it sounded (`Silent`), as `automatizareVerdicts` has it. A take still being set up keeps
+     * its live visual where the verdict shows. The opening, listening, the closing easy item and the mission keep
+     * their levels.
+     */
+    fun automatizare(trials: List<Trial>, seed: ULong): List<Trial> {
+        val takes = trials.indices.filter { isRhythmTake(trials[it]) }
+        val shown = automatizareVerdicts(takes.size, seed)
+        val result = trials.toMutableList()
+        takes.forEachIndexed { take, index ->
+            val trial = trials[index]
+            val level = when {
+                !shown[take] -> FeedbackLevel.Silent
+                trial.feedback == FeedbackLevel.Teach -> FeedbackLevel.Teach
+                else -> FeedbackLevel.Quick
+            }
+            result[index] = trial.copy(feedback = level)
+        }
+        return result
+    }
+
+    private fun isRhythmTake(trial: Trial): Boolean {
+        if (!trial.countsAsAttempt || !trial.exercise.isProduction) return false
+        return when (trial.block.kind) {
+            SessionBlock.Kind.TargetA, SessionBlock.Kind.TargetB, SessionBlock.Kind.Mixed -> true
+            SessionBlock.Kind.Opening, SessionBlock.Kind.Listening, SessionBlock.Kind.Drill, SessionBlock.Kind.Retest,
+            SessionBlock.Kind.Closing, SessionBlock.Kind.Mission,
+            -> false
         }
     }
 }

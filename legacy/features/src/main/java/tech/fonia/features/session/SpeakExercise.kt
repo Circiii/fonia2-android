@@ -118,8 +118,11 @@ import tech.fonia.features.speaking.GuidedCompare
 import tech.fonia.judge.RuntimeContext
 import tech.fonia.store.Attempt
 
-/** `SpeakExercise.Phase`: the model voice, the take, the judging, the answer. */
-enum class SpeakPhase { Model, Listening, Thinking, Result }
+/**
+ * `SpeakExercise.Phase`: the model voice, the take, the judging, the answer. `Heard`: a take at automatizare whose
+ * verdict stays hidden, only acknowledged.
+ */
+enum class SpeakPhase { Model, Listening, Thinking, Heard, Result }
 
 /**
  * Everything spoken goes through here: hear the model, the mic opens by itself, the take ends when the voice does, and
@@ -174,10 +177,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
 
     // The sound a meter would follow here, whatever this take's feedback; it shows in a block that answers at once.
     val meterCandidate = sound?.id?.takeIf { exercise.isRomanianSoundTake }
-    val meterSound = meterCandidate?.takeIf { MeterPlan.shows(trial.feedback) }
+    val meterSound = meterCandidate?.takeIf { MeterPlan.shows(trial.feedback, automatizare = run.isAutomatizare) }
     // The meter's room, kept empty on a take that shows none (a silent one) when other takes of the session show it,
     // so the sheet at the bottom stays one height from item to item.
-    val reservedMeter = meterCandidate?.takeIf { meterSound == null && run.session.trials.any { MeterPlan.shows(it.feedback) } }
+    val reservedMeter = meterCandidate?.takeIf {
+        meterSound == null && run.session.trials.any { MeterPlan.shows(it.feedback, automatizare = run.isAutomatizare) }
+    }
 
     val maximumSeconds = when (exercise) {
         is Exercise.Name -> 5.0
@@ -302,14 +307,10 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         val feedback = trial.feedback
         when {
             feedback == FeedbackLevel.Silent && !asked -> {
-                // Block summary only. A soft pop says "I heard you", nothing more.
+                // Only "Nu te-am auzit" gets here (`TakeFeedbackRules.hidesVerdict`): the take is offered again.
                 app.audio.effect(SoundEffect.Pop)
-                if (result.outcome == Attempt.Outcome.Unclear && result.title == VerdictWriter.notHeard.title) {
-                    phase = SpeakPhase.Result
-                    waitingForChoice = true
-                    return
-                }
-                run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
+                phase = SpeakPhase.Result
+                waitingForChoice = true
             }
             feedback == FeedbackLevel.Quick && !asked -> {
                 result.rating?.let { app.audio.effect(it.effect) }
@@ -350,6 +351,25 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 if (feedback != FeedbackLevel.SelfJudge) announce(result)
             }
         }
+    }
+
+    /**
+     * A take of a silent slot: a soft pop says "I heard you", then on as after a good take. At automatizare, where every
+     * other take is answered, the turn line says "Te-am auzit" for a moment too, and a child hears it in the recorded
+     * voice. The microphone has closed by now.
+     */
+    suspend fun acknowledge(result: TakeVerdict) {
+        letter.rest()
+        app.audio.effect(SoundEffect.Pop)
+        if (run.isAutomatizare) {
+            phase = SpeakPhase.Heard
+            val shown = System.nanoTime()
+            if (run.profile.isChild) app.audio.sayIfRecorded(HEARD)
+            val said = (System.nanoTime() - shown) / 1_000_000
+            delay(max(TakeFeedbackRules.HEARD_BEAT_MS - said, 0L))
+            if (!currentCoroutineContext().isActive) return
+        }
+        run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
     }
 
     /** The judging of one take, apart from the screen, so it can run under [JudgeTimeout]. */
@@ -449,6 +469,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         if (trial.feedback == FeedbackLevel.Silent) result = result.copy(tip = null)
         // The learner judges first: what the phone thinks stays hidden until they've picked.
         if (trial.feedback == FeedbackLevel.SelfJudge) result = result.copy(tip = null)
+        val notHeard = result.outcome == Attempt.Outcome.Unclear && result.title == VerdictWriter.notHeard.title
+        if (TakeFeedbackRules.hidesVerdict(trial.feedback, asks = trial.feedback == FeedbackLevel.SelfJudge, notHeard = notHeard)) {
+            // Judged and stored all the same; `verdict` stays unset so nothing on screen, in the letter or in the hand tells.
+            acknowledge(result)
+            return
+        }
         verdict = result
         showResult(result)
     }
@@ -757,6 +783,7 @@ private fun ListeningBar(
                 mode = when (phase) {
                     SpeakPhase.Listening -> TurnMode.Listening
                     SpeakPhase.Thinking -> TurnMode.Thinking
+                    SpeakPhase.Heard -> TurnMode.Finished(HEARD, praised = false)
                     else -> TurnMode.Model
                 },
                 field = field,
@@ -784,6 +811,9 @@ internal sealed interface TurnMode {
 
 /** iOS `SessionVoice.thinking`. */
 internal const val THINKING = "Mă gândesc"
+
+/** iOS `SessionVoice.heard`: a take at automatizare whose verdict stays hidden. A recorded line. */
+internal const val HEARD = "Te-am auzit"
 
 /**
  * Whose turn it is, at the bottom of the sheet. Each state looks different without sound or reading: the speaker on a

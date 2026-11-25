@@ -140,6 +140,18 @@ Ce nu s-a făcut în tura asta:
 - „Spui odată cu vocea” rămâne la lecțiile de melodie din engleză, ca pe iOS.
 - Textele cu voce înregistrată din `sounds.json` nu s-au schimbat (nici pe iOS).
 
+### A cincea tură (25 noiembrie 2026)
+
+Sursa: `docs/port-android.md` §27 din aplicația iOS și `docs/PENTRU_STEFAN.md` §5, punctul 4: la automatizare, verdictul apare doar la circa jumătate din rostiri.
+
+- **Ritmul (`Curriculum.kt`, `SessionBuilder.kt`).** `Stage.isAutomatizare` e adevărat la propoziții, povestire și zi cu zi. `FeedbackSchedule.automatizare` așază rostirile de exersat din blocurile A, B și din cel amestecat în perechi. Din fiecare pereche, una arată verdictul (`Quick`, sau `Teach` dacă era deja așa), iar cealaltă e `Silent`. Prima rostire are mereu verdict, deci niciodată trei la rând fără. Sămânța e trasă ultima din `SeededRandom`, ca itemii să rămână aceiași. Ritmul e identic cu iOS: semințele 7 și 42 au același șir de referință pe ambele platforme. Deschiderea, ascultarea, finalul și misiunea nu s-au schimbat.
+- **`ios-sessions.txt`.** Fișierul e rescris din constructorul iOS și copiat aici. Diferă doar coloana de feedback, la sesiunile de sunet pe cele trei trepte.
+- **Rostirea fără verdict (`SpeakExercise.kt`, `acknowledge`).** Se judecă și se salvează ca oricare, prin `run.finishAttempt`, cu rezultatul telefonului, deci progresul, blocurile de șase și raportul pentru adult merg ca înainte. Se aude un „pop”, rândul de jos arată „Te-am auzit” (faza nouă `SpeakPhase.Heard`), iar copilul aude clipul înregistrat care exista deja. După 1,2 s, sau cât ține clipul, vine itemul următor. Nu apar panoul, „Încă o dată”, litera colorată sau vibrația.
+- **`TakeFeedbackRules.hidesVerdict`.** O rostire `Silent` nu mai setează `verdict` pe nicio treaptă. Înainte, pe Android, litera arăta „corect” sau „aproape” și telefonul vibra chiar și pe rostirile `Silent`. „Nu te-am auzit” și întrebarea pentru adult sau copil rămân.
+- **Contoare vii.** Nu se mai arată la automatizare (`MeterPlan.shows(feedback, automatizare)`).
+- **Pentru adult.** În pagina pentru părinți, sub etapă, la sunetul aflat la automatizare: `AdultCards.AUTOMATIZARE_NOTE`, același text ca pe iOS.
+- **Teste.** `SessionBuilderTests` (ritmul pe cele trei trepte, 3 din 6 în blocurile A și B, prima cu verdict, niciodată trei la rând fără, ritmul de referință). `SessionRunTests` (o sesiune întreagă la propoziții salvează toate rostirile, cu tot cu cele fără verdict, și umple blocurile de șase). `TakeFeedbackTests` (`hidesVerdict`, durata lui „Te-am auzit”, fără contoare la automatizare).
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.

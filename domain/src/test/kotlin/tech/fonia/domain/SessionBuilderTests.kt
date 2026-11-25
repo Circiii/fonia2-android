@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 
-// Port of FoniaDomainTests/SessionBuilderTests.swift: 4 suites, 61 test functions.
+// Port of FoniaDomainTests/SessionBuilderTests.swift: 4 suites, 70 test functions.
 
 @DisplayName("Session builder")
 class SessionBuilderTests {
@@ -347,14 +347,14 @@ class SessionBuilderTests {
                 Stage.ConsolidateEarly -> assertEquals(5, answered)
                 Stage.ConsolidateLate -> assertEquals(4, answered)
                 Stage.Differentiate -> assertEquals(3, answered)
-                Stage.Automate, Stage.Generalise -> assertEquals(0, answered)
+                Stage.Automate, Stage.Generalise -> assertEquals(3, answered)
             }
         }
     }
 
     @Test
     fun mixedPracticeRespondsToEveryOtherAttempt() {
-        val mixed = session(SoundID.S, Rung.Sentences, age = AgeBand.EightToTen).trialsIn(SessionBlock.Kind.Mixed)
+        val mixed = session(SoundID.S, Rung.Pairs, age = AgeBand.EightToTen).trialsIn(SessionBlock.Kind.Mixed)
         // Twelve mixed takes, the last of which gives its place to the easy closing item.
         assertEquals(11, mixed.size)
         assertEquals(5, mixed.count { it.feedback == FeedbackLevel.Silent })
@@ -376,9 +376,60 @@ class SessionBuilderTests {
         assertFalse(Prosody.Question in young)
     }
 
+    /** The spoken takes of practice, in order: the ones `FeedbackSchedule.automatizare` sets. */
+    private fun practiceTakes(session: Session): List<Trial> = session.trials.filter {
+        it.block.kind in setOf(SessionBlock.Kind.TargetA, SessionBlock.Kind.TargetB, SessionBlock.Kind.Mixed) && it.countsAsAttempt
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Rung::class, names = ["Sentences", "Retell", "Everyday"])
+    fun automatizareAnswersHalfOfEveryTargetBlock(rung: Rung) {
+        for (seed in 0 until 20) {
+            val built = session(SoundID.S, rung, age = AgeBand.EightToTen, seed = seed.toULong())
+            val blocks = practiceTakes(built).filter { it.block.kind != SessionBlock.Kind.Mixed }.groupBy { it.block }
+            assertTrue(blocks.isNotEmpty())
+            for ((block, takes) in blocks) {
+                if (takes.size % 2 != 0) continue
+                assertEquals(takes.size / 2, takes.count { it.feedback != FeedbackLevel.Silent }, "$rung seed $seed $block")
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Rung::class, names = ["Sentences", "Retell", "Everyday"])
+    fun automatizareShowsTheFirstTakeAndNeverHidesThreeInARow(rung: Rung) {
+        for (seed in 0 until 20) {
+            for (age in AgeBand.entries) {
+                val shown = practiceTakes(session(SoundID.R, rung, age = age, seed = seed.toULong())).map { it.feedback != FeedbackLevel.Silent }
+                assertEquals(true, shown.firstOrNull())
+                val answered = shown.count { it }
+                assertTrue(answered >= shown.size / 2 && answered <= (shown.size + 1) / 2)
+                assertFalse(shown.windowed(3).any { window -> window.none { it } }, "$rung $age seed $seed")
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Rung::class, names = ["Sentences", "Retell", "Everyday"])
+    fun automatizareAnswersWithoutTheLiveVisualOrASelfJudgement(rung: Rung) {
+        val levels = practiceTakes(session(SoundID.Z, rung, age = AgeBand.TeenAdult)).map { it.feedback }.toSet()
+        assertTrue(levels.all { it in setOf(FeedbackLevel.Quick, FeedbackLevel.Silent, FeedbackLevel.Teach) })
+        assertTrue(FeedbackLevel.Quick in levels)
+        assertTrue(FeedbackLevel.Silent in levels)
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Rung::class, names = ["Sentences", "Retell", "Everyday"])
+    fun automatizareLeavesTheOpeningListeningAndClosingAlone(rung: Rung) {
+        val built = session(SoundID.Sh, rung, age = AgeBand.SixToSeven)
+        assertTrue(built.trialsIn(SessionBlock.Kind.Listening).all { it.feedback == FeedbackLevel.Quick })
+        assertTrue(built.trialsIn(SessionBlock.Kind.Closing).all { it.feedback != FeedbackLevel.Silent })
+        assertTrue(built.trialsIn(SessionBlock.Kind.Mission).all { it.feedback == FeedbackLevel.Silent })
+    }
+
     @Test
-    fun automationHidesEveryResponseInTheBlocks() {
-        assertTrue(session(SoundID.S, Rung.Sentences).trialsIn(SessionBlock.Kind.TargetA).all { it.feedback == FeedbackLevel.Silent })
+    fun automatizareCoversSentencesRetellAndEveryday() {
+        assertEquals(listOf(Rung.Sentences, Rung.Retell, Rung.Everyday), Rung.entries.filter { it.stage.isAutomatizare })
     }
 
     // Voicing and the listening check
@@ -670,5 +721,77 @@ class FeedbackScheduleTests {
             FeedbackSchedule.levels(stage = Stage.Differentiate, blockIndex = 0, seed = 5uL),
             FeedbackSchedule.levels(stage = Stage.Differentiate, blockIndex = 0, seed = 5uL),
         )
+    }
+
+    // Automatizare
+
+    @Test
+    fun automatizareShowsTheFirstTakeAndHalfOfTheRest() {
+        for (seed in 0uL until 50uL) {
+            for (takes in 1..40) {
+                val shown = FeedbackSchedule.automatizareVerdicts(takes, seed)
+                assertEquals(takes, shown.size)
+                assertEquals(true, shown.first())
+                val answered = shown.count { it }
+                assertTrue(answered == takes / 2 || answered == (takes + 1) / 2)
+                if (takes % 2 == 0) assertEquals(takes / 2, answered)
+                assertFalse(shown.windowed(3).any { window -> window.none { it } }, "seed $seed, $takes takes")
+            }
+        }
+    }
+
+    @Test
+    fun automatizareNeverHidesThreeInARowAcrossPairs() {
+        for (seed in 0uL until 200uL) {
+            val shown = FeedbackSchedule.automatizareVerdicts(60, seed)
+            for (start in 0 until shown.size - 2) {
+                assertTrue(shown[start] || shown[start + 1] || shown[start + 2], "seed $seed at $start")
+            }
+        }
+    }
+
+    @Test
+    fun automatizareRhythmIsSetBySeed() {
+        assertEquals(FeedbackSchedule.automatizareVerdicts(30, 11uL), FeedbackSchedule.automatizareVerdicts(30, 11uL))
+        val patterns = (0uL until 20uL).map { FeedbackSchedule.automatizareVerdicts(12, it) }.toSet()
+        assertTrue(patterns.size > 10)
+        assertTrue(FeedbackSchedule.automatizareVerdicts(0, 1uL).isEmpty())
+    }
+
+    /** The same flags on iOS (`automatizareGoldenRhythm`): the rhythm is drawn from the shared `SeededRandom`. */
+    @Test
+    fun automatizareGoldenRhythm() {
+        assertEquals(
+            listOf(true, false, false, true, true, false, true, false, false, true, true, false),
+            FeedbackSchedule.automatizareVerdicts(12, 7uL),
+        )
+        assertEquals(
+            listOf(true, false, false, true, false, true, true, false, true, false, true, false),
+            FeedbackSchedule.automatizareVerdicts(12, 42uL),
+        )
+    }
+
+    @Test
+    fun automatizareSetsOnlySpokenPracticeTakes() {
+        fun say(text: String): Exercise = Exercise.Repeat(RepeatPrompt(text = text, language = Language.Ro, level = RepeatPrompt.Level.Sentence))
+        val trials = listOf(
+            Trial(Exercise.Intro(SoundID.S), FeedbackLevel.Teach, SessionBlock(SessionBlock.Kind.Opening)),
+            Trial(say("una"), FeedbackLevel.Silent, SessionBlock(SessionBlock.Kind.TargetA)),
+            Trial(say("două"), FeedbackLevel.Silent, SessionBlock(SessionBlock.Kind.TargetA)),
+            Trial(say("trei"), FeedbackLevel.Silent, SessionBlock(SessionBlock.Kind.TargetB)),
+            Trial(say("patru"), FeedbackLevel.Teach, SessionBlock(SessionBlock.Kind.Mixed)),
+            Trial(say("cinci"), FeedbackLevel.Quick, SessionBlock(SessionBlock.Kind.Closing)),
+        )
+        val set = FeedbackSchedule.automatizare(trials, 7uL)
+        val shown = FeedbackSchedule.automatizareVerdicts(4, 7uL)
+        assertEquals(trials.map { it.exercise }, set.map { it.exercise })
+        assertEquals(trials.map { it.block }, set.map { it.block })
+        assertEquals(trials[0], set[0])
+        assertEquals(trials[5], set[5])
+        assertEquals(if (shown[0]) FeedbackLevel.Quick else FeedbackLevel.Silent, set[1].feedback)
+        assertEquals(if (shown[1]) FeedbackLevel.Quick else FeedbackLevel.Silent, set[2].feedback)
+        assertEquals(if (shown[2]) FeedbackLevel.Quick else FeedbackLevel.Silent, set[3].feedback)
+        // A take still being set up keeps its live visual where the verdict shows.
+        assertEquals(if (shown[3]) FeedbackLevel.Teach else FeedbackLevel.Silent, set[4].feedback)
     }
 }

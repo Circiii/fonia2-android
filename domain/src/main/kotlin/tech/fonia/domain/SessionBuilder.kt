@@ -198,6 +198,10 @@ class SessionBuilder(
         if (mission != null) {
             trials += Trial(exercise = Exercise.Mission(mission), feedback = FeedbackLevel.Silent, block = SessionBlock(SessionBlock.Kind.Mission))
         }
+        // Drawn last, so the items of every session come out of the random stream as they always have.
+        if (rung.stage.isAutomatizare) {
+            return Session(trials = FeedbackSchedule.automatizare(trials, random.next()), targetAttempts = attempts)
+        }
         return Session(trials = trials, targetAttempts = attempts)
     }
 

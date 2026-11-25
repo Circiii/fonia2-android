@@ -50,6 +50,7 @@ import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
 import tech.fonia.design.ui
+import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.SoundID
 import tech.fonia.judge.HintKey
 import tech.fonia.judge.TakeVisual
@@ -101,6 +102,20 @@ object HintWords {
 object TakeFeedbackRules {
     /** Half-width of the uncertain middle of the axis; the target zone starts past it (as the judge's visual zones). */
     const val LIVE_ZONE_HALF = 0.1f
+
+    /**
+     * A take of a silent slot says nothing about how it sounded: no panel, no letter cue, no word marks, no haptic.
+     * Still shown: the learner's own question and "Nu te-am auzit", which is about the microphone and offers the take
+     * again. iOS `TakeFeedbackRules.hidesVerdict`.
+     */
+    fun hidesVerdict(feedback: FeedbackLevel, asks: Boolean, notHeard: Boolean): Boolean =
+        feedback == FeedbackLevel.Silent && !asks && !notHeard
+
+    /**
+     * How long "Te-am auzit" stays at automatizare before the next item comes by itself: long enough to read, shorter
+     * than a good take's verdict, so a hidden one never feels like a wait. iOS `TakeFeedbackRules.heardBeat`.
+     */
+    const val HEARD_BEAT_MS = 1200L
 
     /**
      * [visual] with a place axis made from the live hiss when the judge gave none and the sound has an axis; the
