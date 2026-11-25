@@ -147,6 +147,8 @@ class FoniButtonStyle(
     val field: Field = Field.paper,
     val size: Size = Size.large,
     val kind: Kind = Kind.primary,
+    /** The least height, when a lesson asks for more than the size gives (64 for a child's main action). */
+    val minHeight: Dp? = null,
 ) : ButtonStyle {
     @Suppress("EnumEntryName")
     enum class Size { regular, large }
@@ -173,7 +175,7 @@ class FoniButtonStyle(
                         isPressed = configuration.isPressed,
                     )
                     .fillMaxWidth()
-                    .heightIn(min = if (size == Size.large) 48.dp else 44.dp)
+                    .heightIn(min = minHeight ?: if (size == Size.large) 48.dp else 44.dp)
                     .padding(horizontal = 18.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
@@ -276,7 +278,7 @@ class TileButtonStyle(
 }
 
 /** Small rounded action with an icon, next to its neighbours. */
-class PillButtonStyle : ButtonStyle {
+class PillButtonStyle(val minHeight: Dp = 44.dp) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
         CompositionLocalProvider(
@@ -287,11 +289,46 @@ class PillButtonStyle : ButtonStyle {
                 modifier
                     .raised(Capsule, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
                     .fillMaxWidth()
-                    .heightIn(min = 44.dp)
+                    .heightIn(min = minHeight)
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
         }
+    }
+}
+
+/**
+ * One of a row of equal small actions inside a card: the icon over a short word, on the raised white face. Give its
+ * label as [IconOverTitle]. 44 is the least for an adult's finger; a child's controls ask for 56.
+ */
+class IconTileButtonStyle(val minHeight: Dp = 54.dp) : ButtonStyle {
+    @Composable
+    override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
+        val shape = RoundedCornerShape(18.dp)
+        CompositionLocalProvider(
+            LocalFont provides ui(14, UIWeight.semibold, TextRole.subheadline),
+            LocalForeground provides Palette.ink,
+            LocalTextAlign provides TextAlign.Center,
+        ) {
+            Box(
+                modifier
+                    .raised(shape, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
+                    .border(1.5.dp, Palette.line, shape)
+                    .fillMaxWidth()
+                    .heightIn(min = maxOf(44.dp, minHeight))
+                    .padding(6.dp),
+                contentAlignment = Alignment.Center,
+            ) { configuration.label() }
+        }
+    }
+}
+
+/** The label of an [IconTileButtonStyle]: the icon over the word, at most two lines. */
+@Composable
+fun IconOverTitle(title: String, icon: FoniaIcon, iconSize: Float = 20f, modifier: Modifier = Modifier) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        FoniaIconView(icon, size = iconSize)
+        FoniaText(title, maxLines = 2)
     }
 }
 
