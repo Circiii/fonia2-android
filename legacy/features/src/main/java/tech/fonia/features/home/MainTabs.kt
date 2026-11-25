@@ -178,7 +178,9 @@ private fun TabPages(profile: Profile, app: AppModel, path: PathModel, pager: Pa
             if (now != tab) tab = now
         }
     }
-    val bottom = barHeight + with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
+    // The big button stands above the bar. Its height counts in the inset, so a page scrolled to the end stops above
+    // the button instead of under it.
+    val bottom = barHeight + startRise + with(LocalDensity.current) { WindowInsets.navigationBars.getBottom(this).toDp() }
     Box(Modifier.fillMaxSize().background(Palette.paper)) {
         // A real paged row: it follows the finger, and the page that isn't shown is hidden from accessibility.
         HorizontalPager(pager, Modifier.fillMaxSize(), beyondViewportPageCount = 1) { page ->
@@ -186,7 +188,7 @@ private fun TabPages(profile: Profile, app: AppModel, path: PathModel, pager: Pa
             Box(Modifier.fillMaxSize().then(if (value != tab) Modifier.clearAndSetSemantics {} else Modifier)) {
                 when (value) {
                     MainTab.home -> HomeScreen(profile, app, path, bottomInset = bottom)
-                    MainTab.progress -> ProgressScreen(profile, app, path, onStart = onStart, bottomInset = bottom)
+                    MainTab.progress -> ProgressScreen(profile, app, path, bottomInset = bottom)
                 }
             }
         }
@@ -208,6 +210,9 @@ private fun TabPages(profile: Profile, app: AppModel, path: PathModel, pager: Pa
  * White, with no line on top. The two tabs sit at a quarter and three quarters of the width, and the big button
  * stands in the middle, rising out of the bar.
  */
+/** How far the big button stands above the bar. */
+private val startRise = 25.dp
+
 @Composable
 private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier.fillMaxWidth()) {
@@ -235,7 +240,7 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
             style = StartButtonStyle(),
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-25).dp)
+                .offset(y = -startRise)
                 .drawBehind {
                     if (!reduceStart) {
                         val t = startPulse.value
