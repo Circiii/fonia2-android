@@ -102,9 +102,9 @@ internal fun playMark(rect: CGRect): CGPath {
     return path
 }
 
-/** A medal on the progress page: a sound's letter in a ring that fills. */
+/** A medal on the progress page: a sound's letter in a ring that fills. A null [caption] shows the ring alone. */
 @Composable
-fun RingMedal(share: Double, caption: String, modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+fun RingMedal(share: Double, caption: String?, modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
     Column(
         modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -132,6 +132,6 @@ fun RingMedal(share: Double, caption: String, modifier: Modifier = Modifier, con
             contentAlignment = Alignment.Center,
             content = content,
         )
-        FoniaText(caption, style = ui(13, UIWeight.bold, TextRole.caption).monospacedDigit(), color = Palette.accentText)
+        if (caption != null) FoniaText(caption, style = ui(13, UIWeight.bold, TextRole.caption).monospacedDigit(), color = Palette.accentText)
     }
 }

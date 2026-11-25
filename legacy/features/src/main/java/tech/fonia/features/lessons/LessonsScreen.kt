@@ -129,7 +129,8 @@ private fun CardPage(title: String, content: @Composable ColumnScope.() -> Unit)
 fun UnitCard(unit: CourseUnit, path: PathModel, modifier: Modifier = Modifier) {
     val push = rememberPush()
     StyledButton(onClick = { push(AppRoute.Unit(unit.id)) }, style = PressableStyle(), modifier = modifier) {
-        WideCard(path.scene(unit), unit.title, done = path.doneCount(unit), total = unit.lessons.size, detail = unit.subtitle) {
+        // A child sees the bar fill, never "N din M" (ChildCounts).
+        WideCard(path.scene(unit), unit.title, done = path.doneCount(unit), total = unit.lessons.size, detail = unit.subtitle, showsCount = !path.profile.isChild) {
             UnitArt(unit, Modifier.height(96.dp))
         }
     }

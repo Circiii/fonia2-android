@@ -24,6 +24,7 @@ import tech.fonia.designsystem.letter.LetterCue
 import tech.fonia.designsystem.letter.LiveLetter
 import tech.fonia.designsystem.tokens.VerdictStickers
 import tech.fonia.features.app.field
+import tech.fonia.features.progress.ChildCounts
 import tech.fonia.features.session.rememberLetterLink
 import tech.fonia.features.session.stickerFor
 import androidx.compose.foundation.background
@@ -358,7 +359,9 @@ private fun TodayCard(app: AppModel, path: PathModel, modifier: Modifier = Modif
             if (unit != null) {
                 val done = path.doneCount(unit)
                 val total = unit.lessons.size
-                LessonDots(done, total, Modifier.clearAndSetSemantics { contentDescription = "Ai terminat $done din $total lecții" })
+                // A child sees the dots fill, never the count, and TalkBack doesn't read one either (ChildCounts).
+                val label = ChildCounts.todayLabel(done, total, path.profile.isChild)
+                LessonDots(done, total, Modifier.clearAndSetSemantics { if (label != null) contentDescription = label })
             }
         }
         if (sound != null) {

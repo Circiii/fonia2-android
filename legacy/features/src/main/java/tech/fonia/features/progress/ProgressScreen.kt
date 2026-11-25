@@ -150,10 +150,10 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, onStart: ()
                                             .clearAndSetSemantics {
                                                 role = Role.Button
                                                 contentDescription = "Sunetul ${sound.shortLetter}"
-                                                stateDescription = "$done din $total"
+                                                ChildCounts.medalValue(done, total, profile.isChild)?.let { stateDescription = it }
                                             },
                                     ) {
-                                        RingMedal(done.toDouble() / max(total, 1), "$done/$total") {
+                                        RingMedal(done.toDouble() / max(total, 1), ChildCounts.medalCaption(done, total, profile.isChild)) {
                                             FoniaText(sound.shortLetter, style = practice(24, PracticeWeight.bold, TextRole.title2), color = Palette.ink)
                                         }
                                     }
@@ -213,7 +213,7 @@ private fun CourseCard(path: PathModel) {
             FoniaText("Spre 400 de minute", style = ui(16, UIWeight.bold, TextRole.headline), color = Palette.ink)
             ProgressPill(min(path.totalMinutes, 400), 400)
             FoniaText(
-                "Ai ${Plural.format(path.totalMinutes, Plural.Noun.Minut)}. De obicei se aude diferența după 6 până la 8 săptămâni, câte 12 minute de 4 ori pe săptămână.",
+                "Ai ${Plural.format(path.totalMinutes, Plural.Noun.Minut)}.",
                 style = fBody,
                 color = Palette.inkSoft,
             )
