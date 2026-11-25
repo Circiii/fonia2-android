@@ -68,6 +68,7 @@ import tech.fonia.design.FoniaText
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.PaceChart
 import tech.fonia.design.Palette
+import tech.fonia.design.Radius
 import tech.fonia.design.PillButtonStyle
 import tech.fonia.design.PracticeSheet
 import tech.fonia.design.PressableStyle
@@ -333,7 +334,7 @@ private fun MyTalkEditor(title: String, minutes: Int, onMinutes: (Int) -> Unit, 
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(Palette.sheet, ContinuousRoundedRectangle(14.dp))
+                .background(Palette.sheet, ContinuousRoundedRectangle(Radius.small))
                 .padding(14.dp),
         ) {
             BasicTextField(

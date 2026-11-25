@@ -53,6 +53,7 @@ import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
 import tech.fonia.design.Palette
+import tech.fonia.design.Radius
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
 import tech.fonia.design.TileButtonStyle
@@ -205,7 +206,7 @@ fun AdultGateBody(gate: AdultGate, onPass: () -> Unit, modifier: Modifier = Modi
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     for (index in 0 until 2) {
-                        val shape = ContinuousRoundedRectangle(14.dp)
+                        val shape = ContinuousRoundedRectangle(Radius.small)
                         Box(
                             Modifier
                                 .size(width = 52.dp, height = 60.dp)

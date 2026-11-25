@@ -78,6 +78,7 @@ import tech.fonia.design.HomeTile
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
+import tech.fonia.design.Radius
 import tech.fonia.design.PressableStyle
 import tech.fonia.design.ProgressPill
 import tech.fonia.design.SceneName
@@ -300,7 +301,7 @@ private fun DoorButton(
 /** A door: the whole tile is its picture, with the name written on it. */
 @Composable
 private fun DoorTile(scene: SceneName, title: String, aspect: Float, large: Boolean, modifier: Modifier = Modifier) {
-    val shape = remember { ContinuousRoundedRectangle(26.dp) }
+    val shape = remember { ContinuousRoundedRectangle(Radius.card) }
     Box(
         modifier
             .softShadow(shape)

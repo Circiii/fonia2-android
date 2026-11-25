@@ -38,6 +38,7 @@ import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
+import tech.fonia.design.Radius
 import tech.fonia.design.SceneBackdrop
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
@@ -122,7 +123,7 @@ fun StartSheet(path: PathModel, onClose: () -> Unit, onPick: (NextStep) -> Unit)
                     .padding(horizontal = 12.dp)
                     .padding(bottom = 10.dp)
                     .fillMaxWidth()
-                    .background(Palette.sheet, ContinuousRoundedRectangle(26.dp))
+                    .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel))
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,

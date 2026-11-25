@@ -53,7 +53,14 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.max
 import kotlin.math.min
 
-private val cardShape = ContinuousRoundedRectangle(16.dp)
+/** The corners the app uses, and only these: a small tile or chip, a card or row, a panel that holds other things. */
+object Radius {
+    val small = 12.dp
+    val card = 16.dp
+    val panel = 22.dp
+}
+
+private val cardShape = ContinuousRoundedRectangle(Radius.card)
 
 /** A door on the home page: a scene with a short label under it. */
 @Composable
@@ -271,7 +278,7 @@ fun FloatingPanel(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier
             .fillMaxWidth()
-            .background(Palette.sheet, ContinuousRoundedRectangle(21.dp))
+            .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel))
             .padding(16.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -285,7 +292,7 @@ fun StatCard(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> 
     Box(
         modifier
             .fillMaxWidth()
-            .background(Palette.sheet, ContinuousRoundedRectangle(24.dp)),
+            .background(Palette.sheet, ContinuousRoundedRectangle(Radius.panel)),
         contentAlignment = Alignment.CenterStart,
         content = content,
     )

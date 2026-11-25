@@ -42,6 +42,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.LocalReduceMotion
+import tech.fonia.design.Radius
 import java.util.UUID
 
 /**
@@ -135,7 +136,7 @@ internal val AppRoute.opensByZoom: Boolean
 private val Destination.zoomRoute: AppRoute? get() = (this as? Destination.Route)?.route?.takeIf { it.opensByZoom }
 
 /** The door's corner while it grows (`clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))`). */
-private val doorClip = ContinuousRoundedRectangle(18.dp)
+private val doorClip = ContinuousRoundedRectangle(Radius.card)
 
 /**
  * `NavigationStack` with `navigationDestination`: one page at a time, the ones below kept with their saved state.
