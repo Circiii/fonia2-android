@@ -10,3 +10,5 @@ captures/
 .cxx/
 *.keystore
 !debug.keystore
+__pycache__/
+*.pyc
