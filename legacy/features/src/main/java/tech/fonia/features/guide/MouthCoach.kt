@@ -374,7 +374,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             inside = inside,
                             insideAvailable = insideAvailable,
                             onToggleInside = { insideChoice = !inside },
-                            modifier = Modifier.weight(0.54f).fillMaxWidth().padding(horizontal = 16.dp),
+                            modifier = Modifier.weight(0.38f).fillMaxWidth().padding(horizontal = 16.dp),
                         )
                         Spacer(Modifier.height(10.dp))
                         CallSelfPane(
@@ -391,7 +391,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                             micState = micState,
                             onRetry = { app.scope.launch { listen(shown) } },
                             onAdvance = { advance() },
-                            modifier = Modifier.weight(0.46f).fillMaxWidth(),
+                            modifier = Modifier.weight(0.62f).fillMaxWidth(),
                         )
                     }
                 }

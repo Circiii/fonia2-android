@@ -28,6 +28,7 @@ import kotlinx.coroutines.isActive
 import tech.fonia.designsystem.letter.LetterDrive
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sin
 
 /**
@@ -85,8 +86,7 @@ fun PlaceMeter(
     ) {
         BasicText(leftLabel, style = labelStyle.copy(color = colors.ink))
         Canvas(Modifier.weight(1f).height(34.dp)) {
-            tick()
-            state.step(drive)
+            state.step(drive, tick())
             val h = 16.dp.toPx()
             val top = (size.height - h) / 2f
             val r = CornerRadius(h / 2f)
@@ -95,7 +95,7 @@ fun PlaceMeter(
             val zoneW = size.width * 0.34f
             val zoneX = if (targetSharp >= 0.5f) size.width - zoneW else 0f
             val inZone = state.shown > 0.2f && abs(state.pos - targetSharp) < 0.34f
-            state.glow += ((if (inZone) 1f else 0f) - state.glow) * 0.18f
+            state.glow += ((if (inZone) 1f else 0f) - state.glow) * perFrame(0.18f, state.dt)
             drawRoundRect(lerpColor(colors.zone, colors.zoneOn, state.glow), Offset(zoneX, top), Size(zoneW, h), r)
             if (state.shown > 0.02f) {
                 val pad = h * 0.9f
@@ -105,7 +105,7 @@ fun PlaceMeter(
                     val a = state.shown * (1f - (i + 1f) / (PlaceState.TRAIL + 1f)) * 0.35f
                     drawCircle(colors.marker.copy(alpha = a), h * 0.55f, Offset(x(state.trail[(state.head - 1 - i + PlaceState.TRAIL * 2) % PlaceState.TRAIL]), size.height / 2f))
                 }
-                val pulse = 1f + 0.12f * state.glow * sin(state.phase)
+                val pulse = 1f + 0.06f * state.glow * sin(state.phase)
                 drawCircle(colors.marker.copy(alpha = 0.25f * state.shown), h * 1.25f * pulse, Offset(x(state.pos), size.height / 2f))
                 drawCircle(lerpColor(colors.marker, colors.zoneOn, state.glow).copy(alpha = state.shown), h * 0.82f * pulse, Offset(x(state.pos), size.height / 2f))
                 drawCircle(colors.gloss.copy(alpha = 0.85f * state.shown), h * 0.3f, Offset(x(state.pos) - h * 0.2f, size.height / 2f - h * 0.2f))
@@ -122,15 +122,25 @@ private class PlaceState {
     var phase = 0f
     val trail = FloatArray(TRAIL) { 0.5f }
     var head = 0
-    private var frame = 0
+    private var last = 0L
+    private var sinceTrail = 0f
 
-    fun step(drive: LetterDrive) {
+    /** Seconds since the previous frame (0 on the first). */
+    var dt = 0f
+        private set
+
+    /** One frame at [nanos]: every rate is per second of real time, so a 120 Hz phone moves as calmly as a 60 Hz one. */
+    fun step(drive: LetterDrive, nanos: Long) {
+        dt = if (last == 0L || nanos <= last) 0f else ((nanos - last) / 1e9f).coerceAtMost(0.1f)
+        last = nanos
         val s = drive.sharpness
         val hearing = drive.listening && !s.isNaN() && drive.fricative > 0.12f
-        shown += ((if (hearing) 1f else 0f) - shown) * (if (hearing) 0.3f else 0.06f)
-        if (hearing) pos += (s.coerceIn(0f, 1f) - pos) * 0.22f
-        phase += 0.25f
-        if (frame++ % 3 == 0) {
+        shown += ((if (hearing) 1f else 0f) - shown) * perFrame(if (hearing) 0.3f else 0.06f, dt)
+        if (hearing) pos += (s.coerceIn(0f, 1f) - pos) * perFrame(0.16f, dt)
+        phase += 6f * dt
+        sinceTrail += dt
+        if (sinceTrail >= 0.05f) {
+            sinceTrail = 0f
             trail[head] = pos
             head = (head + 1) % TRAIL
         }
@@ -155,10 +165,10 @@ fun VoiceMeter(drive: LetterDrive, wantVoice: Boolean, colors: MeterColors, modi
             .height(34.dp)
             .clearAndSetSemantics { contentDescription = if (wantVoice) "Vocea: pornită sau nu" else "Fără voce" },
     ) {
-        tick()
-        val voiced = drive.listening && drive.voicing > 0.45f && drive.level > 0.05f
-        state.amp += ((if (voiced) (0.35f + 0.65f * drive.level.coerceIn(0f, 1f)) else 0f) - state.amp) * 0.2f
-        state.phase += 0.32f
+        state.tick(tick())
+        val voiced = drive.listening && drive.voicing > 0.45f && drive.speaking
+        state.amp += ((if (voiced) 0.75f else 0f) - state.amp) * perFrame(0.12f, state.dt)
+        state.phase += 7f * state.dt
         val mid = size.height / 2f
         val color = if (wantVoice) lerpColor(colors.track, colors.zoneOn, (state.amp * 1.6f).coerceIn(0f, 1f)) else lerpColor(colors.track, colors.marker, (state.amp * 1.2f).coerceIn(0f, 1f))
         val path = state.path
@@ -179,7 +189,18 @@ private class WaveState {
     var amp = 0f
     var phase = 0f
     val path = Path()
+    private var last = 0L
+    var dt = 0f
+        private set
+
+    fun tick(nanos: Long) {
+        dt = if (last == 0L || nanos <= last) 0f else ((nanos - last) / 1e9f).coerceAtMost(0.1f)
+        last = nanos
+    }
 }
+
+/** A per-frame easing factor tuned at 60 Hz, scaled to [dt] seconds (the same motion on a 60 or 120 Hz screen). */
+private fun perFrame(at60: Float, dt: Float): Float = if (dt <= 0f) 0f else 1f - (1f - at60).pow(dt * 60f)
 
 /** The flutter of the tongue tip for R: five beads that light from the left as the trill gets stronger, and shake. */
 @Composable
@@ -192,16 +213,16 @@ fun TrillMeter(drive: LetterDrive, colors: MeterColors, modifier: Modifier = Mod
             .height(34.dp)
             .clearAndSetSemantics { contentDescription = "Cât de tare vibrează limba" },
     ) {
-        tick()
+        state.tick(tick())
         val strength = if (drive.listening) drive.trill.coerceIn(0f, 1f) else 0f
-        state.amp += (strength - state.amp) * 0.2f
-        state.phase += 0.9f
+        state.amp += (strength - state.amp) * perFrame(0.15f, state.dt)
+        state.phase += 14f * state.dt
         val n = 5
         val d = size.height * 0.62f
         val gap = (size.width - n * d) / (n + 1)
         for (i in 0 until n) {
             val on = ((state.amp * n) - i).coerceIn(0f, 1f)
-            val shake = sin(state.phase + i * 1.3f) * on * d * 0.16f
+            val shake = sin(state.phase + i * 1.3f) * on * d * 0.08f
             val c = Offset(gap + d / 2f + i * (d + gap), size.height / 2f + shake)
             drawCircle(colors.track, d / 2f, c)
             if (on > 0f) drawCircle(colors.zoneOn.copy(alpha = on), d / 2f * (0.55f + 0.45f * on), c)

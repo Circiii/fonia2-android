@@ -42,6 +42,7 @@ kotlin {
 dependencies {
     // The judge (PhoneScorerPort, JudgeRequest, Clip via :engine:live) and ZIPA + GOP (ZipaPhoneScorer).
     api(project(":engine:phones"))
+    api(project(":engine:words"))
     api(project(":engine:judge"))
     implementation(project(":engine:live"))
     // The one ONNX Runtime of the APK: :engine:phones compiles against the desktop jar's identical ai.onnxruntime API.
@@ -75,6 +76,10 @@ abstract class ModelAssetsTask : DefaultTask() {
     @get:Input
     abstract val includeModels: Property<Boolean>
 
+    /** Ids of optional models switched off for this build (`-Pfonia.roasr=false`). */
+    @get:Input
+    abstract val skipped: ListProperty<String>
+
     @TaskAction
     fun copy() {
         val out = outputDir.get().asFile
@@ -83,9 +88,17 @@ abstract class ModelAssetsTask : DefaultTask() {
         val root = JsonSlurper().parse(manifest.get().asFile) as Map<String, Any?>
         @Suppress("UNCHECKED_CAST")
         val models = root["models"] as List<Map<String, Any?>>
+        val kept = ArrayList<Map<String, Any?>>()
         for (m in models.takeIf { includeModels.get() }.orEmpty()) {
             val id = m["id"] as String
             val source = File(cacheDir.get().asFile, m["cache"] as String)
+            // An optional model is left out when its switch is off or its file is not in the cache: the app then
+            // finds no entry for it and goes on without (RoAsrHost.create returns null).
+            if (m["optional"] == true && (id in skipped.get() || !source.isFile)) {
+                logger.lifecycle("Model $id is optional and is left out of this APK.")
+                continue
+            }
+            kept += m
             val bytes = (m["bytes"] as Number).toLong()
             val sha = m["sha256"] as String
             if (!source.isFile) {
@@ -109,7 +122,10 @@ abstract class ModelAssetsTask : DefaultTask() {
             if (actual != sha) throw GradleException("Model '$id': $source has SHA-256 $actual, the manifest pins $sha. Replace it with the pinned file.")
             source.copyTo(File(out, m["asset"] as String), overwrite = true)
         }
-        manifest.get().asFile.copyTo(File(out, "models/manifest.json"), overwrite = true)
+        // The manifest inside the APK lists only what the APK carries.
+        val inApk = if (includeModels.get()) root + mapOf("models" to kept) else root
+        File(out, "models").mkdirs()
+        File(out, "models/manifest.json").writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(inApk)), Charsets.UTF_8)
     }
 }
 
@@ -118,6 +134,7 @@ val modelAssets = tasks.register<ModelAssetsTask>("modelAssets") {
     cacheDir.set(File(gradle.gradleUserHomeDir, "fonia-models"))
     outputDir.set(layout.buildDirectory.dir("generated/fonia-models"))
     includeModels.set(providers.gradleProperty("fonia.ml.modelOnDevice").map { it != "true" }.orElse(true))
+    skipped.set(providers.gradleProperty("fonia.roasr").map { if (it == "false") listOf("roasr") else emptyList() }.orElse(emptyList()))
 }
 
 /**

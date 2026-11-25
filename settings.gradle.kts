@@ -36,6 +36,7 @@ module(":engine:dsp", "dsp") // FoniaDSP
 module(":engine:live", "live") // LiveSnapshot, LiveBoard, LivePipeline, FxGate, the AudioDirector port
 module(":engine:judge", "speech") // FoniaSpeech + the take judges and the fusion
 module(":engine:phones", "phones") // ZIPA + restricted GOP (kept apart so the fast gate needs no model)
+module(":engine:words", "words") // Romanian word recogniser (CTC): features, decoder, word matching, speech statistics
 module(":engine:face", "face") // FoniaFace
 module(":engine:session", "session") // the session reducer
 

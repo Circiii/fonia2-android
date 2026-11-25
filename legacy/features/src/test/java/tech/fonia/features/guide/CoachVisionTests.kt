@@ -96,7 +96,7 @@ class CoachVisionTests {
             assertTrue(f.tx <= 0f && f.tx >= 1080f - 1080f * f.z - 0.01f)
             assertTrue(f.ty <= 0f && f.ty >= 1300f - 1300f * f.z - 0.01f)
         }
-        assertEquals(2.0f, f.z, 0.05f)
+        assertEquals(1.35f, f.z, 0.05f)
         // No face for a while: back to the whole frame.
         repeat(200) { t += 16 * ms; f.update(false, 0f, 0f, 0f, 1080f, 1300f, t, reduceMotion = false) }
         assertEquals(1f, f.z, 0.03f)

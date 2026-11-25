@@ -85,13 +85,16 @@ sealed interface AppRoute {
 
     data object Settings : AppRoute
 
+    /** „La cameră”: the speech coach. [launch] (debug) = `<seconds>:<promptId>[:go]`. */
+    data class SpeechCoach(val launch: String? = null) : AppRoute
+
     /** „Antrenament de dicție” of a sound: the ladder of drills. */
     data class Training(val sound: SoundID) : AppRoute
 
     companion object {
         /**
          * Parses `foniaRoute`: `journal`, `settings`, `sounds`, `warmup`, `play`, `guides`, `stories`, `english`,
-         * `speaking`, `unit:<id>`, `guide:<sound>`, `mirror:<sound>`, `coach:<key>`.
+         * `speaking`, `speech[:<seconds>:<promptId>[:go]]`, `unit:<id>`, `guide:<sound>`, `mirror:<sound>`, `coach:<key>`.
          */
         fun parse(text: String): AppRoute? {
             val parts = text.split(":", limit = 2)
@@ -105,6 +108,7 @@ sealed interface AppRoute {
                 "stories" -> Stories
                 "english" -> English
                 "speaking" -> Speaking
+                "speech" -> SpeechCoach(parts.getOrNull(1))
                 "unit" -> parts.getOrNull(1)?.let { Unit(it) }
                 "guide" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Guide(it) }
                 "mirror" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Mirror(it) }
@@ -192,6 +196,8 @@ data class LaunchArguments(
      * with `foniaDrafts`; a release build without the flag doesn't show them (iOS `LaunchFlags.showsDrafts`).
      */
     val drafts: Boolean = IS_DEBUG_BUILD,
+    /** Debug only: a video in the app's files folder shown to the speech coach in place of the camera (`foniaCoachVideo`). */
+    val coachVideo: String? = null,
 ) {
     companion object {
         val none = LaunchArguments()
@@ -219,6 +225,7 @@ data class LaunchArguments(
                 hidesAdultCards = debug && flag("foniaNoAdultCards"),
                 missionSample = debug && flag("foniaMissionSample"),
                 drafts = debug || flag("foniaDrafts"),
+                coachVideo = if (debug) value("foniaCoachVideo") else null,
             )
         }
     }
@@ -378,6 +385,9 @@ class AppModel(
     /** Set when the first run ends: the home offers the quick check once („Hai să vedem ce sunete exersăm”). */
     var offerCheck: Boolean by mutableStateOf(false)
 
+    /** „Calibrare” is on screen (offered when the first run ends, before the check; and from Setări). */
+    var calibrating: Boolean by mutableStateOf(false)
+
     /** Bumps when a check is saved, so the home and Progres read the plan again. */
     var checksVersion: Int by mutableStateOf(0)
         private set
@@ -487,6 +497,8 @@ class AppModel(
         val parts = start.split(":")
         when (parts[0]) {
             "check" -> startCheck()
+            // The guided calibration, for tests and screenshots.
+            "calibrare" -> calibrating = true
             // The invitation the first run ends on, for screenshots.
             "offer" -> offerCheck = true
             "drill" -> {
@@ -614,8 +626,20 @@ class AppModel(
             } catch (_: Exception) {
                 return null
             }
+            // A test run (fixtures or a WAV in place of the microphone) works on a fresh copy of his data, so its
+            // attempts, stars and drills never land in his real history.
+            val testRun = arguments.fixtures || arguments.micFile != null
+            val home = if (!testRun) context.noBackupFilesDir else File(context.noBackupFilesDir, "TestRun").also { dir ->
+                runCatching {
+                    dir.deleteRecursively()
+                    for (part in listOf("Fonia/Database", "Fonia/Voice")) {
+                        val from = File(context.noBackupFilesDir, part)
+                        if (from.exists()) from.copyRecursively(File(dir, part), overwrite = true)
+                    }
+                }
+            }
             val database = try {
-                FoniaDatabase.live(context.noBackupFilesDir)
+                FoniaDatabase.live(home)
             } catch (_: Exception) {
                 return null
             }
@@ -637,13 +661,16 @@ class AppModel(
                 val index = tech.fonia.lessons.VoiceIndex.parse(text("spec/content/voice/index.json"))
                 audio.extraClips = index.clips.values.filter { it.checked }.associate { it.text.trim().lowercase() to "spec/content/voice/${it.file}" }
             }
+            // How fast the practice moves and how calm the live letter is (spec/pacing.json); the defaults otherwise.
+            runCatching { tech.fonia.features.session.Pacing.current = tech.fonia.features.session.Pacing.parse(text("spec/pacing.json")) }
             val pictures = runCatching { assets.list("images/pictures")?.map { it.substringBeforeLast('.') }?.toSet() }.getOrNull() ?: emptySet()
             val speech = SpeechHub(runCatching { platform.speechModel(context.applicationContext, arguments) }.getOrNull(), scope)
             // The new ML is optional: a phone where its files can't be opened runs the app as before.
             val preferences = FoniaPreferences(context.applicationContext)
             // A force stop takes the app's alarms with it: the daily reminder comes back when the app opens.
             runCatching { PracticeReminder.restore(context.applicationContext) }
-            val openPilot = { runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull() }
+            // A run on a copy of the data (fixtures or a mic file) keeps no pilot log.
+            val openPilot = { if (testRun) null else runCatching { PilotLog.open(PilotLog.defaultFolder(context), pilotEnvironment(context)) }.getOrNull() }
             // Off until an adult switches it on: a family that never opens Setări keeps no log.
             val pilotSlot = PilotSlot(if (preferences.bool(PilotSwitch.KEY, PilotSwitch.DEFAULT)) openPilot() else null)
             val ml = runCatching { MlHub.live(context.applicationContext, scope, pilotSlot) }.getOrNull()
@@ -660,14 +687,14 @@ class AppModel(
                 pilotSlot = pilotSlot,
                 openPilot = openPilot,
                 ml = ml,
-                reading = ReadingStore(File(context.noBackupFilesDir, "Fonia/Reading")),
-                adaptive = AdaptiveStore(File(context.noBackupFilesDir, "Fonia/Adaptive")),
+                reading = ReadingStore(File(home, "Fonia/Reading")),
+                adaptive = AdaptiveStore(File(home, "Fonia/Adaptive")),
                 judge = runCatching { tech.fonia.features.session.SoundJudge.live(context, scope) }.getOrNull(),
                 talkers = tech.fonia.features.session.TalkerMemory.preferences(context),
-                voice = tech.fonia.features.session.VoiceStore(File(context.noBackupFilesDir, "Fonia/Voice")),
-                checks = FileCheckStore(File(context.noBackupFilesDir, "Fonia/Check")),
+                voice = tech.fonia.features.session.VoiceStore(File(home, "Fonia/Voice"), persist = !fixtures && arguments.micFile == null),
+                checks = FileCheckStore(File(home, "Fonia/Check")),
                 lessonContent = v2,
-                drills = tech.fonia.features.diction.FileDrillStore(File(context.noBackupFilesDir, "Fonia/Diction")),
+                drills = tech.fonia.features.diction.FileDrillStore(File(home, "Fonia/Diction")),
                 hasPicture = { name -> name in pictures },
                 localData = LocalData(
                     profileFolders = listOf("Voice", "Check", "Diction", "Reading", "Adaptive").map { File(context.noBackupFilesDir, "Fonia/$it") },

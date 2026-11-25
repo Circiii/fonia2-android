@@ -86,6 +86,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
     val title = if (sound != null) "Ține ${sound.shortLetter} cât poți" else "Suflă în lumânare"
     val field = run.field
     val levels = app.audio.levels
+    val bias = placeBias(app.talkers.holdGroup(run.profile, sound), app.voice.calibrated(run.profile.id))
 
     /**
      * How fast the bar fills now ([HearRules.holdCredit]): the sound itself at full speed, a close one slowly, a hiss of
@@ -97,7 +98,8 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
             detector = def.detector,
             warmTarget = def.id.family == SoundFamily.WarmAir,
             isFricative = levels.isFricative,
-            sNess = levels.sNess,
+            // The place as the letter and the meter show it (recentred for a man's voice, or his own calibration).
+            sNess = recentred(levels.sNess, bias),
             trill = levels.trillStrength,
             level = levels.level,
         )
@@ -118,7 +120,8 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         letter, levels, listening = isListening, modelVoice = false, holdSeconds = { held.value.toFloat() },
         baseInflation = { (0.4 + 0.6 * (held.value / seconds)).toFloat().coerceIn(0.4f, 1f) },
         heard = { heard.value = it },
-        placeBias = placeBias(app.talkers.group(run.profile)),
+        placeBias = bias,
+        aim = LiveAim.of(sound?.id),
     )
 
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -187,7 +190,12 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         try {
             // The group heard in his voice so far; before any voiced take, the one most favourable to the target (a hiss
             // alone cannot tell a man's S from a child's Ș).
-            app.audio.startListening(group = app.talkers.holdGroup(run.profile, sound), calibration = run.profile.calibration, fixtureText = sound?.hero?.says)
+            val personal = app.voice.personal(run.profile.id)
+            val (own, room) = synchronized(personal) { personal.calibration() to personal.room }
+            app.audio.startListening(
+                group = app.talkers.holdGroup(run.profile, sound), calibration = own ?: run.profile.calibration,
+                fixtureText = sound?.hero?.says, room = room,
+            )
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (_: Exception) {
@@ -246,7 +254,7 @@ fun SustainExercise(trial: Trial, target: SustainTarget, seconds: Double, role: 
         } else {
             letter.rest()
         }
-        delay(if (machine == Rating.yes) 1300 else 900)
+        delay(if (machine == Rating.yes) Pacing.current.sustainDoneMs else Pacing.current.sustainPartialMs)
         if (role == SustainRole.Facilitation) {
             run.advance()
         } else {

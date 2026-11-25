@@ -11,7 +11,7 @@ import java.util.Locale
  * (Almost 1.2), abstained on an error 1; runner-made edits weigh half:
  *
  *  A. vowel context: the sNess logit shift before i/e for S/Z ("s:i", "s:e") and Ș/J ("ș:i", "ș:e");
- *  B. per sound: the full head's pool constants (alpha, c, cPlace, correctBias; g fixed);
+ *  B. per sound: the full head's pool constants (alpha, c, cPlace, correctBias, g);
  *  C. praise when the heads agree: (p_fast, p_full) thresholds.
  *
  * Writes `lovo.csv` (id → held-out label) and `fit.md` (what each fold chose, and the all-voices choice to ship).
@@ -81,7 +81,9 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
         val out = ArrayList<FullHeadParams>()
         for (a in listOf(0.25f, 0.5f, 0.75f, 1f, 1.5f)) for (c in listOf(0.25f, 0.5f, 0.75f, 1.25f))
             for (cp in if (place) listOf<Float?>(null, 0f, 0.25f, 0.5f) else listOf<Float?>(null))
-                for (b in listOf(-1f, -0.5f, 0f, 0.5f, 1f)) out += FullHeadParams(a, c, 0.5f, b, cp)
+                // 2026-11-25: the correct-bias range goes past 1 and the GOP weight is free: on CE/GE the chosen values
+                // sat at the grid's edge (b = 1), and ZIPA's GOP is low on good [tʃ]/[dʒ] (heard as s / ʒ).
+                for (b in listOf(-1f, -0.5f, 0f, 0.5f, 1f, 1.5f, 2f, 3f)) for (g in listOf(0f, 0.25f, 0.5f)) out += FullHeadParams(a, c, g, b, cp)
         return out
     }
     private val praiseGrid = listOf(PraiseThresholds()) +

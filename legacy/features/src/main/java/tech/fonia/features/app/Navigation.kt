@@ -129,7 +129,7 @@ internal val LocalNavigationScope = compositionLocalOf<AnimatedVisibilityScope?>
 /** The routes that grow out of their door on Home (`opensByZoom`, MainTabs.swift:160-167). */
 internal val AppRoute.opensByZoom: Boolean
     get() = when (this) {
-        AppRoute.AllSounds, AppRoute.Guides, AppRoute.Warmup, AppRoute.Play, AppRoute.Stories, AppRoute.English, AppRoute.Speaking -> true
+        AppRoute.AllSounds, AppRoute.Guides, AppRoute.Warmup, AppRoute.Play, AppRoute.Stories, AppRoute.English, AppRoute.Speaking, is AppRoute.SpeechCoach -> true
         else -> false
     }
 

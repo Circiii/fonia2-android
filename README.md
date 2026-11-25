@@ -23,10 +23,11 @@ cd fonia2-android
 - `local.properties` trebuie să conțină `sdk.dir=` (calea către Android SDK). JDK 17 (cel din Android Studio merge).
 - Conținutul (cuvinte, voci, imagini) e submodulul `content` (`Circiii/fonia-content`, privat; ramura `voice-elevenlabs` are vocile noi).
 - Fără modelul de foneme (build mai mic, verificarea rapidă a sunetului): adaugă `-Pfonia.zipa=false`.
+- Modelul de recunoaștere a cuvintelor în română nu e public (licență în lămurire, `docs/ASR.md`). Fără el build-ul merge singur, propozițiile se judecă doar după sunet; poți pune explicit `-Pfonia.roasr=false`.
 - Pentru emulator: adaugă `-Pfonia.abi=x86_64`. Microfonul emulatorului trebuie pornit din Extended controls › Microphone.
 - APK-ul iese în `legacy/app/build/outputs/apk/debug/`.
 
-Starea de azi, ce e slab și ce urmează: `docs/STARE.md`.
+Unde a rămas lucrul și ce e de îmbunătățit: **`docs/PENTRU_STEFAN.md`** (25 noiembrie, versiunea 29). Starea mai veche: `docs/STARE.md`.
 
 ## Structură
 
@@ -39,6 +40,7 @@ Starea de azi, ce e slab și ce urmează: `docs/STARE.md`.
 | `speech`, `phones`, `ml` | judecătorul de sunet și modelul de foneme |
 | `face`, `facecamera` | punctele feței și oglinda |
 | `mouth3d` | gura 3D |
+| `words` | recunoașterea cuvintelor în română (Kotlin pur) |
 | `speaking`, `feature/speaking` | „Tu, fără ăăă” și transcriptul prozodic |
 | `domain`, `store` | conținutul, sesiunile, datele |
 | `collector` | aplicația de înregistrat date pentru antrenare |

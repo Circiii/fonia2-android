@@ -2,9 +2,10 @@
 <resources>
     <!-- paper (0xF4F8F3) from the iOS palette, so the window behind Compose matches before the first frame. -->
     <color name="paper">#FFF4F8F3</color>
+    <color name="sky">#FFBCDDF0</color>
 
     <style name="Theme.Fonia" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/paper</item>
+        <item name="android:windowBackground">@color/sky</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>

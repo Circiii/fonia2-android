@@ -47,6 +47,24 @@ class PersonalReference(
         val f0Hz: List<Float> = emptyList(),
         val sounds: List<SoundStats> = emptyList(),
         val takes: Int = 0,
+        /** The guided calibration ("Calibrare"), null before it. */
+        val room: Room? = null,
+    )
+
+    /**
+     * What the guided calibration measured (about 20 s: 2 s of quiet, a held "aaa", "sss", "șșș"): his room's noise
+     * floor and his speaking level (frame RMS, dBFS), his voice's F0, and when. The live meters set their floor and
+     * range from it; the judge uses his group from [f0Hz] until his accepted takes know it better.
+     */
+    @Serializable
+    data class Room(
+        val floorDb: Float,
+        val speechDb: Float,
+        val f0Hz: Float? = null,
+        /** Median live place of his held S and Ș once measured against his own anchors (0 = Ș … 1 = S), for the picture. */
+        val sPlace: Float? = null,
+        val shPlace: Float? = null,
+        val atMillis: Long = 0L,
     )
 
     @Serializable
@@ -55,6 +73,10 @@ class PersonalReference(
     private val calibration = TalkerCalibration()
     private val f0 = ArrayList<Float>()
     private val stats = LinkedHashMap<SoundId, SoundStats>()
+
+    /** The guided calibration, null before it. */
+    var room: Room? = null
+        private set
 
     /** Takes that joined the reference. */
     var takes: Int = 0
@@ -71,8 +93,11 @@ class PersonalReference(
     /** His median F0 (NaN before any voiced accepted take). */
     val f0Hz: Float get() = median(f0)
 
-    /** His talker group from his accepted takes (null before 3 voiced ones). */
-    fun talker(): TalkerGroup? = if (f0.size >= 3) TalkerVoice.groupOf(f0Hz) else null
+    /** His talker group from his accepted takes, or from the calibration's "aaa" before 3 voiced ones (null: neither). */
+    fun talker(): TalkerGroup? = when {
+        f0.size >= 3 -> TalkerVoice.groupOf(f0Hz)
+        else -> room?.f0Hz?.let { TalkerVoice.groupOf(it) }
+    }
 
     fun stats(sound: SoundId): SoundStats? = stats[sound]
 
@@ -80,7 +105,11 @@ class PersonalReference(
     fun apply(request: JudgeRequest): JudgeRequest = request.copy(
         calibration = calibration() ?: request.calibration,
         talker = talker() ?: request.talker,
-        childF0Hz = if (f0.size >= 3) f0Hz else request.childF0Hz,
+        childF0Hz = when {
+            f0.size >= 3 -> f0Hz
+            room?.f0Hz != null -> room!!.f0Hz!!
+            else -> request.childF0Hz
+        },
         reference = this,
     )
 
@@ -132,11 +161,30 @@ class PersonalReference(
         return true
     }
 
+    /**
+     * The guided calibration: his held S and Ș become anchors at once (he was asked for exactly those sounds, so no
+     * judge has to accept them first; a pair the wrong way round is still refused by the DSP's fit), and [room] is kept.
+     * The newest anchors replace the oldest past the DSP's cap per place. Returns true when his own S/Ș boundary is
+     * now [active].
+     */
+    fun calibrate(room: Room, sAnchors: List<SibilantAnchor>, shAnchors: List<SibilantAnchor>): Boolean {
+        this.room = room
+        for (a in sAnchors) calibration.add(a.copy(place = SibilantPlace.S))
+        for (a in shAnchors) calibration.add(a.copy(place = SibilantPlace.SH))
+        return active
+    }
+
+    /** Keeps the places measured after the anchors were added (the result picture). */
+    fun placed(sPlace: Float, shPlace: Float) {
+        room = room?.copy(sPlace = sPlace.takeIf { !it.isNaN() }, shPlace = shPlace.takeIf { !it.isNaN() })
+    }
+
     fun toJson(): String = JudgeSpec.json.encodeToString(State.serializer(), State(
         anchors = calibration.anchors.map { AnchorJson(it.place.rawValue, it.centroidHz, it.peakHz, it.bandRatioDb, it.tiltDb) },
         f0Hz = f0.toList(),
         sounds = stats.values.toList(),
         takes = takes,
+        room = room,
     ))
 
     private fun push(list: MutableList<Float>, value: Float) {
@@ -160,6 +208,7 @@ class PersonalReference(
             state.f0Hz.takeLast(thresholds.window).forEach { ref.f0.add(it) }
             for (s in state.sounds) SoundId.of(s.sound)?.let { ref.stats[it] = s }
             ref.takes = state.takes
+            ref.room = state.room
             return ref
         }
 

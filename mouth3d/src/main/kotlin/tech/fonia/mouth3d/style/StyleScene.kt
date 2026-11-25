@@ -67,9 +67,9 @@ object StyleScene {
     private val FRONT_CENTRE = floatArrayOf(0f, 1.5f, 4f)
     private const val FRONT_HALF_W = 30f / 0.74f
     private const val FRONT_HALF_H = 23f
-    private val PROFILE_CENTRE = floatArrayOf(0f, -3f, -12f)
+    private val PROFILE_CENTRE = floatArrayOf(0f, -11f, -12f)
     private const val PROFILE_HALF_W = 38f
-    private const val PROFILE_HALF_H = 35f
+    private const val PROFILE_HALF_H = 42f
 
     private val meshRanges = ThreadLocal.withInitial { HeadModel.Ranges() }
 

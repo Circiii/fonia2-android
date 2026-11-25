@@ -1,5 +1,7 @@
 package tech.fonia.features.session
 
+import tech.fonia.features.app.shortLetter
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -80,12 +82,18 @@ fun PromptView(
                 val prompt = exercise.prompt
                 when (prompt.level) {
                     RepeatPrompt.Level.Syllable -> BigSyllable(prompt.text, accent, sound, family, letter)
-                    RepeatPrompt.Level.Sentence -> Sentence(prompt.text, prompt.cue, accent, verdict, onTapWord)
+                    RepeatPrompt.Level.Sentence -> Sentence(
+                        prompt.text, prompt.cue, accent, verdict, onTapWord,
+                        hero = if (prompt.language == Language.Ro) sound else null, family = family, letter = letter,
+                    )
                     else -> Word(prompt.text, prompt.picture, prompt.cue, isEnglish = prompt.language == Language.En, sound, accent, family, letter)
                 }
             }
             is Exercise.Name -> Naming(exercise.item, sound, accent, phase, family, letter)
-            is Exercise.Twister -> Sentence(exercise.text, null, accent, verdict, onTapWord)
+            is Exercise.Twister -> Sentence(
+                exercise.text, null, accent, verdict, onTapWord,
+                hero = if (exercise.language == Language.Ro) sound else null, family = family, letter = letter,
+            )
             Exercise.Volume -> VoiceTask("Vorbește tare", "Spune o frază, ca să te audă și ultimul rând.", FoniaIcon.loud, accent)
             Exercise.Glide -> VoiceTask("Urcă și coboară", "Spune „aaa” de jos în sus, apoi înapoi.", FoniaIcon.glide, accent)
             is Exercise.Intonation -> Sentence(
@@ -155,6 +163,10 @@ private fun Naming(item: WordItem, sound: SoundDef?, accent: Color, phase: Speak
     PracticeSheet {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             item.picture?.let { WordPicture(it, Modifier.heightIn(max = 220.dp)) }
+            // While he names the picture the word stays hidden; the sound's letter answers his voice in its place.
+            if (phase != SpeakPhase.Result && letter != null && sound != null && family != null) {
+                EchoLetter(sound.shortLetter, letter, family, Modifier.alpha(1f - shown), height = 150.dp)
+            }
             Box(Modifier.heightIn(min = 56.dp).alpha(shown), contentAlignment = Alignment.Center) {
                 if (letter != null && sound != null && family != null) {
                     LiveTargetWord(item.text, sound.graphemes, family, letter, size = 44f)
@@ -166,10 +178,24 @@ private fun Naming(item: WordItem, sound: SoundDef?, accent: Color, phase: Speak
     }
 }
 
+/**
+ * A sentence to say. With a target sound ([hero]) its letter stands alive above the words (owner, 2026-11-24: on a
+ * sentence nothing reacted while he spoke): it grows with his voice and lights while the sound itself is heard.
+ */
 @Composable
-private fun Sentence(text: String, cue: String?, accent: Color, verdict: TakeVerdict?, onTapWord: (MarkedWord) -> Unit) {
+private fun Sentence(
+    text: String,
+    cue: String?,
+    accent: Color,
+    verdict: TakeVerdict?,
+    onTapWord: (MarkedWord) -> Unit,
+    hero: SoundDef? = null,
+    family: Field? = null,
+    letter: LetterLink? = null,
+) {
     PracticeSheet {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (hero != null && family != null && letter != null) HeldLetter(hero.shortLetter, letter, family, height = 168.dp)
             MarkedSentence(marks(text, verdict), accent = accent, modifier = Modifier.padding(vertical = 12.dp), size = 32f, ink = Palette.ink, onTap = onTapWord)
             if (cue != null) FoniaText(cue, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
         }

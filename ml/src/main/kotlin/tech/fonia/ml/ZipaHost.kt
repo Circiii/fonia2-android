@@ -68,6 +68,7 @@ class ZipaHost(
 
     // Touched only on the host thread.
     private var scorer: ZipaPhoneScorer? = null
+    private var acoustic: AcousticModel? = null
     private var closeable: AutoCloseable? = null
 
     @Volatile var lastTimings = ZipaTimings()
@@ -80,6 +81,7 @@ class ZipaHost(
             val t0 = System.nanoTime()
             val (model, handle) = loader(config.intraOpThreads)
             closeable = handle
+            acoustic = model
             val s = ZipaPhoneScorer(model, config.scorer, modelName = version.tag)
             scorer = s
             lastTimings = lastTimings.copy(loadMs = (System.nanoTime() - t0) / 1e6)
@@ -98,6 +100,28 @@ class ZipaHost(
             s.score(quiet, JudgeRequest(SoundId.S, Level.Word, "sare", Position.Initial))
             Unit
         }.await()
+    }
+
+    /**
+     * The vowels the phone model hears in [samples] (any rate), as seconds from the start: one per syllable. This is
+     * the speech coach's speaking rate. Null when the model is missing or fails. Runs on the host thread.
+     */
+    suspend fun vowelOnsets(samples: FloatArray, sampleRate: Double): DoubleArray? = try {
+        scope.async {
+            ensureLoaded()
+            val model = acoustic ?: return@async null
+            val samples16k = if (sampleRate == 16_000.0) samples else ZipaPhoneScorer.to16k(Clip(samples, sampleRate))
+            val posteriors = model.posteriors(samples16k)
+            if (posteriors.frames == 0) return@async DoubleArray(0)
+            val onsets = IntArray(posteriors.frames)
+            val n = tech.fonia.phones.VowelNuclei.onsets(posteriors, onsets)
+            val secondsPerFrame = samples16k.size / 16_000.0 / posteriors.frames
+            DoubleArray(n) { onsets[it] * secondsPerFrame }
+        }.await()
+    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+        throw cancelled
+    } catch (_: Throwable) {
+        null
     }
 
     override suspend fun run(input: ZipaInput): PhoneEvidence? = scope.async { score(input) }.await()

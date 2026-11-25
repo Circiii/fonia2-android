@@ -34,6 +34,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tech.fonia.design.FoniaText
@@ -96,10 +98,19 @@ private fun AppRoot(arguments: LaunchArguments, platform: FoniaPlatform) {
             onDispose { model.microphone.attach(null) }
         }
         val app = model.app
-        when {
-            app != null -> AppContent(app)
-            model.failed -> CannotStart()
-            else -> Launching()
+        // The start screen stays a moment so the name and Foni are seen; a debug route skips the wait.
+        var held by remember { mutableStateOf(arguments.route == null) }
+        LaunchedEffect(Unit) {
+            delay(2300)
+            held = false
+        }
+        val ready = app != null && app.hasLoadedProfiles && !held
+        androidx.compose.animation.Crossfade(ready, animationSpec = androidx.compose.animation.core.tween(380), label = "start") { open ->
+            when {
+                open && app != null -> AppContent(app)
+                model.failed -> CannotStart()
+                else -> Launching()
+            }
         }
     }
 }
@@ -132,12 +143,10 @@ internal class FoniaViewModel(application: Application, arguments: LaunchArgumen
     }
 }
 
-/** Until the profiles are read: Foni on a cloud, on white. */
+/** Until the profiles are read (and a moment after): the name in living letters and Foni's head. */
 @Composable
 private fun Launching() {
-    Box(Modifier.fillMaxSize().background(Color.White), contentAlignment = Alignment.Center) {
-        MascotView(MascotPose.cloud, Modifier.width(200.dp))
-    }
+    StartScreen()
 }
 
 /** When the content or the database can't be opened. */

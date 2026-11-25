@@ -26,6 +26,9 @@ data class ModelEntry(
 
 /** The models the APK carries, from the manifest the build copied next to them. */
 class ModelRegistry(val entries: List<ModelEntry>) {
+    /** Null when this APK does not carry the model. */
+    fun find(id: String): ModelEntry? = entries.firstOrNull { it.id == id }
+
     fun entry(id: String): ModelEntry = entries.firstOrNull { it.id == id } ?: error("no model '$id' in models/manifest.json")
 
     /** `zipa@dfe87c976626;…`: saved in `attempt.modelVersions` with the thresholds and fusion versions. */
@@ -34,6 +37,9 @@ class ModelRegistry(val entries: List<ModelEntry>) {
     companion object {
         const val MANIFEST_ASSET = "models/manifest.json"
         const val ZIPA = "zipa"
+
+        /** The Romanian word recogniser; optional: an APK may be built without it. */
+        const val ROASR = "roasr"
 
         fun parse(text: String): ModelRegistry {
             val root = Json.parseToJsonElement(text).jsonObject

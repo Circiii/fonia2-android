@@ -64,6 +64,7 @@ tasks.test {
     // Models are downloaded once into the Gradle user cache, never committed. `-Pfonia.models.offline=true` stops the
     // download; the model tests then skip with the reason.
     systemProperty("fonia.models", gradle.gradleUserHomeDir.resolve("fonia-models").absolutePath)
+    providers.gradleProperty("fonia.coach.bench").orNull?.let { systemProperty("fonia.coach.bench", it) }
     systemProperty("fonia.models.offline", providers.gradleProperty("fonia.models.offline").getOrElse("false"))
     if (testJavaExecutable != null) executable = testJavaExecutable.absolutePath
     testLogging {

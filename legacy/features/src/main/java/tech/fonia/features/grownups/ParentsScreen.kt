@@ -132,6 +132,13 @@ private fun Rooms(profile: Profile, app: AppModel, path: PathModel, onShowGrownu
             profileActivityRows(profile, app, context, push)
         }
         ListSection(header = "Reglaje") {
+            row {
+                DetailRow(
+                    "Calibrare pe vocea ta",
+                    "Douăzeci de secunde: liniște, apoi „aaa”, „sss”, „șșș”. Telefonul învață camera, vocea și S-ul și Ș-ul tău.",
+                    onClick = { app.calibrating = true },
+                )
+            }
             profileSetupRows(profile, push)
             row { NavigationRow("Cine exersează", onClick = { push(Destination.Who) }) }
             row { ButtonRow("Alte setări", onClick = { onShowGrownups(true) }, color = Palette.ink) }

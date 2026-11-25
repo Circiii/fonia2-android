@@ -183,6 +183,24 @@ class JudgeV2Tests {
     }
 
     @Test
+    fun theGuidedCalibrationGivesHisBoundaryAndGroupAtOnceAndSurvivesJson() {
+        val ref = PersonalReference()
+        fun a(c: Float) = tech.fonia.dsp.SibilantAnchor(tech.fonia.dsp.SibilantPlace.S, c, c + 400f, 6f, -3f)
+        val room = PersonalReference.Room(floorDb = -72f, speechDb = -31f, f0Hz = 110f, atMillis = 1L)
+        assertTrue(ref.calibrate(room, (0 until 5).map { a(6000f + it * 60) }, (0 until 5).map { a(3800f + it * 50) }))
+        assertNotNull(ref.calibration())
+        assertEquals(TalkerGroup.Man, ref.talker(), "the calibration's aaa says who speaks")
+        assertEquals(110f, ref.apply(word(SoundId.S, "sare", TalkerGroup.Child)).childF0Hz)
+        ref.placed(0.86f, Float.NaN)
+        val back = PersonalReference.fromJson(ref.toJson())
+        assertTrue(back.active)
+        assertEquals(-72f, back.room?.floorDb)
+        assertEquals(0.86f, back.room?.sPlace)
+        assertNull(back.room?.shPlace)
+        assertEquals(TalkerGroup.Man, back.talker())
+    }
+
+    @Test
     fun anUnclearPlaceNeverBecomesAnAnchor() {
         val ref = PersonalReference()
         repeat(6) { ref.update(fakeResult(SoundId.S, 0.55f, 5000f)) }

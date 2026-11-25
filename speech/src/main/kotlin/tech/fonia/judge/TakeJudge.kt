@@ -224,6 +224,11 @@ class TakeJudge(
             decision = decision.copy(verdict = Verdict.Almost)
             notes += "lateralHintAlmost"
         }
+        // A word the phoneme model could not align is most often another word: the fast head alone never praises it
+        // (heard on the emulator: "lup" in an R drill praised by the fast head at p=0.91 while the alignment failed).
+        if (wordLevel && phones != null && !phones.reliable && decision.verdict == Verdict.Correct) {
+            return retake(RetakeReason.OtherWord, firstFeatures)
+        }
         micros["decide"] = (System.nanoTime() - t0) / 1000
         if (phones != null && phones.micros > 0) micros["phones"] = phones.micros
         return TakeResult(

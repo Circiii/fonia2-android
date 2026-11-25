@@ -16,23 +16,27 @@ _spec = importlib.util.spec_from_file_location("make_v1", os.path.join(HERE, "ma
 v1m = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(v1m)
 
-VERSION = "2026-11-24.v2"
+VERSION = "2026-11-25.v3"
 SOURCE = ("fast: hand-set v0, not trained; full: fast head pooled with ZIPA lpr (FullHead.build), constants per sound "
           "chosen by leave-one-voice-out on 8 synthetic voices (EVAL_v2.md), not trained on children")
 
 # Chosen on all voices by EvalV2Fits (tools/eval/out/<tag>/chosen.json); the held-out folds are in EVAL_v2.md.
+# v3 (2026-11-25, tag v28g): wider grid (correctBias up to 3, GOP weight g free). Held out: correct takes accepted
+# 77.4 % -> 82.4 %, errors praised 2.9 % -> 3.4 %. CE keeps its v2 constants: the new choice praised 6/16 CE errors
+# held out without accepting more good CE takes.
 PARAMS = {
     "s": {"alpha": 0.5, "c": 0.25, "g": 0.5, "correctBias": 0.0},
-    "ș": {"alpha": 0.75, "c": 0.5, "g": 0.5, "correctBias": -1.0},
-    "z": {"alpha": 1.0, "c": 0.75, "g": 0.5, "correctBias": 1.0},
-    "j": {"alpha": 0.5, "c": 1.25, "g": 0.5, "correctBias": 1.0},
+    "ș": {"alpha": 0.5, "c": 0.5, "g": 0.25, "correctBias": 0.5},
+    "z": {"alpha": 0.25, "c": 0.25, "g": 0.25, "correctBias": 2.0, "cPlace": 0.0},
+    "j": {"alpha": 0.25, "c": 0.5, "g": 0.5, "correctBias": 3.0, "cPlace": 0.0},
     "ț": {"alpha": 0.25, "c": 1.25, "g": 0.5, "correctBias": 0.0, "cPlace": 0.5},
     "ce": {"alpha": 0.25, "c": 0.75, "g": 0.5, "correctBias": 1.0, "cPlace": 0.0},
-    "ge": {"alpha": 0.25, "c": 0.5, "g": 0.5, "correctBias": 1.0},
-    "r": {"alpha": 1.0, "c": 0.75, "g": 0.5, "correctBias": 1.0},
-    "l": {"alpha": 0.25, "c": 0.75, "g": 0.5, "correctBias": 1.0},
+    "ge": {"alpha": 0.5, "c": 0.75, "g": 0.0, "correctBias": 3.0},
+    "r": {"alpha": 1.5, "c": 1.25, "g": 0.0, "correctBias": 3.0},
+    "l": {"alpha": 0.25, "c": 1.25, "g": 0.0, "correctBias": 3.0},
 }
 PLACE = {"placeSwap", "affricatePlace"}
+TAU_OK = {"r": 0.72, "l": 0.72}
 
 
 def full_head(spec, params):
@@ -66,6 +70,9 @@ if __name__ == "__main__":
         out = v1m.v1(spec)
         params = PARAMS[out["sound"]]
         out["version"] = VERSION
+        # v3: R and L say "correct" from 0.72 (good adult R/L words sat at 0.74-0.77, EVAL v28; no R/L error praised).
+        if out["sound"] in TAU_OK:
+            out["decision"]["tauOk"] = TAU_OK[out["sound"]]
         out["source"] = SOURCE
         out["fullFrom"] = params
         out["heads"]["full"] = full_head(out, params)

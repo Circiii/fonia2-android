@@ -1,5 +1,6 @@
 package tech.fonia.features.speaking
 
+import tech.fonia.features.app.wordsTranscriber
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -514,7 +515,7 @@ private fun TalkScreen(
         }
         phase = TalkPhase.Thinking
         clip = captured
-        val made = TalkReport.make(captured, language, profile, app.content, app.speech.transcriber, if (openingOnly) 0 else seconds, fillerHistory)
+        val made = TalkReport.make(captured, language, profile, app.content, app.wordsTranscriber, if (openingOnly) 0 else seconds, fillerHistory)
         report = made
         if (made.focus != TalkFocus.NotHeard) onFinished(made.fillers)
         noUm = if (language == Language.Ro) NoUmTake.make(captured, report?.rawTranscript) else null

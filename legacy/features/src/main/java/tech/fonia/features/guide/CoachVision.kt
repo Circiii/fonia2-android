@@ -143,8 +143,8 @@ class HoldTimer(private val requiredNanos: Long = 1_000_000_000L) {
  * never gets dizzy, the picture always covering the pane, and back to the whole frame after [lostNanos] without a face.
  */
 class CropFollower(
-    private val maxZoom: Float = 2.0f,
-    private val mouthShare: Float = 0.40f,
+    private val maxZoom: Float = 1.35f,
+    private val mouthShare: Float = 0.24f,
     private val zoomTau: Float = 0.55f,
     private val panTau: Float = 0.35f,
     private val lostNanos: Long = 900_000_000L,
@@ -176,7 +176,7 @@ class CropFollower(
             // Dead band: small changes of the mouth's width (speaking, smiling) do not breathe the zoom.
             if (abs(wantZ - targetZ) / targetZ < 0.12f) wantZ = targetZ else targetZ = wantZ
             wantTx = w * 0.5f - mouthCx * z
-            wantTy = h * 0.55f - mouthCy * z
+            wantTy = h * 0.52f - mouthCy * z
         } else if (now - lastSeen > lostNanos) {
             targetZ = 1f
             wantZ = 1f

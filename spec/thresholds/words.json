@@ -1,0 +1,13 @@
+{
+ "version": "words-1",
+ "saidShare": 0.75,
+ "closeShare": 0.5,
+ "minConfidence": 0.70,
+ "nothingBlankShare": 0.97,
+ "minPeakDb": -45.0,
+ "allSaidCoverage": 0.9,
+ "mostSaidCoverage": 0.6,
+ "fillerWords": ["deci", "practic", "gen", "adică", "știi", "păi", "efectiv", "cumva", "na"],
+ "fillerPhrases": ["de fapt", "cum ar veni", "să zic", "să zicem", "ca să zic așa"],
+ "repeatWithinSeconds": 1.5
+}
