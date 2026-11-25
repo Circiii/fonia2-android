@@ -56,7 +56,6 @@ import tech.fonia.design.fHeadline
 import tech.fonia.design.scene
 import tech.fonia.design.swiftSpring
 import tech.fonia.domain.AttemptsSummary
-import tech.fonia.domain.Plural
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.DialogAction
@@ -328,11 +327,3 @@ private val density: androidx.compose.ui.unit.Density
     get() = androidx.compose.ui.unit.Density(android.content.res.Resources.getSystem().displayMetrics.density)
 
 private data class ExerciseIdentity(val index: Int, val retry: Int)
-
-/** The child's end screen counts effort, never what came out right (iOS `SessionVoice.effort`). */
-internal fun effortLine(attempts: Int, onlyListening: Boolean): String? {
-    if (attempts <= 0) return null
-    val verb = if (onlyListening) "Ai ascultat" else "Ai încercat"
-    if (attempts == 1) return "$verb o dată."
-    return "$verb de ${Plural.format(attempts, Plural.Noun.Oara)}."
-}

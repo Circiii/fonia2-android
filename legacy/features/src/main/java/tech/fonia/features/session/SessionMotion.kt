@@ -167,24 +167,3 @@ private fun Modifier.trimSides(sp: Float): Modifier = this.then(
         layout(p.width - 2 * trim, p.height) { p.place(-trim, 0) }
     },
 )
-
-/**
- * Lays its content out at its natural width and scales it down, centred, when that is wider than the room (SwiftUI's
- * `minimumScaleFactor` for things that are not text, such as a sticker line).
- */
-@Composable
-fun ShrinkToFit(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    androidx.compose.ui.layout.Layout(content, modifier) { measurables, constraints ->
-        val p = measurables.first().measure(constraints.copy(minWidth = 0, maxWidth = androidx.compose.ui.unit.Constraints.Infinity))
-        val room = if (constraints.hasBoundedWidth) constraints.maxWidth else p.width
-        val s = if (p.width > room && p.width > 0) room.toFloat() / p.width else 1f
-        val w = (p.width * s).toInt().coerceAtMost(room)
-        val h = (p.height * s).toInt()
-        layout(w, h) {
-            p.placeWithLayer((w - p.width) / 2, (h - p.height) / 2) {
-                scaleX = s
-                scaleY = s
-            }
-        }
-    }
-}

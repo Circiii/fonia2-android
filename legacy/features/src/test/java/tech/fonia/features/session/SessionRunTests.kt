@@ -585,15 +585,11 @@ class SessionRunTests {
         assertNull(makeRun(app, adult, Rung.Isolated).chapter)
     }
 
-    /** a child is told a part is done, never a count; the end counts effort with dată/ori */
+    /** a child is told a part is done, never a count */
     @Test
     fun childSeesNoNumbersOfRightAnswers() {
         assertEquals("Încă o parte gata. Bravo!", SessionRun.blockNote(2, 6, isChild = true))
         assertEquals("2 din 6 au sunat bine.", SessionRun.blockNote(2, 6, isChild = false))
-        assertEquals("Ai încercat o dată.", effortLine(1, onlyListening = false))
-        assertEquals("Ai încercat de 12 ori.", effortLine(12, onlyListening = false))
-        assertEquals("Ai ascultat de 20 de ori.", effortLine(20, onlyListening = true))
-        assertNull(effortLine(0, onlyListening = false))
     }
 
     /** "aproape" and "încă nu" become one soft line for a child; praise and the unjudged stay */
