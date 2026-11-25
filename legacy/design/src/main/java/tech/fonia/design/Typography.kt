@@ -3,11 +3,17 @@ package tech.fonia.design
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 /**
@@ -210,3 +216,33 @@ val fNumber: TextStyle get() = ui(30, UIWeight.black, TextRole.title).monospaced
 
 val fWord: TextStyle get() = practice(52, PracticeWeight.bold, TextRole.largeTitle)
 val fPhrase: TextStyle get() = practice(30, PracticeWeight.semibold, TextRole.title)
+
+/** A word joined at its hyphens („l-am”, „s-a”) so a line never breaks inside it. */
+val String.tiedAtHyphens: String
+    get() {
+        if (!contains('-')) return this
+        val tied = StringBuilder(length + 4)
+        for (index in indices) {
+            val character = this[index]
+            tied.append(character)
+            if (character == '-' && index > 0 && this[index - 1].isLetter() && index + 1 < length && this[index + 1].isLetter()) {
+                // A word joiner: no width, and no line break on either side of it.
+                tied.append('⁠')
+            }
+        }
+        return tied.toString()
+    }
+
+/** A title or an instruction that may wrap. TalkBack and the tests read the plain string. */
+@Composable
+fun TiedText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle? = null,
+    color: Color = Color.Unspecified,
+    textAlign: TextAlign? = null,
+) {
+    val tied = text.tiedAtHyphens
+    val plain = if (tied == text) modifier else modifier.clearAndSetSemantics { this.text = AnnotatedString(text) }
+    FoniaText(tied, plain, style = style, color = color, textAlign = textAlign)
+}

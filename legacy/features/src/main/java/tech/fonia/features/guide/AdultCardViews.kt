@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniaText
+import tech.fonia.design.TiedText
 import tech.fonia.design.Palette
 import tech.fonia.design.PracticeSheet
 import tech.fonia.design.StyledButton
@@ -75,7 +76,7 @@ fun AdultCardSheet(card: AdultCard, showsReopenHint: Boolean = false) {
 private fun Part(heading: String, text: String) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         FoniaText(heading, Modifier.semantics { heading() }, style = fHeadline, color = Palette.ink)
-        FoniaText(text, style = fBody, color = Palette.ink)
+        TiedText(text, style = fBody, color = Palette.ink)
     }
 }
 

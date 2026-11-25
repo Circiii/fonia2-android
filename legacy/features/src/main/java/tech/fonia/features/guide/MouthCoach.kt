@@ -82,6 +82,7 @@ import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
+import tech.fonia.design.TiedText
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.MouthView
@@ -351,7 +352,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
         }
     }
 
-    HeaderPage("Cum spui ${plan.letter}") {
+    HeaderPage("Încearcă ${plan.letter}") {
         Column(Modifier.fillMaxSize()) {
             Box(Modifier.padding(horizontal = 16.dp)) { Progress(plan.steps.size, index, isDone) }
             Spacer(Modifier.height(10.dp))
@@ -669,7 +670,7 @@ private fun MicStatus(state: MicState, app: AppModel) {
         MicState.Thinking -> ActivityIndicator()
         is MicState.Heard -> Column(verticalArrangement = Arrangement.spacedBy(2.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             FoniaText(state.title, style = fHeadline, color = Palette.ink, textAlign = TextAlign.Center)
-            state.tip?.let { FoniaText(it, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center) }
+            state.tip?.let { TiedText(it, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center) }
         }
     }
 }
@@ -698,7 +699,7 @@ private fun Finished(plan: CoachPlan, app: AppModel, micState: MicState, onTry: 
                 Box(Modifier.heightIn(min = 54.dp), contentAlignment = Alignment.Center) { MicStatus(micState, app) }
             } else if (word != null) {
                 StyledButton(onClick = { app.scope.launch { app.audio.say(word.word, plan.language) } }, style = MiniPillStyle()) { FoniaText(word.word) }
-                FoniaText(word.cue, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
+                TiedText(word.cue, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
             }
             Spacer(Modifier.weight(1f))
             StyledButton(onClick = onDone, style = FoniButtonStyle()) { tech.fonia.design.CTALabel("Gata") }

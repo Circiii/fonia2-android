@@ -95,7 +95,7 @@ class SecondHalfJourneys : Journeys() {
         tap(button("Mai rar"))
 
         tap(button("Încearcă"))
-        assertTrue(waitFor(staticText("Cum spui S")))
+        assertTrue(waitFor(staticText("Încearcă S")))
         goBack()
         assertTrue(waitFor(staticText("Cum spun S?")))
         goBack()
@@ -110,7 +110,7 @@ class SecondHalfJourneys : Journeys() {
             putExtra("foniaRoute", "mirror:s")
         }
         makeChild()
-        assertTrue(waitFor(staticText("Cum spui S"), 10))
+        assertTrue(waitFor(staticText("Încearcă S"), 10))
         assertTrue(waitFor(element("Pasul 1 din 4")))
         // Smile, then teeth: the camera checks them.
         assertTrue(waitFor(element("Pasul 3 din 4"), 30))
