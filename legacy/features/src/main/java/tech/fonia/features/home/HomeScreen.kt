@@ -103,24 +103,25 @@ import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.zoomSource
 import tech.fonia.store.Profile
 
-private data class Door(val id: String, val scene: SceneName, val title: String, val route: AppRoute)
+internal data class Door(val id: String, val scene: SceneName, val title: String, val route: AppRoute)
 
 /** The first door is the main one and gets the whole width. */
-private fun doors(profile: Profile): List<Door> {
+internal fun doors(profile: Profile): List<Door> {
     val sounds = Door("sounds", SceneName.sounds, "Sunete", AppRoute.AllSounds)
-    // „Vorbit în public” opens the speech coach (the camera, live cues, the report). The older exercises („Tu, fără
-    // ăăă”, the minute) are reached from the coach's setup. For a child it takes the place of „Cum spun?”, whose
-    // guides open from every sound anyway.
-    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.SpeechCoach())
+    // A child gets the same five doors as on iOS. The speech coach (the camera, live cues, the report) is for adults,
+    // so a child has no door to it.
     if (profile.isChild) {
         return listOf(
             sounds,
-            speaking,
+            Door("guides", SceneName.guide, "Cum spun?", AppRoute.Guides),
             Door("warmup", SceneName.warmup, "Încălzirea", AppRoute.Warmup),
             Door("play", SceneName.play, "Jocuri", AppRoute.Play),
             Door("stories", SceneName.stories, "Povești", AppRoute.Stories),
         )
     }
+    // „Vorbit în public” opens the speech coach. The older exercises („Tu, fără ăăă”, the minute) are reached from the
+    // coach's setup.
+    val speaking = Door("speaking", SceneName.speaking, "Vorbit în public", AppRoute.SpeechCoach())
     val english = Door("english", SceneName.english, "Engleză", AppRoute.English)
     return when (profile.track) {
         Profile.Track.En -> listOf(english, speaking)
