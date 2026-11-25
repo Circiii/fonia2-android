@@ -94,6 +94,21 @@ class LetterEngineTest {
         assertEquals(0, e.pose.badge)
     }
 
+    @Test fun aVerdictBeforeTheFirstBreathLetsTheLetterSleep() {
+        // A held verdict right away (the calibration's result): the breath can't come any more, so the loop may sleep.
+        val e = engine()
+        val d = LetterDrive()
+        e.cue(LetterCue.Correct)
+        run(e, d, 3f)
+        assertTrue("asleep after the verdict", e.idle(d))
+        // A letter left alone still breathes once before it sleeps.
+        val alone = engine()
+        val t = run(alone, d, 0.6f)
+        assertFalse("waits for its breath", alone.idle(d))
+        run(alone, d, 9f, t)
+        assertTrue("asleep after its breath", alone.idle(d))
+    }
+
     @Test fun reducedMotionJumpsToTheLastFrame() {
         val e = engine("Ș")
         e.reduceMotion = true

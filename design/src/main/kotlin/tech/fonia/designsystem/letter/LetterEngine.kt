@@ -203,12 +203,15 @@ class LetterEngine(val font: AlloOutlines) {
         return particles.alive
     }
 
-    /** Nothing moves and nothing will until the drive or a cue changes: the frame loop may sleep. */
+    /**
+     * Nothing moves and nothing will until the drive or a cue changes: the frame loop may sleep. The first breath is
+     * waited for only while it can still come: a held verdict (the last cues left once [busy] is false) keeps it away.
+     */
     fun idle(drive: LetterDrive): Boolean =
         !busy && pending.isEmpty() && sInfl.settled && sRond.settled && sLevel.settled && sLean.settled &&
             sTremble.settled && sTrill.settled && sBlow.settled && sComma.settled &&
             drive.level < 0.01f && !drive.speaking && drive.trembling <= 0f && drive.trill <= 0f && drive.blow <= 0f &&
-            abs(sInfl.target - targetInflation(drive)) < 1e-3f && (breathedForText || reduceMotion) &&
+            abs(sInfl.target - targetInflation(drive)) < 1e-3f && (breathedForText || reduceMotion || activeCount > 0) &&
             setMix >= 1f && now - lastCueAt > 0.4f
 
     private fun targetInflation(d: LetterDrive) = if (d.inflateWithVoice) integrated else d.inflation.coerceIn(0f, 1f)
