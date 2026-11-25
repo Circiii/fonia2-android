@@ -49,6 +49,7 @@ import tech.fonia.features.session.soundID
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
+import tech.fonia.store.SessionRecord
 import tech.fonia.whisper.FoniaWhisper
 import tech.fonia.whisper.WhisperCppModel
 import java.io.File
@@ -158,6 +159,7 @@ data class CustomRun(
  * | | `foniaReduceMotion` (boolean) | Reduce Motion on whatever the system says, and the voice meters still, for the UI tests (Compose tests wait for idle, and Foni, the sky and a live meter never are) |
  * | | `foniaFace` (string) | the face the mouth coach sees, held still, as `name=value` pairs of `FaceFrame` (`smile=0.8,jawOpen=0.1`) |
  * | `-foniaNoAdultCards` | `foniaNoAdultCards` (boolean) | no first-time card for the adult before a lesson or the mirror |
+ * | `-foniaMissionSample` | `foniaMissionSample` (boolean) | a mission answered two days ago and one from yesterday still to ask about |
  * | | `foniaMicFile` (string) | a WAV on the device read in real time in place of the microphone, then silence, through the same live path (levels, judge, screens) |
  *
  * The same switches can also come as iOS-style strings in a string-array extra `arguments`
@@ -183,6 +185,8 @@ data class LaunchArguments(
     val gateNumber: Int? = null,
     /** Debug only (iOS `-foniaNoAdultCards`): the first-time cards for the adult stay out of the way of a UI test. */
     val hidesAdultCards: Boolean = false,
+    /** Debug only (iOS `-foniaMissionSample`): two missions, one answered and one still to ask about. */
+    val missionSample: Boolean = false,
     /**
      * The drafts (Bac, "Cuvântul important", the reading probes, the diction training): shown in debug builds, or
      * with `foniaDrafts`; a release build without the flag doesn't show them (iOS `LaunchFlags.showsDrafts`).
@@ -213,6 +217,7 @@ data class LaunchArguments(
                 micFile = if (debug) value("foniaMicFile") else null,
                 gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
                 hidesAdultCards = debug && flag("foniaNoAdultCards"),
+                missionSample = debug && flag("foniaMissionSample"),
                 drafts = debug || flag("foniaDrafts"),
             )
         }
@@ -445,9 +450,34 @@ class AppModel(
             scope.launch(Dispatchers.IO) { ignoringFailure { voice.keepOnly(voiceIds); talkers.keepOnly(voiceIds) } }
             // And the best result of each diction drill.
             scope.launch { ignoringFailure { drills.keepOnly(voiceIds) } }
+            addSampleMissionsIfAsked()
             jumpIfAsked()
         }
     }
+
+    /**
+     * `foniaMissionSample` gives the chosen profile a mission answered two days ago and one from yesterday still to ask
+     * about, so the question and the journal line can be seen without waiting a day.
+     */
+    private suspend fun addSampleMissionsIfAsked() {
+        if (didAddSampleMissions || !arguments.missionSample) return
+        val profile = activeProfile ?: return
+        val sound = profile.targetSounds.firstOrNull() ?: return
+        didAddSampleMissions = true
+        ignoringFailure {
+            if (repository.missionAnswers(profile.id).isNotEmpty()) return@ignoringFailure
+            for (daysAgo in listOf(2L, 1L)) {
+                val given = java.time.Instant.now().minusSeconds(daysAgo * 86_400)
+                val session = SessionRecord(profileId = profile.id, track = Profile.Track.Ro, sound = sound, startedAt = given, endedAt = given.plusSeconds(300), attempts = 0)
+                repository.addSession(session)
+                val mission = tech.fonia.store.MissionCheck(profileId = profile.id, sessionId = session.id, sound = sound, givenAt = given)
+                repository.addMission(mission)
+                if (daysAgo == 2L) repository.answerMission(mission.id, tech.fonia.store.MissionCheck.Answer.Sometimes)
+            }
+        }
+    }
+
+    private var didAddSampleMissions = false
 
     /** `-foniaStart s:wordsInitial`, `-foniaStart en:th`, `-foniaStart dictie:pitch` open a session on launch. */
     private fun jumpIfAsked() {

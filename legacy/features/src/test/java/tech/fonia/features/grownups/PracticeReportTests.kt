@@ -10,9 +10,11 @@ import org.junit.Test
 import tech.fonia.domain.ContentSource
 import tech.fonia.domain.FoniaContent
 import tech.fonia.features.guide.AdultCards
+import tech.fonia.features.journal.MissionFollowUp
 import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
+import tech.fonia.store.MissionCheck
 import tech.fonia.store.MoodlessNote
 import tech.fonia.store.Profile
 import tech.fonia.store.SessionRecord
@@ -202,5 +204,36 @@ class PracticeReportTests {
         for (word in listOf("diagnostic", "terapie", "tratează", "risc", "severitate", "tulburare", "greșit", "scor")) {
             assertFalse(word, lower.contains(word))
         }
+    }
+
+    /** what the adult said about a mission is one plain line: the day, the sound, the answer */
+    @Test
+    fun missionAnswersInTheReport() = runBlocking {
+        val ana = seeded()
+        val session = SessionRecord(profileId = ana.id, track = Profile.Track.Ro, sound = "r", startedAt = moment(16), timeZone = ZoneOffset.UTC)
+        repository.addSession(session)
+        val mission = MissionCheck(profileId = ana.id, sessionId = session.id, sound = "r", givenAt = moment(16), timeZone = ZoneOffset.UTC)
+        repository.addMission(mission)
+        repository.answerMission(mission.id, MissionCheck.Answer.Sometimes, at = moment(17))
+        val skipped = SessionRecord(profileId = ana.id, track = Profile.Track.Ro, sound = "s", startedAt = moment(17), timeZone = ZoneOffset.UTC)
+        repository.addSession(skipped)
+        val unanswered = MissionCheck(profileId = ana.id, sessionId = skipped.id, sound = "s", givenAt = moment(17), timeZone = ZoneOffset.UTC)
+        repository.addMission(unanswered)
+        repository.answerMission(unanswered.id, null, at = moment(18))
+
+        val report = report(ana)
+        assertEquals(listOf("16 noiembrie 2026", "12 noiembrie 2026", "5 noiembrie 2026"), report.notes.map { it.day })
+        assertEquals("R: A folosit sunetul peste zi? Uneori.", report.notes.first().text)
+        assertTrue(report.text.contains("16 noiembrie 2026\nR: A folosit sunetul peste zi? Uneori."))
+        assertFalse(report.text.contains("S: A folosit"))
+    }
+
+    /** the journal and the report write the same line */
+    @Test
+    fun missionLine() {
+        assertEquals("S: A folosit sunetul peste zi? Da.", MissionFollowUp.line("S", MissionCheck.Answer.Yes))
+        assertEquals("Ș: A folosit sunetul peste zi? Încă nu.", MissionFollowUp.line("Ș", MissionCheck.Answer.NotYet))
+        assertEquals("Pentru adult", MissionFollowUp.title(isChild = true))
+        assertEquals("Azi, peste zi", MissionFollowUp.title(isChild = false))
     }
 }

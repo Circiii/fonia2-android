@@ -283,7 +283,16 @@ class SessionRun(
     fun advance() {
         if (isClosed || trialSettled) return
         trialSettled = true
+        if (current?.exercise is Exercise.Mission) noteMission()
         moveToNext()
+    }
+
+    /** The adult said "Ne-am înțeles" to a mission: the next session asks how it went. */
+    private fun noteMission() {
+        val sound = ticket.sound
+        if (isCheck || sound == null) return
+        val mission = tech.fonia.store.MissionCheck(profileId = profile.id, sessionId = record.id, sound = sound.rawValue, givenAt = now(), timeZone = zone)
+        later { app.repository.addMission(mission) }
     }
 
     /**

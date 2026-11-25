@@ -367,6 +367,38 @@ class SessionRunTests {
         assertEquals(0, run.attempts)
     }
 
+    /** a mission agreed to is asked about at the next session, on a later day */
+    @Test
+    fun missionIsNoted() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val ticket = SessionTicket(focus = SessionFocus.Sound(SoundID.S, Rung.Everyday), title = "test", sound = SoundID.S)
+        val run = SessionRun(ticket, profile, app, progress = null, history = AttemptsSummary(), now = { day(20, hour = 18) }, zone = zone)
+        // Starting stores the session's row, which the mission belongs to.
+        run.start()
+        play(run, machine = Attempt.Outcome.Good)
+        assertEquals(SessionRun.Phase.Finished, run.phase)
+        delay(50)
+        run.awaitSaves()
+        val pending = app.repository.pendingMission(profile.id, today = "2026-11-21")
+        assertEquals("s", pending?.sound)
+        assertEquals(tech.fonia.store.localDay(day(20, hour = 18), zone), pending?.localDay)
+    }
+
+    /** a session without a mission leaves nothing to ask */
+    @Test
+    fun noMissionNoQuestion() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val run = makeRun(app, profile, Rung.Syllables)
+        play(run, machine = Attempt.Outcome.Good)
+        delay(50)
+        run.awaitSaves()
+        assertEquals(null, app.repository.pendingMission(profile.id, today = "2100-01-01"))
+    }
+
     /** the session on everyday practice still reaches its mission */
     @Test
     fun missionIsReached() {
