@@ -208,20 +208,39 @@ Făcut deodată pe ambele platforme, cu aceleași praguri (`spec/thresholds/spee
 - **Setări.** Comutatoarele experimentale sunt oprite la început. Părerea modelului care schimbă lecția („Părerea pachetului” pe iOS) nu există pe Android, deci nu e nimic de oprit. „Ascultare pe sunete, în probă” doar notează în jurnal. „Acordul cu ZIPA în lecție” e doar în debug și pornește oprit. „Mod adaptiv (pilot)” pornește oprit. Calea principală de judecare n-a fost atinsă.
 - `versionCode` 31.
 
+A doua parte a turei (deciziile proprietarului, 25 noiembrie seara):
+
+- **Propozițiile și repovestirea așteaptă adultul, ca pe iOS.** `Progression.afterBlock` dă „NeedsAdult” la propoziții și repovestire când adultul n-a deschis drumul, înaintea regulii celor două zile. `OwnSuccess.withoutAdult` a ieșit, deci pasul nu se mai transformă în urcare. Copilul vede rândul de așteptare de până acum. Teste: `OwnSuccessTests`, `SessionRunTests`.
+- **„Mai lucrăm” anulează zilele bune de până atunci.** Un „Mai lucrăm” pe o rostire de pe treapta curentă face ca blocurile bune încheiate în ziua lui sau înainte să nu mai conteze la regula celor două zile (`Progression.hasGoodBlockOnEarlierDay`, parametrul `notBefore`; citirea în `AdultMarks`). Doar la copil, doar pe treapta curentă, niciodată o coborâre. O rostire nu își ține treapta, așa că o primește de la blocurile ședinței ei. „Aproape” ales de adult în lecție nu contează. Pilotul adaptiv nu citește semnele. Teste: `TwoDayProgressionTests`, `AdultMarksTests`, `SessionRunTests`.
+- **Pe CE, GE, J și Ț urechea adultului trece copilul mai departe (doar pe Android).** Sunt sunetele pe care telefonul le aude încă slab: sub 80 % rostiri corecte acceptate la v29. Două „Sună bine” în două zile diferite pe treapta curentă, fără „Mai lucrăm” acolo din ziua primului încolo, urcă un copil o treaptă (`WeakJudgeGate`). Doar sub propoziții. Lacătul de după sunetul singur rămâne. Regula se aplică după un răspuns în „Săptămâna pe scurt” și la încărcarea drumului. Teste: `WeakJudgeGateTests`.
+- **Camera trece la „Experimental”, oprită, ca pe iOS.** „Ghidaje pe față în oglindă” și „Vorbit în public în fața camerei”, cu textele de pe iOS, sunt în Setări › Alte setări. Cât sunt oprite, oglinda nu desenează ghidajul buzelor, iar antrenorul nu are pasul cu camera. Copilul nu vede pasul cu camera nici cu comutatorul pornit. Ușa „Vorbit în public” a adultului deschide pagina „Vorbit în public”, ca pe iOS, iar legătura „Alte exerciții” din antrenor a ieșit. Teste: `HomeDoorsTests`.
+- **Ușile adultului în ordinea de pe iOS:** Sunete, Engleză, Vorbit în public. Test: `HomeDoorsTests`.
+- **Cod fără apeluri.** `effortLine` și `ShrinkToFit` au ieșit.
+- **Raportul de citire** își păstrează rândul cu „diagnosticul” (`ReadingReport.DISCLAIMER`). E fraza cerută de 03 §1.3 C2 și spune tocmai că raportul nu e un diagnostic. iOS are aceeași frază, iar citirea e doar în ciorne.
+- **Culorile, ca pe iOS (363df92).** Semnele care spun ceva ajung la 3:1 (WCAG 1.4.11): `chipEdge` `#8A918A`, `progress` `#039A48`, `tip` `#9C7C00`, `almost` `#6C8A26`. Dala de ales (`ChoiceTileStyle`) desenează marginea întreagă, nu la 0,75. Conturul butonului secundar rămâne la 0,55. `TileButtonStyle` n-are pe Android margine ridicată, deci acolo nu era nimic de schimbat. Test: `PaletteContrastTests`, port din iOS.
+- **Rândul din PDF cu rostirile care așteaptă, ca pe iOS (c1eab6f).** Sub rezumat: „2 rostiri așteaptă să fie ascultate: Setări › Săptămâna pe scurt.”. Numără rostirile fără răspunsul adultului din listele săptămânii curente (`WeekReport.pick`, cel mult 5 pe sunet), doar la copil. La 0, rândul lipsește. `PracticeData.recordings` aduce rândurile înregistrărilor, fără sunetul lor. Teste: `PracticeReportTests.takesWaitingToBeHeard`, `waitingLineWording`.
+- **Citări corectate** în `CERCETARE_DISLALIE.md` §6: Lowe & Buchwald 2017 nu arată că feedbackul la 50 % bate 100 %, iar ancora pentru verdictul la circa jumătate din rostiri la automatizare e Preston et al. 2023. Maas 2019 a favorizat practica comasată, nu pe cea distribuită.
+
+Ce nu s-a adoptat:
+
+- **Autoevaluarea „Cum a sunat?”.** Dovezile sunt slabe, RCT-ul din 2020 n-a arătat niciun câștig, iar copiii mici își judecă propriile greșeli aproape la întâmplare.
+- **Feedbackul rezumat** (un singur verdict pentru un șir de rostiri).
+- **Reducerea verdictului pe treptele intermediare.** Rămân la 100 %, pentru că nu sunt dovezi pentru reducere acolo.
+
 Ce rămâne așa, cu intenție:
 
 - **Sunetul de pornire** rămâne oprit până aprobă echipa unul.
 - **Adultul are două alegeri** la o înregistrare, „Sună bine” și „Mai lucrăm”.
-- **Alegerile adultului nu urcă niciodată copilul.** Ele se văd în „Cum merge” și în raport; treapta nu se schimbă. Regula „două zile bune” din `PracticeBook`, din shell-ul `:app`, nu e în aplicația livrată.
-- **Telefonul singur nu coboară niciodată copilul** (vezi mai sus).
+- **Alegerile adultului nu urcă copilul**, cu o singură excepție: CE, GE, J și Ț (vezi mai sus). Pe celelalte sunete ele se văd în „Cum merge” și în raport, iar un „Mai lucrăm” doar anulează zilele bune de până atunci. Regula „două zile bune” din `PracticeBook`, din shell-ul `:app`, nu e în aplicația livrată.
+- **Telefonul singur nu coboară niciodată copilul** (vezi mai sus). Nici „Mai lucrăm” nu coboară.
 
-Rămas pentru proprietar:
+Rămas pentru proprietar, toate rezolvate în a doua parte a turei:
 
-- **Trecerea de propoziții și de repovestire.** Pe iOS, și în `AdaptiveEngine` (`adultDecides`), pasul de după propoziții și repovestire așteaptă adultul. În aplicația Android livrată nu așteaptă: `OwnSuccess.afterBlock` (cu regula celor două zile) și `OwnSuccess.withoutAdult` îl transformă în urcare. Copilul trece deci mai departe fără adult. Comportamentul nu s-a schimbat aici; trebuie decis dacă se aliniază cu iOS.
-- `reading/ReadingReport.kt` are rândul „Orientativ; diagnosticul se pune doar prin evaluarea complexă (art. 10–11).”, cu un cuvânt pe care textele îl evită. N-a fost în lista turei.
-- Pe Android, ghidajul buzelor din oglindă și antrenorul „La cameră” folosesc camera fără comutator. Pe iOS, „Ghidaje pe față în oglindă” și „Vorbit în public în fața camerei” sunt comutatoare oprite la început.
-- Ordinea ușilor adultului diferă: Android Sunete, Vorbit în public, Engleză; iOS Sunete, Engleză, Vorbit în public. A rămas cum era.
-- După ștergerea lui `EndScreen`, `effortLine` (testat, ca `SessionVoice.effort` pe iOS) și `ShrinkToFit` din `SessionMotion.kt` nu mai au apeluri în aplicație. Au rămas pe loc.
+- **Trecerea de propoziții și de repovestire.** Acum așteaptă adultul și pe Android, ca pe iOS și în `AdaptiveEngine` (`adultDecides`). `OwnSuccess.withoutAdult` a ieșit, deci copilul nu mai trece de propoziții și repovestire fără adult.
+- `reading/ReadingReport.kt`, rândul „Orientativ; diagnosticul se pune doar prin evaluarea complexă (art. 10–11).”: rămâne așa. E fraza legală cerută, spune că raportul nu e un diagnostic, iar iOS o are la fel.
+- Camera: ghidajul buzelor și pasul cu camera din antrenor stau acum în spatele comutatoarelor din „Experimental”, oprite la început, ca pe iOS.
+- Ordinea ușilor adultului e acum cea de pe iOS: Sunete, Engleză, Vorbit în public.
+- `effortLine` și `ShrinkToFit` au ieșit.
 
 ## Deciziile și de ce
 
