@@ -67,7 +67,9 @@ class RealJudgeFixturesTest {
     @Test fun traceCarriesVersionsAndFeatures() {
         val j = run("sarah_s", SoundId.S, Rung.WordsInitial, "sare", Talker.AdultHigh)
         val versions = j.detail["versions"] as tech.fonia.store.JSONValue.Object
-        assertEquals("2026-11-21.v0", (versions.value["unlock"] as tech.fonia.store.JSONValue.String).value)
+        // The trace names the unlock table the judge read, whatever version the spec is at.
+        val unlock = Regex("\"version\"\\s*:\\s*\"([^\"]+)\"").find(File(root, "spec/unlock.json").readText())!!.groupValues[1]
+        assertEquals(unlock, (versions.value["unlock"] as tech.fonia.store.JSONValue.String).value)
         assertTrue((j.detail["features"] as tech.fonia.store.JSONValue.Object).value.isNotEmpty())
     }
 }

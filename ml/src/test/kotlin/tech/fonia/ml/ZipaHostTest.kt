@@ -87,7 +87,7 @@ class ZipaHostTest {
         assertEquals(70_677_672L, zipa.bytes)
         assertEquals("CC-BY-4.0", zipa.license)
         assertTrue(zipa.attribution.contains("CC BY 4.0"))
-        assertEquals("zipa@dfe87c976626", registry.versions())
+        assertEquals("zipa@dfe87c976626;roasr@sped-110m-ctc-int8", registry.versions())
     }
 
     @Test
