@@ -53,6 +53,7 @@ import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.FoniaPlatform
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.FullScreenCover
+import tech.fonia.features.app.InstallCount
 import tech.fonia.features.app.LaunchArguments
 import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.MicrophonePermission
@@ -172,12 +173,35 @@ private fun CannotStart() {
     }
 }
 
+/** The install code, once it is due ([InstallCount]). Debug builds never send it. */
+private fun countInstall(app: AppModel) {
+    if (!InstallCount.IS_ENABLED) return
+    val preferences = app.preferences ?: return
+    if (!app.hasLoadedProfiles) return
+    val hasProfiles = app.profiles.isNotEmpty()
+    app.scope.launch { InstallCount.sendIfDue(hasProfiles = hasProfiles, preferences = preferences) }
+}
+
 @Composable
 private fun AppContent(app: AppModel) {
     var showGrownups by remember { mutableStateOf(false) }
     // Three minutes away from the app close the adult check again.
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { app.gate.onBackground() }
-    LifecycleEventEffect(Lifecycle.Event.ON_START) { app.gate.onForeground() }
+    // Back from the background (a start after a stop, not every resume: a dialog or the permission sheet only pause
+    // the app), the install code goes once its day is over.
+    val stopped = remember { booleanArrayOf(false) }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        stopped[0] = true
+        app.gate.onBackground()
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        app.gate.onForeground()
+        if (stopped[0]) {
+            stopped[0] = false
+            countInstall(app)
+        }
+    }
+    // The first profile starts the install code's day of waiting; a launch after that day sends it.
+    LaunchedEffect(app.hasLoadedProfiles && app.profiles.isNotEmpty()) { countInstall(app) }
     val ticket = app.ticket
     val profile = app.activeProfile
     // The cover keeps showing the session it had while it slides away.

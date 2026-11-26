@@ -150,7 +150,9 @@ val contentAssets = tasks.register<ContentAssetsTask>("contentAssets") {
  * One ONNX Runtime in the APK (docs/PLAN.md §6): each ABI the new ML runs on carries exactly one `libonnxruntime*.so`
  * runtime, and no other ABI carries any. sherpa-onnx and Moonshine bring their own copies; if one of them comes in,
  * this fails until the PLAN's choice is made, instead of shipping two runtimes. It also fails if the runtime's 1DS
- * telemetry provider is back in the merged manifest (see AndroidManifest.xml). Runs after every assemble.
+ * telemetry provider or ACCESS_NETWORK_STATE is back in the merged manifest (see AndroidManifest.xml): INTERNET is
+ * there for the install code alone, and without the network state the model fetchers find no network. Runs after
+ * every assemble.
  */
 abstract class CheckOnnxRuntimeTask : DefaultTask() {
     @get:InputFiles
@@ -174,8 +176,11 @@ abstract class CheckOnnxRuntimeTask : DefaultTask() {
         if (manifest.readText().contains("ai.onnxruntime.TelemetryInitializer")) {
             throw GradleException("$manifest declares ONNX Runtime's telemetry provider: remove it (tools:node=\"remove\" in app/src/main/AndroidManifest.xml)")
         }
-        if (manifest.readText().contains("android.permission.INTERNET")) {
-            throw GradleException("$manifest asks for INTERNET: Fonia never does (tools:node=\"remove\" in app/src/main/AndroidManifest.xml)")
+        if (!manifest.readText().contains("android.permission.INTERNET")) {
+            throw GradleException("$manifest lost INTERNET: the install code (InstallCount) could never go")
+        }
+        if (manifest.readText().contains("android.permission.ACCESS_NETWORK_STATE")) {
+            throw GradleException("$manifest asks for ACCESS_NETWORK_STATE: the install code is Fonia's one use of the network (tools:node=\"remove\" in app/src/main/AndroidManifest.xml)")
         }
         val built = loader.get().load(apkFolder.get()) ?: throw GradleException("No APK in ${apkFolder.get()}")
         val lines = mutableListOf<String>()

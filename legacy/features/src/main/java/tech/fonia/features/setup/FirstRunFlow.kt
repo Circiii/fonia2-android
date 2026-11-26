@@ -268,12 +268,12 @@ private fun VoiceWelcome(app: AppModel, onNext: () -> Unit) {
     }
 }
 
-/** What the adult should know before anything else (iOS `ForTheAdult`): three lines, and the whole text one tap away. */
+/** What the adult should know before anything else (iOS `ForTheAdult`): four lines, and the whole text one tap away. */
 @Composable
 private fun ForTheAdult(withReading: Boolean, onBack: () -> Unit, onNext: () -> Unit) {
     var showsAll by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val icons = listOf(FoniaIcon.microphone, FoniaIcon.mirror, FoniaIcon.lock)
+    val icons = listOf(FoniaIcon.microphone, FoniaIcon.mirror, FoniaIcon.chart, FoniaIcon.lock)
     Column(
         Modifier
             .fillMaxSize()
@@ -587,10 +587,15 @@ private fun AdultSetup(onBack: () -> Unit, onDone: (Profile) -> Unit) {
             }
             FoniaText("Așa ascultăm mai bine S și Ș.", style = fCaption, color = Palette.inkSoft)
         }
-        // An adult learner skips the note for the adult beside a child; what stays on the phone is said here.
+        // An adult learner skips the note for the adult beside a child; what stays on the phone and the install code
+        // are said here, before the day the code waits is over.
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             FoniaIconView(FoniaIcon.lock, size = 18f, tint = Palette.accentText)
             FoniaText(PrivacyText.summary[0], style = fBody, color = Palette.ink)
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
+            FoniaIconView(FoniaIcon.chart, size = 18f, tint = Palette.accentText)
+            FoniaText(PrivacyText.INSTALL_LINE, Modifier.weight(1f), style = fBody, color = Palette.ink)
         }
     }
 }

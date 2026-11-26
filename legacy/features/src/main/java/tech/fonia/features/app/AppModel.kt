@@ -805,7 +805,7 @@ class AppModel(
                     clearSettings = {
                         val app = context.applicationContext
                         PracticeReminder.cancel(app)
-                        listOf("fonia", "fonia_talker").all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }
+                        listOf(FoniaPreferences.FILE, "fonia_talker").all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }
                     },
                     // The takes of the store open now, pinned first tries included.
                     recordingFolders = listOf(File(home, "Fonia/Recordings")),

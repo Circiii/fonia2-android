@@ -92,7 +92,7 @@ Pentru 1–3 există porți construite, dar oprite, și un raport în `EvalV2Run
 ## 6. Reguli care se țin mereu
 
 - **Git:** lucrezi pe `main` din acest depozit (`Circiii/fonia2-android`), cu commituri mici și mesaje simple în română. Depozitul e public: nu urca modele, înregistrări de voce sau chei.
-- **Fără internet și fără analiză:** fără permisiunea `INTERNET` și fără SDK-uri de analiză. Nicio înregistrare sau imagine nu pleacă de pe telefon.
+- **Fără analiză:** fără SDK-uri de analiză. `INTERNET` e cerut doar pentru numărul de instalări (`InstallCount`: un UUID și „android”, o singură dată, se poate opri din Setări); `ACCESS_NETWORK_STATE` rămâne scos. Nicio înregistrare sau imagine nu pleacă de pe telefon.
 - **Copilul nu vede** „greșit”, roșu sau sunet de eșec. Fără cuvintele „diagnostic”, „terapie”, „tratează”. Ș și Ț cu virgulă dedesubt.
 - **Audio:**
   - nimic nu se redă cât microfonul e deschis;

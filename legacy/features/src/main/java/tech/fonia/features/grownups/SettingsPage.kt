@@ -99,6 +99,7 @@ import tech.fonia.domain.SoundID
 import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
+import tech.fonia.features.app.InstallCount
 import tech.fonia.features.app.Destination
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaAlert
@@ -182,6 +183,8 @@ fun SettingsPage(profile: Profile?, app: AppModel, onClose: () -> Unit, modifier
             MoreGroup(app, Modifier.arriving(5))
             SettingsGroup("Datele tale", SettingsTint.Blue, Modifier.arriving(6)) {
                 SettingsRow(FoniaIcon.lock.rawValue, "Ce păstrăm pe telefon", chevron = true) { showPrivacy = true }
+                RowDivider()
+                InstallCountRow(app)
                 RowDivider()
                 SettingsRow(FoniaIcon.book.rawValue, "Licențe", "Fonturile, desenele și codul pe care e făcută Fonia", chevron = true) { push(Destination.Licences) }
                 RowDivider()
@@ -485,6 +488,23 @@ private fun Practice(profile: Profile, app: AppModel, modifier: Modifier, push: 
 }
 
 // MARK: The app
+
+/** Once the code has gone the switch has nothing left to stop, and the line says so. */
+@Composable
+private fun InstallCountRow(app: AppModel) {
+    var countInstall by rememberStoredBoolean(app.preferences, InstallCount.ON_KEY, InstallCount.DEFAULT_ON)
+    val installSent by rememberStoredBoolean(app.preferences, InstallCount.SENT_KEY)
+    SwitchRow(
+        FoniaIcon.chart.rawValue,
+        "Numără instalarea",
+        countInstall,
+        if (installSent) {
+            "Codul a plecat. Nu se mai trimite altul, decât după „Șterge tot”."
+        } else {
+            "La o zi după primul profil, trimite o dată un cod făcut la întâmplare, ca să știm câte instalări sunt. Fără nume și fără nimic din exerciții."
+        },
+    ) { countInstall = it }
+}
 
 @Composable
 private fun AppGroup(app: AppModel, modifier: Modifier) {

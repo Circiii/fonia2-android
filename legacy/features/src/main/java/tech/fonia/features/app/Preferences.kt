@@ -12,8 +12,10 @@ import androidx.compose.runtime.remember
  * `UserDefaults.standard`: the few switches an adult sets (`Settings.effectsOff`, `Settings.keepRecordings`, the talk
  * being prepared). The app is never backed up (`allowBackup="false"`), so they stay on the phone, as on iOS.
  */
-class FoniaPreferences(context: Context) {
-    private val preferences: SharedPreferences = context.getSharedPreferences("fonia", Context.MODE_PRIVATE)
+class FoniaPreferences internal constructor(private val preferences: SharedPreferences) {
+    constructor(context: Context) : this(context.getSharedPreferences(FILE, Context.MODE_PRIVATE))
+
+    fun contains(key: String): Boolean = preferences.contains(key)
 
     fun bool(key: String, default: Boolean = false): Boolean = preferences.getBoolean(key, default)
 
@@ -33,6 +35,12 @@ class FoniaPreferences(context: Context) {
         preferences.edit().putInt(key, value).apply()
     }
 
+    fun long(key: String, default: Long = 0): Long = preferences.getLong(key, default)
+
+    fun setLong(key: String, value: Long) {
+        preferences.edit().putLong(key, value).apply()
+    }
+
     fun remove(key: String) {
         preferences.edit().remove(key).apply()
     }
@@ -45,6 +53,11 @@ class FoniaPreferences(context: Context) {
 
     internal fun forget(listener: SharedPreferences.OnSharedPreferenceChangeListener) =
         preferences.unregisterOnSharedPreferenceChangeListener(listener)
+
+    companion object {
+        /** The settings file; "Șterge tot" empties it (`LocalData.clearSettings`). */
+        const val FILE = "fonia"
+    }
 }
 
 /** `@AppStorage(key) var value = default`: a state that reads and writes one stored switch, and follows other writers. */
