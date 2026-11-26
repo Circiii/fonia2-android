@@ -105,6 +105,10 @@ import tech.fonia.store.localDay
 import java.time.Instant
 import java.time.ZoneId
 import java.util.UUID
+import tech.fonia.features.app.FoniaPreferences
+import tech.fonia.features.app.rememberStoredBoolean
+import tech.fonia.features.home.DailyRounds
+import tech.fonia.features.session.FrontTeeth
 
 /**
  * How it's going, the notes and the settings. A plain settings page: no door, no question.
@@ -142,7 +146,7 @@ private fun Rooms(profile: Profile, app: AppModel, path: PathModel, onShowGrownu
                     onClick = { app.calibrating = true },
                 )
             }
-            profileSetupRows(profile, push)
+            profileSetupRows(profile, push, app.preferences)
             row { NavigationRow("Cine exersează", onClick = { push(Destination.Who) }) }
             row { ButtonRow("Alte setări", onClick = { onShowGrownups(true) }, color = Palette.ink) }
         }
@@ -220,10 +224,11 @@ private fun PracticeReportRow(profile: Profile, app: AppModel, context: Context)
 }
 
 /** What an adult changes for one person. */
-fun ListSectionScope.profileSetupRows(profile: Profile, push: (Destination) -> Unit) {
+fun ListSectionScope.profileSetupRows(profile: Profile, push: (Destination) -> Unit, preferences: FoniaPreferences?) {
     if (profile.isChild) {
         row { NavigationRow("Ce sunete exersează", onClick = { push(Destination.SoundChoice(profile.id)) }) }
         row { DetailRow(AdultCards.SCREEN_TITLE, AdultCards.SCREEN_DETAIL, onClick = { push(Destination.AdultCards) }) }
+        childDayRows(profile, preferences)
         // The adaptive pilot (docs/PLAN.md §7.4): off until an adult switches it on.
         row { NavigationRow("Mod adaptiv (pilot)", onClick = { push(Destination.Adaptive(profile.id)) }) }
     }
@@ -523,4 +528,23 @@ internal suspend fun <T> orEmpty(fetch: suspend () -> List<T>): List<T> = try {
     throw cancelled
 } catch (_: Exception) {
     emptyList()
+}
+
+/**
+ * Two of a child's own switches, kept per child (iOS `ChildDayRows`): a second short round on the same day for the
+ * youngest ([DailyRounds]), and the front teeth being out ([FrontTeeth]).
+ */
+fun ListSectionScope.childDayRows(profile: Profile, preferences: FoniaPreferences?) {
+    if (DailyRounds.isOffered(profile)) {
+        row {
+            var on by rememberStoredBoolean(preferences, DailyRounds.key(profile.id))
+            ToggleRow(DailyRounds.TITLE, on, detail = DailyRounds.DETAIL) { on = it }
+        }
+    }
+    if (FrontTeeth.isOffered(profile)) {
+        row {
+            var out by rememberStoredBoolean(preferences, FrontTeeth.key(profile.id))
+            ToggleRow(FrontTeeth.TITLE, out, detail = FrontTeeth.DETAIL) { out = it }
+        }
+    }
 }

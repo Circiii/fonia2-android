@@ -228,7 +228,7 @@ fun ProfileDetail(profileID: UUID, app: AppModel) {
         InsetGroupedList(Modifier.weight(1f)) {
             ListSection {
                 profileActivityRows(profile, app, context, push)
-                profileSetupRows(profile, push)
+                profileSetupRows(profile, push, app.preferences)
             }
             ListSection {
                 row { ButtonRow("Șterge profilul", onClick = { confirmDelete = true }, destructive = true) }
