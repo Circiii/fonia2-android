@@ -145,10 +145,14 @@ class PictureTests {
         assertEquals(picturesInJSON(), catalogEntries)
     }
 
+    /**
+     * The pictures are already small palette PNGs. Xcode's lossy pass made them bigger and frayed their cut-out edges,
+     * so they ship as they are (iOS eace9ab, content 51f5cf5).
+     */
     @Test
-    fun imagesetsAreCompressed() {
+    fun imagesetsAreLossless() {
         val properties = assertNotNull(imageCatalog()["1f40d"]?.jsonObject)
-        assertEquals("lossy", properties["compression"]?.jsonPrimitive?.content)
+        assertEquals("lossless", properties["compression"]?.jsonPrimitive?.content)
     }
 
     @Test
