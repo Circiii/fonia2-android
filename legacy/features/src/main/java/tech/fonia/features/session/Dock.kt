@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import tech.fonia.design.ContinuousRoundedRectangle
+import tech.fonia.design.EaseInCurve
 import tech.fonia.design.Palette
 
 /**
@@ -79,24 +81,29 @@ object DockMotion {
     }
 
     /**
-     * The result card coming in over the turn line as one piece, after the line has gone; and the line coming back
-     * after the card has gone.
+     * The result card coming in over the turn line as one piece. It starts while the line is still fading, so the
+     * bottom of the screen is never empty in between. The line comes back after the card has gone.
      */
     fun card(toCard: Boolean, reduceMotion: Boolean, density: Density): ContentTransform {
         val out = fadeOut(tween(120, easing = FastOutLinearInEasing))
         if (!toCard) return ContentTransform(fadeIn(inSpec(120, 220)), out, sizeTransform = SizeTransform(clip = false))
         val lift = with(density) { 18.dp.roundToPx() }
-        val enter = fadeIn(inSpec(120, 300)) + (if (reduceMotion) EnterTransition.None else slideInVertically(inSpec(120, 300)) { lift })
+        val enter = fadeIn(inSpec(40, 300)) + (if (reduceMotion) EnterTransition.None else slideInVertically(inSpec(40, 300)) { lift })
         return ContentTransform(enter, out, sizeTransform = SizeTransform(clip = false))
     }
 
     /**
-     * The page that leaves fades out quickly; the next one comes in after it, with a short slide. The two never stand
-     * on top of each other while either can be read. With Reduce Motion on, plain fades.
+     * The page that leaves fades and slides a little to the left; the next one slides in from the right while the last
+     * is still fading, so no empty sky shows between them. With Reduce Motion on, plain fades.
      */
     fun page(reduceMotion: Boolean, density: Density): ContentTransform {
-        val shift = with(density) { 22.dp.roundToPx() }
-        val enter = fadeIn(inSpec(140, 280)) + (if (reduceMotion) EnterTransition.None else slideInHorizontally(inSpec(140, 280)) { shift })
-        return ContentTransform(enter, fadeOut(tween(140, easing = FastOutLinearInEasing)), sizeTransform = SizeTransform(clip = false))
+        val shift = with(density) { 28.dp.roundToPx() }
+        val back = with(density) { 18.dp.roundToPx() }
+        val enter = fadeIn(inSpec(60, 340)) + (if (reduceMotion) EnterTransition.None else slideInHorizontally(inSpec(60, 340)) { shift })
+        // `.easeIn(duration: 0.16)`.
+        val leave = tween<Float>(160, easing = EaseInCurve)
+        val exit = fadeOut(leave) +
+            (if (reduceMotion) ExitTransition.None else slideOutHorizontally(tween(160, easing = EaseInCurve)) { -back })
+        return ContentTransform(enter, exit, sizeTransform = SizeTransform(clip = false))
     }
 }

@@ -543,7 +543,8 @@ fun VoiceRings(
         for (ring in 0 until 3) {
             val index = ring.toFloat()
             val drift = if (reduceMotion) 0f else (sin(time * 1.2 - ring * 0.7) * 0.012).toFloat()
-            val scale = 0.6f + index * 0.17f + v * (0.1f + index * 0.1f) + drift
+            // Even at the loudest the outer ring stays inside the frame, so nothing gets cut by what is around it.
+            val scale = 0.62f + index * 0.14f + v * (0.04f + index * 0.03f) + drift
             drawCircle(shown.opacity(0.2 - 0.05 * ring), radius = d / 2 * scale, center = centre)
         }
     }

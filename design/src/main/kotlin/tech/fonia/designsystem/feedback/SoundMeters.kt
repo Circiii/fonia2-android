@@ -28,6 +28,7 @@ import kotlinx.coroutines.isActive
 import tech.fonia.designsystem.letter.LetterDrive
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 
@@ -102,13 +103,17 @@ fun PlaceMeter(
                 fun x(p: Float) = pad + (size.width - 2 * pad) * p.coerceIn(0f, 1f)
                 // A short tail behind the bead, so the eye sees which way the sound moved.
                 for (i in 0 until PlaceState.TRAIL) {
-                    val a = state.shown * (1f - (i + 1f) / (PlaceState.TRAIL + 1f)) * 0.35f
-                    drawCircle(colors.marker.copy(alpha = a), h * 0.55f, Offset(x(state.trail[(state.head - 1 - i + PlaceState.TRAIL * 2) % PlaceState.TRAIL]), size.height / 2f))
+                    val a = state.shown * (1f - (i + 1f) / (PlaceState.TRAIL + 1f)) * 0.22f
+                    drawCircle(colors.marker.copy(alpha = a), h * 0.4f, Offset(x(state.trail[(state.head - 1 - i + PlaceState.TRAIL * 2) % PlaceState.TRAIL]), size.height / 2f))
                 }
-                val pulse = 1f + 0.06f * state.glow * sin(state.phase)
-                drawCircle(colors.marker.copy(alpha = 0.25f * state.shown), h * 1.25f * pulse, Offset(x(state.pos), size.height / 2f))
-                drawCircle(lerpColor(colors.marker, colors.zoneOn, state.glow).copy(alpha = state.shown), h * 0.82f * pulse, Offset(x(state.pos), size.height / 2f))
-                drawCircle(colors.gloss.copy(alpha = 0.85f * state.shown), h * 0.3f, Offset(x(state.pos) - h * 0.2f, size.height / 2f - h * 0.2f))
+                // A solid knob with a white rim, like a slider's: crisp edges, no haze round it. It comes and goes by
+                // size, nearly opaque all the way, so it never turns into a see-through smudge.
+                val pulse = 1f + 0.1f * state.glow * sin(state.phase)
+                val grow = (0.35f + 0.65f * min(1f, state.shown * 1.5f)) * pulse
+                val solid = min(1f, state.shown * 3f)
+                val centre = Offset(x(state.pos), size.height / 2f)
+                drawCircle(colors.gloss.copy(alpha = solid), h * 0.95f * grow, centre)
+                drawCircle(lerpColor(colors.marker, colors.zoneOn, state.glow).copy(alpha = solid), h * 0.72f * grow, centre)
             }
         }
         BasicText(rightLabel, style = labelStyle.copy(color = colors.ink))

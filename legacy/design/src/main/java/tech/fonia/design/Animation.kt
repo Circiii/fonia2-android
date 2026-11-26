@@ -52,6 +52,9 @@ internal fun springStiffness(duration: Double): Double {
 /** CAMediaTimingFunction easeOut, which `Animation.easeOut` uses. */
 val EaseOutCurve: Easing = CubicBezierEasing(0f, 0f, 0.58f, 1f)
 
+/** CAMediaTimingFunction easeIn, which `Animation.easeIn` uses. */
+val EaseInCurve: Easing = CubicBezierEasing(0.42f, 0f, 1f, 1f)
+
 /** CAMediaTimingFunction easeInEaseOut, which `Animation.easeInOut` uses. */
 val EaseInOutCurve: Easing = CubicBezierEasing(0.42f, 0f, 0.58f, 1f)
 

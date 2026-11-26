@@ -166,9 +166,9 @@ fun TakeStrip(visual: TakeVisual, sound: SoundID, field: Field, correct: Boolean
                     drawRoundRect(if (on) Palette.progress.copy(alpha = 0.55f + 0.45f * glow) else Palette.accentSoft, Offset(zx0, top), Size(zx1 - zx0, h), r)
                     val cx = x(axis.value)
                     val cy = size.height / 2f
-                    if (on) drawCircle(Palette.progress.copy(alpha = 0.3f * glow), h * 1.5f, Offset(cx, cy))
-                    drawCircle(if (on) Palette.progress else field.deep, h * 0.85f, Offset(cx, cy))
-                    drawCircle(Palette.sheet.copy(alpha = 0.85f), h * 0.3f, Offset(cx - h * 0.2f, cy - h * 0.2f))
+                    // The same knob as the live meter: a white rim round a solid dot, all inside the canvas.
+                    drawCircle(Palette.sheet, h * 0.95f, Offset(cx, cy))
+                    drawCircle(if (on) Palette.progress else field.deep, h * 0.72f, Offset(cx, cy))
                 }
                 FoniaText(right, style = ui(17, UIWeight.black, TextRole.headline), color = Palette.ink)
             }

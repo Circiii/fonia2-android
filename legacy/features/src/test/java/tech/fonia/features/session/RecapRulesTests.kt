@@ -39,4 +39,16 @@ class RecapRulesTests {
         assertEquals("Urmează: Lumânările", RecapRules.nextLine("Lumânările"))
         assertNull(RecapRules.nextLine(null, sound = "R"))
     }
+
+    @Test
+    fun theFirstStarAndRoundNumbersGetALineOfTheirOwn() {
+        assertEquals("Prima ta stea!", RecapRules.starLine(1))
+        assertEquals("Ai strâns 10 stele!", RecapRules.starLine(10))
+        assertEquals("Ai strâns 25 de stele!", RecapRules.starLine(25))
+        assertEquals("Ai strâns 150 de stele!", RecapRules.starLine(150))
+        assertNull(RecapRules.starLine(9))
+        assertNull(RecapRules.starLine(120))
+        assertTrue(RecapRules.isMilestone(5))
+        assertFalse(RecapRules.isMilestone(6))
+    }
 }

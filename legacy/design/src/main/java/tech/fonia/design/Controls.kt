@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -27,14 +28,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
@@ -49,9 +51,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
 import kotlin.math.min
-
-/** `Animation.spring(duration: 0.12, bounce: 0)`: every press. */
-private val press = swiftSpring<Float>(0.12, 0.0)
 
 /** What a button style draws with, like SwiftUI's `ButtonStyleConfiguration`. */
 class ButtonConfiguration(
@@ -80,33 +79,20 @@ fun StyledButton(
 ) {
     val interactions = remember { MutableInteractionSource() }
     val pressed by interactions.collectIsPressedAsState()
-    val reduceMotion = LocalReduceMotion.current
-    val view = androidx.compose.ui.platform.LocalView.current
-    // Press feedback (v2): the button gives under the finger and springs back, with a light tick; his look is unchanged.
-    val scale by animateFloatAsState(
-        if (pressed && enabled && !reduceMotion) 0.94f else 1f,
-        androidx.compose.animation.core.spring(dampingRatio = 0.45f, stiffness = 700f),
-        label = "press",
-    )
+    // How it gives under the finger, and what the phone feels, is the style's: each one presses like its iOS twin.
     style.MakeBody(
         ButtonConfiguration(label = label, isPressed = pressed && enabled, isEnabled = enabled),
-        modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .clickable(
-                interactionSource = interactions,
-                indication = null,
-                enabled = enabled,
-                onClickLabel = onClickLabel,
-                role = Role.Button,
-                onClick = {
-                    view.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
-                    FoniaSfx.play(SfxCue.Tap)
-                    onClick()
-                },
-            ),
+        modifier.clickable(
+            interactionSource = interactions,
+            indication = null,
+            enabled = enabled,
+            onClickLabel = onClickLabel,
+            role = Role.Button,
+            onClick = {
+                FoniaSfx.play(SfxCue.Tap)
+                onClick()
+            },
+        ),
     )
 }
 
@@ -125,8 +111,9 @@ fun FoniaLabel(title: String, icon: FoniaIcon, iconSize: Float = 22f, modifier: 
     FoniaLabel(title, modifier) { FoniaIconView(icon, size = iconSize) }
 
 /**
- * A solid piece on a darker edge. When it's pressed the face goes down over the edge. The edge is the same
- * shape moved down by [depth], and the piece keeps [depth] of room under it, so pressing never moves the
+ * A solid piece on a darker edge. When it's pressed the face goes down over the edge at once and gives a little (98.5%,
+ * from its foot), then springs back up with a small bounce; the phone gives one soft knock as it goes down. The edge is
+ * the same shape moved down by [depth], and the piece keeps [depth] of room under it, so pressing never moves the
  * layout around it.
  */
 @Composable
@@ -136,11 +123,22 @@ internal fun Modifier.raised(
     edge: Color,
     depth: Dp,
     isPressed: Boolean,
-    /** A hairline round the face, for a white button that may stand on a white sheet. */
-    outline: Color = Color.Transparent,
+    /**
+     * A line round the face, for a white button that may stand on a white sheet. Null: a face on the grey edge gets a
+     * light one in the edge's colour, so the face and its edge read as one piece, not a grey smear.
+     */
+    outline: Color? = null,
 ): Modifier {
-    val pressed by animateFloatAsState(if (isPressed) 1f else 0f, press, label = "raised")
+    val pressed by animateFloatAsState(if (isPressed) 1f else 0f, pressSpec(isPressed), label = "raised")
+    PressHaptic(isPressed)
+    val rim = outline ?: if (edge == Palette.chipEdge) Palette.chipEdge.copy(alpha = 0.45f) else Color.Transparent
     return this
+        .graphicsLayer {
+            val s = 1f - 0.015f * pressed
+            scaleX = s
+            scaleY = s
+            transformOrigin = TransformOrigin(0.5f, 1f)
+        }
         .drawBehind {
             val d = depth.toPx()
             val outline = shape.createOutline(Size(size.width, size.height - d), layoutDirection, this)
@@ -149,7 +147,7 @@ internal fun Modifier.raised(
         .padding(bottom = depth)
         .graphicsLayer { translationY = pressed * depth.toPx() }
         .background(face, shape)
-        .then(if (outline.alpha > 0f) Modifier.border(1.dp, outline, shape) else Modifier)
+        .then(if (rim.alpha > 0f) Modifier.border(1.5.dp, rim, shape) else Modifier)
 }
 
 internal val Capsule: Shape = RoundedCornerShape(percent = 50)
@@ -240,10 +238,18 @@ fun CTALabel(title: String, modifier: Modifier = Modifier) {
 class QuietButtonStyle(val color: Color) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
+        val isPressed = configuration.isPressed
+        val dim by animateFloatAsState(if (isPressed) 0.55f else 1f, pressSpec(isPressed), label = "quiet")
+        val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, pressSpec(isPressed), label = "quietScale")
+        PressHaptic(isPressed, PressFeel.Tick)
         CompositionLocalProvider(LocalFont provides fBodyStrong, LocalForeground provides color) {
             Box(
                 modifier
-                    .alpha(if (configuration.isPressed) 0.55f else 1f)
+                    .graphicsLayer {
+                        alpha = dim
+                        scaleX = scale
+                        scaleY = scale
+                    }
                     .padding(horizontal = 12.dp)
                     .heightIn(min = 44.dp),
                 contentAlignment = Alignment.Center,
@@ -260,7 +266,9 @@ class RoundButtonStyle(
 ) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
-        val scale by animateFloatAsState(if (configuration.isPressed) 0.96f else 1f, press, label = "round")
+        // Flat here, raised on iOS: it keeps its shrink, with the raised pieces' timing and soft knock.
+        val scale by animateFloatAsState(if (configuration.isPressed) 0.96f else 1f, pressSpec(configuration.isPressed), label = "round")
+        PressHaptic(configuration.isPressed)
         CompositionLocalProvider(LocalForeground provides ink) {
             Box(
                 modifier
@@ -281,7 +289,8 @@ class TileButtonStyle(
 ) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
-        val scale by animateFloatAsState(if (configuration.isPressed) 0.98f else 1f, press, label = "tile")
+        val scale by animateFloatAsState(if (configuration.isPressed) 0.98f else 1f, pressSpec(configuration.isPressed), label = "tile")
+        PressHaptic(configuration.isPressed)
         val shape = remember(radius) { ContinuousRoundedRectangle(radius) }
         Box(
             modifier
@@ -301,27 +310,50 @@ class ChoiceTileStyle(val isOn: Boolean, val radius: Dp = Radius.card) : ButtonS
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
         val shape = remember(radius) { ContinuousRoundedRectangle(radius) }
+        // `.animation(.spring(duration: 0.3, bounce: 0.35), value: isOn)` and `.sensoryFeedback(.selection, trigger: isOn)`.
+        val turn = swiftSpring<Color>(0.3, 0.35)
+        val face by animateColorAsState(if (isOn) Palette.accentSoft else Palette.sheet, turn, label = "choiceFace")
+        val ring by animateColorAsState(if (isOn) Palette.accent else Palette.accent.copy(alpha = 0f), turn, label = "choiceRing")
+        SelectionTick(isOn)
         Box(
             modifier
                 .semantics { selected = isOn }
-                .raised(shape, if (isOn) Palette.accentSoft else Palette.sheet, Palette.chipEdge, 3.dp, configuration.isPressed),
+                .raised(shape, face, Palette.chipEdge, 3.dp, configuration.isPressed),
         ) {
             Box(
-                Modifier.then(if (isOn) Modifier.border(2.dp, Palette.accent, shape) else Modifier),
+                Modifier.then(if (ring.alpha > 0f) Modifier.border(2.dp, ring, shape) else Modifier),
                 contentAlignment = Alignment.Center,
             ) { configuration.label() }
-            if (isOn) {
-                Box(
-                    Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp)
-                        .size(20.dp)
-                        .background(Palette.accent, CircleShape)
-                        .clearAndSetSemantics {},
-                    contentAlignment = Alignment.Center,
-                ) { FoniaIconView(FoniaIcon.tick, size = 11f, tint = Palette.buttonLabel) }
+            // The tick pops in: a ring closes round it, then it grows in (`.movingParts.pop(Palette.accentSoftEdge)`).
+            PopIn(
+                isOn,
+                ring = Palette.accentSoftEdge,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(6.dp)
+                    .size(20.dp)
+                    .clearAndSetSemantics {},
+            ) {
+                Box(Modifier.size(20.dp).background(Palette.accent, CircleShape), contentAlignment = Alignment.Center) {
+                    FoniaIconView(FoniaIcon.tick, size = 11f, tint = Palette.buttonLabel)
+                }
             }
         }
+    }
+}
+
+/** `.sensoryFeedback(.selection, trigger: value)`: one quiet tick each time [value] changes, none when it first shows. */
+@Composable
+fun SelectionTick(value: Any?) {
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    val on = tech.fonia.designsystem.motion.LocalFoniaHapticsEnabled.current
+    val first = remember { booleanArrayOf(true) }
+    androidx.compose.runtime.LaunchedEffect(value) {
+        if (first[0]) {
+            first[0] = false
+            return@LaunchedEffect
+        }
+        if (on) haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.SegmentTick)
     }
 }
 
@@ -386,11 +418,8 @@ fun IconOverTitle(title: String, icon: FoniaIcon, iconSize: Float = 20f, modifie
 class MiniPillStyle : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
-        val scale by animateFloatAsState(
-            if (configuration.isPressed) 0.96f else 1f,
-            swiftSpring(0.18, 0.2),
-            label = "minipill",
-        )
+        val scale by animateFloatAsState(if (configuration.isPressed) 0.96f else 1f, pressSpec(configuration.isPressed), label = "minipill")
+        PressHaptic(configuration.isPressed)
         CompositionLocalProvider(
             LocalFont provides ui(13.5, UIWeight.semibold, TextRole.footnote),
             LocalForeground provides Palette.accentText,
@@ -417,6 +446,8 @@ class MiniPillStyle : ButtonStyle {
 class ToolButtonStyle(
     val field: Field = Field.paper,
     val diameter: Dp = 40.dp,
+    /** Turns the icon a third of a circle each time it is pressed: a gear that turns under the finger. */
+    val spins: Boolean = false,
 ) : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
@@ -427,16 +458,40 @@ class ToolButtonStyle(
                     .raised(CircleShape, Palette.sheet, Palette.chipEdge, 2.3.dp, configuration.isPressed)
                     .size(diameter),
                 contentAlignment = Alignment.Center,
-            ) { configuration.label() }
+            ) { SpinOnPress(configuration.isPressed, spins) { configuration.label() } }
         }
     }
+}
+
+/**
+ * Keeps its own turn so every press adds to it: the gear never winds back. A six-toothed gear looks the same after
+ * 120°, so it always comes to rest square. With Reduce Motion it does not turn.
+ */
+@Composable
+private fun SpinOnPress(isPressed: Boolean, isOn: Boolean, label: @Composable () -> Unit) {
+    if (!isOn) {
+        label()
+        return
+    }
+    val reduceMotion = LocalReduceMotion.current
+    val turn = remember { androidx.compose.animation.core.Animatable(0f) }
+    var target by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    androidx.compose.runtime.LaunchedEffect(isPressed) {
+        if (!isPressed || reduceMotion) return@LaunchedEffect
+        target += 120f
+    }
+    androidx.compose.runtime.LaunchedEffect(target) {
+        if (target != turn.value) turn.animateTo(target, swiftSpring(0.55, 0.25))
+    }
+    Box(Modifier.graphicsLayer { rotationZ = turn.value }, contentAlignment = Alignment.Center) { label() }
 }
 
 /** The round plus at the bottom of a page. */
 class PlusButtonStyle : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
-        val scale by animateFloatAsState(if (configuration.isPressed) 0.96f else 1f, press, label = "plus")
+        val scale by animateFloatAsState(if (configuration.isPressed) 0.96f else 1f, pressSpec(configuration.isPressed), label = "plus")
+        PressHaptic(configuration.isPressed)
         CompositionLocalProvider(LocalForeground provides Palette.buttonLabel) {
             Box(
                 modifier
@@ -574,12 +629,32 @@ fun RatingRow(
     }
 }
 
-/** `PressableStyle`: anything that shrinks a little under the finger. */
+/** `PressableStyle`: anything that shrinks a little under the finger and darkens by 3%, with a soft knock. */
 class PressableStyle : ButtonStyle {
     @Composable
     override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
-        val scale by animateFloatAsState(if (configuration.isPressed) 0.97f else 1f, press, label = "pressable")
-        Box(modifier.graphicsLayer { scaleX = scale; scaleY = scale }) { configuration.label() }
+        val isPressed = configuration.isPressed
+        val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, pressSpec(isPressed), label = "pressable")
+        val dim by animateFloatAsState(if (isPressed) -0.03f else 0f, pressSpec(isPressed), label = "pressableDim")
+        PressHaptic(isPressed)
+        Box(modifier.graphicsLayer { scaleX = scale; scaleY = scale }.brightness { dim }) { configuration.label() }
+    }
+}
+
+/** A row in a list of settings or links: it greys under the finger, gives a little and one quiet tick. */
+class RowPressStyle : ButtonStyle {
+    @Composable
+    override fun MakeBody(configuration: ButtonConfiguration, modifier: Modifier) {
+        val isPressed = configuration.isPressed
+        // `.animation(isPressed ? pressDown : .easeOut(duration: 0.2), value: isPressed)`.
+        val scale by animateFloatAsState(if (isPressed) 0.985f else 1f, if (isPressed) pressDown() else easeOut(0.2), label = "row")
+        val grey by animateColorAsState(
+            if (isPressed) Palette.cloud else Palette.cloud.copy(alpha = 0f),
+            if (isPressed) pressDown() else easeOut(0.2),
+            label = "rowGrey",
+        )
+        PressHaptic(isPressed, PressFeel.Tick)
+        Box(modifier.graphicsLayer { scaleX = scale; scaleY = scale }.background(grey)) { configuration.label() }
     }
 }
 

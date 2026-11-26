@@ -90,6 +90,8 @@ import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fButton
 import tech.fonia.design.fPrompt
+import tech.fonia.design.ping
+import tech.fonia.design.shine
 import tech.fonia.design.ui
 import tech.fonia.designsystem.motion.BurstStyle
 import tech.fonia.designsystem.motion.CelebrationBurst
@@ -777,7 +779,7 @@ private fun ListeningBar(
                 color = FoniTone(field).glow,
                 isLive = (phase == SpeakPhase.Listening || phase == SpeakPhase.Model) && !still,
                 level = level,
-                modifier = Modifier.requiredSize(216.dp),
+                modifier = Modifier.requiredSize(180.dp),
                 heard = if (showsHeardColour && phase == SpeakPhase.Listening) ({ levels.heardColour }) else null,
             )
             Foni(Modifier.size(124.dp), mood = if (phase == SpeakPhase.Listening) FoniMood.listening else FoniMood.idle, level = level)
@@ -859,8 +861,8 @@ internal fun TurnLine(
         TurnMode.Thinking -> if (line != null) FoniaIcon.retry else FoniaIcon.hourglass
         is TurnMode.Finished -> if (mode.praised) FoniaIcon.star else FoniaIcon.ear
     }
-    val edge by animateDpAsState(if (listening) 3.dp else 1.5.dp, tween(160), label = "edge")
-    val edgeColor by animateColorAsState(if (listening) field.deep else Palette.line, tween(160), label = "edgeColor")
+    val edge by animateDpAsState(if (listening) 2.dp else 1.5.dp, tween(160), label = "edge")
+    val edgeColor by animateColorAsState(if (listening) field.deep.copy(alpha = 0.85f) else Palette.line, tween(160), label = "edgeColor")
     val disc by animateColorAsState(if (listening) field.deep else Palette.cloud, tween(160), label = "disc")
     Box(Modifier.fillMaxWidth()) {
         Row(
@@ -894,7 +896,13 @@ internal fun TurnLine(
                     },
                 contentAlignment = Alignment.Center,
             ) {
-                Box(Modifier.size(40.dp).background(disc, CircleShape))
+                // Two green rings leave the disc the moment the mic opens: it is listening now.
+                Box(
+                    Modifier
+                        .size(40.dp)
+                        .ping(trigger = listening, color = Palette.accent.copy(alpha = 0.5f), enabled = listening, count = 2)
+                        .background(disc, CircleShape),
+                )
                 AnimatedContent(targetState = icon, transitionSpec = { DockMotion.swap(reduceMotion, density) }, label = "turnIcon") { shown ->
                     FoniaIconView(shown, size = 22f, tint = if (listening) Palette.buttonLabel else field.deep)
                 }
@@ -972,6 +980,9 @@ private fun ResultPanel(
     val pillHeight = DockMetrics.tapHeight(isChild)
     val rowHeight = DockMetrics.rowHeight(isChild)
     val stacked = LocalDensity.current.fontScale >= 1.5f
+    // Flips once the card is up, so the light on "Mai departe" plays after it lands rather than with it.
+    var landed by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { landed = true }
     DockSheet {
         if (!asks || feedback != FeedbackLevel.SelfJudge) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -1033,7 +1044,8 @@ private fun ResultPanel(
                 StyledButton(
                     onClick = onNext,
                     style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular, minHeight = rowHeight),
-                    modifier = Modifier.weight(1f),
+                    // A light passing over the way on, once, after a take that came out right.
+                    modifier = Modifier.weight(1f).shine(landed, enabled = verdict.rating == Rating.yes, delayMillis = 550),
                 ) { FoniaText("Mai departe") }
             }
         }

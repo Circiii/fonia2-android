@@ -35,6 +35,8 @@ object Palette {
     /** The same green, dark enough to read as small text. */
     val accentText = Color.hex(0x036A34)
     val accentSoft = Color.hex(0xD1F2D7)
+    /** The ring that closes round a choice's tick as it pops in. */
+    val accentSoftEdge = Color.hex(0xA3D9AF)
 
     /**
      * What is done on a bar, a bead or a step, on [progressTrack]: 3:1 against it, so the share reads without a
