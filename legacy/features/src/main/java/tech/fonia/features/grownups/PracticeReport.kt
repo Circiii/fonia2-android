@@ -16,6 +16,7 @@ import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.journal.MissionFollowUp
 import tech.fonia.features.reading.ReadingReport
 import tech.fonia.features.session.CaptureLog
+import tech.fonia.features.session.FrontTeeth
 import tech.fonia.store.Attempt
 import tech.fonia.store.JSONObject
 import tech.fonia.store.JSONValue
@@ -117,6 +118,13 @@ data class PracticeReport(
         val selfAgreed: Int = 0,
         /** Tries per microphone (`CaptureLog`), for the tries saved since the microphone was kept. */
         val microphones: Map<String, Int> = emptyMap(),
+        /**
+         * Tries said while an adult had noted the front teeth out ([FrontTeeth]), on a sound the gap changes, with the
+         * first and last day of them.
+         */
+        val teethTries: Int = 0,
+        val teethFrom: LocalDate? = null,
+        val teethTo: LocalDate? = null,
     ) {
         /** "Treapta 4 din 10: „În mijlocul cuvântului” (cuvinte cu S la mijloc)." */
         val ladder: String
@@ -221,10 +229,28 @@ data class PracticeReport(
             }
 
         /**
-         * What follows the agreement line: the learner's own answers, the microphones, then how often the phone
-         * didn't hear clearly.
+         * "Cât îi lipseau dinții din față (3 – 20 noiembrie): 40 de încercări. Atunci S poate suna altfel, fără ca
+         * vorbirea să se fi schimbat." Null when no try was said with the teeth out.
          */
-        val belowAnswers: List<String> get() = listOfNotNull(selfJudged, microphoneLine) + hearing
+        val teethLine: String?
+            get() {
+                val from = teethFrom ?: return null
+                val to = teethTo ?: return null
+                if (teethTries <= 0) return null
+                val last = dayMonth.format(to)
+                val whenText = when {
+                    from == to -> last
+                    from.month == to.month && from.year == to.year -> "${from.dayOfMonth} – $last"
+                    else -> "${dayMonth.format(from)} – $last"
+                }
+                return "Cât îi lipseau dinții din față ($whenText): ${Plural.format(teethTries, Plural.Noun.Incercare)}. Atunci $letter poate suna altfel, fără ca vorbirea să se fi schimbat."
+            }
+
+        /**
+         * What follows the agreement line: the learner's own answers, the microphones, the days with the front teeth
+         * out, then how often the phone didn't hear clearly.
+         */
+        val belowAnswers: List<String> get() = listOfNotNull(selfJudged, microphoneLine, teethLine) + hearing
     }
 
     data class Note(val day: String, val text: String)
@@ -306,6 +332,9 @@ data class PracticeReport(
 
     companion object {
         fun fileName(day: LocalDate): String = "fonia-raport-$day.pdf"
+
+        /** "20 noiembrie". */
+        internal val dayMonth: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM", java.util.Locale.forLanguageTag("ro-RO"))
 
         /** The characters of a note the report prints at most. */
         const val NOTE_LENGTH = 700
@@ -425,8 +454,11 @@ data class PracticeReport(
                 var selfCompared = 0
                 var selfAgreed = 0
                 val microphones = mutableMapOf<String, Int>()
+                val gapChanges = sound.id in FrontTeeth.affects
+                val teethDays = mutableListOf<LocalDate>()
                 for (attempt in tries) {
                     CaptureLog.microphone(attempt.detail)?.let { microphones[it] = (microphones[it] ?: 0) + 1 }
+                    if (gapChanges && CaptureLog.teethOut(attempt.detail)) day(attempt.localDay)?.let { teethDays += it }
                     selfOutcome(attempt.detail)?.let { own ->
                         selfRated = selfRated.adding(own)
                         if (attempt.machineOutcome in judged) {
@@ -473,6 +505,9 @@ data class PracticeReport(
                     selfCompared = selfCompared,
                     selfAgreed = selfAgreed,
                     microphones = microphones,
+                    teethTries = teethDays.size,
+                    teethFrom = teethDays.minOrNull(),
+                    teethTo = teethDays.maxOrNull(),
                 )
             }
 

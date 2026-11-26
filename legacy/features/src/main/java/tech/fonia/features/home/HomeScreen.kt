@@ -102,6 +102,9 @@ import tech.fonia.features.app.lowercasedFirstLetter
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.zoomSource
 import tech.fonia.store.Profile
+import tech.fonia.features.app.rememberStoredBoolean
+import tech.fonia.store.localDay
+import java.time.Instant
 
 internal data class Door(val id: String, val scene: SceneName, val title: String, val route: AppRoute)
 
@@ -378,6 +381,26 @@ private fun TodayCard(app: AppModel, path: PathModel, modifier: Modifier = Modif
     val unit = step?.unit
     val sound = unit?.sound?.let { app.content.sound(it) }
     val title = step?.lesson?.title ?: "Ai terminat tot, bravo!"
+    // An adult's „Încă o rundă mai târziu” (DailyRounds), kept per child. `now` moves on when the pause after the first
+    // lesson is over, so the offer shows without leaving the page.
+    val roundsOn by rememberStoredBoolean(app.preferences, DailyRounds.key(path.profile.id))
+    var now by remember { mutableStateOf(Instant.now()) }
+    val round = if (roundsOn && DailyRounds.isOffered(path.profile) && step != null && path.hasStarted) {
+        DailyRounds.round(path.sessions, localDay(now), now)
+    } else {
+        null
+    }
+    val restingUntil = (round as? DailyRounds.Round.Resting)?.until
+    LaunchedEffect(restingUntil) {
+        val until = restingUntil ?: return@LaunchedEffect
+        delay(java.time.Duration.between(Instant.now(), until).toMillis().coerceAtLeast(0) + 1_000)
+        now = Instant.now()
+    }
+    val roundLine = when (round) {
+        DailyRounds.Round.Second -> "Încă o rundă mică?"
+        DailyRounds.Round.Done -> "Ai exersat de două ori azi. Bravo!"
+        else -> null
+    }
     val push = rememberPush()
     val scope = rememberCoroutineScope()
     val card = remember { ContinuousRoundedRectangle(28.dp) }
@@ -400,6 +423,9 @@ private fun TodayCard(app: AppModel, path: PathModel, modifier: Modifier = Modif
                 )
             }
             FoniaText(title, style = ui(21, UIWeight.bold, TextRole.headline), color = Palette.ink, maxLines = 2, minimumScaleFactor = 0.75f)
+            if (roundLine != null) {
+                FoniaText(roundLine, style = ui(15, UIWeight.medium, TextRole.subheadline), color = Palette.inkSoft)
+            }
             if (unit != null) {
                 val done = path.doneCount(unit)
                 val total = unit.lessons.size

@@ -1,6 +1,7 @@
 package tech.fonia.features.session
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -8,6 +9,7 @@ import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.app.AudioHub
 import tech.fonia.features.grownups.PracticeReport
 import tech.fonia.store.JSONValue
+import tech.fonia.store.Profile
 
 /**
  * What is kept about how a take was heard, next to the attempt (iOS `CaptureLogTests`): the microphone, the rate, the
@@ -55,5 +57,44 @@ class CaptureLogTests {
             assertTrue(PracticeReport.microphoneName(microphone).isNotEmpty())
         }
         assertEquals("al telefonului", PracticeReport.microphoneName("phone"))
+    }
+
+    /** a take said with the front teeth out is marked; others carry nothing about teeth */
+    @Test
+    fun teeth() {
+        val out = CaptureLog.entry(microphone = "phone", sampleRate = 48_000.0, thresholds = DSPThresholds.v1, model = null, app = null, teethOut = true)
+        assertEquals(
+            JSONValue.Object(
+                mapOf(
+                    "mic" to JSONValue.String("phone"), "rateHz" to JSONValue.Number(48_000.0), "dsp" to JSONValue.String("v1"),
+                    "teethOut" to JSONValue.Bool(true),
+                ),
+            ),
+            out,
+        )
+        assertTrue(CaptureLog.teethOut(CaptureLog.adding(out, to = null)))
+        val plain = CaptureLog.entry(microphone = "phone", sampleRate = 48_000.0, thresholds = DSPThresholds.v1, model = null, app = null)
+        assertFalse(CaptureLog.teethOut(CaptureLog.adding(plain, to = null)))
+        assertFalse(CaptureLog.teethOut(null))
+    }
+
+    /** the teeth switch is per child, off by default, and only for children */
+    @Test
+    fun teethSwitch() {
+        fun profile(kind: Profile.Kind, band: Profile.AgeBand) = Profile(
+            kind = kind, ageBand = band, voiceGroup = Profile.VoiceGroup.Child, color = "cold", track = Profile.Track.Ro,
+        )
+        val ana = profile(Profile.Kind.Child, Profile.AgeBand.SixToSeven)
+        val ion = profile(Profile.Kind.Child, Profile.AgeBand.SixToSeven)
+        val adult = profile(Profile.Kind.Adult, Profile.AgeBand.Adult)
+        val stored = mutableSetOf<String>()
+        assertFalse(FrontTeeth.areOut(ana) { it in stored })
+        stored += FrontTeeth.key(ana.id)
+        stored += FrontTeeth.key(adult.id)
+        assertTrue(FrontTeeth.areOut(ana) { it in stored })
+        assertFalse(FrontTeeth.areOut(ion) { it in stored })
+        assertFalse(FrontTeeth.areOut(adult) { it in stored })
+        assertTrue(FrontTeeth.key(ana.id).startsWith("fonia."))
+        assertFalse(FrontTeeth.areOut(ana, preferences = null))
     }
 }

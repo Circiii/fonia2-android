@@ -23,9 +23,17 @@ object CaptureLog {
     /**
      * What one take was heard with. [thresholds] are the ones the take was measured with (`AudioHub.analysisThresholds`),
      * so a narrow-band microphone shows as `v1-noSibilants`, the same label as in the pilot log. [model] is the label of
-     * the model whose opinion went into the verdict, if any.
+     * the model whose opinion went into the verdict, if any. [teethOut] marks a take said while an adult had noted the
+     * front teeth out ([FrontTeeth]).
      */
-    fun entry(microphone: String, sampleRate: Double, thresholds: DSPThresholds, model: String?, app: String?): JSONValue {
+    fun entry(
+        microphone: String,
+        sampleRate: Double,
+        thresholds: DSPThresholds,
+        model: String?,
+        app: String?,
+        teethOut: Boolean = false,
+    ): JSONValue {
         val entry = linkedMapOf<String, JSONValue>(
             "mic" to JSONValue.String(microphone),
             "rateHz" to JSONValue.Number(Math.round(sampleRate).toDouble()),
@@ -33,6 +41,7 @@ object CaptureLog {
         )
         if (model != null) entry["model"] = JSONValue.String(model)
         if (app != null) entry["app"] = JSONValue.String(app)
+        if (teethOut) entry["teethOut"] = JSONValue.Bool(true)
         return JSONValue.Object(entry)
     }
 
@@ -43,5 +52,11 @@ object CaptureLog {
     fun microphone(detail: Map<String, JSONValue>?): String? {
         val capture = detail?.get(KEY) as? JSONValue.Object ?: return null
         return (capture.value["mic"] as? JSONValue.String)?.value
+    }
+
+    /** Whether a saved attempt was said while the front teeth were out. */
+    fun teethOut(detail: Map<String, JSONValue>?): Boolean {
+        val capture = detail?.get(KEY) as? JSONValue.Object ?: return false
+        return (capture.value["teethOut"] as? JSONValue.Bool)?.value == true
     }
 }

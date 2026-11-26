@@ -357,7 +357,9 @@ class WeekReportTests {
             sessions = listOf(session(16, minutes = 10.0), session(18, minutes = 25.0)),
             pairs = (0 until 21).map { attempt(16, 17, it, kept = it < 6) },
         )
-        assertEquals("2 zile cu exerciții, 35 de minute.", WeekCopy.summary(report))
+        assertEquals("2 zile cu exerciții, 2 ședințe, 35 de minute.", WeekCopy.summary(report))
+        val open = build(sessions = listOf(session(16, finished = false)), pairs = listOf(attempt(16, 17, 0, kept = false)))
+        assertEquals("1 zi cu exerciții, 0 minute.", WeekCopy.summary(open))
         assertEquals("2 zile, 35 de minute, 21 de încercări.", WeekCopy.facts(report.sounds[0]))
         assertEquals("Am ales 5 din cele 6 înregistrări păstrate. La 6 nu ai spus încă ce ai auzit.", WeekCopy.takesLead(report.sounds[0]))
         assertEquals("o înregistrare", WeekCopy.recordings(1))

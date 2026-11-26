@@ -483,4 +483,37 @@ class PracticeReportTests {
         assertEquals(line, report.sounds.first().microphoneLine)
         assertTrue(report.text.contains(line))
     }
+
+    /** tries said with the front teeth out are counted on the hissing sounds, with their days; R is left alone */
+    @Test
+    fun teethOut() = runBlocking {
+        val ana = child()
+        suspend fun add(day: Int, sound: String, teethOut: Boolean) {
+            val start = moment(day)
+            val session = SessionRecord(profileId = ana.id, track = Profile.Track.Ro, sound = sound, startedAt = start, endedAt = start.plusSeconds(300), timeZone = ZoneOffset.UTC)
+            repository.addSession(session)
+            val capture = CaptureLog.entry(microphone = "phone", sampleRate = 48_000.0, thresholds = DSPThresholds.v1, model = null, app = null, teethOut = teethOut)
+            repository.addAttempt(
+                Attempt(
+                    sessionId = session.id, profileId = ana.id, ts = start, exerciseKind = "repeat", sound = sound, target = "sare",
+                    machineOutcome = Attempt.Outcome.Good, detail = CaptureLog.adding(capture, to = null), timeZone = ZoneOffset.UTC,
+                ),
+            )
+        }
+        add(3, sound = "s", teethOut = false)
+        assertTrue(report(ana).sounds.all { it.teethLine == null })
+
+        add(5, sound = "s", teethOut = true)
+        var s = report(ana).sounds.first { it.letter == "S" }
+        assertEquals("Cât îi lipseau dinții din față (5 noiembrie): 1 încercare. Atunci S poate suna altfel, fără ca vorbirea să se fi schimbat.", s.teethLine)
+
+        add(12, sound = "s", teethOut = true)
+        add(12, sound = "r", teethOut = true)
+        val report = report(ana)
+        s = report.sounds.first { it.letter == "S" }
+        val line = "Cât îi lipseau dinții din față (5 – 12 noiembrie): 2 încercări. Atunci S poate suna altfel, fără ca vorbirea să se fi schimbat."
+        assertEquals(line, s.teethLine)
+        assertTrue(report.text.contains(line))
+        assertNull(report.sounds.first { it.letter == "R" }.teethLine)
+    }
 }

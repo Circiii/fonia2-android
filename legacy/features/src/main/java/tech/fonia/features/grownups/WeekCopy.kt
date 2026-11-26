@@ -60,10 +60,11 @@ object WeekCopy {
         return "${dayMonth.format(monday)}$startYear – ${dayMonth.format(sunday)}$year"
     }
 
-    /** "4 zile cu exerciții, 35 de minute." */
+    /** "4 zile cu exerciții, 5 ședințe, 35 de minute." The sessions are left out while none was finished. */
     fun summary(report: WeekReport): String {
         if (report.days == 0) return NO_PRACTICE
-        return "${Plural.format(report.days, Plural.Noun.Zi)} cu exerciții, ${Plural.format(report.minutes, Plural.Noun.Minut)}."
+        val sessions = if (report.sessions > 0) " ${Plural.format(report.sessions, Plural.Noun.Sedinta)}," else ""
+        return "${Plural.format(report.days, Plural.Noun.Zi)} cu exerciții,$sessions ${Plural.format(report.minutes, Plural.Noun.Minut)}."
     }
 
     /** "3 zile, 12 minute, 40 de încercări." */

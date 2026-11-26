@@ -469,6 +469,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             thresholds = app.audio.analysisThresholds,
             model = fresh?.model,
             app = CaptureLog.appVersion,
+            teethOut = FrontTeeth.areOut(run.profile, app.preferences),
         )
         run.pendingMeasures = CaptureLog.adding(capture, to = null)
         if (run.profile.isChild) result = result.softenedForChild

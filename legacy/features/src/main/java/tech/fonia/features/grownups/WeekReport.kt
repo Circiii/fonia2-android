@@ -52,6 +52,8 @@ data class WeekReport(
     val days: Int,
     val minutes: Int,
     val sounds: List<SoundWeek>,
+    /** Sessions finished in the week, on any track. */
+    val sessions: Int = 0,
 ) {
     /** A kept take next to the attempt it belongs to. */
     data class Take(val attempt: Attempt, val recording: Recording, val why: Why = Why.Other) {
@@ -172,6 +174,7 @@ data class WeekReport(
                 days = (weekSessions.map { it.localDay } + weekAttempts.map { it.localDay }).toSet().size,
                 minutes = minutes(weekSessions),
                 sounds = sounds,
+                sessions = weekSessions.count { it.endedAt != null },
             )
         }
 

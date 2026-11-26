@@ -251,6 +251,8 @@ fun ProfileDetail(profileID: UUID, app: AppModel) {
                     }
                     AdultCardsSeen.forget(profileID, app.preferences)
                     SpeakingMemory.forget(profileID, app.preferences)
+                    tech.fonia.features.home.DailyRounds.forget(profileID, app.preferences)
+                    tech.fonia.features.session.FrontTeeth.forget(profileID, app.preferences)
                     // And every row of the pilot log about this profile.
                     try {
                         app.pilot?.deleteProfile(profileID)
