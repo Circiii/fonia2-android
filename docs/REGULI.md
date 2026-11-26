@@ -1,7 +1,7 @@
 # Reguli de produs și de lucru
 
 ## Copiii și datele
-- Nicio înregistrare sau imagine nu pleacă de pe telefon. Aplicația nu cere permisiunea `INTERNET` și nu are SDK-uri de analiză; build-ul pică dacă apare o permisiune de rețea.
+- Nicio înregistrare sau imagine nu pleacă de pe telefon. Aplicația nu are SDK-uri de analiză. Cere `INTERNET` doar pentru numărul de instalări (un cod făcut la întâmplare și „android”, o singură dată, se poate opri din Setări); build-ul pică dacă apare `ACCESS_NETWORK_STATE`.
 - Modelele (fonemele, Whisper, punctele feței) rulează pe telefon.
 
 ## Texte

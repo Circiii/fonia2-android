@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
@@ -63,11 +62,10 @@ internal fun ModelSections(app: AppModel) {
         if (!app.isPilotLogOn) append(" Notează doar cu jurnalul de exersare pornit.")
         if (state is ModelsHub.State.Failed && state.noNetwork) append(" Acum nu e Wi-Fi.")
     }
-    // The shipped app has no internet permission (app/src/main/AndroidManifest.xml), so it can't fetch the package:
-    // the row would only fail. It shows where the permission is there (a build that asks for it).
-    val context = LocalContext.current
-    val canFetch = remember { context.checkSelfPermission(android.Manifest.permission.INTERNET) == android.content.pm.PackageManager.PERMISSION_GRANTED }
-    if (canFetch || state != ModelsHub.State.Absent) {
+    // The shipped app fetches no model: its one use of the internet is the install code, and without
+    // ACCESS_NETWORK_STATE (removed in legacy/app/src/main/AndroidManifest.xml) the fetcher finds no Wi-Fi to use.
+    // So the row would only fail, and shows only for a package already on the phone.
+    if (state != ModelsHub.State.Absent) {
         ListSection(header = "Ascultare pe sunete, în probă", footer = footer) {
             row { ShadowModelRow(ml.models, entry) }
         }

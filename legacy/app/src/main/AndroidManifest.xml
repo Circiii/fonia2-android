@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Microphone for every exercise, camera for the mouth mirror. No network: Fonia sends and downloads nothing
-         (the models ship in the APK); INTERNET / ACCESS_NETWORK_STATE that libraries (ONNX Runtime, Media3) bring are
-         removed here, and checkDebugOnnxRuntime fails the build if INTERNET is back in the merged manifest. -->
+    <!-- Microphone for every exercise, camera for the mouth mirror. INTERNET only for the install code
+         (InstallCount in :legacy:features: one random UUID and "android", sent once a day after the first profile,
+         unless an adult switches it off). Nothing else goes out and nothing is downloaded (the models ship in the APK):
+         ACCESS_NETWORK_STATE, which libraries (ONNX Runtime, Media3) bring, stays removed, so the model fetchers find no
+         network to use, and check<Variant>OnnxRuntime fails the build if it is back in the merged manifest. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
 
     <uses-feature android:name="android.hardware.microphone" android:required="true" />

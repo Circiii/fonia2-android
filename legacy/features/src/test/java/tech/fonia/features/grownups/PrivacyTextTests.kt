@@ -12,9 +12,15 @@ class PrivacyTextTests {
     private val text = (PrivacyText.summary + all.flatMap { listOf(it.title, it.body) }).joinToString("\n")
 
     @Test
-    fun theFirstRunSaysThreeLines() {
-        assertEquals(3, PrivacyText.summary.size)
+    fun theFirstRunSaysFourLines() {
+        assertEquals(4, PrivacyText.summary.size)
         assertEquals("Vocea ta rămâne pe telefon.", PrivacyText.summary[0])
+        assertEquals(
+            "După o zi, trimitem o dată un cod făcut la întâmplare, ca să știm câte instalări sunt. Îl poți opri din Setări.",
+            PrivacyText.summary[2],
+        )
+        // An adult learner's setup page says the same line.
+        assertEquals(PrivacyText.INSTALL_LINE, PrivacyText.summary[2])
     }
 
     @Test
@@ -30,10 +36,27 @@ class PrivacyTextTests {
     }
 
     @Test
-    fun noDownloadIsPromisedByAnAppWithoutInternet() {
+    fun noDownloadIsPromisedAndTheInstallCodeIsTheOnlyThingSent() {
         assertFalse(text.contains("huggingface"))
         assertFalse(text.contains("descărca"))
-        assertTrue(text.contains("Fonia nu folosește internetul."))
+        assertFalse(text.contains("Fonia nu folosește internetul."))
+        val internet = all.single { it.title == "Internetul" }.body
+        assertTrue(internet.contains("Pe internet trimite doar codul de la „Numărul de instalări”"))
+        assertTrue(internet.contains("nimic altceva"))
+    }
+
+    /** iOS `PrivacyText`'s section, with "android" where iOS says "ios". */
+    @Test
+    fun theInstallCodeIsSaidAsOnIOS() {
+        val section = all.single { it.title == "Numărul de instalări" }
+        assertEquals(
+            "La o zi după primul profil, Fonia trimite o dată un cod făcut la întâmplare pe telefon și cuvântul „android”, ca să știm cam câte instalări sunt. Codul nu e legat de niciun profil și nu spune nimic despre tine sau despre exerciții. Ajunge într-o bază de date Supabase din Frankfurt. Ca la orice conexiune, serverul vede atunci adresa IP a telefonului. Jurnalele tehnice ale serverului o țin câteva zile, iar în tabel nu o păstrăm. Până pleacă, îl poți opri din Setări, la „Numără instalarea”. „Șterge tot” scoate codul și alegerea de pe telefon, iar Fonia o ia de la capăt ca o instalare nouă.",
+            section.body,
+        )
+        assertFalse(text.contains("„ios”"))
+        val titles = all.map { it.title }
+        assertEquals(titles.indexOf("Ștergerea") - 1, titles.indexOf("Numărul de instalări"))
+        assertTrue(PrivacyText.sections(withReading = false).any { it.title == "Numărul de instalări" })
     }
 
     @Test
@@ -52,8 +75,11 @@ class PrivacyTextTests {
     }
 
     @Test
-    fun theAppStillAsksForNoInternet() {
+    fun theAppAsksForTheInternetButNotForTheNetworkState() {
         val manifest = File("../app/src/main/AndroidManifest.xml").readText()
-        assertTrue(manifest.contains("""android.permission.INTERNET" tools:node="remove""""))
+        assertTrue(manifest.contains("""<uses-permission android:name="android.permission.INTERNET" />"""))
+        assertFalse(manifest.contains("""android.permission.INTERNET" tools:node="remove""""))
+        // Without the network state the model fetchers find no network: the install code stays the one thing sent.
+        assertTrue(manifest.contains("""android.permission.ACCESS_NETWORK_STATE" tools:node="remove""""))
     }
 }

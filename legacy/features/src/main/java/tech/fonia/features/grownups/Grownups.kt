@@ -57,6 +57,7 @@ import tech.fonia.features.app.NavigationHost
 import tech.fonia.features.app.NavigationRow
 import tech.fonia.features.app.ListSection
 import tech.fonia.features.app.ProgressRow
+import tech.fonia.features.app.InstallCount
 import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.SystemNavigationBar
 import tech.fonia.features.app.ToggleRow
@@ -103,6 +104,8 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
     var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
     var faceGuides by rememberStoredBoolean(app.preferences, Settings.faceGuides)
     var cameraCoach by rememberStoredBoolean(app.preferences, Settings.cameraCoach)
+    var countInstall by rememberStoredBoolean(app.preferences, InstallCount.ON_KEY, InstallCount.DEFAULT_ON)
+    val installSent by rememberStoredBoolean(app.preferences, InstallCount.SENT_KEY)
     var addingChild by remember { mutableStateOf(false) }
     var confirmWipe by remember { mutableStateOf(false) }
     /** What stayed on the phone after "Șterge tot" (null: no failure to show). */
@@ -170,6 +173,18 @@ private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
             ModelSections(app)
             ListSection {
                 row { ButtonRow("Ce păstrăm pe telefon", onClick = { showLegal = true }) }
+                // Once the code has gone the switch has nothing left to stop, and the line says so.
+                row {
+                    ToggleRow(
+                        "Numără instalarea",
+                        countInstall,
+                        detail = if (installSent) {
+                            "Codul a plecat. Nu se mai trimite altul, decât după „Șterge tot”."
+                        } else {
+                            "La o zi după primul profil, trimite o dată un cod făcut la întâmplare, ca să știm câte instalări sunt. Fără nume și fără nimic din exerciții."
+                        },
+                    ) { countInstall = it }
+                }
                 row { NavigationRow("Licențe", onClick = { push(Destination.Licences) }) }
                 row { ButtonRow("Ajutor", onClick = { LegalInfo.open(context, LegalInfo.SUPPORT_URL) }) }
                 row { ValueRow("Versiunea", LegalInfo.version(context)) }

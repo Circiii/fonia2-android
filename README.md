@@ -9,7 +9,7 @@ Fonia ajută copiii să-și exerseze sunetele limbii române (S, Ș, Z, J, Ț, C
 - **„Tu, fără ăăă”**: îți auzi propria voce cu umpluturile tăiate;
 - efecte sonore, mișcare și fontul Baloo 2 în toată interfața.
 
-Totul rulează pe telefon. Aplicația nu cere acces la internet.
+Totul rulează pe telefon. Pe internet, aplicația trimite o singură dată un cod făcut la întâmplare, ca să știm câte instalări sunt (se poate opri din Setări), și nimic altceva.
 
 ## Build
 

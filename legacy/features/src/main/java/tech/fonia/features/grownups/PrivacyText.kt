@@ -25,8 +25,8 @@ object LegalInfo {
     }
 
     /**
-     * Opens [url] in the phone's browser. The app itself has no internet permission and never will: the browser
-     * fetches the page, not Fonia. False when no app can open it.
+     * Opens [url] in the phone's browser: the browser fetches the page, not Fonia, whose one use of the internet is
+     * the install code ([tech.fonia.features.app.InstallCount]). False when no app can open it.
      */
     fun open(context: Context, url: String): Boolean = try {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
@@ -39,7 +39,7 @@ object LegalInfo {
 }
 
 /**
- * What Fonia keeps and where it goes, in the words an adult reads in the app: three lines at the first run, the whole
+ * What Fonia keeps and where it goes, in the words an adult reads in the app: four lines at the first run, the whole
  * text in the settings. The wording is iOS `PrivacyText`'s where the two apps keep the same things; the sections only
  * Android has (the voice numbers, the reading probes, the adaptive pilot) are added, and the model download, which
  * Android doesn't have, is left out. Every sentence has to stay true to the code; the comments say where.
@@ -47,10 +47,14 @@ object LegalInfo {
 object PrivacyText {
     data class Section(val title: String, val body: String)
 
+    /** The install code in one line: in the summary, and on an adult learner's setup page, who skips the summary. */
+    const val INSTALL_LINE = "După o zi, trimitem o dată un cod făcut la întâmplare, ca să știm câte instalări sunt. Îl poți opri din Setări."
+
     /** The first run's short version. */
     val summary = listOf(
         "Vocea ta rămâne pe telefon.",
         "Camera pornește doar la Oglindă și nu păstrează nicio imagine.",
+        INSTALL_LINE,
         "Fără cont, fără reclame. Poți șterge tot oricând, din Setări.",
     )
 
@@ -60,10 +64,11 @@ object PrivacyText {
             "Ce rămâne pe telefon",
             "Profilurile, încercările, notițele și înregistrările stau pe telefonul tău. Fonia nu are cont, nu are reclame și nu măsoară cum o folosești.",
         ),
-        // The manifest removes INTERNET, and checkDebugOnnxRuntime fails the build if it comes back.
+        // INTERNET is in the manifest for InstallCount alone. ACCESS_NETWORK_STATE stays removed, so the model fetchers
+        // find no network, and check<Variant>OnnxRuntime fails the build if it comes back.
         Section(
             "Internetul",
-            "Fonia nu folosește internetul. Tot ce îi trebuie vine odată cu aplicația, și nu trimite nimic nicăieri. Linkurile din Setări se deschid în browser.",
+            "Tot ce îi trebuie Foniei vine odată cu aplicația. Pe internet trimite doar codul de la „Numărul de instalări”, mai jos, și nimic altceva. Linkurile din Setări se deschid în browser.",
         ),
         Section(
             "Microfonul",
@@ -104,6 +109,12 @@ object PrivacyText {
             "Fișierul pentru logoped",
             "Îl faci tu, din Setări, și îl trimiți cui vrei. Conține profilul, progresul la fiecare sunet, lecțiile, încercările, notițele, textul recunoscut din discursuri și, dacă jurnalul e pornit, un rezumat al lui. Nu conține vocea și nici numele. Fonia nu îl trimite singură. La fel e și cu raportul PDF pentru logoped" +
                 if (withReading) " și cu raportul de citire." else ".",
+        ),
+        // InstallCount: one random UUID and "android", a day after the first profile, only while the switch in Settings
+        // is on, never in debug builds. The table takes inserts only. Wiping clears its keys with the settings file.
+        Section(
+            "Numărul de instalări",
+            "La o zi după primul profil, Fonia trimite o dată un cod făcut la întâmplare pe telefon și cuvântul „android”, ca să știm cam câte instalări sunt. Codul nu e legat de niciun profil și nu spune nimic despre tine sau despre exerciții. Ajunge într-o bază de date Supabase din Frankfurt. Ca la orice conexiune, serverul vede atunci adresa IP a telefonului. Jurnalele tehnice ale serverului o țin câteva zile, iar în tabel nu o păstrăm. Până pleacă, îl poți opri din Setări, la „Numără instalarea”. „Șterge tot” scoate codul și alegerea de pe telefon, iar Fonia o ia de la capăt ca o instalare nouă.",
         ),
         // AppModel.wipeEverything.
         Section(
