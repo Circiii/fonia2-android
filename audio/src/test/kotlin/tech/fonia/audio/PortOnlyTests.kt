@@ -159,4 +159,16 @@ class DecodingTests {
         assertEquals(117_600, RecordingWriter.bitRate(44_100))
         assertEquals(42_666, RecordingWriter.bitRate(16_000))
     }
+
+    /** input types map to the microphone names the attempt log keeps (iOS `AudioSessionMappingTests.microphones`) */
+    @Test
+    fun microphones() {
+        assertEquals("phone", CaptureInfo.microphone(AudioDeviceInfo.TYPE_BUILTIN_MIC))
+        assertEquals("wired", CaptureInfo.microphone(AudioDeviceInfo.TYPE_WIRED_HEADSET))
+        assertEquals("bluetooth", CaptureInfo.microphone(AudioDeviceInfo.TYPE_BLUETOOTH_SCO))
+        assertEquals("bluetooth", CaptureInfo.microphone(AudioDeviceInfo.TYPE_BLE_HEADSET))
+        assertEquals("usb", CaptureInfo.microphone(AudioDeviceInfo.TYPE_USB_HEADSET))
+        assertEquals("other", CaptureInfo.microphone(AudioDeviceInfo.TYPE_TELEPHONY))
+        assertEquals("other", CaptureInfo.microphone(null))
+    }
 }

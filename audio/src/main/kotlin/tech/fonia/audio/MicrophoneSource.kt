@@ -69,8 +69,24 @@ data class CaptureInfo(
     /** Under 32 kHz, or a Bluetooth microphone: S/Ș cannot be judged, as on iOS (inventory §13.2). */
     val isNarrowBand: Boolean get() = isBluetoothMic || sampleRate < NARROW_BAND_RATE
 
+    /** What the attempt log calls this input ([microphone]). */
+    val microphone: String get() = microphone(deviceType)
+
     companion object {
         const val NARROW_BAND_RATE = 32_000.0
+
+        /**
+         * What the attempt log calls the microphone of a take, as iOS `AudioSessionMapping.microphone` does: `phone`,
+         * `wired`, `bluetooth`, `usb`, or `other`, also for an input the system did not name. With no capture at all
+         * the caller writes `none`.
+         */
+        fun microphone(deviceType: Int?): String = when (deviceType) {
+            AudioDeviceInfo.TYPE_BUILTIN_MIC -> "phone"
+            AudioDeviceInfo.TYPE_WIRED_HEADSET -> "wired"
+            AudioDeviceInfo.TYPE_BLUETOOTH_SCO, AudioDeviceInfo.TYPE_BLE_HEADSET -> "bluetooth"
+            AudioDeviceInfo.TYPE_USB_DEVICE, AudioDeviceInfo.TYPE_USB_HEADSET, AudioDeviceInfo.TYPE_USB_ACCESSORY -> "usb"
+            else -> "other"
+        }
     }
 }
 

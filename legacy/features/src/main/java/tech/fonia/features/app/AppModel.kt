@@ -635,6 +635,8 @@ class AppModel(
             scope: CoroutineScope,
         ): AppModel? {
             val assets = context.applicationContext.assets
+            tech.fonia.features.session.CaptureLog.appVersion =
+                tech.fonia.features.grownups.LegalInfo.version(context.applicationContext).takeIf { it != "?" }
             val source = ContentSource { path ->
                 try {
                     assets.open(path).use { it.readBytes() }

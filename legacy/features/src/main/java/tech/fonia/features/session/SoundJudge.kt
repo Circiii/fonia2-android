@@ -93,6 +93,11 @@ class SoundJudge(
         val joinedReference: Boolean = false,
         /** The few numbers of [visual] to keep for his progress (null for a gate: nothing was measured). */
         val dot: TakeDot? = null,
+        /**
+         * The tag of the model whose opinion went into this verdict (ZIPA, `zipa@<version>`), when it answered in time;
+         * null when the fast head decided alone. Kept with the attempt (`CaptureLog`).
+         */
+        val model: String? = null,
     )
 
     fun warmUp() {
@@ -142,6 +147,7 @@ class SoundJudge(
         var fullMs = -1L
         var joined = false
         var hint: HintKey? = null
+        var modelTag: String? = null
         val seconds = take.samples.size / take.sampleRate
         val budget = fullBudgetMs(seconds)
         // Sentences and single words: the word recogniser listens to the same take on its own thread while the sound
@@ -187,6 +193,7 @@ class SoundJudge(
                     null
                 }
                 fullMs = (System.nanoTime() - t1) / 1_000_000
+                if (phones != null) modelTag = host.version.tag
                 phones?.let { judge.decide(measured, it, runtime = rt) } ?: fast
             }
             if (personal != null) joined = synchronized(personal) { personal.update(decided) }
@@ -194,7 +201,7 @@ class SoundJudge(
             decided
         }
         val dot = if (result.head == Head.Gate) null else TakeDot.of(result.visual, request.sound.raw, result.verdict, System.currentTimeMillis())
-        val bySound = map(result, sound).copy(visual = result.visual, hint = hint, joinedReference = joined, dot = dot)
+        val bySound = map(result, sound).copy(visual = result.visual, hint = hint, joinedReference = joined, dot = dot, model = modelTag)
         val heardNow = heardWords?.await()
         val check = heardNow?.takeIf { isSentence }?.let { WordMatcher.check(request.text, it) }
         val judged = when {

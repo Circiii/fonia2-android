@@ -147,6 +147,12 @@ class SessionRun(
     private var blockRatedByAdult = 0
     private var didStoreSession = false
 
+    /**
+     * What is kept about the take being judged, with its attempt (iOS `pendingMeasures`): on Android only the capture
+     * (`CaptureLog`), set by the take cycle and taken by the next attempt.
+     */
+    var pendingMeasures: Map<String, JSONValue>? = null
+
     /** One finish per trial, however many taps and timers race for it. */
     private var trialSettled = false
     private var isClosed = false
@@ -355,7 +361,9 @@ class SessionRun(
             soundOf(exercise)?.let { sound -> takes[index] = tech.fonia.features.check.CheckTake(sound, decided, pendingCertainty) }
         }
         pendingCertainty = null
-        if (counts && !isCheck) store(exercise, machine, adult, selfRating, take)
+        val measures = pendingMeasures
+        pendingMeasures = null
+        if (counts && !isCheck) store(exercise, machine, adult, selfRating, take, measures)
         if (!isCheck) app.logAttempt(this, takeKey, exercise, machine, adult, selfRating, decided, counts, retry)
         if (counts) adaptive?.take(index, exercise, machine, adult)
         if (retry) {
@@ -395,7 +403,14 @@ class SessionRun(
         saving.withLock { }
     }
 
-    private fun store(exercise: Exercise, machine: Attempt.Outcome, adult: Attempt.Outcome?, selfRating: Rating?, take: CapturedClip?) {
+    private fun store(
+        exercise: Exercise,
+        machine: Attempt.Outcome,
+        adult: Attempt.Outcome?,
+        selfRating: Rating?,
+        take: CapturedClip?,
+        measures: Map<String, JSONValue>? = null,
+    ) {
         val repository = app.repository
         val profileID = profile.id
         val sessionID = record.id
@@ -403,7 +418,10 @@ class SessionRun(
         val target = exercise.itemText ?: label(exercise)
         val kind = exercise.kind.rawValue
         val keepsAudio = !profile.isChild || (app.preferences?.bool(Settings.keepRecordings) ?: false)
-        val detail = selfRating?.let { mapOf<String, JSONValue>("selfRating" to JSONValue.String(it.rawValue)) }
+        val detail = buildMap<String, JSONValue> {
+            measures?.let { putAll(it) }
+            selfRating?.let { put("selfRating", JSONValue.String(it.rawValue)) }
+        }.ifEmpty { null }
         // `Task.detached(priority: .utility)`: the take is written off the main thread.
         later {
             withContext(Dispatchers.Default) {

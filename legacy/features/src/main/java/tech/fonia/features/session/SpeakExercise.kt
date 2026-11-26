@@ -463,6 +463,14 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         var result = judgedResult
         // A take nobody heard is said again by itself, as the new judge's retakes are.
         if (!result.keepsTake && result.rating == null && retakeByItself()) return
+        val capture = CaptureLog.entry(
+            microphone = app.audio.lastMicrophone,
+            sampleRate = clip.sampleRate,
+            thresholds = app.audio.analysisThresholds,
+            model = fresh?.model,
+            app = CaptureLog.appVersion,
+        )
+        run.pendingMeasures = CaptureLog.adding(capture, to = null)
         if (run.profile.isChild) result = result.softenedForChild
         if (trial.feedback == FeedbackLevel.Silent) result = result.copy(tip = null)
         // The learner judges first: what the phone thinks stays hidden until they've picked.

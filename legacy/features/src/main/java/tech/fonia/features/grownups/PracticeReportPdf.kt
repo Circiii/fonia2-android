@@ -277,7 +277,7 @@ object PracticeReportPdf {
         private fun chartHeight(sound: PracticeReport.SoundPart): Float = if (sound.weeks.size > 1) 86f else 0f
 
         private fun blockHeight(sound: PracticeReport.SoundPart): Float {
-            val lines = listOfNotNull(sound.ladder, sound.stageLine, sound.confirmed, sound.moveLine, sound.tries, sound.agreement) + sound.hearing
+            val lines = listOfNotNull(sound.ladder, sound.stageLine, sound.confirmed, sound.moveLine, sound.tries, sound.agreement) + sound.belowAnswers
             val textHeight = lines.sumOf { layout(it, body, CONTENT).height + 4 }
             return 22f + 16f + textHeight + 60f + chartHeight(sound) + 20f
         }
@@ -295,8 +295,9 @@ object PracticeReportPdf {
             sound.moveLine?.let { paragraph(it, after = 3f) }
             paragraph(sound.tries, strong, after = 6f)
             table(sound.rows)
-            paragraph(sound.agreement, after = if (sound.hearing.isEmpty()) 8f else 3f)
-            sound.hearing.forEachIndexed { index, line -> paragraph(line, after = if (index == sound.hearing.lastIndex) 8f else 3f) }
+            val below = sound.belowAnswers
+            paragraph(sound.agreement, after = if (below.isEmpty()) 8f else 3f)
+            below.forEachIndexed { index, line -> paragraph(line, after = if (index == below.lastIndex) 8f else 3f) }
             val chart = chartHeight(sound)
             if (chart > 0) weekBars(sound, chart)
             y += 8f

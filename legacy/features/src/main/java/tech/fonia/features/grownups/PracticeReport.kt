@@ -15,7 +15,10 @@ import tech.fonia.features.app.title
 import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.journal.MissionFollowUp
 import tech.fonia.features.reading.ReadingReport
+import tech.fonia.features.session.CaptureLog
 import tech.fonia.store.Attempt
+import tech.fonia.store.JSONObject
+import tech.fonia.store.JSONValue
 import tech.fonia.store.PracticeData
 import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
@@ -105,6 +108,15 @@ data class PracticeReport(
         val listened: Int = 0,
         /** Of those, the ones where it didn't hear clearly (`Unclear`). */
         val unheard: Int = 0,
+        /** Whose own answers [selfRated] are: "copilul", or "cel care a exersat" for an adult. */
+        val who: String = "copilul",
+        /** The learner's own answers to „Cum ți s-a părut?”, by outcome. */
+        val selfRated: Tally = Tally(),
+        /** Self-rated tries the phone answered too, and how many of those got the same answer. */
+        val selfCompared: Int = 0,
+        val selfAgreed: Int = 0,
+        /** Tries per microphone (`CaptureLog`), for the tries saved since the microphone was kept. */
+        val microphones: Map<String, Int> = emptyMap(),
     ) {
         /** "Treapta 4 din 10: „În mijlocul cuvântului” (cuvinte cu S la mijloc)." */
         val ladder: String
@@ -178,6 +190,41 @@ data class PracticeReport(
                 val line = "Telefonul n-a auzit clar $unheard din ${Plural.format(listened, Plural.Noun.Incercare)}."
                 return if (unheard * 2 > listened) listOf(line, CAPTURE_TIP) else listOf(line)
             }
+
+        /**
+         * "La 9 încercări, copilul a spus singur cum i s-a părut: „Bine” 6, „Aproape” 2, „Încă nu” 1.", and how often
+         * the phone said the same. Null under one block of answers. Never shown to the child.
+         */
+        val selfJudged: String?
+            get() {
+                if (selfRated.judged < SELF_FLOOR) return null
+                val split = "„Bine” ${selfRated.good}, „Aproape” ${selfRated.almost}, „Încă nu” ${selfRated.notYet}"
+                var line = "La ${Plural.format(selfRated.judged, Plural.Noun.Incercare)}, $who a spus singur cum i s-a părut: $split."
+                if (selfCompared >= SELF_FLOOR) {
+                    val same = if (selfAgreed == 0) "La niciuna" else "La $selfAgreed"
+                    line += " $same dintre cele $selfCompared la care a răspuns și telefonul, răspunsurile au fost la fel."
+                }
+                return line
+            }
+
+        /**
+         * "Încercări pe fiecare microfon: al telefonului 40, Bluetooth 12. Prin alt microfon, telefonul aude altfel."
+         * Null while every try came through one microphone.
+         */
+        val microphoneLine: String?
+            get() {
+                if (microphones.size <= 1) return null
+                val counts = microphones.entries
+                    .sortedWith(compareByDescending<Map.Entry<String, Int>> { it.value }.thenBy { it.key })
+                    .joinToString(", ") { "${microphoneName(it.key)} ${it.value}" }
+                return "Încercări pe fiecare microfon: $counts. Prin alt microfon, telefonul aude altfel."
+            }
+
+        /**
+         * What follows the agreement line: the learner's own answers, the microphones, then how often the phone
+         * didn't hear clearly.
+         */
+        val belowAnswers: List<String> get() = listOfNotNull(selfJudged, microphoneLine) + hearing
     }
 
     data class Note(val day: String, val text: String)
@@ -247,7 +294,7 @@ data class PracticeReport(
                 lines += sound.tries
                 lines += sound.rows.map { it.joinToString(" | ") }
                 lines += sound.agreement
-                lines += sound.hearing
+                lines += sound.belowAnswers
                 lines += CHART_TITLE
                 lines += sound.weeks.map { "${ReadingReport.shortDate(it.monday)}: ${it.attempts}" }
             }
@@ -285,6 +332,27 @@ data class PracticeReport(
 
         /** The fewest tries the phone listened to before the report says how often it didn't hear clearly: one block. */
         const val HEARING_FLOOR = 6
+
+        /** A microphone as `CaptureLog` keeps it, named for the report. */
+        fun microphoneName(microphone: String): String = when (microphone) {
+            "phone" -> "al telefonului"
+            "wired" -> "cu fir"
+            "bluetooth" -> "Bluetooth"
+            "usb" -> "USB"
+            "fixture" -> "înregistrări de test"
+            else -> "altul"
+        }
+
+        /** The fewest own answers before the report shows them: the three of one block at grupuri de consoane. */
+        const val SELF_FLOOR = 3
+
+        /** The learner's own answer to „Cum ți s-a părut?”, as `SessionRun` keeps it in `detail["selfRating"]`. */
+        fun selfOutcome(detail: JSONObject?): Attempt.Outcome? = when ((detail?.get("selfRating") as? JSONValue.String)?.value) {
+            "yes" -> Attempt.Outcome.Good
+            "nearly" -> Attempt.Outcome.Almost
+            "notYet" -> Attempt.Outcome.NotYet
+            else -> null
+        }
 
         /** What usually helps when the phone misses more than half the tries. */
         const val CAPTURE_TIP = "De obicei ajută: telefonul mai aproape, televizorul oprit, microfonul neacoperit."
@@ -353,7 +421,19 @@ data class PracticeReport(
                 var agreed = 0
                 var listened = 0
                 var unheard = 0
+                var selfRated = Tally()
+                var selfCompared = 0
+                var selfAgreed = 0
+                val microphones = mutableMapOf<String, Int>()
                 for (attempt in tries) {
+                    CaptureLog.microphone(attempt.detail)?.let { microphones[it] = (microphones[it] ?: 0) + 1 }
+                    selfOutcome(attempt.detail)?.let { own ->
+                        selfRated = selfRated.adding(own)
+                        if (attempt.machineOutcome in judged) {
+                            selfCompared += 1
+                            if (own == attempt.machineOutcome) selfAgreed += 1
+                        }
+                    }
                     phone = phone.adding(attempt.machineOutcome)
                     when (attempt.machineOutcome) {
                         Attempt.Outcome.Good, Attempt.Outcome.Almost, Attempt.Outcome.NotYet -> listened += 1
@@ -388,6 +468,11 @@ data class PracticeReport(
                     weeks = weeks.map { Week(it, perWeek[it] ?: 0) },
                     listened = listened,
                     unheard = unheard,
+                    who = if (data.profile.isChild) "copilul" else "cel care a exersat",
+                    selfRated = selfRated,
+                    selfCompared = selfCompared,
+                    selfAgreed = selfAgreed,
+                    microphones = microphones,
                 )
             }
 

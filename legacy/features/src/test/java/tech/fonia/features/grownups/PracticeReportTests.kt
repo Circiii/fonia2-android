@@ -8,12 +8,17 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import tech.fonia.domain.ContentSource
+import tech.fonia.design.Rating
 import tech.fonia.domain.FoniaContent
+import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.journal.MissionFollowUp
+import tech.fonia.features.session.CaptureLog
+import tech.fonia.features.session.attemptOutcome
 import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
+import tech.fonia.store.JSONValue
 import tech.fonia.store.MissionCheck
 import tech.fonia.store.MoodlessNote
 import tech.fonia.store.Profile
@@ -388,5 +393,94 @@ class PracticeReportTests {
         repository.saveProfile(adult)
         practise(adult, day = 17, tries = listOf(Attempt.Outcome.Good to null))
         assertEquals(PracticeReport.HOW_TO_READ, report(adult).readingNotes)
+    }
+
+    /** One session of self-judged tries: the phone's outcome and the learner's own answer, as `SessionRun` saves it. */
+    private suspend fun selfJudged(profile: Profile, day: Int, month: Int = 11, sound: String = "s", tries: List<Pair<Attempt.Outcome, Rating>>) {
+        val start = moment(day, month)
+        val session = SessionRecord(profileId = profile.id, track = Profile.Track.Ro, sound = sound, startedAt = start, endedAt = start.plusSeconds(300), timeZone = ZoneOffset.UTC)
+        repository.addSession(session)
+        tries.forEachIndexed { index, (machine, own) ->
+            repository.addAttempt(
+                Attempt(
+                    sessionId = session.id,
+                    profileId = profile.id,
+                    ts = start.plusSeconds(index * 10L),
+                    exerciseKind = "repeat",
+                    sound = sound,
+                    target = "stup",
+                    machineOutcome = machine,
+                    detail = mapOf("selfRating" to JSONValue.String(own.name)),
+                    timeZone = ZoneOffset.UTC,
+                ),
+            )
+        }
+    }
+
+    /** the learner's own answers show as counts, with how often the phone said the same */
+    @Test
+    fun ownAnswers() = runBlocking {
+        for (rating in Rating.entries) {
+            assertEquals(rating.attemptOutcome, PracticeReport.selfOutcome(mapOf("selfRating" to JSONValue.String(rating.name))))
+        }
+        assertNull(PracticeReport.selfOutcome(null))
+
+        val ana = child()
+        selfJudged(ana, day = 12, tries = listOf(Attempt.Outcome.Good to Rating.yes, Attempt.Outcome.NotYet to Rating.yes))
+        // Two answers are less than a block: nothing yet.
+        assertNull(report(ana).sounds.first().selfJudged)
+
+        selfJudged(ana, day = 13, tries = listOf(Attempt.Outcome.Almost to Rating.nearly, Attempt.Outcome.Unclear to Rating.notYet, Attempt.Outcome.Good to Rating.yes))
+        val report = report(ana)
+        val s = report.sounds.first()
+        val line = "La 5 încercări, copilul a spus singur cum i s-a părut: „Bine” 3, „Aproape” 1, „Încă nu” 1. " +
+            "La 3 dintre cele 4 la care a răspuns și telefonul, răspunsurile au fost la fel."
+        assertEquals(line, s.selfJudged)
+        assertTrue(report.text.contains(line))
+        // The phone's own tally doesn't change: the learner's answer is not the phone's.
+        assertEquals(2, s.phone.good)
+
+        val adult = Profile(
+            kind = Profile.Kind.Adult, ageBand = Profile.AgeBand.Adult, voiceGroup = Profile.VoiceGroup.Female,
+            color = "cold", targetSounds = listOf("s"), track = Profile.Track.Ro,
+        )
+        repository.saveProfile(adult)
+        selfJudged(adult, day = 13, tries = listOf(Attempt.Outcome.Unclear to Rating.yes, Attempt.Outcome.Unclear to Rating.nearly, Attempt.Outcome.NotJudged to Rating.yes))
+        assertEquals(
+            "La 3 încercări, cel care a exersat a spus singur cum i s-a părut: „Bine” 2, „Aproape” 1, „Încă nu” 0.",
+            report(adult).sounds.first().selfJudged,
+        )
+
+        assertTrue(report(seeded()).sounds.all { it.selfJudged == null })
+    }
+
+    /** a change of microphone shows as tries per microphone; one microphone, or none kept, says nothing */
+    @Test
+    fun microphones() = runBlocking {
+        val ana = child()
+        val start = moment(12)
+        val session = SessionRecord(profileId = ana.id, track = Profile.Track.Ro, sound = "s", startedAt = start, endedAt = start.plusSeconds(300), timeZone = ZoneOffset.UTC)
+        repository.addSession(session)
+        suspend fun add(microphone: String?, rate: Double = 48_000.0) {
+            val capture = microphone?.let { CaptureLog.entry(microphone = it, sampleRate = rate, thresholds = DSPThresholds.v1, model = null, app = null) }
+            repository.addAttempt(
+                Attempt(
+                    sessionId = session.id, profileId = ana.id, ts = start, exerciseKind = "repeat", sound = "s", target = "sare",
+                    machineOutcome = Attempt.Outcome.Good, detail = capture?.let { CaptureLog.adding(it, to = null) }, timeZone = ZoneOffset.UTC,
+                ),
+            )
+        }
+        add(null)
+        add("phone")
+        add("phone")
+        assertNull(report(ana).sounds.first().microphoneLine)
+
+        add("bluetooth", rate = 16_000.0)
+        add("wired")
+        add("phone")
+        val report = report(ana)
+        val line = "Încercări pe fiecare microfon: al telefonului 3, Bluetooth 1, cu fir 1. Prin alt microfon, telefonul aude altfel."
+        assertEquals(line, report.sounds.first().microphoneLine)
+        assertTrue(report.text.contains(line))
     }
 }

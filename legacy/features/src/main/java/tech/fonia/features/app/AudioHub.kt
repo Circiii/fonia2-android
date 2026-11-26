@@ -214,6 +214,14 @@ class AudioHub(
     var analysisThresholds: DSPThresholds = DSPThresholds.v1
         private set
 
+    /**
+     * The microphone the last take came through, as `CaptureLog` names it: `fixture` for a test clip or a WAV in place
+     * of the microphone, `none` before any take.
+     */
+    @Volatile
+    var lastMicrophone: String = "none"
+        private set
+
     /** The in-app "Sunete" switch: every effect goes through [FoniaSfx] (his `SoundEffects` player is retired). */
     var effectsMuted: Boolean
         get() = FoniaSfx.muted
@@ -411,6 +419,10 @@ class AudioHub(
                 val thresholds = if (sibilantsOff(engine.captureInfo, rate)) withoutSibilants else DSPThresholds.v1
                 analysisThresholds = thresholds
                 val info = engine.captureInfo
+                lastMicrophone = when (source) {
+                    is TakeSource.Fixture -> "fixture"
+                    TakeSource.Microphone -> info?.microphone ?: "none"
+                }
                 val stats = TakeStats(rate, sourceName)
                 take = stats
                 log(
