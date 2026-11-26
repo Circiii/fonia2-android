@@ -13,6 +13,8 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import tech.fonia.domain.ProbeLevel
+import tech.fonia.domain.ProbeSummary
 
 // Extra parity checks, not ports of iOS tests: the byte formats that let a database or an export move between
 // platforms. The expectations come from swift-foundation's JSONWriter and JSONEncoder (release/6.2, iOS 26),
@@ -233,7 +235,67 @@ class ExportFormatTests {
         }
     }
 
+    @Test
+    @DisplayName("probes are written as JSONEncoder writes ProbeSummary, goodShare left out when nil")
+    fun probesAreByteIdentical() = runTest {
+        TestStore().use { store ->
+            addFixedProfile(store)
+            val probes = listOf(
+                ProbeSummary(
+                    date = Instant.ofEpochSecond(1_790_000_000), sound = "ș", level = ProbeLevel.Words, finished = false,
+                    items = 6, good = 2, keepWorking = 1, skipped = 1, unmarked = 2, goodShare = 2.0 / 3.0,
+                    phoneGood = 1, phoneJudged = 4, compared = 2, agreed = 1,
+                ),
+                ProbeSummary(
+                    date = Instant.ofEpochSecond(1_790_086_400), sound = "s", level = ProbeLevel.Sentences, finished = true,
+                    items = 5, good = 0, keepWorking = 0, skipped = 0, unmarked = 5, goodShare = null,
+                    phoneGood = 5, phoneJudged = 5, compared = 0, agreed = 0,
+                ),
+            )
+            val text = store.repository.exportJSON(profileId = profileId, probes = probes).decodeToString()
+            assertTrue(text.contains(EXPECTED_PROBES), text)
+        }
+    }
+
     private companion object {
+        /** What swift-foundation's JSONEncoder writes for these two `ProbeSummary` values (Swift 6.4, macOS 27). */
+        val EXPECTED_PROBES = """
+            |  "probes" : [
+            |    {
+            |      "agreed" : 1,
+            |      "compared" : 2,
+            |      "date" : "2026-09-21T14:13:20Z",
+            |      "finished" : false,
+            |      "good" : 2,
+            |      "goodShare" : 0.6666666666666666,
+            |      "items" : 6,
+            |      "keepWorking" : 1,
+            |      "level" : "words",
+            |      "phoneGood" : 1,
+            |      "phoneJudged" : 4,
+            |      "skipped" : 1,
+            |      "sound" : "ș",
+            |      "unmarked" : 2
+            |    },
+            |    {
+            |      "agreed" : 0,
+            |      "compared" : 0,
+            |      "date" : "2026-09-22T14:13:20Z",
+            |      "finished" : true,
+            |      "good" : 0,
+            |      "items" : 5,
+            |      "keepWorking" : 0,
+            |      "level" : "sentences",
+            |      "phoneGood" : 5,
+            |      "phoneJudged" : 5,
+            |      "skipped" : 0,
+            |      "sound" : "s",
+            |      "unmarked" : 5
+            |    }
+            |  ],
+            |  "profile" : {
+        """.trimMargin()
+
         val EXPECTED_EXPORT = """
             {
               "app" : "fonia",
@@ -269,6 +331,9 @@ class ExportFormatTests {
                   "text" : "Bine la S"
                 }
               ],
+              "probes" : [
+
+              ],
               "profile" : {
                 "ageBand" : "6-7",
                 "color" : "cold",
@@ -298,7 +363,7 @@ class ExportFormatTests {
                   "ts" : "2026-11-04T08:05:00Z"
                 }
               ],
-              "schemaVersion" : 3,
+              "schemaVersion" : 4,
               "sessions" : [
                 {
                   "attempts" : 1,

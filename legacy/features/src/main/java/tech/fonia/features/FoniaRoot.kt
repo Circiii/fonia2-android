@@ -209,7 +209,9 @@ private fun AppContent(app: AppModel) {
                         // After a day with a mission, the next lesson first asks the adult how it went, once.
                         MissionCheckGate(profile, app, asks = shown.custom == null, onClose = { app.ticket = null }) {
                             // A child's first lesson of each kind opens with a card for the adult beside them.
-                            AdultCardGate(profile, FirstTimeCard.lesson(shown.focus, profile, app), app, onClose = { app.ticket = null }) {
+                            // A probe („Cuvinte noi”) is no lesson: the card waits for the lesson that follows it.
+                            val card = if (shown.probe == null) FirstTimeCard.lesson(shown.focus, profile, app) else null
+                            AdultCardGate(profile, card, app, onClose = { app.ticket = null }) {
                                 SessionScreen(ticket = shown, profile = profile, app = app, onDone = { app.ticket = null })
                             }
                         }

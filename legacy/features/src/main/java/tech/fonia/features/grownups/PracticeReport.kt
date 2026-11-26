@@ -2,7 +2,10 @@ package tech.fonia.features.grownups
 
 import tech.fonia.domain.Catalog
 import tech.fonia.domain.FoniaContent
+import tech.fonia.domain.NewWordsRecord
 import tech.fonia.domain.Plural
+import tech.fonia.domain.ProbeLevel
+import tech.fonia.domain.ProbeRules
 import tech.fonia.domain.Rung
 import tech.fonia.domain.SoundID
 import tech.fonia.features.app.at
@@ -14,6 +17,7 @@ import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
 import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.journal.MissionFollowUp
+import tech.fonia.features.probe.ProbeCopy
 import tech.fonia.features.reading.ReadingReport
 import tech.fonia.features.session.CaptureLog
 import tech.fonia.features.session.FrontTeeth
@@ -125,6 +129,8 @@ data class PracticeReport(
         val teethTries: Int = 0,
         val teethFrom: LocalDate? = null,
         val teethTo: LocalDate? = null,
+        /** „Cuvinte noi” on this sound (`ProbeRules`): the latest probes, the phone beside the adult, what they suggest. */
+        val probeLines: List<String> = emptyList(),
     ) {
         /** "Treapta 4 din 10: „În mijlocul cuvântului” (cuvinte cu S la mijloc)." */
         val ladder: String
@@ -248,9 +254,9 @@ data class PracticeReport(
 
         /**
          * What follows the agreement line: the learner's own answers, the microphones, the days with the front teeth
-         * out, then how often the phone didn't hear clearly.
+         * out, how often the phone didn't hear clearly, then the „Cuvinte noi” probes.
          */
-        val belowAnswers: List<String> get() = listOfNotNull(selfJudged, microphoneLine, teethLine) + hearing
+        val belowAnswers: List<String> get() = listOfNotNull(selfJudged, microphoneLine, teethLine) + hearing + probeLines
     }
 
     data class Note(val day: String, val text: String)
@@ -415,7 +421,7 @@ data class PracticeReport(
 
         private val judged = setOf(Attempt.Outcome.Good, Attempt.Outcome.Almost, Attempt.Outcome.NotYet)
 
-        fun build(data: PracticeData, content: FoniaContent, today: LocalDate): PracticeReport {
+        fun build(data: PracticeData, content: FoniaContent, today: LocalDate, probes: List<NewWordsRecord> = emptyList()): PracticeReport {
             val practised = data.sessions.filter { it.endedAt != null || it.attempts > 0 }
             val practisedDays = practised.mapNotNull { day(it.localDay) }.toSortedSet().toList()
             val seconds = data.sessions.sumOf { session ->
@@ -508,6 +514,7 @@ data class PracticeReport(
                     teethTries = teethDays.size,
                     teethFrom = teethDays.minOrNull(),
                     teethTo = teethDays.maxOrNull(),
+                    probeLines = probeLines(probes.filter { it.sound == id }, letter),
                 )
             }
 
@@ -553,6 +560,30 @@ data class PracticeReport(
                 perMinute = if (rate >= 1) rate else null,
             )
         }
+
+        // MARK: „Cuvinte noi” (iOS 98c737d)
+
+        /**
+         * The last three finished probes of a sound, how many were finished, the phone beside the adult on the latest,
+         * and what the marks suggest. [records] are oldest first.
+         */
+        fun probeLines(records: List<NewWordsRecord>, letter: String): List<String> {
+            if (records.isEmpty()) return emptyList()
+            val finished = records.filter { it.finished }
+            val lines = finished.takeLast(3).map { record ->
+                ProbeCopy.reportLine(record, letter, ReadingReport.longDate(record.date.atZone(ZoneId.systemDefault()).toLocalDate()))
+            }.toMutableList()
+            if (finished.size < records.size) lines += ProbeCopy.doneLine(done = finished.size, offered = records.size)
+            finished.lastOrNull()?.let(ProbeCopy::phoneLine)?.let { lines += it }
+            if (ProbeRules.tellsTherapist(records)) {
+                lines += ProbeCopy.tellTherapist
+            } else if (ProbeRules.suggestsSentences(records) && finished.lastOrNull()?.level == ProbeLevel.Words) {
+                lines += ProbeCopy.suggestSentences
+            }
+            return lines
+        }
+
+        // END „Cuvinte noi”
 
         /** The Monday of the week [day] falls in. */
         fun monday(day: LocalDate): LocalDate = day.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))

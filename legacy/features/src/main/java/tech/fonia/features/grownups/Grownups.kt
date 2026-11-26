@@ -32,6 +32,7 @@ import tech.fonia.design.Palette
 import tech.fonia.design.fBody
 import tech.fonia.design.fCaption
 import tech.fonia.design.fHeadline
+import tech.fonia.domain.ProbeSummary
 import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.adaptive.AdaptiveStore
 import tech.fonia.features.app.AdultGateBody
@@ -44,6 +45,7 @@ import tech.fonia.features.app.NavigationHost
 import tech.fonia.features.app.SystemNavigationBar
 import tech.fonia.features.home.DestinationScreen
 import tech.fonia.features.pilot.PilotLog
+import tech.fonia.features.probe.ProbeStore
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import java.io.File
@@ -101,6 +103,7 @@ internal object ProfileExport {
      * With [pilot] and [profile], the pilot log's summary for the logoped (`fonia-exersare-<pseudonym>.json`, 03 §4.3)
      * goes along as a second file; the first file stays FoniaStore's export, byte for byte the iOS format. A profile
      * that was in the adaptive pilot ([adaptive]) has its modes, steps and estimates at the end of that summary.
+     * The „Cuvinte noi” [probes], kept beside the database, go in as counts (`ProbeSummary`), never their words.
      */
     suspend fun share(
         context: Context,
@@ -109,9 +112,11 @@ internal object ProfileExport {
         pilot: PilotLog? = null,
         profile: Profile? = null,
         adaptive: AdaptiveStore? = null,
+        probes: ProbeStore? = null,
     ) {
         val bytes = try {
-            repository.exportJSON(profileID)
+            val summaries = probes?.records(profileID)?.map { ProbeSummary(it) } ?: emptyList()
+            repository.exportJSON(profileID, probes = summaries)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (_: Exception) {

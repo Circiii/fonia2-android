@@ -29,6 +29,7 @@ import tech.fonia.features.check.QuickCheckRules
 import tech.fonia.domain.FoniaContent
 import tech.fonia.domain.Lesson
 import tech.fonia.domain.Rung
+import tech.fonia.domain.ProbeLists
 import tech.fonia.domain.SessionFocus
 import tech.fonia.domain.SoundID
 import tech.fonia.domain.VoiceIndex
@@ -45,6 +46,11 @@ import tech.fonia.features.pilot.PilotLog
 import tech.fonia.features.pilot.PilotSlot
 import tech.fonia.features.pilot.PilotSwitch
 import tech.fonia.features.pilot.pilotEnvironment
+import tech.fonia.features.probe.ProbeCopy
+import tech.fonia.features.probe.ProbePlan
+import tech.fonia.features.probe.ProbeStore
+import tech.fonia.features.probe.bundled
+import tech.fonia.features.probe.probe
 import tech.fonia.features.reading.ReadingStore
 import tech.fonia.features.session.soundID
 import tech.fonia.store.FoniaDatabase
@@ -135,7 +141,10 @@ data class SessionTicket(
     val sound: SoundID?,
     /** Trials the app prepared itself (the quick check, a diction drill) instead of the session builder's. */
     val custom: CustomRun? = null,
-)
+) {
+    /** „Cuvinte noi” before a lesson (`ProbeRules`): its items replace the builder's, and the lesson follows. */
+    val probe: ProbePlan? get() = (custom?.kind as? CustomRun.Kind.Probe)?.plan
+}
 
 /** A run of trials made by the app, played through the same session screen, take cycle and judge. */
 data class CustomRun(
@@ -150,6 +159,9 @@ data class CustomRun(
 
         /** One drill of the diction training of [sound], the [index]-th of its ladder. */
         data class Drill(val sound: SoundID, val index: Int) : Kind
+
+        /** „Cuvinte noi” before a lesson (iOS `SessionTicket.probe`): nothing of it is practice. */
+        data class Probe(val plan: ProbePlan) : Kind
     }
 }
 
@@ -312,7 +324,17 @@ class AppModel(
     val hasPicture: (String) -> Boolean = { true },
     /** The folders and settings files "Șterge tot" empties besides the stores above; null in the JVM tests. */
     val localData: LocalData? = null,
+    // MARK: „Cuvinte noi” (iOS 98c737d)
+    /**
+     * The „Cuvinte noi” probes, beside the database too. Kept even where the lists are hidden, so a wipe or a deleted
+     * profile always clears it.
+     */
+    val probes: ProbeStore? = null,
+    probeLists: ProbeLists? = null,
 ) {
+    /** The probe lists; null until a speech therapist approves them, or where drafts are shown. Null means no probe. */
+    val probeLists: ProbeLists? = probeLists?.takeIf { arguments.drafts || it.isApproved }
+
     private val slot: PilotSlot = pilotSlot ?: PilotSlot(pilot)
 
     /** The adult check before the settings, the files that leave the phone, links out and a child's notes. */
@@ -471,6 +493,8 @@ class AppModel(
             scope.launch(Dispatchers.IO) { ignoringFailure { voice.keepOnly(voiceIds); talkers.keepOnly(voiceIds) } }
             // And the best result of each diction drill.
             scope.launch { ignoringFailure { drills.keepOnly(voiceIds) } }
+            // And its „Cuvinte noi” probes.
+            probes?.let { store -> scope.launch { ignoringFailure { store.keepOnly(voiceIds) } } }
             addSampleMissionsIfAsked()
             addSampleWeekIfAsked()
             jumpIfAsked()
@@ -576,6 +600,7 @@ class AppModel(
                     drills.keepOnly(emptySet())
                     reading?.keepOnly(emptySet())
                     adaptive?.keepOnly(emptySet())
+                    probes?.removeAll()
                     local?.let { withContext(Dispatchers.IO) { it.profileFolders.forEach(FullWipe::deleteFolder) } }
                 },
                 FullWipe.Part("fișierele pentru logoped") {
@@ -619,7 +644,52 @@ class AppModel(
     }
 
     fun start(lesson: Lesson, unit: CourseUnit) {
-        ticket = SessionTicket(focus = lesson.focus, title = lesson.title, sound = lesson.focus.soundID ?: unit.sound)
+        val lessonTicket = SessionTicket(focus = lesson.focus, title = lesson.title, sound = lesson.focus.soundID ?: unit.sound)
+        // MARK: „Cuvinte noi” (iOS 98c737d): every fourth lesson on a sound may open with a probe.
+        afterProbe = null
+        val profile = activeProfile
+        if (probeLists == null || profile == null || lesson.focus !is SessionFocus.Sound) {
+            ticket = lessonTicket
+            return
+        }
+        // Reading the stores takes a moment; a second tap meanwhile starts nothing twice.
+        if (isFindingProbe) return
+        isFindingProbe = true
+        scope.launch {
+            try {
+                val plan = try {
+                    probe(lesson.focus, profile)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    null
+                }
+                if (plan != null) {
+                    afterProbe = lessonTicket
+                    ticket = SessionTicket(
+                        focus = lesson.focus,
+                        title = ProbeCopy.title,
+                        sound = lessonTicket.sound,
+                        custom = CustomRun(CustomRun.Kind.Probe(plan), plan.trials),
+                    )
+                } else {
+                    ticket = lessonTicket
+                }
+            } finally {
+                isFindingProbe = false
+            }
+        }
+    }
+
+    /** The lesson a probe opened, waiting for the probe to end. */
+    private var afterProbe: SessionTicket? = null
+    private var isFindingProbe = false
+
+    /** The probe is over: the lesson it opened starts. Leaving the probe early starts nothing. */
+    fun startAfterProbe() {
+        val next = afterProbe ?: return
+        afterProbe = null
+        ticket = next
     }
 
     fun close() {
@@ -726,8 +796,10 @@ class AppModel(
                 lessonContent = v2,
                 drills = tech.fonia.features.diction.FileDrillStore(File(home, "Fonia/Diction")),
                 hasPicture = { name -> name in pictures },
+                probes = ProbeStore(File(home, "Fonia/Probes")),
+                probeLists = ProbeLists.bundled(assets),
                 localData = LocalData(
-                    profileFolders = listOf("Voice", "Check", "Diction", "Reading", "Adaptive").map { File(context.noBackupFilesDir, "Fonia/$it") },
+                    profileFolders = listOf("Voice", "Check", "Diction", "Reading", "Adaptive", "Probes").map { File(context.noBackupFilesDir, "Fonia/$it") },
                     exportFolders = listOf(File(context.cacheDir, "export")),
                     pilotFolder = PilotLog.defaultFolder(context),
                     clearSettings = {

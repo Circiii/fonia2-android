@@ -340,7 +340,7 @@ private fun LogopedTiles(profile: Profile, app: AppModel, modifier: Modifier, pu
             // tile only says so.
             if (hasPractice) {
                 SettingsTile(SettingsIcons.SHARE, SettingsTint.Rose, "Raportul pentru logoped", "PDF, fără nume și fără voce", Modifier.weight(1f)) {
-                    guard { app.scope.launch { PracticeReportPdf.share(context, app.repository, app.content, profile.id) } }
+                    guard { app.scope.launch { PracticeReportPdf.share(context, app.repository, app.content, profile.id, app.probes) } }
                 }
             } else {
                 SettingsTile(SettingsIcons.SHARE, SettingsTint.Rose, "Raportul pentru logoped", "După prima zi de exersare", Modifier.weight(1f).alpha(0.6f), onClick = null)
@@ -407,7 +407,7 @@ private fun Activity(profile: Profile, app: AppModel, modifier: Modifier, push: 
     // The file leaves the phone, so it waits for the adult check.
     val export: @Composable () -> Unit = {
         SettingsRow(SettingsIcons.SHARE, AudienceCopy.exportTitle(profile.isChild), AudienceCopy.exportDetail(profile.isChild)) {
-            guard { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive) } }
+            guard { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive, app.probes) } }
         }
     }
     if (profile.isChild) {

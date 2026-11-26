@@ -161,9 +161,12 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         else -> run.ticket.sound?.let { app.content.sound(it) }
     }
 
-    /** Text the model voice says first. A picture to name has no model: the child has to find the word. */
+    /**
+     * Text the model voice says first. A picture to name has no model: the child has to find the word. In a probe
+     * („Cuvinte noi”), a reader reads the item with no model.
+     */
     val modelText: Pair<String, Language>? = when (exercise) {
-        is Exercise.Repeat -> exercise.prompt.text to exercise.prompt.language
+        is Exercise.Repeat -> if (run.ticket.probe?.reads == true) null else exercise.prompt.text to exercise.prompt.language
         is Exercise.Twister -> exercise.text to exercise.language
         is Exercise.Intonation -> (if (exercise.ask == IntonationAsk.Question) exercise.question else exercise.statement) to Language.Ro
         is Exercise.Expression -> exercise.text to Language.Ro

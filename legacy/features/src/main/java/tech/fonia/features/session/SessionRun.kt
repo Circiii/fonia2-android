@@ -20,6 +20,8 @@ import tech.fonia.domain.DaySpread
 import tech.fonia.domain.Exercise
 import tech.fonia.domain.Language
 import tech.fonia.domain.FeedbackLevel
+import tech.fonia.domain.NewWordsRecord
+import tech.fonia.domain.ProbeItem
 import tech.fonia.domain.Progression
 import tech.fonia.domain.RepeatPrompt
 import tech.fonia.domain.SustainRole
@@ -49,6 +51,8 @@ import tech.fonia.features.pilot.PilotHooks
 import tech.fonia.features.pilot.logAttempt
 import tech.fonia.features.pilot.logSessionEnd
 import tech.fonia.features.pilot.logSessionStart
+import tech.fonia.features.probe.ProbeCopy
+import tech.fonia.features.probe.ProbeTake
 import tech.fonia.store.Attempt
 import tech.fonia.store.JSONValue
 import tech.fonia.store.Profile
@@ -205,8 +209,9 @@ class SessionRun(
             built = Session(trials = built.trials.filter { it.exercise !is Exercise.Intro }, targetAttempts = built.targetAttempts)
         }
         session = built
-        // The story is for children, as the hero's intro is.
-        chapter = if (profile.isChild && ticket.custom == null) ticket.sound?.let { app.content.sound(it).chapter(ticket.focus) } else null
+        // The story is for children, as the hero's intro is. A probe opens on its own line, for everyone.
+        chapter = ticket.probe?.let { ProbeCopy.opening(it.level) }
+            ?: if (profile.isChild && ticket.custom == null) ticket.sound?.let { app.content.sound(it).chapter(ticket.focus) } else null
         field = ticket.sound?.family?.field ?: (if (profile.isChild) Field.cold else Field.paper)
         record = SessionRecord(
             profileId = profile.id,
@@ -238,6 +243,22 @@ class SessionRun(
 
     /** The quick check: its takes stay in memory for the result screen and are never stored as practice. */
     val isCheck: Boolean get() = ticket.custom?.kind == tech.fonia.features.app.CustomRun.Kind.Check
+
+    // MARK: „Cuvinte noi” (iOS 98c737d)
+
+    /** „Cuvinte noi”: nothing of it is stored as practice, logged, or moves a rung either. Its answers go to `ProbeStore`. */
+    val isProbe: Boolean get() = ticket.probe != null
+
+    /** A session beside the practice: a quick check or a probe. */
+    val isAside: Boolean get() = isCheck || isProbe
+
+    /**
+     * A probe's takes, the last one of each trial: the phone's answer and the clip, in memory for the adult's page.
+     * Only the answers are kept, in `ProbeStore`; the clips are never written.
+     */
+    val probeTakes = androidx.compose.runtime.mutableStateMapOf<Int, ProbeTake>()
+
+    // END „Cuvinte noi”
 
     /**
      * A sound practised at automatizare: half its takes say how they sounded, the others are only heard
@@ -308,7 +329,7 @@ class SessionRun(
             session = planned
         }
         isTellingChapter = chapter != null && !opensOnIntro
-        if (isCheck) return
+        if (isAside) return
         ignoringFailure { app.repository.addSession(record) }
         app.logSessionStart(this, record)
     }
@@ -324,7 +345,7 @@ class SessionRun(
     /** The adult said "Ne-am înțeles" to a mission: the next session asks how it went. */
     private fun noteMission() {
         val sound = ticket.sound
-        if (isCheck || sound == null) return
+        if (isAside || sound == null) return
         val mission = tech.fonia.store.MissionCheck(profileId = profile.id, sessionId = record.id, sound = sound.rawValue, givenAt = now(), timeZone = zone)
         later { app.repository.addMission(mission) }
     }
@@ -365,18 +386,20 @@ class SessionRun(
                 if (decided == Attempt.Outcome.Good) identifiedRight += 1
             }
         }
-        if (ticket.custom != null && counts) {
+        if (ticket.custom != null && counts && !isProbe) {
             soundOf(exercise)?.let { sound -> takes[index] = tech.fonia.features.check.CheckTake(sound, decided, pendingCertainty) }
         }
         val block = current?.block
         if (counts && decided == Attempt.Outcome.Good && take != null && block != null && playsBack(block)) {
             blockGoodTakes += take
         }
+        // „Cuvinte noi”: the phone's answer and the clip stay in memory; nothing is stored as practice.
+        if (isProbe && counts) probeTakes[index] = ProbeTake(phone = machine, clip = take)
         pendingCertainty = null
         val measures = pendingMeasures
         pendingMeasures = null
-        if (counts && !isCheck) store(exercise, machine, adult, selfRating, take, measures)
-        if (!isCheck) app.logAttempt(this, takeKey, exercise, machine, adult, selfRating, decided, counts, retry)
+        if (counts && !isAside) store(exercise, machine, adult, selfRating, take, measures)
+        if (!isAside) app.logAttempt(this, takeKey, exercise, machine, adult, selfRating, decided, counts, retry)
         if (counts) adaptive?.take(index, exercise, machine, adult)
         if (retry) {
             retryToken += 1
@@ -576,6 +599,8 @@ class SessionRun(
     private fun noteSilentBlock(block: SessionBlock) {
         val goodTakes = blockGoodTakes.toList()
         blockGoodTakes.clear()
+        // The probe's words say nothing in the moment, and at its end only the adult hears how they went.
+        if (isProbe) return
         val silent = session.trials.filter { it.block == block && it.feedback == FeedbackLevel.Silent && it.countsAsAttempt }
         if (silent.size < 3 || block.kind == SessionBlock.Kind.Retest) return
         if (playsBack(block)) {
@@ -593,7 +618,7 @@ class SessionRun(
      * (`SessionBuilder.mixedBlock`, `delaysVerdicts`). English and diction keep theirs in the moment.
      */
     private fun playsBack(block: SessionBlock): Boolean =
-        block.kind == SessionBlock.Kind.Mixed && !isCheck && ticket.focus is SessionFocus.Sound
+        block.kind == SessionBlock.Kind.Mixed && !isAside && ticket.focus is SessionFocus.Sound
 
     private val rungOfSession: Rung
         get() = (ticket.focus as? SessionFocus.Sound)?.rung ?: Rung.Isolated
@@ -645,7 +670,8 @@ class SessionRun(
         app.judge?.trim()
         app.audio.effect(SoundEffect.Star)
         tech.fonia.design.FoniaSfx.play(tech.fonia.design.SfxCue.SessionEnd)
-        if (didStoreSession || isCheck) return
+        if (isProbe) keepProbe(finished = true)
+        if (didStoreSession || isAside) return
         didStoreSession = true
         val repository = app.repository
         val id = record.id
@@ -653,12 +679,42 @@ class SessionRun(
         app.logSessionEnd(this, finished = true)
     }
 
+    // MARK: „Cuvinte noi” (iOS 98c737d)
+
+    /** The probe as it was said: every item, the phone's answer where there was a take, no adult marks yet. */
+    val probeRecord: NewWordsRecord?
+        get() {
+            val probe = ticket.probe ?: return null
+            val items = probe.items.mapIndexed { position, text -> ProbeItem(text = text, phone = probeTakes[position]?.phone?.rawValue) }
+            return NewWordsRecord(
+                id = probe.id,
+                date = record.startedAt,
+                sound = probe.sound.rawValue,
+                level = probe.level,
+                items = items,
+                finished = phase == Phase.Finished,
+            )
+        }
+
+    /** Kept once at its end, and again when the adult marks it. A probe left early still counts as offered. */
+    private fun keepProbe(finished: Boolean) {
+        if (didStoreSession) return
+        val probes = app.probes ?: return
+        val kept = probeRecord?.copy(finished = finished) ?: return
+        didStoreSession = true
+        val profileID = profile.id
+        later { probes.save(kept, profileID) }
+    }
+
+    // END „Cuvinte noi”
+
     suspend fun leaveEarly() {
         isClosed = true
         playback = null
         app.judge?.trim()
         if (phase != Phase.Finished) adaptive?.let { closeAdaptiveSession(it, finished = false) }
-        if (phase != Phase.Finished && !isCheck) app.logSessionEnd(this, finished = false)
+        if (phase != Phase.Finished && !isAside) app.logSessionEnd(this, finished = false)
+        if (phase != Phase.Finished && isProbe) keepProbe(finished = false)
         app.audio.shutDown()
     }
 

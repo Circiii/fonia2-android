@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tech.fonia.domain.FoniaContent
+import tech.fonia.features.probe.ProbeStore
 import tech.fonia.features.reading.ReadingReportPdf
 import tech.fonia.features.reading.ReadingReportPdf.BOTTOM
 import tech.fonia.features.reading.ReadingReportPdf.CONTENT
@@ -43,9 +44,12 @@ object PracticeReportPdf {
     /** The folder the share sheet reads from, inside the cache folder that `fonia_export_paths.xml` opens. */
     fun folder(context: Context): File = File(context.cacheDir, "export/report")
 
-    /** The report for [profileID] on [today], built from the store's copy without the name. */
-    suspend fun report(repository: FoniaRepository, content: FoniaContent, profileID: UUID, today: LocalDate = LocalDate.now()): PracticeReport =
-        PracticeReport.build(repository.practiceData(profileID), content, today)
+    /**
+     * The report for [profileID] on [today], built from the store's copy without the name. [probes] are the
+     * „Cuvinte noi” probes, for their lines under each sound; null leaves them out.
+     */
+    suspend fun report(repository: FoniaRepository, content: FoniaContent, profileID: UUID, today: LocalDate = LocalDate.now(), probes: ProbeStore? = null): PracticeReport =
+        PracticeReport.build(repository.practiceData(profileID), content, today, probes = probes?.records(profileID) ?: emptyList())
 
     /** Whether there is a day of practice to report on, for the row in the settings. */
     suspend fun hasPractice(repository: FoniaRepository, profileID: UUID): Boolean =
@@ -55,8 +59,8 @@ object PracticeReportPdf {
      * Makes the PDF when it's asked for, so a note written a moment ago is in it, and opens the share sheet. With
      * nothing practised yet there is no report, and nothing happens.
      */
-    suspend fun share(context: Context, repository: FoniaRepository, content: FoniaContent, profileID: UUID) {
-        val report = runCatching { report(repository, content, profileID) }.getOrNull() ?: return
+    suspend fun share(context: Context, repository: FoniaRepository, content: FoniaContent, profileID: UUID, probes: ProbeStore? = null) {
+        val report = runCatching { report(repository, content, profileID, probes = probes) }.getOrNull() ?: return
         if (report.isEmpty) return
         val file = withContext(Dispatchers.IO) {
             val folder = folder(context)

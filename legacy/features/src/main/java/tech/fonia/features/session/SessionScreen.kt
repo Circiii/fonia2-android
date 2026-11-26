@@ -151,7 +151,7 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     val finished = run?.phase == SessionRun.Phase.Finished
     LaunchedEffect(finished) {
         val ended = run ?: return@LaunchedEffect
-        if (!finished || ended.isCheck) return@LaunchedEffect
+        if (!finished || ended.isAside) return@LaunchedEffect
         if (drillKind != null && drill != null) {
             // A drill: its best result opens the next one (his own success); „Încă una” is the next drill, or this
             // one again while the next is still closed.
@@ -187,6 +187,15 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         nextKnown = true
     }
 
+    /** „Cuvinte noi” is over: its lesson starts in a fresh cover (iOS `afterProbe`). */
+    fun afterProbe() {
+        app.scope.launch {
+            app.audio.shutDown()
+            onDone()
+            app.startAfterProbe()
+        }
+    }
+
     fun more() {
         val step = nextStep
         val goTo = nextDrill
@@ -212,6 +221,8 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         if (current.phase != SessionRun.Phase.Finished) SceneBackdrop(current.field.scene)
         if (current.phase == SessionRun.Phase.Finished && current.isCheck) {
             tech.fonia.features.check.CheckResultScreen(current, app, onDone = { finish() })
+        } else if (current.phase == SessionRun.Phase.Finished && current.isProbe) {
+            tech.fonia.features.probe.ProbeEnd(current, app, onNext = { afterProbe() })
         } else if (current.phase == SessionRun.Phase.Finished) {
             RecapScreen(current, app, next = nextTitle, nextSound = nextSound, nextKnown = nextKnown, isDrill = drillKind != null, onMore = { more() }, onDone = { finish() })
         } else {
@@ -243,7 +254,9 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
                 val playback = current.playback
                 if (current.isTellingChapter && chapter != null && chapterSound != null) {
                     Box(Modifier.weight(1f)) {
-                        ChapterBeat(app.content.sound(chapterSound).hero, chapter, current.field, app) { current.finishChapter() }
+                        // A probe's opening line is for everyone; the hero shows only to a child.
+                        val hero = if (current.profile.isChild) app.content.sound(chapterSound).hero else null
+                        ChapterBeat(hero, chapter, current.field, app) { current.finishChapter() }
                     }
                 } else if (playback != null) {
                     // `.id(playback.id)`, faded in as iOS animates `run.playback?.id`.
@@ -277,7 +290,7 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
         isPresented = confirmLeaving,
         onDismiss = { confirmLeaving = false },
         title = "Te oprești aici?",
-        message = if (current.attempts > 0) "Ce ai lucrat până acum se păstrează." else null,
+        message = if (current.attempts > 0 && !current.isAside) "Ce ai lucrat până acum se păstrează." else null,
         actions = listOf(
             DialogAction("Mă opresc", ActionRole.Destructive) { leave(current) },
             DialogAction("Mai rămân", ActionRole.Cancel),

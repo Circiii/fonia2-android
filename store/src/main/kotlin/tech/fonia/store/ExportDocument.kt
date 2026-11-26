@@ -6,17 +6,24 @@ import java.time.Instant
 import java.util.Base64
 import java.util.Locale
 import java.util.UUID
+import tech.fonia.domain.ProbeSummary
 
 /**
  * The shape of the file handed to the logoped.
  *
- * `schemaVersion` 3 (as iOS a4b8205) adds `missionChecks`: each „Azi, peste zi” mission a session gave, and what the
- * adult said about it at the next session; each `soundProgress` row also carries its `moves`. Version 2 (iOS 007bfcf):
+ * `schemaVersion` 4 (as iOS 98c737d) adds `probes`: each „Cuvinte noi” probe as counts (`ProbeSummary`), the adult's
+ * marks beside the phone's quiet answers. Version 3 (iOS a4b8205) added `missionChecks`: each „Azi, peste zi” mission a
+ * session gave, and what the adult said about it at the next session; each `soundProgress` row also carries its `moves`. Version 2 (iOS 007bfcf):
  * the profile carries a `label` and only carries `name` when the adult chose to add it, and in a pseudonymous file
  * every `id`/`profileId` of the profile is [ANONYMOUS_PROFILE_ID]. Version 1 always carried the name and the
  * profile's real id. Nothing reads these files back.
  */
-internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio: RecordingFiles?) {
+internal class ExportDocument(
+    contents: Contents,
+    val exportedAt: Instant,
+    audio: RecordingFiles?,
+    val probes: List<ProbeSummary> = emptyList(),
+) {
     class Contents(
         val profile: Profile,
         val soundProgress: List<SoundProgress>,
@@ -69,7 +76,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
     )
 
     val app = "fonia"
-    val schemaVersion = 3
+    val schemaVersion = 4
     val profile: Profile = contents.profile.copy(sibilantCalibration = null)
     val soundProgress: List<SoundProgress> = contents.soundProgress
     val sessions: List<SessionRecord> = contents.sessions
@@ -118,6 +125,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         put("speeches", JArray(speeches.map { it.exportNode() }))
         put("notes", JArray(notes.map { it.exportNode() }))
         put("missionChecks", JArray(missionChecks.map { it.exportNode() }))
+        put("probes", JArray(probes.map { it.exportNode() }))
     }
 
     companion object {
@@ -167,6 +175,24 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         put("asked", JBool(asked))
         putIfPresent("answer", answer?.let { JText(it.rawValue) })
         putIfPresent("answeredAt", answeredAt?.let { jsonDate(it, DATES) })
+    }
+
+    /** A probe's counts, never its words. `goodShare` is left out when nil, as the synthesized `Encodable` does. */
+    private fun ProbeSummary.exportNode(): JsonNode = jsonObject {
+        put("date", jsonDate(date, DATES))
+        put("sound", JText(sound))
+        put("level", JText(level.rawValue))
+        put("finished", JBool(finished))
+        put("items", jsonNumber(items))
+        put("good", jsonNumber(good))
+        put("keepWorking", jsonNumber(keepWorking))
+        put("skipped", jsonNumber(skipped))
+        put("unmarked", jsonNumber(unmarked))
+        putIfPresent("goodShare", goodShare?.let { jsonNumber(it) })
+        put("phoneGood", jsonNumber(phoneGood))
+        put("phoneJudged", jsonNumber(phoneJudged))
+        put("compared", jsonNumber(compared))
+        put("agreed", jsonNumber(agreed))
     }
 
     private fun SessionRecord.exportNode(): JsonNode = jsonObject {

@@ -15,6 +15,8 @@ kotlin {
 }
 
 dependencies {
+    // As FoniaStore imports FoniaDomain: the export takes ProbeSummary, so it is part of the public API.
+    api(project(":core:domain"))
     api(libs.androidx.sqlite)
     implementation(libs.androidx.sqlite.bundled)
     // Part of the public API: the streams are Flows, and JSONValue has a kotlinx.serialization serializer.

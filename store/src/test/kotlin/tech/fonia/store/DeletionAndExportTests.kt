@@ -194,12 +194,12 @@ class ExportTests {
             assertEquals(
                 setOf(
                     "app", "schemaVersion", "exportedAt", "profile", "soundProgress",
-                    "sessions", "attempts", "recordings", "speeches", "notes", "missionChecks",
+                    "sessions", "attempts", "recordings", "speeches", "notes", "missionChecks", "probes",
                 ),
                 root.keys,
             )
             assertEquals("fonia", root["app"].string)
-            assertEquals(3, root["schemaVersion"].int)
+            assertEquals(4, root["schemaVersion"].int)
             assertEquals("2026-11-04T10:00:00Z", root["exportedAt"].string)
 
             for (key in listOf("soundProgress", "sessions", "attempts", "recordings", "speeches", "notes", "missionChecks")) {
@@ -292,7 +292,7 @@ class ExportTests {
             assertEquals("Ana", profile["name"].string)
             assertEquals("Ana", profile["label"].string)
             assertEquals(ana.id.uuidString, profile["id"].string)
-            assertEquals(3, root["schemaVersion"].int)
+            assertEquals(4, root["schemaVersion"].int)
             assertEquals(ana.id.uuidString, ((root["missionChecks"] as? JsonArray)?.firstOrNull() as? JsonObject)?.get("profileId").string)
         }
     }

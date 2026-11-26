@@ -17,12 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import tech.fonia.design.Field
+import tech.fonia.design.FoniaText
+import tech.fonia.design.PracticeWeight
+import tech.fonia.design.TextRole
 import tech.fonia.design.WordPicture
 import tech.fonia.design.fDisplay
+import tech.fonia.design.practice
+import tech.fonia.domain.Language
 import tech.fonia.domain.SoundHero
 import tech.fonia.features.app.AppModel
 
@@ -31,9 +37,12 @@ import tech.fonia.features.app.AppModel
  * it; the screen shows only the hero and its name, so a child faces no sentence to read (the owner's "as little text
  * as possible"). A screen reader gets the chapter text. It goes away when the voice ends or on a tap, so it never
  * stands between a child and the lesson for long.
+ *
+ * [hero] is null for an adult: a probe's opening line („Cuvinte noi”) then shows as text, in the practice font, as on
+ * iOS. With no clip to say it, that line stays until a tap, so it doesn't flash past unread.
  */
 @Composable
-fun ChapterBeat(hero: SoundHero, text: String, field: Field, app: AppModel, onDone: () -> Unit) {
+fun ChapterBeat(hero: SoundHero?, text: String, field: Field, app: AppModel, onDone: () -> Unit) {
     var isDone by remember { mutableStateOf(false) }
     // True once the voice has finished on its own: closing then has nothing to stop.
     var hasSpoken by remember { mutableStateOf(false) }
@@ -55,8 +64,12 @@ fun ChapterBeat(hero: SoundHero, text: String, field: Field, app: AppModel, onDo
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(1f))
-        WordPicture(hero.picture, Modifier.heightIn(min = 80.dp, max = 220.dp))
-        WaveTitle(hero.name, fDisplay, field.foreground)
+        if (hero != null) {
+            WordPicture(hero.picture, Modifier.heightIn(min = 80.dp, max = 220.dp))
+            WaveTitle(hero.name, fDisplay, field.foreground)
+        } else {
+            FoniaText(text, style = practice(30, PracticeWeight.semibold, TextRole.title), color = field.foreground, textAlign = TextAlign.Center)
+        }
         Spacer(Modifier.weight(1f))
         MainAction("Începem", field) { scope.launch { close() } }
     }
@@ -64,6 +77,7 @@ fun ChapterBeat(hero: SoundHero, text: String, field: Field, app: AppModel, onDo
         app.audio.say(text)
         if (!isActive) return@ExerciseTask
         hasSpoken = true
+        if (hero == null && !app.audio.hasClip(text, Language.Ro)) return@ExerciseTask
         close()
     }
 }

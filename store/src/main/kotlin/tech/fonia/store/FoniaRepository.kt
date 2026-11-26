@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
 import java.util.UUID
+import tech.fonia.domain.ProbeSummary
 
 sealed class FoniaStoreError(message: String) : Exception(message) {
     /** Equal to any other `ProfileNotFound`, like the Swift case. */
@@ -325,9 +326,16 @@ class FoniaRepository(
      */
     /**
      * The file for the logoped. Without [includeName] nothing in it names the person or ties it to this phone: no name,
-     * the name replaced by "[nume]" in free text, a fixed profile id (iOS 007bfcf).
+     * the name replaced by "[nume]" in free text, a fixed profile id (iOS 007bfcf). [probes] are the „Cuvinte noi”
+     * counts, which the app keeps outside the database (iOS 98c737d).
      */
-    suspend fun exportJSON(profileId: UUID, includeAudio: Boolean = false, includeName: Boolean = false, now: Instant = Instant.now()): ByteArray {
+    suspend fun exportJSON(
+        profileId: UUID,
+        includeAudio: Boolean = false,
+        includeName: Boolean = false,
+        probes: List<ProbeSummary> = emptyList(),
+        now: Instant = Instant.now(),
+    ): ByteArray {
         val contents = writer.read { db ->
             val profile = Profile.fetchOne(db, listOf(profileId)) ?: throw FoniaStoreError.ProfileNotFound()
             ExportDocument.Contents(
@@ -349,7 +357,7 @@ class FoniaRepository(
         }
         val exported = if (includeName) contents else contents.pseudonymous()
         return fileWork {
-            ExportDocument(exported, exportedAt = now, audio = if (includeAudio) files else null).encoded()
+            ExportDocument(exported, exportedAt = now, audio = if (includeAudio) files else null, probes = probes).encoded()
         }
     }
 
