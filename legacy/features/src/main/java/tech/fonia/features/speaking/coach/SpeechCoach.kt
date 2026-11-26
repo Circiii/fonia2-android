@@ -357,7 +357,7 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         val summary = withContext(Dispatchers.Default) { s.audio?.summary() }
         val captured = heard?.takeIf { it.sampleRate > 0 && it.samples.isNotEmpty() }
         clip = captured
-        // „Fără ăăă”: the same take through the speaking pipeline (Whisper's words when the model is there).
+        // „Fără ăăă”: the same take through the speaking pipeline (Parakeet-Ro's words, or Whisper's).
         val take = captured?.let { c ->
             val transcript = app.wordsTranscriber?.let { t ->
                 runCatching {
@@ -377,7 +377,7 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         }
         // The recogniser holds about 130 MB (more after a long talk): free it until the next talk or sentence.
         app.judge?.words?.trim()
-        val fillers = take?.analysis?.spans?.let { fillerMarks(it, wordsArePermissive = app.speech.transcriber != null) }
+        val fillers = take?.analysis?.spans?.let { fillerMarks(it, wordsArePermissive = app.wordsTranscriber != null) }
             ?: emptyList()
         val built = withContext(Dispatchers.Default) {
             CoachReportBuilder.build(s.timeline(), talked.coerceAtLeast(1.0), summary, fillers, previous?.scores, spec, baseline)
@@ -508,8 +508,8 @@ internal class CoachController(val app: AppModel, val profile: Profile, private 
         )
 
         /**
-         * The fillers of the take for the strip. The sound detector's „ăăă” always count; filler words only when the
-         * words came from a recogniser whose licence allows it (Whisper). Otherwise only what the sound itself showed.
+         * The fillers of the take for the strip. The sound detector's „ăăă” always count; filler words only when a
+         * recogniser wrote the words (Parakeet-Ro or Whisper). Otherwise only what the sound itself showed.
          */
         fun fillerMarks(spans: List<tech.fonia.speaking.FlaggedSpan>, wordsArePermissive: Boolean): List<FillerMark> =
             spans.mapNotNull { span ->
