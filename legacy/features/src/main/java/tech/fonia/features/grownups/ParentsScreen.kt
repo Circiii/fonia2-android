@@ -386,7 +386,8 @@ private fun SoundRow(
             StyledPlainButton("Am ascultat, e bine") {
                 val updated = if (confirmed) profile else profile.copy(confirmedSounds = profile.confirmedSounds + sound.id.rawValue)
                 val next = Progression.confirmedByAdult(state)
-                val savedProgress = (saved ?: SoundProgress(profileId = profile.id, sound = sound.id.rawValue)).copy(rung = next.rung.index)
+                val savedProgress = (saved ?: SoundProgress(profileId = profile.id, sound = sound.id.rawValue))
+                    .move(to = next.rung.index, at = Instant.now(), by = SoundProgress.Move.Source.Adult)
                 app.scope.launch {
                     app.save(updated)
                     try {

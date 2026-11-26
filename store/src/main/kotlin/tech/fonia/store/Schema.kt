@@ -147,6 +147,10 @@ internal object Schema {
                 db.execute("CREATE INDEX \"missionCheck_on_profile_givenAt\" ON \"missionCheck\"(\"profileId\", \"givenAt\")")
             }
 
+            migrator.registerMigration("v4-sound-moves") { db ->
+                db.execute("ALTER TABLE \"soundProgress\" ADD COLUMN \"moves\" TEXT NOT NULL DEFAULT '[]'")
+            }
+
             return migrator
         }
 }

@@ -65,8 +65,6 @@ import tech.fonia.features.app.SessionTicket
 import tech.fonia.features.app.ViewTask
 import tech.fonia.features.app.isChild
 import tech.fonia.store.Profile
-import java.time.Duration
-import java.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -78,19 +76,17 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
     var run by remember { mutableStateOf<SessionRun?>(null) }
     var confirmLeaving by remember { mutableStateOf(false) }
 
-    /** What came before on this focus, for the builder: finished sessions, this week's attempts, the last items. */
+    /** What came before on this focus, for the builder: finished sessions and the last items. */
     suspend fun history(): AttemptsSummary {
         val sessions = orNull { app.repository.sessions(profile.id) } ?: emptyList()
         val same = sessions.filter { it.focus == ticket.focus.key && it.endedAt != null }
-        val weekAgo = Instant.now().minus(Duration.ofSeconds(7 * 86_400L))
-        val thisWeek = same.filter { it.startedAt.isAfter(weekAgo) }.fold(0) { sum, session -> sum + session.attempts }
         var recent = emptySet<String>()
         val last = same.maxByOrNull { it.startedAt }
         if (last != null) {
             val attempts = orNull { app.repository.attempts(last.id) } ?: emptyList()
             recent = attempts.mapNotNull { it.target }.toSet()
         }
-        return AttemptsSummary(sessionsCompleted = same.size, attemptsThisWeek = thisWeek, recentItems = recent)
+        return AttemptsSummary(sessionsCompleted = same.size, recentItems = recent)
     }
 
     /** What the last three runs on this focus played (listening items included), so the next one draws others. */

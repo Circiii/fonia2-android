@@ -476,10 +476,10 @@ class SessionRun(
                 if (!phoneAlone) state = outcome.state
                 when (val step = if (phoneAlone) ProgressionStep.Stay else outcome.step) {
                     is ProgressionStep.Advance -> {
-                        updated = updated.copy(rung = step.to.index)
+                        updated = updated.move(to = step.to.index, at = endedAt, by = SoundProgress.Move.Source.Blocks)
                         movedUpTo = step.to
                     }
-                    is ProgressionStep.Drop -> updated = updated.copy(rung = step.to.index)
+                    is ProgressionStep.Drop -> updated = updated.move(to = step.to.index, at = endedAt, by = SoundProgress.Move.Source.Blocks)
                     is ProgressionStep.NeedsAdult -> needsAdultNext = step.next
                     ProgressionStep.Stay -> Unit
                 }
@@ -522,7 +522,8 @@ class SessionRun(
         when (val step = engine.end(finished, state)) {
             is ProgressionStep.Advance -> if (sound != null) {
                 movedUpTo = step.to
-                val updated = (progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue)).copy(rung = step.to.index)
+                val updated = (progress ?: SoundProgress(profileId = profile.id, sound = sound.rawValue))
+                    .move(to = step.to.index, at = now(), by = SoundProgress.Move.Source.Blocks)
                 progress = updated
                 val repository = app.repository
                 later { repository.saveSoundProgress(updated) }

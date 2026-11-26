@@ -29,7 +29,7 @@ class ListeningVarietyTests {
 
     private fun heard(focus: SessionFocus, seed: Long, recent: Set<String>): List<String> {
         val built = SessionBuilder(content).build(
-            SessionRequest(age = AgeBand.TeenAdult, focus = focus, history = AttemptsSummary(0, 0, emptySet()), seed = seed.toULong()),
+            SessionRequest(age = AgeBand.TeenAdult, focus = focus, history = AttemptsSummary(0, emptySet()), seed = seed.toULong()),
         )
         return variety.vary(built, focus, recent, Random(seed)).trials.mapNotNull {
             when (val e = it.exercise) {

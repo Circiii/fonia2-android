@@ -132,6 +132,8 @@ class WeakJudgeGateTests {
         val moved = repository.soundProgress(profile.id).single()
         assertEquals(Rung.WordsMedial.index, moved.rung)
         assertEquals(2, moved.blockHistory.size)
+        assertEquals(listOf(SoundProgress.Move.Source.AdultMarks), moved.moves.map { it.by })
+        assertEquals(listOf(Rung.WordsInitial.index), moved.moves.map { it.from })
         // The marks were at the rung below: nothing moves again.
         assertEquals(emptyList<SoundID>(), WeakJudgeGate.apply(repository, profile))
         assertEquals(Rung.WordsMedial.index, repository.soundProgress(profile.id).single().rung)

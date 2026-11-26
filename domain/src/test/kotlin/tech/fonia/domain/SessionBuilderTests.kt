@@ -99,13 +99,14 @@ class SessionBuilderTests {
     }
 
     @Test
-    fun sessionsGrowAndEaseOffOnceTheWeekIsOnTarget() {
+    fun sessionsGrowAndStayGrown() {
         val first = session(age = AgeBand.SixToSeven, history = AttemptsSummary(sessionsCompleted = 0))
         val later = session(age = AgeBand.SixToSeven, history = AttemptsSummary(sessionsCompleted = 3))
-        val onTarget = session(age = AgeBand.SixToSeven, history = AttemptsSummary(sessionsCompleted = 3, attemptsThisWeek = 150))
+        val muchLater = session(age = AgeBand.SixToSeven, history = AttemptsSummary(sessionsCompleted = 40))
         assertEquals(30, first.targetAttempts)
         assertEquals(48, later.targetAttempts)
-        assertEquals(30, onTarget.targetAttempts)
+        assertEquals(48, muchLater.targetAttempts)
+        assertEquals(600, muchLater.timeLimitSeconds)
     }
 
     @Test

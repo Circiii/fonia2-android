@@ -11,6 +11,7 @@ import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
+import java.time.Instant
 
 /**
  * The adult's ear standing in for the phone's, on Android only, for the sounds the phone still hears poorly.
@@ -57,7 +58,7 @@ object WeakJudgeGate {
             if (sound !in sounds) continue
             val marks = AdultMarks.load(repository, profile.id, progress, Rung.at(progress.rung))
             val next = nextRung(profile, sound, progress, marks) ?: continue
-            repository.saveSoundProgress(progress.copy(rung = next.index))
+            repository.saveSoundProgress(progress.move(to = next.index, at = Instant.now(), by = SoundProgress.Move.Source.AdultMarks))
             moved += sound
         }
         return moved

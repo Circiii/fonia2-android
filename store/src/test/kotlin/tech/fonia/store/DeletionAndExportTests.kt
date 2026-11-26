@@ -194,17 +194,21 @@ class ExportTests {
             assertEquals(
                 setOf(
                     "app", "schemaVersion", "exportedAt", "profile", "soundProgress",
-                    "sessions", "attempts", "recordings", "speeches", "notes",
+                    "sessions", "attempts", "recordings", "speeches", "notes", "missionChecks",
                 ),
                 root.keys,
             )
             assertEquals("fonia", root["app"].string)
-            assertEquals(2, root["schemaVersion"].int)
+            assertEquals(3, root["schemaVersion"].int)
             assertEquals("2026-11-04T10:00:00Z", root["exportedAt"].string)
 
-            for (key in listOf("soundProgress", "sessions", "attempts", "recordings", "speeches", "notes")) {
+            for (key in listOf("soundProgress", "sessions", "attempts", "recordings", "speeches", "notes", "missionChecks")) {
                 assertEquals(1, (root[key] as? JsonArray)?.size, "$key should hold only Ana's row")
             }
+            val mission = assertNotNull((root["missionChecks"] as? JsonArray)?.firstOrNull() as? JsonObject)
+            assertEquals(ExportDocument.ANONYMOUS_PROFILE_ID.uuidString, mission["profileId"].string)
+            assertEquals("s", mission["sound"].string)
+            assertEquals("2026-11-04", mission["localDay"].string)
             val profile = assertNotNull(root["profile"] as? JsonObject)
             assertNull(profile["name"])
             assertEquals("Profil", profile["label"].string)
@@ -288,7 +292,8 @@ class ExportTests {
             assertEquals("Ana", profile["name"].string)
             assertEquals("Ana", profile["label"].string)
             assertEquals(ana.id.uuidString, profile["id"].string)
-            assertEquals(2, root["schemaVersion"].int)
+            assertEquals(3, root["schemaVersion"].int)
+            assertEquals(ana.id.uuidString, ((root["missionChecks"] as? JsonArray)?.firstOrNull() as? JsonObject)?.get("profileId").string)
         }
     }
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.ZoneId
+import java.time.Instant
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -26,6 +27,7 @@ class SchemaTests {
                 "v1-notes",
                 "v2-session-focus",
                 "v3-mission-checks",
+                "v4-sound-moves",
             ),
             Schema.migrator.migrations,
         )
@@ -52,6 +54,39 @@ class SchemaTests {
             val profile = store.addChild(name = "Ana")
             Schema.migrator.migrate(store.database.writer)
             assertEquals(profile, store.repository.profile(id = profile.id))
+        }
+    }
+
+    @Test
+    @DisplayName("progress saved before moves were kept reads with none, and a move keeps where it came from")
+    fun soundMoves() {
+        DatabaseQueue().use { queue ->
+            Schema.migrator.migrate(queue, upTo = "v3-mission-checks")
+            val id = UUID.randomUUID()
+            queue.writeBlocking { db ->
+                db.execute(
+                    """
+                    INSERT INTO profile (id, kind, ageBand, voiceGroup, color, createdAt, track)
+                    VALUES (?, 'child', '6-7', 'child', 'sky', '2026-11-04 10:00:00.000', 'ro')
+                    """.trimIndent(),
+                    listOf(id),
+                )
+                db.execute("INSERT INTO soundProgress (profileId, sound, rung, blockHistory) VALUES (?, 's', 2, '[]')", listOf(id))
+            }
+            Schema.migrator.migrate(queue)
+            var saved = assertNotNull(queue.readBlocking { db -> SoundProgress.fetchOne(db, listOf(id, "s")) })
+            assertEquals(2, saved.rung)
+            assertTrue(saved.moves.isEmpty())
+
+            val at = Instant.ofEpochSecond(1_800_000_000)
+            saved = saved.move(to = 2, at = at, by = SoundProgress.Move.Source.Blocks)
+            assertTrue(saved.moves.isEmpty())
+            saved = saved.move(to = 3, at = at, by = SoundProgress.Move.Source.Adult)
+            assertEquals(3, saved.rung)
+            assertEquals(listOf(SoundProgress.Move(from = 2, to = 3, at = at, by = SoundProgress.Move.Source.Adult)), saved.moves)
+            val written = saved
+            queue.writeBlocking { db -> SoundProgress.save(db, written) }
+            assertEquals(saved.moves, queue.readBlocking { db -> SoundProgress.fetchOne(db, listOf(id, "s")) }?.moves)
         }
     }
 

@@ -133,7 +133,39 @@ data class SoundProgress(
     val sound: String,
     val rung: Int = 0,
     val blockHistory: List<Block> = emptyList(),
+    /** Oldest first. Empty for progress saved before moves were kept. */
+    val moves: List<Move> = emptyList(),
 ) {
+    /** A change of rung and what made it, for the logoped's report. */
+    data class Move(
+        val from: Int,
+        val to: Int,
+        val at: Instant,
+        val by: Source,
+    ) {
+        enum class Source(val rawValue: String) {
+            /** Finished blocks moved the learner: the phone's answers, with the adult's where an adult rated tries. */
+            Blocks("blocks"),
+
+            /** An adult said „Am ascultat, e bine” on the parents' page. */
+            Adult("adult"),
+
+            /** An adult said „Sună bine” on two days, on a sound the phone may still hear poorly (`WeakJudgeGate`). */
+            AdultMarks("adultMarks"),
+            ;
+
+            companion object {
+                fun fromRawValue(rawValue: String): Source? = entries.firstOrNull { it.rawValue == rawValue }
+            }
+        }
+    }
+
+    /** Swift's `mutating move(to:at:by:)`: the rung set and the move kept, when it is one. */
+    fun move(to: Int, at: Instant, by: Move.Source): SoundProgress {
+        if (to == rung) return this
+        return copy(rung = to, moves = moves + Move(from = rung, to = to, at = at, by = by))
+    }
+
     /** One finished block on a rung: how many of its attempts went well. */
     data class Block(
         val rung: Int,
@@ -150,6 +182,7 @@ data class SoundProgress(
             "blockHistory" to databaseJSON(
                 JArray(record.blockHistory.map { it.toNode(DateEncodingStrategy.MillisecondsSince1970) }),
             ),
+            "moves" to databaseJSON(JArray(record.moves.map { it.toNode(DateEncodingStrategy.MillisecondsSince1970) })),
         )
 
         override fun decode(row: Row): SoundProgress = SoundProgress(
@@ -157,6 +190,7 @@ data class SoundProgress(
             sound = row.string("sound"),
             rung = row.int("rung"),
             blockHistory = row.json("blockHistory") { it.decodeBlocks() },
+            moves = row.json("moves") { it.decodeMoves() },
         )
     }
 }
@@ -518,6 +552,15 @@ internal fun SoundProgress.Block.toNode(dates: DateEncodingStrategy): JsonNode =
     ),
 )
 
+internal fun SoundProgress.Move.toNode(dates: DateEncodingStrategy): JsonNode = JObject(
+    mapOf(
+        "from" to jsonNumber(from),
+        "to" to jsonNumber(to),
+        "at" to jsonDate(at, dates),
+        "by" to JText(by.rawValue),
+    ),
+)
+
 /** `[String]`: a string anywhere else is a type mismatch, as with `JSONDecoder`. */
 private fun JsonElement.decodeStrings(): List<String> {
     val array = this as? JsonArray ?: throw SerializationException("Expected an array of strings")
@@ -538,6 +581,22 @@ private fun JsonElement.decodeBlocks(): List<SoundProgress.Block> {
             good = block.decodeInt("good"),
             total = block.decodeInt("total"),
             endedAt = instantFromMillisecondsSince1970(block.decodeDouble("endedAt")),
+        )
+    }
+}
+
+/** `[Move]` with GRDB's `.millisecondsSince1970` dates. */
+private fun JsonElement.decodeMoves(): List<SoundProgress.Move> {
+    val array = this as? JsonArray ?: throw SerializationException("Expected an array of moves")
+    return array.map { element ->
+        val move = element as? JsonObject ?: throw SerializationException("Expected a move object")
+        val by = (move["by"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+            ?: throw SerializationException("Expected a string for key \"by\"")
+        SoundProgress.Move(
+            from = move.decodeInt("from"),
+            to = move.decodeInt("to"),
+            at = instantFromMillisecondsSince1970(move.decodeDouble("at")),
+            by = SoundProgress.Move.Source.fromRawValue(by) ?: throw SerializationException("Unknown move source $by"),
         )
     }
 }

@@ -258,6 +258,9 @@ class ExportFormatTests {
                 }
               ],
               "exportedAt" : "2026-11-04T10:00:00Z",
+              "missionChecks" : [
+
+              ],
               "notes" : [
                 {
                   "id" : "B07E0000-0000-4000-8000-000000000002",
@@ -295,7 +298,7 @@ class ExportFormatTests {
                   "ts" : "2026-11-04T08:05:00Z"
                 }
               ],
-              "schemaVersion" : 2,
+              "schemaVersion" : 3,
               "sessions" : [
                 {
                   "attempts" : 1,
@@ -319,6 +322,9 @@ class ExportFormatTests {
                       "rung" : 0,
                       "total" : 6
                     }
+                  ],
+                  "moves" : [
+
                   ],
                   "profileId" : "00000000-0000-0000-0000-000000000000",
                   "rung" : 1,
@@ -518,6 +524,7 @@ class GRDBConventionTests {
                 "sound TEXT NOT NULL PK2",
                 "rung INTEGER NOT NULL DEFAULT 0",
                 "blockHistory TEXT NOT NULL DEFAULT '[]'",
+                "moves TEXT NOT NULL DEFAULT '[]'",
                 "FK profileId -> profile(id) ON DELETE CASCADE",
                 "INDEX sqlite_autoindex_soundProgress_1(profileId, sound) UNIQUE pk",
             ),

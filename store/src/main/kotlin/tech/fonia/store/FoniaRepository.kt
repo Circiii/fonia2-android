@@ -342,6 +342,9 @@ class FoniaRepository(
                 recordings = fetchRecordings(db, profileId),
                 speeches = fetchSpeeches(db, profileId),
                 notes = fetchNotes(db, profileId),
+                missionChecks = MissionCheck.fetchAll(
+                    db, "SELECT * FROM missionCheck WHERE profileId = ? ORDER BY givenAt", listOf(profileId),
+                ),
             )
         }
         val exported = if (includeName) contents else contents.pseudonymous()

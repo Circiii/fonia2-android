@@ -25,7 +25,6 @@ class PracticeData(
 
 /** What the report is drawn from, never with the name in it. */
 suspend fun FoniaRepository.practiceData(profileId: UUID): PracticeData {
-    val missionAnswers = writer.read { db -> fetchMissionAnswers(db, profileId) }
     val contents = writer.read { db ->
         val profile = Profile.fetchOne(db, listOf(profileId)) ?: throw FoniaStoreError.ProfileNotFound()
         ExportDocument.Contents(
@@ -36,6 +35,7 @@ suspend fun FoniaRepository.practiceData(profileId: UUID): PracticeData {
             recordings = Recording.fetchAll(db, "SELECT * FROM recording WHERE profileId = ? ORDER BY ts DESC", listOf(profileId)),
             speeches = emptyList(),
             notes = MoodlessNote.fetchAll(db, "SELECT * FROM note WHERE profileId = ? ORDER BY localDay DESC", listOf(profileId)),
+            missionChecks = fetchMissionAnswers(db, profileId),
         )
     }.pseudonymous()
     return PracticeData(
@@ -44,7 +44,7 @@ suspend fun FoniaRepository.practiceData(profileId: UUID): PracticeData {
         sessions = contents.sessions,
         attempts = contents.attempts,
         notes = contents.notes,
-        missionAnswers = missionAnswers,
+        missionAnswers = contents.missionChecks,
         recordings = contents.recordings,
     )
 }

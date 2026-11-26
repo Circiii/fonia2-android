@@ -63,15 +63,9 @@ enum class Prosody(override val rawValue: String) : StringRawValue {
  */
 data class AttemptsSummary(
     val sessionsCompleted: Int = 0,
-    val attemptsThisWeek: Int = 0,
     /** Texts used in the last session. A new session starts with other items. */
     val recentItems: Set<String> = emptySet(),
-) {
-    companion object {
-        /** Above this the week is on target, so sessions ease off to the short end of the range. */
-        val weeklyTarget = 150
-    }
-}
+)
 
 sealed interface EnglishFocus {
     /** Repeating listening drill on the trained words, in all four voices. */

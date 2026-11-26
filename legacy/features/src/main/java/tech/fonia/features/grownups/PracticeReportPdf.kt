@@ -226,15 +226,16 @@ object PracticeReportPdf {
                 y += height + 4f
             }
             y += 6f
-            paragraph(report.summary, paint(11.5f, fonts.bold), after = if (report.waitingLine == null) 12f else 4f)
-            report.waitingLine?.let { paragraph(it, after = 12f) }
+            val below = listOfNotNull(report.waitingLine, report.pace)
+            paragraph(report.summary, paint(11.5f, fonts.bold), after = if (below.isEmpty()) 12f else 4f)
+            below.forEachIndexed { index, line -> paragraph(line, after = if (index == below.lastIndex) 12f else 4f) }
         }
 
         /** The box with what the numbers are and aren't. */
         fun howToRead() {
             val inner = CONTENT - 28f
             val title = layout(PracticeReport.HOW_TO_READ_TITLE, paint(10f, fonts.bold), inner)
-            val lines = PracticeReport.HOW_TO_READ.map { layout("•  $it", paint(8.8f), inner) }
+            val lines = report.readingNotes.map { layout("•  $it", paint(8.8f), inner) }
             val height = title.height + lines.sumOf { it.height + 3 } + 24f
             room(height)
             val box = RectF(LEFT, y, RIGHT, y + height)
@@ -276,7 +277,7 @@ object PracticeReportPdf {
         private fun chartHeight(sound: PracticeReport.SoundPart): Float = if (sound.weeks.size > 1) 86f else 0f
 
         private fun blockHeight(sound: PracticeReport.SoundPart): Float {
-            val lines = listOfNotNull(sound.ladder, sound.stageLine, sound.confirmed, sound.tries, sound.agreement)
+            val lines = listOfNotNull(sound.ladder, sound.stageLine, sound.confirmed, sound.moveLine, sound.tries, sound.agreement) + sound.hearing
             val textHeight = lines.sumOf { layout(it, body, CONTENT).height + 4 }
             return 22f + 16f + textHeight + 60f + chartHeight(sound) + 20f
         }
@@ -291,9 +292,11 @@ object PracticeReportPdf {
             paragraph(sound.ladder, after = 3f)
             paragraph(sound.stageLine, after = 3f)
             sound.confirmed?.let { paragraph(it, after = 3f) }
+            sound.moveLine?.let { paragraph(it, after = 3f) }
             paragraph(sound.tries, strong, after = 6f)
             table(sound.rows)
-            paragraph(sound.agreement, after = 8f)
+            paragraph(sound.agreement, after = if (sound.hearing.isEmpty()) 8f else 3f)
+            sound.hearing.forEachIndexed { index, line -> paragraph(line, after = if (index == sound.hearing.lastIndex) 8f else 3f) }
             val chart = chartHeight(sound)
             if (chart > 0) weekBars(sound, chart)
             y += 8f

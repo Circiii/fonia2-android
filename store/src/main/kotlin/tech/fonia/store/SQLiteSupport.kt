@@ -513,15 +513,24 @@ internal class DatabaseMigrator {
         if (ran) writer.didCommit()
     }
 
+    /** GRDB's `migrate(_:upTo:)`: the migrations up to and including [upTo], as a newer app found them. */
+    fun migrate(writer: DatabaseWriter, upTo: String) {
+        require(registered.any { it.first == upTo }) { "undefined migration: \"$upTo\"" }
+        val ran = writer.writeWithoutTransactionBlocking { db -> migrate(db, upTo) }
+        if (ran) writer.didCommit()
+    }
+
     /** Runs the migrations not applied yet and says whether there were any. */
-    fun migrate(db: Database): Boolean {
+    fun migrate(db: Database, upTo: String? = null): Boolean {
         db.execute("CREATE TABLE IF NOT EXISTS grdb_migrations (identifier TEXT NOT NULL PRIMARY KEY)")
         val applied = appliedIdentifiers(db)
         var ran = false
         for ((identifier, migration) in registered) {
-            if (identifier in applied) continue
-            run(db, identifier, migration)
-            ran = true
+            if (identifier !in applied) {
+                run(db, identifier, migration)
+                ran = true
+            }
+            if (identifier == upTo) break
         }
         return ran
     }

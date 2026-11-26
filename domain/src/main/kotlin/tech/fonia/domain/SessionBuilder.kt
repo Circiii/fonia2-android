@@ -610,9 +610,12 @@ class SessionBuilder(
         val shortSessionTrialsPerPart = 4
         val perceptionPerPairBlock = 3
 
+        /**
+         * Sessions grow with practice and stay grown: more tries in a session help, so a busy week doesn't shorten
+         * them (Edeal & Gildersleeve-Neumann 2011). The ten-minute limit still ends a session.
+         */
         private fun attemptTarget(request: SessionRequest): Int {
             val steps = request.age.attemptSteps
-            if (request.history.attemptsThisWeek >= AttemptsSummary.weeklyTarget) return steps[0]
             return steps[minOf(request.history.sessionsCompleted, steps.size - 1)]
         }
 

@@ -305,4 +305,88 @@ class PracticeReportTests {
         assertEquals("Pentru adult", MissionFollowUp.title(isChild = true))
         assertEquals("Azi, peste zi", MissionFollowUp.title(isChild = false))
     }
+
+    /** the pace is tries per minute over the sessions that ended with tries, and absent when there is too little */
+    @Test
+    fun pace() = runBlocking {
+        val ana = child()
+        practise(ana, day = 4, minutes = 6.0, tries = List(30) { Attempt.Outcome.Good to null })
+        practise(ana, day = 5, minutes = 4.0, tries = List(20) { Attempt.Outcome.Almost to null })
+        val report = report(ana)
+        assertEquals(5, report.perMinute)
+        assertEquals("În medie, 5 încercări pe minut de exersare.", report.pace)
+        assertTrue(report.text.contains("În medie, 5 încercări pe minut de exersare."))
+
+        // 7 tries in 18 minutes rounds to none a minute: no line rather than a zero.
+        assertNull(report(seeded()).pace)
+    }
+
+    /** the report says how often the phone didn't hear clearly, and what helps when it is more than half */
+    @Test
+    fun hearing() = runBlocking {
+        val ana = child()
+        practise(ana, day = 4, tries = List(5) { Attempt.Outcome.Unclear to null } + List(3) { Attempt.Outcome.Good to null })
+        practise(
+            ana, day = 5, sound = "r",
+            tries = List(2) { Attempt.Outcome.Unclear to null } + List(6) { Attempt.Outcome.NotYet to null } +
+                List(9) { Attempt.Outcome.NotJudged to null },
+        )
+        val report = report(ana)
+
+        val s = report.sounds.first { it.letter == "S" }
+        assertEquals(listOf("Telefonul n-a auzit clar 5 din 8 încercări.", PracticeReport.CAPTURE_TIP), s.hearing)
+        // Tries the phone doesn't judge at all are not tries it missed.
+        val r = report.sounds.first { it.letter == "R" }
+        assertEquals(8, r.listened)
+        assertEquals(listOf("Telefonul n-a auzit clar 2 din 8 încercări."), r.hearing)
+        assertTrue(report.text.contains(PracticeReport.CAPTURE_TIP))
+
+        // Under one block the phone listened to, nothing is said.
+        val few = report(seeded())
+        assertEquals(listOf("Telefonul n-a auzit clar 1 din 6 încercări."), few.sounds.first().hearing)
+        assertEquals(emptyList<String>(), few.sounds.last().hearing)
+    }
+
+    /** the report says when the lesson last changed and what changed it */
+    @Test
+    fun lastMove() = runBlocking {
+        val ana = child()
+        var progress = SoundProgress(profileId = ana.id, sound = "s", rung = 2)
+            .move(to = 3, at = moment(12, hour = 12), by = SoundProgress.Move.Source.Blocks)
+        repository.saveSoundProgress(progress)
+        practise(ana, day = 12, tries = listOf(Attempt.Outcome.Good to null))
+        var report = report(ana)
+        val s = report.sounds.first()
+        assertEquals("Ultima schimbare: 12 noiembrie 2026, de la lecția 3 la lecția 4, după blocuri bune.", s.moveLine)
+        assertTrue(report.text.contains(s.moveLine!!))
+
+        progress = progress.move(to = 4, at = moment(14, hour = 12), by = SoundProgress.Move.Source.Adult)
+        repository.saveSoundProgress(progress)
+        report = report(ana)
+        assertEquals(
+            "Ultima schimbare: 14 noiembrie 2026, de la lecția 4 la lecția 5, după ce adultul a ascultat și a spus că e bine.",
+            report.sounds.first().moveLine,
+        )
+
+        // Progress from before moves were kept says nothing.
+        assertTrue(report(seeded()).sounds.all { it.moveLine == null })
+    }
+
+    /** a child's report says only an adult takes a step back; an adult's doesn't */
+    @Test
+    fun onlyAdultsGoBack() = runBlocking {
+        val ana = child()
+        practise(ana, day = 17, tries = listOf(Attempt.Outcome.Good to null))
+        val childReport = report(ana)
+        assertEquals(PracticeReport.ONLY_ADULTS_GO_BACK, childReport.readingNotes.last())
+        assertEquals(PracticeReport.HOW_TO_READ, childReport.readingNotes.dropLast(1))
+
+        val adult = Profile(
+            kind = Profile.Kind.Adult, ageBand = Profile.AgeBand.Adult, voiceGroup = Profile.VoiceGroup.Female,
+            color = "cold", targetSounds = listOf("s"), track = Profile.Track.Ro,
+        )
+        repository.saveProfile(adult)
+        practise(adult, day = 17, tries = listOf(Attempt.Outcome.Good to null))
+        assertEquals(PracticeReport.HOW_TO_READ, report(adult).readingNotes)
+    }
 }

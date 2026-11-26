@@ -18,9 +18,11 @@ import tech.fonia.features.reading.ReadingReport
 import tech.fonia.store.Attempt
 import tech.fonia.store.PracticeData
 import tech.fonia.store.Profile
+import tech.fonia.store.SoundProgress
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import kotlin.math.ceil
@@ -51,6 +53,8 @@ data class PracticeReport(
      * practising alone, who has no such page.
      */
     val waitingToHear: Int = 0,
+    /** Tries per minute, over the sessions that ended and had tries; null under one minute of them or under one a minute. */
+    val perMinute: Int? = null,
 ) {
     /**
      * How many tries got each answer. [none] is "no answer": the phone didn't hear clearly or didn't judge, or the
@@ -84,6 +88,8 @@ data class PracticeReport(
         /** The stage name of that rung ([StageNames]): where the lesson sits in the course, not a grade. */
         val stage: String,
         val confirmedByAdult: Boolean,
+        /** The latest change of rung and what made it; null for progress saved before moves were kept. */
+        val lastMove: SoundProgress.Move? = null,
         val attempts: Int,
         val days: Int,
         val phone: Tally,
@@ -92,6 +98,13 @@ data class PracticeReport(
         val compared: Int,
         val agreed: Int,
         val weeks: List<Week>,
+        /**
+         * Tries the phone listened to: it answered, or it said it didn't hear clearly. Tries it doesn't judge at all
+         * (no detector for the sound, a take only shadowed) are left out.
+         */
+        val listened: Int = 0,
+        /** Of those, the ones where it didn't hear clearly (`Unclear`). */
+        val unheard: Int = 0,
     ) {
         /** "Treapta 4 din 10: „În mijlocul cuvântului” (cuvinte cu S la mijloc)." */
         val ladder: String
@@ -107,6 +120,19 @@ data class PracticeReport(
         val stageLine: String get() = AdultCards.stageLine(stage)
 
         val confirmed: String? get() = if (confirmedByAdult) "Adultul a ascultat $letter singur și a spus că e bine." else null
+
+        /** "Ultima schimbare: 12 noiembrie 2026, de la lecția 3 la lecția 4, după blocuri bune." Null when none was kept. */
+        val moveLine: String?
+            get() {
+                val move = lastMove ?: return null
+                val reason = when (move.by) {
+                    SoundProgress.Move.Source.Blocks -> if (move.to > move.from) "după blocuri bune" else "după un bloc greu"
+                    SoundProgress.Move.Source.Adult -> "după ce adultul a ascultat și a spus că e bine"
+                    SoundProgress.Move.Source.AdultMarks -> "după ce adultul a spus „Sună bine” în două zile diferite"
+                }
+                val day = ReadingReport.longDate(move.at.atZone(ZoneId.systemDefault()).toLocalDate())
+                return "Ultima schimbare: $day, de la lecția ${move.from + 1} la lecția ${move.to + 1}, $reason."
+            }
 
         val tries: String get() = "${Plural.format(attempts, Plural.Noun.Incercare)} în ${Plural.format(days, Plural.Noun.Zi)}."
 
@@ -140,6 +166,17 @@ data class PracticeReport(
                     else -> "de ${Plural.format(agreed, Plural.Noun.Oara)}"
                 }
                 return "Din ${Plural.format(compared, Plural.Noun.Incercare)} la care au răspuns amândoi, telefonul și adultul au spus același lucru $times."
+            }
+
+        /**
+         * "Telefonul n-a auzit clar 5 din 8 încercări.", and what helps when that is more than half. Empty under one
+         * block of tries the phone listened to.
+         */
+        val hearing: List<String>
+            get() {
+                if (listened < HEARING_FLOOR) return emptyList()
+                val line = "Telefonul n-a auzit clar $unheard din ${Plural.format(listened, Plural.Noun.Incercare)}."
+                return if (unheard * 2 > listened) listOf(line, CAPTURE_TIP) else listOf(line)
             }
     }
 
@@ -188,6 +225,12 @@ data class PracticeReport(
             }
         }
 
+    /** "În medie, 5 încercări pe minut de exersare." Null when there is too little to tell. */
+    val pace: String? get() = perMinute?.let { "În medie, ${Plural.format(it, Plural.Noun.Incercare)} pe minut de exersare." }
+
+    /** The lines of the „Cum se citește” box for this report. */
+    val readingNotes: List<String> get() = HOW_TO_READ + if (isChild) listOf(ONLY_ADULTS_GO_BACK) else emptyList()
+
     /** Everything the PDF prints, in order, for the tests and for a quick look. */
     val text: String
         get() {
@@ -195,13 +238,16 @@ data class PracticeReport(
             lines += facts.map { "${it.first}: ${it.second}" }
             lines += summary
             waitingLine?.let { lines += it }
-            lines += listOf(HOW_TO_READ_TITLE) + HOW_TO_READ + SOUNDS_TITLE
+            pace?.let { lines += it }
+            lines += listOf(HOW_TO_READ_TITLE) + readingNotes + SOUNDS_TITLE
             for (sound in sounds) {
                 lines += listOf(sound.title, sound.ladder, sound.stageLine)
                 sound.confirmed?.let { lines += it }
+                sound.moveLine?.let { lines += it }
                 lines += sound.tries
                 lines += sound.rows.map { it.joinToString(" | ") }
                 lines += sound.agreement
+                lines += sound.hearing
                 lines += CHART_TITLE
                 lines += sound.weeks.map { "${ReadingReport.shortDate(it.monday)}: ${it.attempts}" }
             }
@@ -233,6 +279,15 @@ data class PracticeReport(
             "Numele copilului nu apare. În notițe, numele e înlocuit cu [nume].",
             AdultCards.STAGE_REPORT_NOTE,
         )
+
+        /** Only for a child: the phone never takes a child back a step. */
+        const val ONLY_ADULTS_GO_BACK = "Telefonul nu coboară niciodată un copil pe o treaptă mai jos. Doar un adult poate face asta."
+
+        /** The fewest tries the phone listened to before the report says how often it didn't hear clearly: one block. */
+        const val HEARING_FLOOR = 6
+
+        /** What usually helps when the phone misses more than half the tries. */
+        const val CAPTURE_TIP = "De obicei ajută: telefonul mai aproape, televizorul oprit, microfonul neacoperit."
 
         const val SOUNDS_TITLE = "Sunetele exersate"
 
@@ -271,6 +326,16 @@ data class PracticeReport(
                 max(0.0, Duration.between(session.startedAt, end).toMillis() / 1000.0)
             }
             val soundAttempts = data.attempts.filter { it.sound != null }
+            // The tries the store holds for each session, rather than the session's own running count.
+            val triesIn = data.attempts.groupingBy { it.sessionId }.eachCount()
+            val timed = data.sessions.mapNotNull { session ->
+                val end = session.endedAt ?: return@mapNotNull null
+                val count = triesIn[session.id] ?: 0
+                if (count <= 0) return@mapNotNull null
+                max(0.0, Duration.between(session.startedAt, end).toMillis() / 1000.0) to count
+            }
+            val timedMinutes = timed.sumOf { it.first } / 60
+            val rate = if (timedMinutes >= 1) Math.round(timed.sumOf { it.second } / timedMinutes).toInt() else 0
             val weeks = weekRange(soundAttempts.mapNotNull { day(it.localDay) } + practisedDays)
 
             val catalog = Catalog(content)
@@ -286,8 +351,15 @@ data class PracticeReport(
                 var adult = Tally()
                 var compared = 0
                 var agreed = 0
+                var listened = 0
+                var unheard = 0
                 for (attempt in tries) {
                     phone = phone.adding(attempt.machineOutcome)
+                    when (attempt.machineOutcome) {
+                        Attempt.Outcome.Good, Attempt.Outcome.Almost, Attempt.Outcome.NotYet -> listened += 1
+                        Attempt.Outcome.Unclear -> { listened += 1; unheard += 1 }
+                        Attempt.Outcome.NotJudged -> Unit
+                    }
                     adult = adult.adding(attempt.adultOutcome)
                     val said = attempt.adultOutcome
                     if (said != null && said in judged && attempt.machineOutcome in judged) {
@@ -306,6 +378,7 @@ data class PracticeReport(
                     lessonDetail = lesson?.detail ?: "",
                     stage = AdultCards.stageName(rung),
                     confirmedByAdult = id in data.profile.confirmedSounds,
+                    lastMove = saved?.moves?.lastOrNull(),
                     attempts = tries.size,
                     days = tries.map { it.localDay }.toSet().size,
                     phone = phone,
@@ -313,6 +386,8 @@ data class PracticeReport(
                     compared = compared,
                     agreed = agreed,
                     weeks = weeks.map { Week(it, perWeek[it] ?: 0) },
+                    listened = listened,
+                    unheard = unheard,
                 )
             }
 
@@ -355,6 +430,7 @@ data class PracticeReport(
                 sounds = sounds,
                 notes = notes,
                 waitingToHear = if (data.profile.isChild) week.listWaiting else 0,
+                perMinute = if (rate >= 1) rate else null,
             )
         }
 

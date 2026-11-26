@@ -10,9 +10,11 @@ import java.util.UUID
 /**
  * The shape of the file handed to the logoped.
  *
- * `schemaVersion` 2 (as iOS 007bfcf): the profile carries a `label` and only carries `name` when the adult chose to add
- * it, and in a pseudonymous file every `id`/`profileId` of the profile is [ANONYMOUS_PROFILE_ID]. Version 1 always
- * carried the name and the profile's real id. Nothing reads these files back.
+ * `schemaVersion` 3 (as iOS a4b8205) adds `missionChecks`: each „Azi, peste zi” mission a session gave, and what the
+ * adult said about it at the next session; each `soundProgress` row also carries its `moves`. Version 2 (iOS 007bfcf):
+ * the profile carries a `label` and only carries `name` when the adult chose to add it, and in a pseudonymous file
+ * every `id`/`profileId` of the profile is [ANONYMOUS_PROFILE_ID]. Version 1 always carried the name and the
+ * profile's real id. Nothing reads these files back.
  */
 internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio: RecordingFiles?) {
     class Contents(
@@ -23,6 +25,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         val recordings: List<Recording>,
         val speeches: List<SpeechRecord>,
         val notes: List<MoodlessNote>,
+        val missionChecks: List<MissionCheck> = emptyList(),
     ) {
         /**
          * The same data with nothing that names the person or ties the file to this phone: no name, the name replaced
@@ -50,6 +53,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
                     )
                 },
                 notes = notes.map { it.copy(profileId = id, text = redactor.redact(it.text)) },
+                missionChecks = missionChecks.map { it.copy(profileId = id) },
             )
         }
     }
@@ -65,7 +69,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
     )
 
     val app = "fonia"
-    val schemaVersion = 2
+    val schemaVersion = 3
     val profile: Profile = contents.profile.copy(sibilantCalibration = null)
     val soundProgress: List<SoundProgress> = contents.soundProgress
     val sessions: List<SessionRecord> = contents.sessions
@@ -93,6 +97,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
     }
     val speeches: List<SpeechRecord> = contents.speeches
     val notes: List<MoodlessNote> = contents.notes
+    val missionChecks: List<MissionCheck> = contents.missionChecks
 
     /**
      * `JSONEncoder` with `[.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]` and `.iso8601` dates, as UTF-8.
@@ -112,6 +117,7 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         put("recordings", JArray(recordings.map { it.exportNode() }))
         put("speeches", JArray(speeches.map { it.exportNode() }))
         put("notes", JArray(notes.map { it.exportNode() }))
+        put("missionChecks", JArray(missionChecks.map { it.exportNode() }))
     }
 
     companion object {
@@ -148,6 +154,19 @@ internal class ExportDocument(contents: Contents, val exportedAt: Instant, audio
         put("sound", JText(sound))
         put("rung", jsonNumber(rung))
         put("blockHistory", JArray(blockHistory.map { it.toNode(DATES) }))
+        put("moves", JArray(moves.map { it.toNode(DATES) }))
+    }
+
+    private fun MissionCheck.exportNode(): JsonNode = jsonObject {
+        put("id", jsonUUID(id))
+        put("profileId", jsonUUID(profileId))
+        put("sessionId", jsonUUID(sessionId))
+        put("sound", JText(sound))
+        put("givenAt", jsonDate(givenAt, DATES))
+        put("localDay", JText(localDay))
+        put("asked", JBool(asked))
+        putIfPresent("answer", answer?.let { JText(it.rawValue) })
+        putIfPresent("answeredAt", answeredAt?.let { jsonDate(it, DATES) })
     }
 
     private fun SessionRecord.exportNode(): JsonNode = jsonObject {
