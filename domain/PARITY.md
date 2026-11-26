@@ -27,6 +27,7 @@ plus `SwiftSemantics.kt` (Swift string semantics and raw-value decoding). The 14
 | `Session.endButton` | Kotlin data classes compare constructor properties only | A body property. It is always "Gata pe azi", so equality is unchanged. |
 | `Codable` on `Exercise`, `Trial`, `Session`, `AttemptsSummary`, `ProgressionState`, `MouthParams`, `TonguePos`… | Nothing serializes them on iOS (inventory §1.3) | Only the JSON content types are `@Serializable`. Their decoding follows `JSONDecoder` defaults: unknown keys ignored, every non-optional key required (`@Required` where the Kotlin constructor keeps Swift's memberwise defaults, as in `WordItem`), unknown raw values rejected, a UTF-8 BOM accepted. |
 | `min(x, y)` on `Double` | `Math.min` treats -0.0 and NaN differently | Written as Swift defines it, `if (y < x) y else x`, for the hold times capped by the phonation norm. |
+| `ProbeLists.bundled()` from `Resources/Drafts/probes.json` | `:core:domain` carries no app resources | `ProbeLists.parse(json)` here; the file is a byte copy in `:legacy:features` `assets/drafts/probes.json`, read by `bundled` in `probe/ProbePlan.kt`, and the test of the bundled lists is in `NewWordsProbeTests` |
 
 ## Tests
 

@@ -5,6 +5,9 @@ același nume, în `tech.fonia.design`), plus cinci fișiere de sprijin: `Geomet
 `CGAffineTransform`, `CGPath` cu marginea strânsă a lui `Path.boundingRect`, colțurile „continue”), `Animation.kt`
 (springurile SwiftUI și `AnimatedVector`), `Painting.kt` (pensule, gradiente, blur), `Theme.kt` (`FoniaTheme`,
 `FoniaText`, mediul SwiftUI ca `CompositionLocal`) și `FoniaAssets.kt` (citirea `images/` și `fonts/` din APK, cu cache).
+Din tura a zecea mai sunt două: `Press.kt` (apăsarea ca pe iOS: coborâre în 50 ms, revenire cu spring în 0,3 s,
+vibrația la apăsare, `.pressable`, `.rowPress`, filtrul de luminozitate) și `Effects.kt` (efectele Pow refăcute în
+Compose din matematica lor: luciu, săritură, ping, `PopIn`, `Spray`, `scrollSettle`, `NumericText`).
 
 Verificat pe emulator (1080 × 2400, 420 dpi) cu galeria de depanare, pagină lângă pagină cu cadrele din
 `fonia-app-rezultate/walkthrough*.mp4`: Acasă (cadrul de la 0:55), „Cum spun S?” (2:45 din `walkthrough-mic`),
@@ -28,7 +31,10 @@ tech.fonia.app/tech.fonia.design.DesignGalleryActivity --es section guri` (`comp
 | `Canvas(rendersAsynchronously: true)` | randare în afara firului principal | desen obișnuit; poza lui Foni se calculează în `withFrameNanos` și doar desenul o citește (fără recompunere) | Compose nu are canvas asincron |
 | Zgomotul din `sin` (privire, clipit, stele, steluțe) | libm Darwin | `kotlin.math.sin` | diferențe de ordinul 1e-11 după înmulțirea cu 43758, invizibile |
 | Reduce Motion | setare dedicată | „Elimină animațiile” (scara animatorului = 0), citită de `FoniaTheme` în `LocalReduceMotion` | Android nu are altă setare |
-| Vibrații | `.impact(.light)` la Foni, `.impact(.medium)` la butonul galben | `HapticFeedbackType.ContextClick` și `VirtualKey` | Taptic Engine nu există; efectul variază după telefon |
+| Vibrații | `.impact(.light)` la Foni, `.impact(.medium)` la butonul galben; la apăsare, după stilul butonului | `HapticFeedbackType.ContextClick` și `VirtualKey`; la apăsare, după stil (moale → `ContextClick`, tic → `SegmentTick`), oprite cu `LocalFoniaHapticsEnabled` | Taptic Engine nu există; efectul variază după telefon |
+| Apăsarea | fiecare `ButtonStyle` își face apăsarea | la fel: `StyledButton` nu mai are scara generică de 0,94 și nici vibrația la clic; sunetul de atingere rămâne | aceeași mișcare pe fiecare stil |
+| Luminozitatea la apăsare | `.brightness` | un strat cu matrice de culoare | Compose nu are `.brightness` |
+| Butoanele plate (Round, Tile, MiniPill, Plus) | ridicate, cu margine (§35) | doar noua temporizare și vibrația; forma rămâne plată | restilizarea lor n-a intrat în tura a zecea |
 | Iconițele | SVG vectorial, „template” | SVG prin AndroidSVG, desenat la mărimea afișată și colorat `SrcIn` cu culoarea textului; stratul duotone își păstrează opacitatea 0,2 | rezultat identic, dar e bitmap la mărimea cerută |
 | Imaginile | catalog compilat, comprimat cu pierderi | PNG/JPEG din `content/`, decodate întregi, cu mipmap pentru micșorare; cache LRU de 180 MiB golit la presiune de memorie | compresia la împachetare ține de `:app` |
 | `RisingPanel` | `ignoresSafeArea(edges: .bottom)` doar dacă atinge marginea | continuă mereu sub bara de navigare, cu înălțimea ei | ecranele îl pun mereu jos |

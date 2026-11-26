@@ -36,6 +36,16 @@ prezentare, cu capturile din `screenshots/` puse lângă cadrele iOS din `fonia-
 | `Session/PromptView.swift` | `session/PromptView.kt` | |
 | `Session/SustainExercise.swift` | `session/SustainExercise.kt` | cu `HeldTime` |
 | `Session/TakeJudge.swift` | `session/TakeJudge.kt` | |
+| `Session/CaptureLog.swift` | `session/CaptureLog.kt` | ce se ține despre captura fiecărei încercări în `detail.capture`: microfonul, rata, pragurile DSP, modelul, versiunea, dinții din față |
+| `Session/FrontTeeth.swift` | `session/FrontTeeth.kt` | „Îi cad dinții din față”, pe copil; `areOut` primește și o funcție de citire, pentru testele JVM |
+| `Session/Playback.swift` | `session/Playback.kt` | ce redă finalul blocului amestecat, rândurile lui și cele trei încercări alese |
+| `Session/PlaybackBeat.swift` | `session/PlaybackBeat.kt` | ecranul dintre încercări; cu TalkBack așteaptă o atingere, rândul e o regiune live politicoasă |
+| `Home/DailyRounds.swift` | `home/DailyRounds.kt` | a doua rundă la 4–5 ani, din ședințele încheiate în ziua locală |
+| `Grownups/ChildDayRows.swift` | `grownups/SettingsPage.kt` (`Practice`) | cele două comutatoare ale copilului, în „Exersarea”, sub fișele pentru adult |
+| `App/AdultGate.swift`, `Grownups/AdultGateView.swift` | `app/AdultGate.kt`, `app/AdultGateScreen.kt` | înmulțirea cu patru răspunsuri, pauza după două greșeli |
+| `Grownups/SettingsPage.swift` | `grownups/SettingsPage.kt`, `ReminderSettings.kt` | setările pe grupuri; rândurile doar de Android (pachetul de vorbire, jurnalul, ZIPA, calibrarea) stau în grupul lor |
+| `Progress/TallyScreen.swift` | `progress/TallyScreen.kt` | zilele și stelele: comutatorul, calendarul lunii, pragurile, peretele de stele; pop, spray și luciul din Pow desenate în Compose |
+| `Probe/ProbePlan.swift`, `ProbeStore.swift`, `ProbeScreens.swift` | `probe/ProbePlan.kt`, `probe/ProbeStore.kt`, `probe/ProbeScreens.kt` | „Cuvinte noi”, ciornă: listele în `assets/drafts/probes.json` (copie octet cu octet), proba ca `CustomRun.Kind.Probe` |
 | `Session/Verdict.swift` | `session/Verdict.kt` | `TakeVerdict`, `Praise`, `VerdictWriter`, `Rating.attemptOutcome`, `Rating.effect` |
 | `Guide/SoundGuide.swift` | `guide/SoundGuide.kt` | |
 | `Guide/MouthCoach.swift` | `guide/MouthCoach.kt` | `MouthCoach` și `MouthDiagram` |
@@ -139,6 +149,13 @@ Pe iOS sunt argumente de linie de comandă; aici sunt extras în intent, citite 
 | Camera | ARKit sau Vision | gura scriptată pe orice telefon, până intră `:facecamera` (vezi mai sus); `tongueOut` nu există în modelele Android, deci pasul `en-th` trece doar cu „Am făcut” | |
 | S/Ș pe căști | doar banda măsurată din clip | și dispozitivul numit de `captureInfo` | Android îl știe dinainte |
 | Reduce Motion | setarea de accesibilitate | „Elimină animațiile” (scara animatorului 0), plus `foniaReduceMotion` | Android nu are altă setare |
+| Microfonul din jurnalul de captare | primul port de intrare din ruta `AVAudioSession` | `AudioDeviceInfo.type` al microfonului ales (`MicrophoneSource.microphone`); `dsp` e eticheta pragurilor folosite de fapt | Android nu are rute; un microfon Bluetooth îngust apare ca `v1-noSibilants`, ca în jurnalul pilot |
+| A doua rundă pe Acasă | propoziția și butonul cardului de azi („Încă o rundă mică?”, „Încă o rundă”) | doar rândul de sub titlul cardului („Încă o rundă mică?”, „Ai exersat de două ori azi. Bravo!”) | cardul de pe Android n-are propoziție și buton propriu; lecția pornește din butonul galben din bară |
+| Foni la o încercare bună | un salt (`jump(14)`) | săritura dublă din `foniReaction` | rămâne cea de pe Android |
+| Luciul pe „Gata” la final | „Gata” e butonul principal | „Gata” e butonul alb secundar, deci luciul abia se vede | butonul era așa înainte de tura a zecea |
+| Fișierul probelor „Cuvinte noi” | `Application Support/Fonia/Probes/<profil>.json`, exclus din backup | `noBackupFilesDir/Fonia/Probes/<profil>.json` | Android nu are `Application Support`; dosarul fără backup ține locul excluderii |
+| Vocea la probă | modelul și rândul de început din clip, altfel vocea telefonului | doar din clip; fără clip, modelul și rândul de început tac | Android n-are voce a telefonului în lecție; clipurile se generează după aprobarea listelor |
+| Ciornele în release | doar `draftsApproved` | și cu `foniaDrafts` dat la pornire, din adb (`LaunchArguments.drafts`) | regula de dinainte pentru toate ciornele Android (a500252); din lansator rămân ascunse |
 | Butoanele din „Cum spun?” | `Label { Text(…) } icon: { … }` în a treia parte a rândului | textul stă pe un rând și se micșorează până la 0,7 | pe 411 dp Compose rupea „Ascultă” și „Încearcă” în mijlocul cuvântului |
 
 ## Testele

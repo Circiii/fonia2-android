@@ -243,6 +243,67 @@ Rămas pentru proprietar, toate rezolvate în a doua parte a turei:
 - Ordinea ușilor adultului e acum cea de pe iOS: Sunete, Engleză, Vorbit în public.
 - `effortLine` și `ShrinkToFit` au ieșit.
 
+### A zecea tură: iOS §32–§40 (26 noiembrie 2026)
+
+Portul din `docs/port-android.md` §32–§40 al fonia-app (iOS `main` la `98c737d`). Conținutul e la `1a58864` (nota pentru S cu dosul palmei, poze fără compresie).
+
+- **§32 Lecția.** Apăsarea pe fețele ridicate e cea de pe iOS: coboară în 50 ms și revine cu arc (0,3 s, bounce 0,42); fețele albe au conturul de 1,5 dp în `chipEdge` la 45 %. Cercurile lui Foni stau în 180 dp, la 0,62/0,76/0,90. Bila de pe banda S/Ș e un punct plin cu inel alb, fără halou, și apare prin mărime. „Te aud” are chenarul de 2 dp și două inele verzi care pleacă din disc când se deschide microfonul. La o încercare bună, peste „Mai departe” trece luciul. Cartonașul următor intră după 60 ms (340 ms, deplasare 28), cel vechi iese în 160 ms, iar cardul de rezultat pornește după 40 ms, deci nu mai apare cerul gol. „Încă una” pornește deja o lecție curată: acoperirea lecției e `key(ticket.id)`. Replica de la S și Ș nu s-a schimbat nici pe iOS.
+- **§33 Finalul în pași** (`Recap`): Foni urcă și pornesc scânteile, la +520 ms steaua intră cu pop și spray, cu `CONFIRM`, la +480 ms contorul crește cu 1, cu `CLOCK_TICK`, iar la momentele rotunde vine a doua explozie, la +420 ms trece luciul pe buton. Steaua apare doar când au fost încercări, iar ședința curentă se numără după id. Rândurile sunt ale lui `RecapRules.starLine`: „Prima ta stea!”, „Ai strâns N stele!” la 5, 10, 25, 50, 75, 100 și din 50 în 50, altfel „N stele”. Fără animații, totul e acolo dintr-odată. Teste: `RecapRulesTests`.
+- **§34 Poarta pentru adulți** (`AdultGate`, `AdultGateScreen`): „Cât face a × b?” cu a și b între 6 și 9 și patru răspunsuri în 2×2, variantele greșite din aceeași listă ca pe iOS. O greșeală scutură răspunsurile și aduce altă întrebare; după două la rând vine pauza de 5 s, „O clipă de pauză… N”. Rămâne deschisă 180 s în fundal. Pasul cu ținutul apăsat a ieșit. `foniaGate 56` fixează 7 × 8 pentru testele UI. Teste: `AdultGateTests`.
+- **§34 Setările** (`SettingsPage.kt`) au grupurile, culorile și ordinea de pe iOS: „Cine exersează”, la copil cele patru plăci pentru logoped, activitatea, exersarea, aplicația, „Studiu și funcții noi” (pliat, cu „Toate sunt oprite” sau „N sunt pornite”), „Datele tale”, ștergerea cu contur roșu și subsolul cu versiunea și „Totul rămâne pe telefon.”. Grupurile intră pe rând, la 40 ms unul după altul, ca în codul iOS. Iconița unui comutator pulsează o dată când pornește. „Alte setări” a ieșit. `Palette` are acum `danger` și `dangerSoft`, ca iOS.
+- **§34 Zile și stele** (`TallyScreen`, `AppRoute.Tally`): pastilele de pe Acasă și plăcile Zile și Stele din Progres o deschid. Zilele au cel mai lung șir (`PathModel.longestRun`), luna asta, calendarul lunii cu zilele exersate care intră cu pop și „O zi liberă nu șterge nimic. Zilele doar se adună.”. Nu există un șir curent care se poate pierde. Stelele au steaua care face spray la atingere, „Încă N până la X”, pragurile de la final și peretele de stele, până la 100 și apoi „și încă N”. Teste: `TallyTests`.
+- **§35 Apăsarea, ca piese comune** în `:legacy:design` (`Press.kt`, `Effects.kt`): fețele ridicate, `Pressable` (0,96, cu 3 % mai întunecat), butoanele text discrete (0,55 și 0,96), `RowPressStyle` pentru rânduri, bifa care apare cu pop pe plăcile de alegere, iconița tabului ales care urcă la 110 %, ușile de pe Acasă care se estompează la margini și cifrele care se rotesc. Rotița de setări se rotește cu 120° la fiecare apăsare. Fiecare are hapticul lui: click ușor la apăsare, tick la alegere.
+- **§36 Doza fără plafon.** `AttemptsSummary.weeklyTarget` și `attemptsThisWeek` au ieșit. Ședința crește pe pașii vârstei și rămâne la pasul atins, oricâte încercări au fost în săptămână (`SessionBuilder.attemptTarget`). Limita de 10 minute rămâne. Teste: `SessionBuilderTests`, `ListeningVarietyTests`.
+- **§36 Exportul are `schemaVersion` 3**, cu `missionChecks` (în ordinea `givenAt`, `profileId` pseudonim) și `moves` pe fiecare rând din `soundProgress`. Migrarea `v4-sound-moves` adaugă coloana. Se scrie prin `SoundProgress.move(to, at, by)` din blocurile sesiunii, sesiunea adaptivă, „Am ascultat, e bine” și `WeakJudgeGate`; nu scrie nimic dacă lecția nu se schimbă. Teste în `:core:data` și `WeakJudgeGateTests`.
+- **§36 Raportul PDF:** încercări pe minut sub rezumat, „Telefonul n-a auzit clar X din Y încercări.” (de la 6 ascultate, cu sfatul de captură peste jumătate), „Ultima schimbare: …” la fiecare sunet și, doar la copil, rândul că telefonul nu coboară niciodată un copil. Teste: `PracticeReportTests`.
+- **§37 Părerea copilului în raport.** De la 3 răspunsuri la „Cum ți s-a părut?”: „La N încercări, copilul a spus singur cum i s-a părut: …”, cu acordul cu telefonul când acesta a răspuns la cel puțin 3. La adult, „cel care a exersat”. În lecție nu s-a schimbat nimic.
+- **§37 Jurnalul de captare.** Fiecare încercare spusă la microfon are în `detail` cheia `capture`: `mic`, `rateHz`, `dsp`, `model` (când părerea ZIPA a intrat în verdict), `app`. Pe Android:
+  - `mic` vine din `AudioDeviceInfo.type` al microfonului ales (`MicrophoneSource.microphone`): `phone`, `wired`, `bluetooth`, `usb`, `other`; `fixture` pentru clipurile de test, `none` când nu s-a pornit nimic.
+  - `dsp` e eticheta pragurilor folosite de fapt (`AudioHub.analysisThresholds`), deci și un microfon Bluetooth îngust apare ca `v1-noSibilants`, ca în jurnalul pilot.
+  - `model` e `zipa@<versiune>`, pus pe `SoundJudge.Judged` (Android nu are `TakeVerdict` din iOS).
+  - Android nu ține măsurătorile DSP ale clipului în `detail`, doar captura.
+  Rândul „Încercări pe fiecare microfon: …” apare în raport când un sunet a venit prin mai multe microfoane. Teste: `CaptureLogTests`, `PracticeReportTests.ownAnswers`, `microphones`, `PortOnlyTests.microphones`.
+- **§38 „Îi cad dinții din față”** (copii) și **„Încă o rundă mai târziu”** (copii de 4–5 ani) sunt în Setări › Exersarea, sub fișele pentru adult, ca pe iOS. Cheile `fonia.teethOut.<id>` și `fonia.rounds.<id>`, oprite implicit, se șterg cu profilul; „Șterge tot” golește oricum toate preferințele.
+  - Cu dinții notați, încercarea are `"teethOut": true` în captură, iar raportul spune la S, Z, Ț, Ș, J, CE și GE câte încercări au fost și în ce zile. Lecția nu se schimbă.
+  - Cu runda pornită, cardul de azi de pe Acasă scrie sub titlu „Încă o rundă mică?” după 2 ore de la prima lecție încheiată și „Ai exersat de două ori azi. Bravo!” după a doua. Se schimbă singur când trec cele 2 ore.
+  - „Săptămâna pe scurt”: „2 zile cu exerciții, 2 ședințe, 35 de minute.”; fără ședințe încheiate, ca înainte.
+  Teste: `DailyRoundsTests`, `CaptureLogTests.teeth`, `teethSwitch`, `PracticeReportTests.teethOut`, `WeekReportTests.counts`. Comutatoarele nu se pot citi din preferințe în testele JVM (`FoniaPreferences` cere un `Context`), așa că testele trec cheia printr-o funcție.
+- **§39 Verdictul amânat în blocul amestecat.** În lecția pe un sunet, toate încercările blocului amestecat sunt `silent`; silabele și sunetele ținute rămân `teach`, iar engleza și dicția păstrează alternanța. `FeedbackSchedule.automatizare` nu mai ia blocul amestecat. `ios-sessions.txt` e cel regenerat pe iOS, deci `SessionVectors` trece pe același fișier. La finalul blocului, înaintea itemului ușor, lecția se oprește pe ecranul dintre încercări (`PlaybackBeat`): „Gata! Ascultă trei care au sunat bine.” și cele trei încercări bune (prima, cea din mijloc, ultima), „Gata! Bravo că ai mers până la capăt.” sub trei, iar la adult „7 din 11 au sunat bine. Ascultă trei dintre ele.” sau nota obișnuită. Trece singur la 0,8 s după redare (2,4 s fără), la o atingere sau la „Mai departe”; cu TalkBack așteaptă atingerea. Clipurile redate stau doar în memorie. Fiecare încercare are în `detail` și `"feedback"` (`teach`, `quick`, `selfJudge`, `silent` sau `later`). Teste: `SessionBuilderTests`, `SessionRunTests`, `AdaptivePilotTests`, `SessionPilotTests`.
+- **§40 „Cuvinte noi”, ca ciornă.** `assets/drafts/probes.json` e copia octet cu octet a listelor de pe iOS (25 de cuvinte și 10 propoziții pe sunet, `review.status` = `draft`). `AppModel` ține listele doar cu ciornele arătate sau după ce un logoped le trece pe `approved`, deci în release, pornit din lansator, nu se schimbă nimic. Teste: `NewWordsProbeRunTests.due`, `hiddenWhereDraftsAreHidden`.
+  - **Când vine** (`ProbeRules.isDue`, în `:core:domain`): înaintea unei lecții pe sunet, de la `wordsInitial`, nu la 4–5 ani, după cel puțin 3 ședințe pe sunet încheiate de la ultima probă. Sub 8 itemi nu vine. De la 8 ani itemul se citește, fără model.
+  - **Cum merge:** un rând de început, apoi itemii, toți `silent`, într-un singur bloc `targetB`. Nu se scrie nicio ședință, încercare sau înregistrare, nimic în jurnalul pilot, nicio schimbare de treaptă; misiunea și fișa pentru adult vin la lecția de după.
+  - **Final:** copilul vede „Mulțumesc!”, cu „Pentru adult” în spatele porții și „Mai departe”; adultul care exersează ajunge direct la notare. Notarea are „Sună bine”, „Mai lucrăm”, „Sari peste”, a doua atingere scoate semnul, „Nespus.” la itemul nespus, iar „Gata” salvează și pornește lecția. Sugestiile vin doar din semnele adultului, ca pe iOS.
+  - **Stocare:** `noBackupFilesDir/Fonia/Probes/<profil>.json`, datele în milisecunde, ultimele 120 de probe. Se șterge cu profilul și cu „Șterge tot”.
+  - **Export și raport:** `schemaVersion` 4 cu `probes` (`ProbeSummary`, fără cuvinte; `goodShare` lipsește când nu există, ca în `Encodable` de pe iOS). În PDF, rândurile probei vin la fiecare sunet după „Telefonul n-a auzit clar…”, în `belowAnswers`, ca pe iOS.
+  Teste: `ProbeTests` (7), cele 15 din `NewWordsProbeTests.kt` (`NewWordsProbeStoreTests`, `NewWordsProbeRunTests` și celelalte), `FormatParityTests`, `DeletionAndExportTests`.
+
+Diferențe față de iOS, cu motivul (și în `PARITY.md`):
+
+- **Foni la o încercare bună** face săritura dublă de pe Android, nu saltul unic din Pow.
+- **Luciul pe „Gata”** abia se vede: pe Android „Gata” e butonul alb secundar, cum era și înainte.
+- **Butoanele plate** (rotunde, plăcile mici, pastilele, „+”) au primit doar timpul apăsării și hapticul, nu și forma de pe iOS. Spray-ul n-are tiparul haptic propriu, iar sub butonul de start nu mai e cercul alb.
+- **A doua rundă pe Acasă** e doar rândul de sub titlul cardului. Cardul Android n-are propoziție și buton propriu ca pe iOS (lecția pornește din butonul galben din bară), deci „Ai exersat azi. Bravo!” și eticheta „Încă o rundă” n-au unde să apară.
+- **Setările doar de Android** (pachetul de vorbire, jurnalul, ZIPA, calibrarea) stau în grupul lor. Unde iOS a schimbat textele într-un commit de dinainte de §32 (910e0e6), Android păstrează rândurile lui: „Jurnalul de exersare”, „Reglează S și Ș…”, „Calibrare pe vocea ta”.
+- **Ecranul dintre încercări** (§39) intră cu 0,3 s de estompare, doar pe Android. Anunțul pentru cititorul de ecran (`SessionVoice.announce` pe iOS) e aici o regiune live politicoasă.
+- **Proba „Cuvinte noi” fără clipuri tace:** Android n-are voce a telefonului în lecție, deci până la înregistrare modelul și rândul de început nu se aud. Copilul trece mai departe imediat, adultul vede rândul până atinge.
+- **Ciornele în release** se pot arăta și cu `foniaDrafts` dat la pornire din adb, regula de dinainte pentru toate ciornele Android (a500252). Din lansator, proba rămâne ascunsă, ca pe iOS.
+- **Proba și verificarea rapidă:** pe Android, blocul tăcut se oprește fără notă doar la probă, pentru că verificarea rapidă n-a avut niciodată această oprire. Modul umbră din debug și punctele vocii personale văd încercările probei, la fel ca pe ale verificării rapide.
+
+Ce nu s-a portat:
+
+- Din §34: scoaterea modului adaptiv din setări, alerta la ștergerea eșuată a unui profil și rândul cu doza. Vin din commituri iOS de dinainte de §32 (aada150, 910e0e6, eace9ab), care nu sunt în tura asta.
+- Din §39: `docs/voices` și uneltele de voci (sunt doar pe iOS) și limita pe tip din builder, care vine dintr-un commit mai vechi.
+- Licența Pow (§32): Android nu folosește Pow.
+- Din §40: `docs/voci-pentru-coleg.md` și `tools/voices/*`, care sunt doar pe iOS.
+
+De făcut, separat:
+
+- Commiturile iOS aada150, 910e0e6, eace9ab, de dinainte de §32.
+- `AdultCards.REPORT_DISCLAIMER`, primul rând din `PracticeReport.HOW_TO_READ` („E o părere, nu o evaluare.”) și `FOOTER` au încă „evaluare”; iOS le-a schimbat.
+- Vocile: în `voicelist.py`, cele două fraze ale copilului din §39; pentru §40, grupul B („Acum spui niște cuvinte noi. Eu doar ascult.”, „Acum spui niște propoziții noi. Eu doar ascult.”), grupul C („Mulțumesc!”) și clipurile pentru cele 225 de cuvinte și 90 de propoziții, după aprobarea listelor.
+- `SettingsIcons` (chart, note, share, trash) trebuie mutate în `FoniaIcon`.
+- Testele instrumentate (`androidTest`) s-au compilat, dar nu au rulat pe un telefon.
+
 ## Deciziile și de ce
 
 - **Verificarea adultului vs. „fără ușa adultului” (a2dd627).** Cererea de sincronizare a cerut explicit verificarea, ca pe iOS. Ușa „Sunt adult” nu a revenit. Verificarea apare doar când se intră într-o zonă de adult. Testele instrumentate vechi care caută „Sunt adult” erau deja nepotrivite înainte de această muncă. Se pot repara cu `foniaGate`.

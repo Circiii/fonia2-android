@@ -4,7 +4,7 @@ Portul din `tech.fonia.store` urmează `Packages/FoniaKit/Sources/FoniaStore` (G
 
 ## Ce e identic și cum s-a verificat
 
-- **Schema și migrările.** Cele 6 migrări au aceleași nume și aceeași ordine și sunt notate în tabelul `grdb_migrations` al GRDB. Fiecare `CREATE TABLE`, `CREATE INDEX` și `ALTER TABLE` e textul pe care îl generează GRDB 7. Asta s-a verificat în sursele `SQLColumnGenerator`, `SQLTableGenerator` și `SQLIndexGenerator`: `.jsonText` e `TEXT`, iar cheia primară se scrie `PRIMARY KEY NOT NULL`. Testul `schemaShape` îngheață coloanele, tipurile, valorile implicite, cheile străine și indexurile.
+- **Schema și migrările.** Cele 8 migrări au aceleași nume și aceeași ordine și sunt notate în tabelul `grdb_migrations` al GRDB. Fiecare `CREATE TABLE`, `CREATE INDEX` și `ALTER TABLE` e textul pe care îl generează GRDB 7. Asta s-a verificat în sursele `SQLColumnGenerator`, `SQLTableGenerator` și `SQLIndexGenerator`: `.jsonText` e `TEXT`, iar cheia primară se scrie `PRIMARY KEY NOT NULL`. Testul `schemaShape` îngheață coloanele, tipurile, valorile implicite, cheile străine și indexurile.
 - **Valorile pe disc, ca la GRDB.** UUID-ul e BLOB de 16 octeți. Datele sunt text `yyyy-MM-dd HH:mm:ss.SSS` în UTC, tăiat la milisecundă. `Bool` e 0/1, iar enumurile își păstrează valoarea `rawValue`. Coloanele JSON au cheile sortate, slash-ul scris `\/` și datele în milisecunde din 1970. La citire, datele se parsează ca în `SQLiteDateParser`. Le acoperă testele `columnsFollowGRDB` și `readsRowsWrittenOnIOS`.
 - **Exportul pentru logoped**, octet cu octet, după swift-foundation `release/6.2` (iOS 26):
   - indentare de două spații și `" : "` între cheie și valoare;
