@@ -119,6 +119,10 @@ class SessionRun(
     var blockNote: String? by mutableStateOf(null)
         private set
 
+    /** The end of a lesson's mixed block, while it plays: the next trial waits for [endPlayback]. */
+    var playback: Playback? by mutableStateOf(null)
+        private set
+
     /** The hero's chapter for this lesson, told to a child as the lesson opens. Null when there is none. */
     val chapter: String?
 
@@ -145,6 +149,10 @@ class SessionRun(
 
     /** Takes of this block an adult rated. Only then can the block move a child down. */
     private var blockRatedByAdult = 0
+
+    /** The good takes of a block that plays them back at its end. In memory only: nothing here is ever written. */
+    private val blockGoodTakes = mutableListOf<CapturedClip>()
+
     private var didStoreSession = false
 
     /**
@@ -360,6 +368,10 @@ class SessionRun(
         if (ticket.custom != null && counts) {
             soundOf(exercise)?.let { sound -> takes[index] = tech.fonia.features.check.CheckTake(sound, decided, pendingCertainty) }
         }
+        val block = current?.block
+        if (counts && decided == Attempt.Outcome.Good && take != null && block != null && playsBack(block)) {
+            blockGoodTakes += take
+        }
         pendingCertainty = null
         val measures = pendingMeasures
         pendingMeasures = null
@@ -372,6 +384,14 @@ class SessionRun(
             return
         }
         closeBlockIfNeeded()
+        // A block that plays good takes back holds the next trial until they have played.
+        if (playback == null) moveToNext()
+    }
+
+    /** The takes have played, or the learner tapped on: the lesson goes on. */
+    fun endPlayback() {
+        if (playback == null || isClosed) return
+        playback = null
         moveToNext()
     }
 
@@ -421,6 +441,7 @@ class SessionRun(
         val detail = buildMap<String, JSONValue> {
             measures?.let { putAll(it) }
             selfRating?.let { put("selfRating", JSONValue.String(it.rawValue)) }
+            current?.let { put("feedback", JSONValue.String(feedbackKey(it, playsBack(it.block)))) } // lint-copy: ignore
         }.ifEmpty { null }
         // `Task.detached(priority: .utility)`: the take is written off the main thread.
         later {
@@ -553,10 +574,26 @@ class SessionRun(
 
     /** Trials with no response in the moment end with a plain count, so the learner isn't left guessing. */
     private fun noteSilentBlock(block: SessionBlock) {
+        val goodTakes = blockGoodTakes.toList()
+        blockGoodTakes.clear()
         val silent = session.trials.filter { it.block == block && it.feedback == FeedbackLevel.Silent && it.countsAsAttempt }
-        if (silent.size < 3 || blockTotal < 3 || block.kind == SessionBlock.Kind.Retest) return
+        if (silent.size < 3 || block.kind == SessionBlock.Kind.Retest) return
+        if (playsBack(block)) {
+            val end = Playback.end(blockGood, blockTotal, goodTakes, profile.isChild)
+            playback = end.playback
+            blockNote = end.note
+            return
+        }
+        if (blockTotal < 3) return
         blockNote = blockNote(blockGood, blockTotal, profile.isChild)
     }
+
+    /**
+     * The mixed block of a lesson on a sound keeps its verdicts for its end, where good takes play back
+     * (`SessionBuilder.mixedBlock`, `delaysVerdicts`). English and diction keep theirs in the moment.
+     */
+    private fun playsBack(block: SessionBlock): Boolean =
+        block.kind == SessionBlock.Kind.Mixed && !isCheck && ticket.focus is SessionFocus.Sound
 
     private val rungOfSession: Rung
         get() = (ticket.focus as? SessionFocus.Sound)?.rung ?: Rung.Isolated
@@ -618,6 +655,7 @@ class SessionRun(
 
     suspend fun leaveEarly() {
         isClosed = true
+        playback = null
         app.judge?.trim()
         if (phase != Phase.Finished) adaptive?.let { closeAdaptiveSession(it, finished = false) }
         if (phase != Phase.Finished && !isCheck) app.logSessionEnd(this, finished = false)
@@ -638,6 +676,13 @@ class SessionRun(
          */
         fun phoneAloneWouldDrop(isChild: Boolean, ratedByAdult: Int, step: ProgressionStep): Boolean =
             isChild && ratedByAdult == 0 && step is ProgressionStep.Drop
+
+        /**
+         * How the take was answered, for the export: the trial's level, or "later" for a take of a block whose good
+         * takes play back at its end.
+         */
+        fun feedbackKey(trial: Trial, playsBack: Boolean): String =
+            if (playsBack && trial.feedback == FeedbackLevel.Silent) "later" else trial.feedback.rawValue
 
         /** A child is told a part of the lesson is done, never how many came out right. An adult gets the count. */
         fun blockNote(good: Int, total: Int, isChild: Boolean): String = when {

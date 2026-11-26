@@ -162,10 +162,10 @@ object FeedbackSchedule {
     }
 
     /**
-     * The trials of a session on a rung at automatizare: each spoken take of practice answers at once (`Quick`) or
-     * says nothing about how it sounded (`Silent`), as `automatizareVerdicts` has it. A take still being set up keeps
-     * its live visual where the verdict shows. The opening, listening, the closing easy item and the mission keep
-     * their levels.
+     * The trials of a session on a rung at automatizare: each spoken take of the target blocks answers at once
+     * (`Quick`) or says nothing about how it sounded (`Silent`), as `automatizareVerdicts` has it. A take still being
+     * set up keeps its live visual where the verdict shows. The opening, listening, the mixed block (which keeps its
+     * verdicts for its end), the closing easy item and the mission keep their levels.
      */
     fun automatizare(trials: List<Trial>, seed: ULong): List<Trial> {
         val takes = trials.indices.filter { isRhythmTake(trials[it]) }
@@ -186,9 +186,9 @@ object FeedbackSchedule {
     private fun isRhythmTake(trial: Trial): Boolean {
         if (!trial.countsAsAttempt || !trial.exercise.isProduction) return false
         return when (trial.block.kind) {
-            SessionBlock.Kind.TargetA, SessionBlock.Kind.TargetB, SessionBlock.Kind.Mixed -> true
-            SessionBlock.Kind.Opening, SessionBlock.Kind.Listening, SessionBlock.Kind.Drill, SessionBlock.Kind.Retest,
-            SessionBlock.Kind.Closing, SessionBlock.Kind.Mission,
+            SessionBlock.Kind.TargetA, SessionBlock.Kind.TargetB -> true
+            SessionBlock.Kind.Opening, SessionBlock.Kind.Listening, SessionBlock.Kind.Mixed, SessionBlock.Kind.Drill,
+            SessionBlock.Kind.Retest, SessionBlock.Kind.Closing, SessionBlock.Kind.Mission,
             -> false
         }
     }

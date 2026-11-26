@@ -11,6 +11,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import tech.fonia.audio.CapturedClip
 import tech.fonia.design.Rating
 import tech.fonia.domain.AttemptsSummary
 import tech.fonia.domain.ContentSource
@@ -34,6 +35,7 @@ import tech.fonia.features.app.progressionState
 import tech.fonia.store.Attempt
 import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
+import tech.fonia.store.JSONValue
 import tech.fonia.store.Profile
 import tech.fonia.store.SessionRecord
 import tech.fonia.store.SoundProgress
@@ -135,6 +137,8 @@ class SessionRunTests {
         var seen = 0
         var retried = false
         while (run.phase == SessionRun.Phase.Trial && seen < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             seen += 1
             if (trial.countsAsAttempt) {
@@ -170,14 +174,21 @@ class SessionRunTests {
         assertTrue(run.isAutomatizare)
         run.start()
         var played = 0
+        var targetPlayed = 0
         var hidden = 0
         var seen = 0
         while (run.phase == SessionRun.Phase.Trial && seen < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             seen += 1
             if (trial.countsAsAttempt) {
                 played += 1
-                if (trial.feedback == FeedbackLevel.Silent) hidden += 1
+                // The mixed block keeps all its verdicts for its end; the target blocks answer half their takes.
+                if (trial.block.kind == SessionBlock.Kind.TargetA || trial.block.kind == SessionBlock.Kind.TargetB) {
+                    targetPlayed += 1
+                    if (trial.feedback == FeedbackLevel.Silent) hidden += 1
+                }
                 // What `SpeakExercise` does with a hidden take: the phone's outcome, no adult, no retry.
                 run.finishAttempt(trial.exercise, machine = Attempt.Outcome.Good, adult = null, take = null)
             } else {
@@ -186,7 +197,7 @@ class SessionRunTests {
         }
         assertEquals(SessionRun.Phase.Finished, run.phase)
         assertTrue(hidden > 0)
-        assertTrue(hidden * 2 <= played + 1)
+        assertTrue(hidden * 2 <= targetPlayed + 1)
         assertEquals(played, run.attempts)
         // So the good block still counts towards moving on; past sentences an adult has the last word.
         assertEquals(Rung.Sentences.index, savedRung(app, profile, run))
@@ -254,6 +265,73 @@ class SessionRunTests {
             assertEquals(rung in listOf(Rung.Sentences, Rung.Retell, Rung.Everyday), makeRun(app, child(), rung).isAutomatizare)
         }
         assertFalse(makeRun(app, child(), Rung.Sentences, focus = SessionFocus.Diction(tech.fonia.domain.DictionAreaID.Pitch)).isAutomatizare)
+    }
+
+    /** the mixed block keeps its verdicts for its end, where three good takes play back from memory */
+    @Test
+    fun mixedBlockPlaysBackGoodTakes() = runBlocking {
+        val app = makeApp()
+        val profile = child()
+        app.repository.saveProfile(profile)
+        val run = makeRun(app, profile, Rung.Pairs)
+        run.start()
+        val clip = CapturedClip(FloatArray(1600), 16_000.0)
+        var mixedTakes = 0
+        var seen = 0
+        while (run.phase == SessionRun.Phase.Trial && run.playback == null && seen < 500) {
+            val trial = run.current ?: break
+            seen += 1
+            if (trial.countsAsAttempt) {
+                if (trial.block.kind == SessionBlock.Kind.Mixed) mixedTakes += 1
+                run.finishAttempt(trial.exercise, machine = Attempt.Outcome.Good, adult = null, take = clip)
+            } else {
+                run.advance()
+            }
+        }
+        val playback = assertNotNullAndGet(run.playback)
+        assertEquals(11, mixedTakes)
+        assertEquals(SessionBlock.Kind.Mixed, run.current?.block?.kind)
+        assertEquals(Playback.CHILD_LISTEN, playback.line)
+        assertEquals(3, playback.takes.size)
+        assertNull(run.blockNote)
+        // Nothing moves on while the takes play.
+        val held = run.index
+        run.current?.let { run.finishAttempt(it.exercise, machine = Attempt.Outcome.Good, adult = null, take = clip) }
+        assertEquals(held, run.index)
+        assertTrue(run.attempts > 0)
+        run.endPlayback()
+        assertNull(run.playback)
+        assertEquals(SessionBlock.Kind.Closing, run.current?.block?.kind)
+        delay(50)
+        run.awaitSaves()
+        val stored = app.repository.attempts(run.sessionID)
+        // The export tells a verdict kept for later from one said at once.
+        assertEquals(mixedTakes, stored.count { it.detail?.get("feedback") == JSONValue.String("later") }) // lint-copy: ignore
+        assertTrue(stored.any { it.detail?.get("feedback") == JSONValue.String("teach") || it.detail?.get("feedback") == JSONValue.String("quick") }) // lint-copy: ignore
+        // A child's takes stay in memory: nothing was written to play them back.
+        assertTrue(app.repository.recordings(profile.id).isEmpty())
+    }
+
+    /** a child hears praise and no count at the end of the mixed block; an adult gets the count */
+    @Test
+    fun playbackLines() {
+        assertEquals(emptyList<Int>(), Playback.spread(2))
+        assertEquals(listOf(0, 1, 2), Playback.spread(3))
+        assertEquals(listOf(0, 1, 3), Playback.spread(4))
+        assertEquals(listOf(0, 5, 10), Playback.spread(11))
+        val child = Playback.lines(good = 7, total = 11, goodTakes = 7, isChild = true)
+        assertEquals(Playback.CHILD_LISTEN, child.shown)
+        assertNull(child.note)
+        val fewer = Playback.lines(good = 2, total = 11, goodTakes = 2, isChild = true)
+        assertEquals(Playback.CHILD_DONE, fewer.shown)
+        for (line in listOf(Playback.CHILD_LISTEN, Playback.CHILD_DONE)) {
+            assertFalse(line, line.any { it.isDigit() })
+        }
+        assertEquals("7 din 11 au sunat bine. Ascultă trei dintre ele.", Playback.lines(good = 7, total = 11, goodTakes = 7, isChild = false).shown)
+        val adultFewer = Playback.lines(good = 2, total = 11, goodTakes = 2, isChild = false)
+        assertNull(adultFewer.shown)
+        assertEquals("2 din 11 au sunat bine.", adultFewer.note)
+        assertNull(Playback.lines(good = 0, total = 2, goodTakes = 0, isChild = false).note)
     }
 
     /** a whole good session moves one rung, not one per block */
@@ -537,6 +615,8 @@ class SessionRunTests {
         var sawMission = false
         var seen = 0
         while (run.phase == SessionRun.Phase.Trial && seen < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             seen += 1
             if (trial.exercise is Exercise.Mission) sawMission = true
@@ -580,6 +660,8 @@ class SessionRunTests {
     private fun walk(run: SessionRun, retryEveryTarget: Boolean = false): List<tech.fonia.domain.Trial> {
         val shown = mutableListOf<tech.fonia.domain.Trial>()
         while (run.phase == SessionRun.Phase.Trial && shown.size < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             shown += trial
             if (trial.countsAsAttempt) {

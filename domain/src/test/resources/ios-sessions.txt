@@ -243,15 +243,15 @@ targetB 0 teach - repeat usu | syllable|-
 targetB 0 teach - repeat su | syllable|-
 targetB 0 teach - repeat isi | syllable|-
 targetB 0 silent - repeat so | syllable|-
-mixed 0 quick slow name suc | -
+mixed 0 silent slow name suc | -
 mixed 0 silent slow name salată | -
 mixed 0 teach loud repeat es | syllable|-
 mixed 0 silent neutral name suc | -
-mixed 0 quick neutral name supă | -
+mixed 0 silent neutral name supă | -
 mixed 0 teach loud repeat sa | syllable|-
-mixed 0 quick loud name salată | -
+mixed 0 silent loud name salată | -
 mixed 0 silent loud name sanie | -
-mixed 0 quick neutral name suc | -
+mixed 0 silent neutral name suc | -
 mixed 0 teach neutral repeat se | syllable|-
 mixed 0 teach loud repeat si | syllable|-
 closing 0 teach - repeat su | syllable|-
@@ -326,7 +326,7 @@ mixed 0 teach fast repeat us | syllable|-
 mixed 0 silent slow name suc | -
 mixed 0 teach neutral repeat su | syllable|-
 mixed 0 teach exclamation repeat si | syllable|-
-mixed 0 quick loud name salată | -
+mixed 0 silent loud name salată | -
 mixed 0 silent fast name suc | -
 mixed 0 teach exclamation repeat se | syllable|-
 mixed 0 teach slow repeat si | syllable|-
@@ -353,17 +353,17 @@ targetB 0 teach - name salată | -
 targetB 0 teach - name sanie | -
 targetB 0 silent - name suc | -
 targetB 0 teach - name supă | -
-mixed 0 quick slow name casă | -
+mixed 0 silent slow name casă | -
 mixed 0 silent loud name salată | -
-mixed 0 quick loud name sanie | -
+mixed 0 silent loud name sanie | -
 mixed 0 silent slow name pisică | -
-mixed 0 quick slow name suc | -
+mixed 0 silent slow name suc | -
 mixed 0 silent neutral repeat busolă | word|-
-mixed 0 quick slow name pisică | -
+mixed 0 silent slow name pisică | -
 mixed 0 silent neutral name sanie | -
-mixed 0 quick slow name casă | -
+mixed 0 silent slow name casă | -
 mixed 0 silent neutral name supă | -
-mixed 0 quick neutral repeat busolă | word|-
+mixed 0 silent neutral repeat busolă | word|-
 closing 0 quick - repeat sanie | word|-
 # sound s wordsMedial teenAdult 3 66
 listening 0 quick - choose Zzzzzz | Ssssss|-
@@ -430,17 +430,17 @@ targetA 4 teach - name pisică | -
 targetA 4 silent - repeat busolă | word|-
 targetA 4 teach - name casă | -
 targetA 4 teach - name pisică | -
-mixed 0 quick exclamation repeat busolă | word|-
+mixed 0 silent exclamation repeat busolă | word|-
 mixed 0 silent neutral name pisică | -
-mixed 0 quick fast name casă | -
+mixed 0 silent fast name casă | -
 mixed 0 silent question name pisică | -
-mixed 0 quick fast name suc | -
+mixed 0 silent fast name suc | -
 mixed 0 silent fast name supă | -
-mixed 0 quick neutral name salată | -
+mixed 0 silent neutral name salată | -
 mixed 0 silent question name sanie | -
-mixed 0 quick question repeat busolă | word|-
+mixed 0 silent question repeat busolă | word|-
 mixed 0 silent neutral name casă | -
-mixed 0 quick exclamation name suc | -
+mixed 0 silent exclamation name suc | -
 closing 0 quick - repeat suc | word|-
 # sound s wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -463,17 +463,17 @@ targetB 0 silent - repeat busolă | word|-
 targetB 0 teach - name pisică | -
 targetB 0 teach - repeat busolă | word|-
 targetB 0 teach - name casă | -
-mixed 0 quick neutral name pisică | -
+mixed 0 silent neutral name pisică | -
 mixed 0 silent neutral repeat busolă | word|-
-mixed 0 quick loud name os | -
+mixed 0 silent loud name os | -
 mixed 0 silent neutral name casă | -
-mixed 0 quick neutral repeat busolă | word|-
+mixed 0 silent neutral repeat busolă | word|-
 mixed 0 silent loud name pisică | -
-mixed 0 quick slow repeat cos | word|-
+mixed 0 silent slow repeat cos | word|-
 mixed 0 silent slow name nas | -
-mixed 0 quick loud name casă | -
+mixed 0 silent loud name casă | -
 mixed 0 silent loud repeat busolă | word|-
-mixed 0 quick slow name casă | -
+mixed 0 silent slow name casă | -
 closing 0 quick - repeat sanie | word|-
 # sound s wordsFinal teenAdult 3 66
 listening 0 quick - hear raci | false
@@ -540,17 +540,17 @@ targetA 4 silent - name nas | -
 targetA 4 teach - name ananas | -
 targetA 4 teach - name nas | -
 targetA 4 teach - repeat cos | word|-
-mixed 0 quick slow name ananas | -
+mixed 0 silent slow name ananas | -
 mixed 0 silent neutral name pisică | -
-mixed 0 quick exclamation repeat busolă | word|-
+mixed 0 silent exclamation repeat busolă | word|-
 mixed 0 silent neutral name os | -
-mixed 0 quick fast repeat cos | word|-
+mixed 0 silent fast repeat cos | word|-
 mixed 0 silent exclamation name os | -
-mixed 0 quick exclamation name nas | -
+mixed 0 silent exclamation name nas | -
 mixed 0 silent exclamation name casă | -
-mixed 0 quick slow name pisică | -
+mixed 0 silent slow name pisică | -
 mixed 0 silent question repeat busolă | word|-
-mixed 0 quick question name casă | -
+mixed 0 silent question name casă | -
 closing 0 quick - repeat suc | word|-
 # sound s clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -573,17 +573,17 @@ targetB 0 teach - name nas | -
 targetB 0 teach - repeat cos | word|-
 targetB 0 teach - name nas | -
 targetB 0 silent - repeat cos | word|-
-mixed 0 quick slow name pisică | -
+mixed 0 silent slow name pisică | -
 mixed 0 silent slow name os | -
-mixed 0 quick loud name ananas | -
+mixed 0 silent loud name ananas | -
 mixed 0 silent slow repeat busolă | word|-
-mixed 0 quick loud name stea | -
+mixed 0 silent loud name stea | -
 mixed 0 silent loud name spital | -
-mixed 0 quick slow name cactus | -
+mixed 0 silent slow name cactus | -
 mixed 0 silent neutral name os | -
-mixed 0 quick neutral repeat cos | word|-
+mixed 0 silent neutral repeat cos | word|-
 mixed 0 silent slow name ananas | -
-mixed 0 quick slow repeat busolă | word|-
+mixed 0 silent slow repeat busolă | word|-
 closing 0 quick - repeat supă | word|-
 # sound s clusters teenAdult 3 66
 listening 0 quick - choose șută | sută|-
@@ -650,17 +650,17 @@ targetA 4 silent - name scaun | -
 targetA 4 silent - name sandviș | -
 targetA 4 selfJudge - name cactus | -
 targetA 4 quick - name salată | -
-mixed 0 quick exclamation name cactus | -
+mixed 0 silent exclamation name cactus | -
 mixed 0 silent exclamation name os | -
-mixed 0 quick fast name salată | -
+mixed 0 silent fast name salată | -
 mixed 0 silent fast name ananas | -
-mixed 0 quick exclamation name nas | -
+mixed 0 silent exclamation name nas | -
 mixed 0 silent neutral repeat cos | word|-
-mixed 0 quick question repeat busolă | word|-
+mixed 0 silent question repeat busolă | word|-
 mixed 0 silent neutral name ananas | -
-mixed 0 quick fast name sandviș | -
+mixed 0 silent fast name sandviș | -
 mixed 0 silent question name nas | -
-mixed 0 quick question name os | -
+mixed 0 silent question name os | -
 closing 0 quick - repeat suc | word|-
 # sound s pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -686,17 +686,17 @@ targetB 0 silent - name cactus | -
 targetB 0 selfJudge - name stea | -
 targetB 0 quick - name cosmonaut | -
 targetB 0 selfJudge - name sandviș | -
-mixed 0 quick loud name spital | -
+mixed 0 silent loud name spital | -
 mixed 0 silent neutral repeat sar, zar | word|-
-mixed 0 quick neutral repeat sută | word|șută
+mixed 0 silent neutral repeat sută | word|șută
 mixed 0 silent slow repeat sare | word|zare
-mixed 0 quick loud name sandviș | -
+mixed 0 silent loud name sandviș | -
 mixed 0 silent loud repeat zar | word|sar
-mixed 0 quick slow repeat sare | word|zare
+mixed 0 silent slow repeat sare | word|zare
 mixed 0 silent neutral repeat cos, coș | word|-
-mixed 0 quick loud repeat cos | word|coș
+mixed 0 silent loud repeat cos | word|coș
 mixed 0 silent neutral name scaun | -
-mixed 0 quick slow name cactus | -
+mixed 0 silent slow name cactus | -
 closing 0 quick - repeat salată | word|-
 # sound s pairs teenAdult 3 66
 listening 0 quick - choose sar | zar|-
@@ -778,17 +778,17 @@ targetA 4 quick - repeat sută | word|șută
 targetA 4 quick - repeat zar | word|sar
 targetA 4 silent - repeat sar | word|zar
 targetA 4 silent - repeat sar, zar | word|-
-mixed 0 quick exclamation name cosmonaut | -
+mixed 0 silent exclamation name cosmonaut | -
 mixed 0 silent question repeat sută | word|șută
-mixed 0 quick loud repeat sar, zar | word|-
+mixed 0 silent loud repeat sar, zar | word|-
 mixed 0 silent slow name spital | -
-mixed 0 quick exclamation name cactus | -
+mixed 0 silent exclamation name cactus | -
 mixed 0 silent exclamation name stea | -
-mixed 0 quick loud name scaun | -
+mixed 0 silent loud name scaun | -
 mixed 0 silent question name sandviș | -
-mixed 0 quick exclamation name cosmonaut | -
+mixed 0 silent exclamation name cosmonaut | -
 mixed 0 silent slow name stea | -
-mixed 0 quick neutral name scaun | -
+mixed 0 silent neutral name scaun | -
 closing 0 quick - repeat supă | word|-
 # sound s sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -811,17 +811,17 @@ targetB 0 silent - repeat sar, zar | word|-
 targetB 0 quick - repeat zar | word|sar
 targetB 0 quick - repeat șută | word|sută
 targetB 0 silent - repeat sută | word|șută
-mixed 0 quick loud repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent loud repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent loud repeat cos | word|coș
 mixed 0 silent slow repeat Sara sare sus. | sentence|-
-mixed 0 quick loud repeat sare | word|zare
-mixed 0 quick slow repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent loud repeat sare | word|zare
+mixed 0 silent slow repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent neutral repeat sar | word|zar
-mixed 0 quick neutral repeat zare | word|sare
+mixed 0 silent neutral repeat zare | word|sare
 mixed 0 silent neutral repeat sar, zar | word|-
 mixed 0 silent loud repeat Sara sare sus. | sentence|-
-mixed 0 quick loud repeat zar | word|sar
-mixed 0 quick loud repeat sută | word|șută
+mixed 0 silent loud repeat zar | word|sar
+mixed 0 silent loud repeat sută | word|șută
 closing 0 quick - repeat sanie | word|-
 # sound s sentences teenAdult 3 66
 listening 0 quick - choose Ssssss | Șșșșșș|-
@@ -889,16 +889,16 @@ targetA 4 silent - repeat Pisica stă pe sanie. | sentence|-
 targetA 4 quick - repeat Ursul are un sac cu ananas. | sentence|-
 targetA 4 silent - repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent question repeat sare | word|zare
-mixed 0 quick neutral repeat Sara sare sus. | sentence|-
-mixed 0 quick neutral twister Șase sași în șase saci. | -
-mixed 0 silent exclamation twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
-mixed 0 quick exclamation repeat zare | word|sare
+mixed 0 silent neutral repeat Sara sare sus. | sentence|-
 mixed 0 silent neutral twister Șase sași în șase saci. | -
-mixed 0 quick neutral twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
+mixed 0 silent exclamation twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
+mixed 0 silent exclamation repeat zare | word|sare
+mixed 0 silent neutral twister Șase sași în șase saci. | -
+mixed 0 silent neutral twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
 mixed 0 silent neutral repeat Supa e sărată. | sentence|-
-mixed 0 quick loud repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent loud repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent exclamation twister Șase sași în șase saci. | -
-mixed 0 quick question repeat cos, coș | word|-
+mixed 0 silent question repeat cos, coș | word|-
 closing 0 quick - repeat salată | word|-
 # sound s retell fourToFive 0 24
 opening 0 teach - intro - | -
@@ -921,15 +921,15 @@ targetB 0 quick - repeat Sara sare sus. | sentence|-
 targetB 0 silent - repeat Pisica stă pe sanie. | sentence|-
 targetB 0 silent - repeat Sara sare sus. | sentence|-
 targetB 0 quick - repeat Supa e sărată. | sentence|-
-mixed 0 quick loud repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent loud repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent slow repeat Ursul are un sac cu ananas. | sentence|-
 mixed 0 silent neutral repeat Sara sare sus. | sentence|-
-mixed 0 quick neutral repeat Supa e sărată. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent neutral repeat Supa e sărată. | sentence|-
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent neutral repeat Sara sare sus. | sentence|-
 mixed 0 silent slow repeat Supa e sărată. | sentence|-
-mixed 0 quick neutral repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick neutral repeat Ursul are un sac cu ananas. | sentence|-
+mixed 0 silent neutral repeat Ursul are un sac cu ananas. | sentence|-
+mixed 0 silent neutral repeat Ursul are un sac cu ananas. | sentence|-
 mixed 0 silent neutral repeat Supa e sărată. | sentence|-
 mixed 0 silent - describe pisică sanie | -
 closing 0 quick - repeat salată | word|-
@@ -998,17 +998,17 @@ targetA 4 quick - describe pisică sanie | -
 targetA 4 silent - describe soare casă | -
 targetA 4 silent - retell Povestea de azi | -
 targetA 4 quick - repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick slow twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
+mixed 0 silent slow twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
 mixed 0 silent slow repeat Supa e sărată. | sentence|-
-mixed 0 quick - describe urs ananas | -
+mixed 0 silent - describe urs ananas | -
 mixed 0 silent fast repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick - describe pisică sanie | -
+mixed 0 silent - describe pisică sanie | -
 mixed 0 silent - retell Sâsâilă | -
-mixed 0 quick fast repeat Sara sare sus. | sentence|-
+mixed 0 silent fast repeat Sara sare sus. | sentence|-
 mixed 0 silent exclamation repeat Pisica stă pe sanie. | sentence|-
 mixed 0 silent slow repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick fast repeat Sara sare sus. | sentence|-
-mixed 0 quick loud repeat Supa e sărată. | sentence|-
+mixed 0 silent fast repeat Sara sare sus. | sentence|-
+mixed 0 silent loud repeat Supa e sărată. | sentence|-
 closing 0 quick - repeat sanie | word|-
 # sound s everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -1032,16 +1032,16 @@ targetB 0 quick - repeat Supa e sărată. | sentence|-
 targetB 0 silent - repeat Sara sare sus. | sentence|-
 targetB 0 quick - repeat Supa e sărată. | sentence|-
 mixed 0 silent slow repeat Supa e sărată. | sentence|-
-mixed 0 quick slow repeat Pisica stă pe sanie. | sentence|-
-mixed 0 quick neutral repeat Ursul are un sac cu ananas. | sentence|-
+mixed 0 silent slow repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent neutral repeat Ursul are un sac cu ananas. | sentence|-
 mixed 0 silent slow repeat Sara sare sus. | sentence|-
-mixed 0 quick slow repeat Ursul are un sac cu ananas. | sentence|-
+mixed 0 silent slow repeat Ursul are un sac cu ananas. | sentence|-
 mixed 0 silent neutral repeat Sara sare sus. | sentence|-
 mixed 0 silent loud repeat Pisica stă pe sanie. | sentence|-
-mixed 0 quick neutral repeat Supa e sărată. | sentence|-
+mixed 0 silent neutral repeat Supa e sărată. | sentence|-
 mixed 0 silent neutral repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick loud repeat Pisica stă pe sanie. | sentence|-
-mixed 0 quick - retell Sâsâilă | -
+mixed 0 silent loud repeat Pisica stă pe sanie. | sentence|-
+mixed 0 silent - retell Sâsâilă | -
 closing 0 quick - repeat suc | word|-
 mission 0 silent - mission Seara, spune-le alor tăi: „Somn dulce!” | -
 # sound s everyday teenAdult 3 66
@@ -1109,16 +1109,16 @@ targetA 4 quick - retell Povestea de azi | -
 targetA 4 silent - repeat Pisica stă pe sanie. | sentence|-
 targetA 4 quick - retell Povestea de azi | -
 targetA 4 silent - retell Sâsâilă | -
-mixed 0 quick fast twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
+mixed 0 silent fast twister Sara sare sus, Sanda sare sus, sus sar surorile. | -
 mixed 0 silent - describe urs ananas | -
-mixed 0 quick question repeat Sara sare sus. | sentence|-
+mixed 0 silent question repeat Sara sare sus. | sentence|-
 mixed 0 silent slow repeat Pisica stă pe sanie. | sentence|-
-mixed 0 quick loud twister Șase sași în șase saci. | -
+mixed 0 silent loud twister Șase sași în șase saci. | -
 mixed 0 silent neutral repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick loud repeat Supa e sărată. | sentence|-
+mixed 0 silent loud repeat Supa e sărată. | sentence|-
 mixed 0 silent exclamation repeat Sara sare sus. | sentence|-
 mixed 0 silent slow repeat Ursul are un sac cu ananas. | sentence|-
-mixed 0 quick slow repeat Supa e sărată. | sentence|-
+mixed 0 silent slow repeat Supa e sărată. | sentence|-
 mixed 0 silent slow repeat Pisica stă pe sanie. | sentence|-
 closing 0 quick - repeat sanie | word|-
 mission 0 silent - mission În parc, sari și strigă: „Sus, sus!” | -
@@ -1367,17 +1367,17 @@ targetB 0 silent - repeat eșe | syllable|-
 targetB 0 teach - repeat oș | syllable|-
 targetB 0 teach - repeat aș | syllable|-
 targetB 0 teach - repeat uș | syllable|-
-mixed 0 quick neutral name șurub | -
+mixed 0 silent neutral name șurub | -
 mixed 0 silent loud name șoarece | -
-mixed 0 quick slow name șurub | -
+mixed 0 silent slow name șurub | -
 mixed 0 teach neutral repeat șu | syllable|-
 mixed 0 teach loud repeat ușu | syllable|-
 mixed 0 teach loud repeat șe | syllable|-
 mixed 0 teach neutral repeat iș | syllable|-
 mixed 0 silent loud name șosete | -
-mixed 0 quick loud name șah | -
+mixed 0 silent loud name șah | -
 mixed 0 teach loud repeat așa | syllable|-
-mixed 0 quick slow name șoarece | -
+mixed 0 silent slow name șoarece | -
 closing 0 teach - repeat și | syllable|-
 # sound ș wordsInitial teenAdult 3 66
 listening 0 quick - choose Șșșșșș | Ssssss|-
@@ -1444,7 +1444,7 @@ targetA 4 teach - name șah | -
 targetA 4 teach - name șurub | -
 targetA 4 silent - name șosete | -
 targetA 4 teach - name șurub | -
-mixed 0 quick slow name șah | -
+mixed 0 silent slow name șah | -
 mixed 0 teach loud repeat ușu | syllable|-
 mixed 0 teach fast repeat uș | syllable|-
 mixed 0 silent slow name șoarece | -
@@ -1477,17 +1477,17 @@ targetB 0 teach - name șah | -
 targetB 0 silent - name șoarece | -
 targetB 0 teach - name șah | -
 targetB 0 teach - name șoarece | -
-mixed 0 quick neutral name șosete | -
+mixed 0 silent neutral name șosete | -
 mixed 0 silent slow name șurub | -
-mixed 0 quick loud name ușă | -
+mixed 0 silent loud name ușă | -
 mixed 0 silent neutral name șoarece | -
-mixed 0 quick neutral name cămașă | -
+mixed 0 silent neutral name cămașă | -
 mixed 0 silent slow name mașină | -
-mixed 0 quick loud name șah | -
+mixed 0 silent loud name șah | -
 mixed 0 silent slow name cămașă | -
-mixed 0 quick neutral name șosete | -
+mixed 0 silent neutral name șosete | -
 mixed 0 silent loud name șurub | -
-mixed 0 quick loud name mașină | -
+mixed 0 silent loud name mașină | -
 closing 0 quick - repeat șoarece | word|-
 # sound ș wordsMedial teenAdult 3 66
 listening 0 quick - hear nas | false
@@ -1554,17 +1554,17 @@ targetA 4 teach - name cămașă | -
 targetA 4 silent - name mașină | -
 targetA 4 teach - name ușă | -
 targetA 4 teach - name cămașă | -
-mixed 0 quick loud name ușă | -
+mixed 0 silent loud name ușă | -
 mixed 0 silent exclamation name șah | -
-mixed 0 quick neutral name cămașă | -
+mixed 0 silent neutral name cămașă | -
 mixed 0 silent neutral name mașină | -
-mixed 0 quick question name ușă | -
+mixed 0 silent question name ușă | -
 mixed 0 silent fast name cămașă | -
-mixed 0 quick neutral name mașină | -
+mixed 0 silent neutral name mașină | -
 mixed 0 silent neutral name ușă | -
-mixed 0 quick question name mașină | -
+mixed 0 silent question name mașină | -
 mixed 0 silent fast name cămașă | -
-mixed 0 quick question name șosete | -
+mixed 0 silent question name șosete | -
 closing 0 quick - repeat șoarece | word|-
 # sound ș wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -1587,17 +1587,17 @@ targetB 0 teach - name mașină | -
 targetB 0 teach - name cămașă | -
 targetB 0 silent - name mașină | -
 targetB 0 teach - name ușă | -
-mixed 0 quick loud name mașină | -
-mixed 0 silent neutral name ușă | -
-mixed 0 quick neutral name cămașă | -
-mixed 0 silent neutral name coș | -
-mixed 0 quick loud repeat măgăruș | word|-
 mixed 0 silent loud name mașină | -
-mixed 0 quick loud name cămașă | -
+mixed 0 silent neutral name ușă | -
+mixed 0 silent neutral name cămașă | -
+mixed 0 silent neutral name coș | -
+mixed 0 silent loud repeat măgăruș | word|-
+mixed 0 silent loud name mașină | -
+mixed 0 silent loud name cămașă | -
 mixed 0 silent neutral repeat iepuraș | word|-
-mixed 0 quick neutral repeat măgăruș | word|-
+mixed 0 silent neutral repeat măgăruș | word|-
 mixed 0 silent neutral name cocoș | -
-mixed 0 quick loud name coș | -
+mixed 0 silent loud name coș | -
 closing 0 quick - repeat șurub | word|-
 # sound ș wordsFinal teenAdult 3 66
 listening 0 quick - choose coș | cos|-
@@ -1664,17 +1664,17 @@ targetA 4 teach - repeat măgăruș | word|-
 targetA 4 teach - name coș | -
 targetA 4 teach - repeat iepuraș | word|-
 targetA 4 teach - name coș | -
-mixed 0 quick question name cocoș | -
+mixed 0 silent question name cocoș | -
 mixed 0 silent neutral repeat măgăruș | word|-
-mixed 0 quick fast name mașină | -
-mixed 0 silent loud name ușă | -
-mixed 0 quick question name cămașă | -
 mixed 0 silent fast name mașină | -
-mixed 0 quick fast name cămașă | -
+mixed 0 silent loud name ușă | -
+mixed 0 silent question name cămașă | -
+mixed 0 silent fast name mașină | -
+mixed 0 silent fast name cămașă | -
 mixed 0 silent slow repeat iepuraș | word|-
-mixed 0 quick fast name ușă | -
+mixed 0 silent fast name ușă | -
 mixed 0 silent loud name mașină | -
-mixed 0 quick question name coș | -
+mixed 0 silent question name coș | -
 closing 0 quick - repeat șurub | word|-
 # sound ș clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -1697,17 +1697,17 @@ targetB 0 silent - name coș | -
 targetB 0 teach - name cocoș | -
 targetB 0 teach - repeat măgăruș | word|-
 targetB 0 teach - name coș | -
-mixed 0 quick loud repeat iepuraș | word|-
+mixed 0 silent loud repeat iepuraș | word|-
 mixed 0 silent slow name cocoș | -
-mixed 0 quick loud name sandviș | -
+mixed 0 silent loud name sandviș | -
 mixed 0 silent loud repeat măgăruș | word|-
-mixed 0 quick neutral repeat iepuraș | word|-
+mixed 0 silent neutral repeat iepuraș | word|-
 mixed 0 silent slow name șosete | -
-mixed 0 quick loud name sandviș | -
+mixed 0 silent loud name sandviș | -
 mixed 0 silent neutral name cocoș | -
-mixed 0 quick slow name coș | -
+mixed 0 silent slow name coș | -
 mixed 0 silent loud name cocoș | -
-mixed 0 quick slow name pește | -
+mixed 0 silent slow name pește | -
 closing 0 quick - repeat șoarece | word|-
 # sound ș clusters teenAdult 3 66
 listening 0 quick - choose sută | șută|-
@@ -1774,17 +1774,17 @@ targetA 4 selfJudge - name șapcă | -
 targetA 4 silent - name căpșună | -
 targetA 4 selfJudge - name șapcă | -
 targetA 4 quick - name șosete | -
-mixed 0 quick question name sandviș | -
+mixed 0 silent question name sandviș | -
 mixed 0 silent neutral name mașină | -
-mixed 0 quick neutral name pește | -
+mixed 0 silent neutral name pește | -
 mixed 0 silent fast name cămașă | -
-mixed 0 quick neutral repeat măgăruș | word|-
+mixed 0 silent neutral repeat măgăruș | word|-
 mixed 0 silent fast name cocoș | -
-mixed 0 quick fast name coș | -
+mixed 0 silent fast name coș | -
 mixed 0 silent fast name căpșună | -
-mixed 0 quick loud repeat iepuraș | word|-
+mixed 0 silent loud repeat iepuraș | word|-
 mixed 0 silent fast name șapcă | -
-mixed 0 quick loud name sandviș | -
+mixed 0 silent loud name sandviș | -
 closing 0 quick - repeat șah | word|-
 # sound ș pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -1810,17 +1810,17 @@ targetB 0 silent - name pește | -
 targetB 0 silent - name sandviș | -
 targetB 0 quick - name căpșună | -
 targetB 0 selfJudge - name sandviș | -
-mixed 0 quick neutral repeat șută | word|sută
+mixed 0 silent neutral repeat șută | word|sută
 mixed 0 silent neutral repeat coș, cos | word|-
-mixed 0 quick loud repeat sută | word|șută
+mixed 0 silent loud repeat sută | word|șută
 mixed 0 silent neutral repeat cos | word|coș
-mixed 0 quick slow name șapcă | -
+mixed 0 silent slow name șapcă | -
 mixed 0 silent loud name pește | -
-mixed 0 quick neutral repeat coș | word|cos
+mixed 0 silent neutral repeat coș | word|cos
 mixed 0 silent loud name sandviș | -
-mixed 0 quick neutral name pește | -
+mixed 0 silent neutral name pește | -
 mixed 0 silent neutral repeat șoc, joc | word|-
-mixed 0 quick neutral name șapcă | -
+mixed 0 silent neutral name șapcă | -
 closing 0 quick - repeat șosete | word|-
 # sound ș pairs teenAdult 3 66
 listening 0 quick - hear rinocer | false
@@ -1902,17 +1902,17 @@ targetA 4 quick - repeat coș, cos | word|-
 targetA 4 quick - repeat joc | word|șoc
 targetA 4 silent - repeat șoc | word|joc
 targetA 4 quick - repeat șută | word|sută
-mixed 0 quick exclamation name pește | -
+mixed 0 silent exclamation name pește | -
 mixed 0 silent exclamation name șapcă | -
-mixed 0 quick neutral name căpșună | -
+mixed 0 silent neutral name căpșună | -
 mixed 0 silent fast name sandviș | -
-mixed 0 quick question name șapcă | -
+mixed 0 silent question name șapcă | -
 mixed 0 silent slow name căpșună | -
-mixed 0 quick neutral name pește | -
+mixed 0 silent neutral name pește | -
 mixed 0 silent slow repeat coș | word|cos
-mixed 0 quick loud name sandviș | -
+mixed 0 silent loud name sandviș | -
 mixed 0 silent loud name căpșună | -
-mixed 0 quick neutral repeat cos | word|coș
+mixed 0 silent neutral repeat cos | word|coș
 closing 0 quick - repeat șoarece | word|-
 # sound ș sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -1936,14 +1936,14 @@ targetB 0 quick - repeat coș, cos | word|-
 targetB 0 quick - repeat joc | word|șoc
 targetB 0 silent - repeat sută | word|șută
 mixed 0 silent neutral repeat Iepurașul are o șapcă. | sentence|-
-mixed 0 quick slow repeat Șoricelul doarme în coș. | sentence|-
+mixed 0 silent slow repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent neutral repeat șoc, joc | word|-
-mixed 0 quick neutral repeat cos | word|coș
-mixed 0 silent neutral repeat sută | word|șută
-mixed 0 quick loud repeat coș | word|cos
-mixed 0 quick slow repeat Iepurașul are o șapcă. | sentence|-
 mixed 0 silent neutral repeat cos | word|coș
-mixed 0 quick slow repeat șoc | word|joc
+mixed 0 silent neutral repeat sută | word|șută
+mixed 0 silent loud repeat coș | word|cos
+mixed 0 silent slow repeat Iepurașul are o șapcă. | sentence|-
+mixed 0 silent neutral repeat cos | word|coș
+mixed 0 silent slow repeat șoc | word|joc
 mixed 0 silent loud repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent neutral repeat joc | word|șoc
 closing 0 quick - repeat șurub | word|-
@@ -2013,16 +2013,16 @@ targetA 4 quick - repeat Șoricelul doarme în coș. | sentence|-
 targetA 4 silent - repeat Mașina e lângă ușă. | sentence|-
 targetA 4 quick - repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent question repeat șoc, joc | word|-
-mixed 0 quick exclamation repeat coș, cos | word|-
+mixed 0 silent exclamation repeat coș, cos | word|-
 mixed 0 silent neutral repeat joc | word|șoc
-mixed 0 quick fast twister Știu că știi că știu că știi. | -
+mixed 0 silent fast twister Știu că știi că știu că știi. | -
 mixed 0 silent question repeat Iepurașul are o șapcă. | sentence|-
-mixed 0 quick question repeat sută | word|șută
-mixed 0 quick fast repeat șută | word|sută
+mixed 0 silent question repeat sută | word|șută
+mixed 0 silent fast repeat șută | word|sută
 mixed 0 silent question twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
-mixed 0 quick exclamation repeat cos | word|coș
+mixed 0 silent exclamation repeat cos | word|coș
 mixed 0 silent neutral twister Știu că știi că știu că știi. | -
-mixed 0 quick question repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent question repeat Cocoșul mănâncă căpșuni. | sentence|-
 closing 0 quick - repeat șurub | word|-
 # sound ș retell fourToFive 0 24
 opening 0 teach - intro - | -
@@ -2046,16 +2046,16 @@ targetB 0 quick - repeat Șoricelul doarme în coș. | sentence|-
 targetB 0 silent - repeat Mașina e lângă ușă. | sentence|-
 targetB 0 quick - repeat Iepurașul are o șapcă. | sentence|-
 mixed 0 silent - retell Povestea de azi | -
-mixed 0 quick loud repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent loud repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent loud repeat Șoricelul doarme în coș. | sentence|-
-mixed 0 quick slow repeat Mașina e lângă ușă. | sentence|-
-mixed 0 quick neutral repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent slow repeat Mașina e lângă ușă. | sentence|-
+mixed 0 silent neutral repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent - retell Trenulețul Șușu | -
 mixed 0 silent slow repeat Iepurașul are o șapcă. | sentence|-
-mixed 0 quick neutral repeat Șoricelul doarme în coș. | sentence|-
+mixed 0 silent neutral repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent - describe mașină ușă | -
-mixed 0 quick neutral repeat Iepurașul are o șapcă. | sentence|-
-mixed 0 quick slow repeat Iepurașul are o șapcă. | sentence|-
+mixed 0 silent neutral repeat Iepurașul are o șapcă. | sentence|-
+mixed 0 silent slow repeat Iepurașul are o șapcă. | sentence|-
 closing 0 quick - repeat șah | word|-
 # sound ș retell teenAdult 3 66
 listening 0 quick - choose cos | coș|-
@@ -2123,16 +2123,16 @@ targetA 4 quick - repeat Cocoșul mănâncă căpșuni. | sentence|-
 targetA 4 silent - repeat Mașina e lângă ușă. | sentence|-
 targetA 4 quick - repeat Iepurașul are o șapcă. | sentence|-
 mixed 0 silent - describe mașină ușă | -
-mixed 0 quick loud repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent loud repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent slow twister Știu că știi că știu că știi. | -
-mixed 0 quick loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
+mixed 0 silent loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
 mixed 0 silent neutral repeat Mașina e lângă ușă. | sentence|-
-mixed 0 quick loud repeat Șoricelul doarme în coș. | sentence|-
+mixed 0 silent loud repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent question twister Știu că știi că știu că știi. | -
-mixed 0 quick loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
-mixed 0 quick question twister Știu că știi că știu că știi. | -
+mixed 0 silent loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
+mixed 0 silent question twister Știu că știi că știu că știi. | -
 mixed 0 silent neutral repeat Iepurașul are o șapcă. | sentence|-
-mixed 0 quick loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
+mixed 0 silent loud twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
 closing 0 quick - repeat șosete | word|-
 # sound ș everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -2156,14 +2156,14 @@ targetB 0 silent - repeat Mașina e lângă ușă. | sentence|-
 targetB 0 quick - repeat Iepurașul are o șapcă. | sentence|-
 targetB 0 silent - repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent slow repeat Mașina e lângă ușă. | sentence|-
-mixed 0 quick neutral repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent neutral repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent - describe mașină ușă | -
-mixed 0 quick neutral repeat Mașina e lângă ușă. | sentence|-
+mixed 0 silent neutral repeat Mașina e lângă ușă. | sentence|-
 mixed 0 silent loud repeat Cocoșul mănâncă căpșuni. | sentence|-
-mixed 0 quick loud repeat Șoricelul doarme în coș. | sentence|-
+mixed 0 silent loud repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent slow repeat Șoricelul doarme în coș. | sentence|-
-mixed 0 quick loud repeat Mașina e lângă ușă. | sentence|-
-mixed 0 quick slow repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent loud repeat Mașina e lângă ușă. | sentence|-
+mixed 0 silent slow repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent slow repeat Mașina e lângă ușă. | sentence|-
 mixed 0 silent neutral repeat Cocoșul mănâncă căpșuni. | sentence|-
 closing 0 quick - repeat șosete | word|-
@@ -2233,16 +2233,16 @@ targetA 4 silent - retell Trenulețul Șușu | -
 targetA 4 quick - describe cocoș căpșună | -
 targetA 4 quick - repeat Cocoșul mănâncă căpșuni. | sentence|-
 targetA 4 silent - retell Trenulețul Șușu | -
-mixed 0 quick slow repeat Iepurașul are o șapcă. | sentence|-
+mixed 0 silent slow repeat Iepurașul are o șapcă. | sentence|-
 mixed 0 silent loud repeat Șoricelul doarme în coș. | sentence|-
 mixed 0 silent - describe mașină ușă | -
-mixed 0 quick loud repeat Cocoșul mănâncă căpșuni. | sentence|-
+mixed 0 silent loud repeat Cocoșul mănâncă căpșuni. | sentence|-
 mixed 0 silent slow repeat Șoricelul doarme în coș. | sentence|-
-mixed 0 quick - describe șoarece coș | -
+mixed 0 silent - describe șoarece coș | -
 mixed 0 silent slow repeat Mașina e lângă ușă. | sentence|-
-mixed 0 quick fast repeat Iepurașul are o șapcă. | sentence|-
+mixed 0 silent fast repeat Iepurașul are o șapcă. | sentence|-
 mixed 0 silent - retell Povestea de azi | -
-mixed 0 quick fast twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
+mixed 0 silent fast twister Șoricelul și-a pus șapca, șosetele și cămașa. | -
 mixed 0 silent loud repeat Cocoșul mănâncă căpșuni. | sentence|-
 closing 0 quick - repeat șosete | word|-
 mission 0 silent - mission Când te încalți, spune: „Întâi șosetele!” | -
@@ -2493,7 +2493,7 @@ targetB 0 teach - repeat uzu | syllable|-
 targetB 0 silent - repeat oz | syllable|-
 mixed 0 teach slow repeat ze | syllable|-
 mixed 0 silent loud name ziar | -
-mixed 0 quick neutral name zăpadă | -
+mixed 0 silent neutral name zăpadă | -
 mixed 0 silent slow name zână | -
 mixed 0 teach slow repeat zi | syllable|-
 mixed 0 silent slow name zar | -
@@ -2501,7 +2501,7 @@ mixed 0 teach neutral repeat uz | syllable|-
 mixed 0 teach loud repeat zo | syllable|-
 mixed 0 teach slow repeat eze | syllable|-
 mixed 0 silent slow name ziar | -
-mixed 0 quick neutral name zăpadă | -
+mixed 0 silent neutral name zăpadă | -
 closing 0 teach - repeat zi | syllable|-
 # sound z wordsInitial teenAdult 3 66
 listening 0 quick - choose zar | jar|-
@@ -2570,13 +2570,13 @@ targetA 4 teach - name ziar | -
 targetA 4 teach - name zăpadă | -
 mixed 0 teach fast repeat ez | syllable|-
 mixed 0 silent question name zână | -
-mixed 0 quick exclamation name zar | -
+mixed 0 silent exclamation name zar | -
 mixed 0 teach loud repeat ozo | syllable|-
-mixed 0 quick question name ziar | -
+mixed 0 silent question name ziar | -
 mixed 0 silent fast name zăpadă | -
-mixed 0 quick question name zar | -
+mixed 0 silent question name zar | -
 mixed 0 silent loud name zână | -
-mixed 0 quick neutral name ziar | -
+mixed 0 silent neutral name ziar | -
 mixed 0 silent exclamation name zar | -
 mixed 0 teach exclamation repeat iz | syllable|-
 closing 0 teach - repeat za | syllable|-
@@ -2601,17 +2601,17 @@ targetB 0 teach - name ziar | -
 targetB 0 teach - name zăpadă | -
 targetB 0 teach - name zar | -
 targetB 0 silent - name ziar | -
-mixed 0 quick loud name vază | -
+mixed 0 silent loud name vază | -
 mixed 0 silent neutral name dinozaur | -
-mixed 0 quick slow name zână | -
+mixed 0 silent slow name zână | -
 mixed 0 silent slow name mazăre | -
-mixed 0 quick neutral name zăpadă | -
+mixed 0 silent neutral name zăpadă | -
 mixed 0 silent neutral name zână | -
-mixed 0 quick loud name zăpadă | -
+mixed 0 silent loud name zăpadă | -
 mixed 0 silent loud name dinozaur | -
-mixed 0 quick slow name ziar | -
+mixed 0 silent slow name ziar | -
 mixed 0 silent neutral name buză | -
-mixed 0 quick neutral name zar | -
+mixed 0 silent neutral name zar | -
 closing 0 quick - repeat zăpadă | word|-
 # sound z wordsMedial teenAdult 3 66
 listening 0 quick - hear jeleu | false
@@ -2678,17 +2678,17 @@ targetA 4 teach - name mazăre | -
 targetA 4 teach - name vază | -
 targetA 4 silent - name mazăre | -
 targetA 4 teach - name vază | -
-mixed 0 quick exclamation name buză | -
+mixed 0 silent exclamation name buză | -
 mixed 0 silent exclamation name zar | -
-mixed 0 quick neutral name zăpadă | -
+mixed 0 silent neutral name zăpadă | -
 mixed 0 silent neutral name ziar | -
-mixed 0 quick loud name dinozaur | -
+mixed 0 silent loud name dinozaur | -
 mixed 0 silent loud name zână | -
-mixed 0 quick question name ziar | -
+mixed 0 silent question name ziar | -
 mixed 0 silent question name mazăre | -
-mixed 0 quick exclamation name zăpadă | -
+mixed 0 silent exclamation name zăpadă | -
 mixed 0 silent fast name buză | -
-mixed 0 quick exclamation name zar | -
+mixed 0 silent exclamation name zar | -
 closing 0 quick - repeat ziar | word|-
 # sound z wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -2711,17 +2711,17 @@ targetB 0 silent - name buză | -
 targetB 0 teach - name vază | -
 targetB 0 teach - name buză | -
 targetB 0 teach - name vază | -
-mixed 0 quick loud repeat gaz | word|-
+mixed 0 silent loud repeat gaz | word|-
 mixed 0 silent neutral name autobuz | -
-mixed 0 quick slow name dinozaur | -
+mixed 0 silent slow name dinozaur | -
 mixed 0 silent loud name orez | -
-mixed 0 quick slow name autobuz | -
+mixed 0 silent slow name autobuz | -
 mixed 0 silent neutral name orez | -
-mixed 0 quick neutral repeat gaz | word|-
+mixed 0 silent neutral repeat gaz | word|-
 mixed 0 silent slow name orez | -
-mixed 0 quick neutral name autobuz | -
+mixed 0 silent neutral name autobuz | -
 mixed 0 silent slow name mazăre | -
-mixed 0 quick neutral name buză | -
+mixed 0 silent neutral name buză | -
 closing 0 quick - repeat ziar | word|-
 # sound z wordsFinal teenAdult 3 66
 listening 0 quick - choose zare | sare|-
@@ -2788,17 +2788,17 @@ targetA 4 teach - name orez | -
 targetA 4 silent - name autobuz | -
 targetA 4 teach - name orez | -
 targetA 4 teach - repeat gaz | word|-
-mixed 0 quick slow name buză | -
+mixed 0 silent slow name buză | -
 mixed 0 silent fast name autobuz | -
-mixed 0 quick slow repeat gaz | word|-
+mixed 0 silent slow repeat gaz | word|-
 mixed 0 silent question name dinozaur | -
-mixed 0 quick fast name orez | -
+mixed 0 silent fast name orez | -
 mixed 0 silent neutral repeat gaz | word|-
-mixed 0 quick slow name vază | -
+mixed 0 silent slow name vază | -
 mixed 0 silent question name autobuz | -
-mixed 0 quick slow name orez | -
+mixed 0 silent slow name orez | -
 mixed 0 silent neutral name mazăre | -
-mixed 0 quick exclamation name autobuz | -
+mixed 0 silent exclamation name autobuz | -
 closing 0 quick - repeat ziar | word|-
 # sound z clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -2821,17 +2821,17 @@ targetB 0 teach - repeat gaz | word|-
 targetB 0 teach - name orez | -
 targetB 0 silent - repeat gaz | word|-
 targetB 0 teach - name autobuz | -
-mixed 0 quick neutral name orez | -
+mixed 0 silent neutral name orez | -
 mixed 0 silent loud name autobuz | -
-mixed 0 quick neutral name autobuz | -
+mixed 0 silent neutral name autobuz | -
 mixed 0 silent neutral name cizme | -
-mixed 0 quick loud name bluză | -
+mixed 0 silent loud name bluză | -
 mixed 0 silent loud repeat gaz | word|-
-mixed 0 quick slow name zăpadă | -
+mixed 0 silent slow name zăpadă | -
 mixed 0 silent loud name autobuz | -
-mixed 0 quick slow name autobuz | -
+mixed 0 silent slow name autobuz | -
 mixed 0 silent slow repeat gaz | word|-
-mixed 0 quick loud name zmeu | -
+mixed 0 silent loud name zmeu | -
 closing 0 quick - repeat zar | word|-
 # sound z clusters teenAdult 3 66
 listening 0 quick - choose Jjjjjj | Zzzzzz|-
@@ -2898,17 +2898,17 @@ targetA 4 silent - name cizme | -
 targetA 4 quick - name zmeu | -
 targetA 4 selfJudge - name autobuz | -
 targetA 4 silent - name zăpadă | -
-mixed 0 quick question name orez | -
+mixed 0 silent question name orez | -
 mixed 0 silent fast repeat gaz | word|-
-mixed 0 quick fast name autobuz | -
+mixed 0 silent fast name autobuz | -
 mixed 0 silent neutral name orez | -
-mixed 0 quick neutral name autobuz | -
+mixed 0 silent neutral name autobuz | -
 mixed 0 silent fast name bluză | -
-mixed 0 quick fast repeat gaz | word|-
+mixed 0 silent fast repeat gaz | word|-
 mixed 0 silent neutral name zăpadă | -
-mixed 0 quick loud name autobuz | -
+mixed 0 silent loud name autobuz | -
 mixed 0 silent question name zmeu | -
-mixed 0 quick loud name autobuz | -
+mixed 0 silent loud name autobuz | -
 closing 0 quick - repeat zăpadă | word|-
 # sound z pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -2934,17 +2934,17 @@ targetB 0 silent - name bluză | -
 targetB 0 quick - name cizme | -
 targetB 0 selfJudge - name bluză | -
 targetB 0 selfJudge - name zmeu | -
-mixed 0 quick loud repeat zare | word|sare
+mixed 0 silent loud repeat zare | word|sare
 mixed 0 silent loud name cizme | -
-mixed 0 quick neutral name bluză | -
+mixed 0 silent neutral name bluză | -
 mixed 0 silent loud repeat sare | word|zare
-mixed 0 quick slow name zmeu | -
+mixed 0 silent slow name zmeu | -
 mixed 0 silent slow name bluză | -
-mixed 0 quick neutral name cizme | -
+mixed 0 silent neutral name cizme | -
 mixed 0 silent loud name zmeu | -
-mixed 0 quick neutral name bluză | -
+mixed 0 silent neutral name bluză | -
 mixed 0 silent neutral name zmeu | -
-mixed 0 quick slow name cizme | -
+mixed 0 silent slow name cizme | -
 closing 0 quick - repeat zăpadă | word|-
 # sound z pairs teenAdult 3 66
 listening 0 quick - hear păsărică | false
@@ -3026,17 +3026,17 @@ targetA 4 quick - repeat sare | word|zare
 targetA 4 silent - repeat zare | word|sare
 targetA 4 silent - repeat zar | word|jar
 targetA 4 silent - repeat zar, sar | word|-
-mixed 0 quick question name bluză | -
+mixed 0 silent question name bluză | -
 mixed 0 silent exclamation name cizme | -
-mixed 0 quick neutral name zmeu | -
+mixed 0 silent neutral name zmeu | -
 mixed 0 silent slow name bluză | -
-mixed 0 quick fast repeat zar | word|sar
+mixed 0 silent fast repeat zar | word|sar
 mixed 0 silent question repeat zare, sare | word|-
-mixed 0 quick slow name zmeu | -
+mixed 0 silent slow name zmeu | -
 mixed 0 silent exclamation repeat zar, sar | word|-
-mixed 0 quick neutral repeat jar | word|zar
+mixed 0 silent neutral repeat jar | word|zar
 mixed 0 silent exclamation name cizme | -
-mixed 0 quick question repeat sar | word|zar
+mixed 0 silent question repeat sar | word|zar
 closing 0 quick - repeat ziar | word|-
 # sound z sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -3060,14 +3060,14 @@ targetB 0 silent - repeat zare, sare | word|-
 targetB 0 silent - repeat sare | word|zare
 targetB 0 quick - repeat sar | word|zar
 mixed 0 silent loud repeat zare | word|sare
-mixed 0 quick slow repeat zar | word|sar
+mixed 0 silent slow repeat zar | word|sar
 mixed 0 silent loud repeat zare | word|sare
-mixed 0 quick slow repeat zar | word|jar
-mixed 0 quick neutral repeat zare, sare | word|-
+mixed 0 silent slow repeat zar | word|jar
+mixed 0 silent neutral repeat zare, sare | word|-
 mixed 0 silent loud repeat Zebra are dungi. | sentence|-
 mixed 0 silent neutral repeat zar | word|sar
-mixed 0 quick slow repeat sar | word|zar
-mixed 0 quick loud repeat Zarul e pe ziar. | sentence|-
+mixed 0 silent slow repeat sar | word|zar
+mixed 0 silent loud repeat Zarul e pe ziar. | sentence|-
 mixed 0 silent slow repeat Zebra are dungi. | sentence|-
 mixed 0 silent neutral repeat sare | word|zare
 closing 0 quick - repeat zăpadă | word|-
@@ -3136,15 +3136,15 @@ targetA 4 quick - repeat Zebra are dungi. | sentence|-
 targetA 4 silent - repeat Albina zboară pe frunză. | sentence|-
 targetA 4 quick - repeat Zarul e pe ziar. | sentence|-
 targetA 4 silent - repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick slow repeat Zâna zâmbește. | sentence|-
+mixed 0 silent slow repeat Zâna zâmbește. | sentence|-
 mixed 0 silent fast repeat Zebra are dungi. | sentence|-
 mixed 0 silent exclamation twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick question twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick loud repeat Albina zboară pe frunză. | sentence|-
+mixed 0 silent question twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent loud repeat Albina zboară pe frunză. | sentence|-
 mixed 0 silent question repeat Zâna zâmbește. | sentence|-
 mixed 0 silent neutral twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick loud twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick slow twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent loud twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent slow twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
 mixed 0 silent loud twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
 mixed 0 silent exclamation repeat Zebra are dungi. | sentence|-
 closing 0 quick - repeat ziar | word|-
@@ -3170,16 +3170,16 @@ targetB 0 silent - repeat Zarul e pe ziar. | sentence|-
 targetB 0 silent - repeat Zâna zâmbește. | sentence|-
 targetB 0 quick - repeat Zarul e pe ziar. | sentence|-
 mixed 0 silent neutral repeat Zarul e pe ziar. | sentence|-
-mixed 0 quick - describe autobuz orez | -
-mixed 0 quick neutral repeat Albina zboară pe frunză. | sentence|-
+mixed 0 silent - describe autobuz orez | -
+mixed 0 silent neutral repeat Albina zboară pe frunză. | sentence|-
 mixed 0 silent loud repeat Zebra are dungi. | sentence|-
 mixed 0 silent neutral repeat Zâna zâmbește. | sentence|-
-mixed 0 quick loud repeat Zarul e pe ziar. | sentence|-
+mixed 0 silent loud repeat Zarul e pe ziar. | sentence|-
 mixed 0 silent loud repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick slow repeat Zâna zâmbește. | sentence|-
-mixed 0 quick neutral repeat Zebra are dungi. | sentence|-
+mixed 0 silent slow repeat Zâna zâmbește. | sentence|-
+mixed 0 silent neutral repeat Zebra are dungi. | sentence|-
 mixed 0 silent - retell Albinuța Zuzu | -
-mixed 0 quick loud repeat Zarul e pe ziar. | sentence|-
+mixed 0 silent loud repeat Zarul e pe ziar. | sentence|-
 closing 0 quick - repeat ziar | word|-
 # sound z retell teenAdult 3 66
 listening 0 quick - choose zar | jar|-
@@ -3247,14 +3247,14 @@ targetA 4 silent - describe zână zăpadă | -
 targetA 4 quick - retell Albinuța Zuzu | -
 targetA 4 silent - repeat Zarul e pe ziar. | sentence|-
 mixed 0 silent fast twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent - describe zebră ziar | -
-mixed 0 quick question repeat Zâna zâmbește. | sentence|-
+mixed 0 silent question repeat Zâna zâmbește. | sentence|-
 mixed 0 silent question repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick loud twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick question twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent loud twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent question twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
 mixed 0 silent exclamation repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick slow twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent slow twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
 mixed 0 silent fast repeat Zebra are dungi. | sentence|-
 mixed 0 silent slow repeat Zebra are dungi. | sentence|-
 closing 0 quick - repeat zăpadă | word|-
@@ -3280,16 +3280,16 @@ targetB 0 quick - repeat Zarul e pe ziar. | sentence|-
 targetB 0 quick - repeat Albina zboară pe frunză. | sentence|-
 targetB 0 silent - repeat Zâna zâmbește. | sentence|-
 mixed 0 silent neutral repeat Zarul e pe ziar. | sentence|-
-mixed 0 quick slow repeat Zebra are dungi. | sentence|-
-mixed 0 silent neutral repeat Zâna zâmbește. | sentence|-
-mixed 0 quick slow repeat Albina zboară pe frunză. | sentence|-
 mixed 0 silent slow repeat Zebra are dungi. | sentence|-
-mixed 0 quick loud repeat Zâna zâmbește. | sentence|-
+mixed 0 silent neutral repeat Zâna zâmbește. | sentence|-
+mixed 0 silent slow repeat Albina zboară pe frunză. | sentence|-
+mixed 0 silent slow repeat Zebra are dungi. | sentence|-
+mixed 0 silent loud repeat Zâna zâmbește. | sentence|-
 mixed 0 silent loud repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick - describe zână zăpadă | -
+mixed 0 silent - describe zână zăpadă | -
 mixed 0 silent - describe zebră ziar | -
-mixed 0 quick neutral repeat Zarul e pe ziar. | sentence|-
-mixed 0 quick - describe zână zăpadă | -
+mixed 0 silent neutral repeat Zarul e pe ziar. | sentence|-
+mixed 0 silent - describe zână zăpadă | -
 closing 0 quick - repeat zar | word|-
 mission 0 silent - mission Pe stradă, găsiți o trecere de zebră. | -
 # sound z everyday teenAdult 3 66
@@ -3358,16 +3358,16 @@ targetA 4 quick - repeat Zarul e pe ziar. | sentence|-
 targetA 4 quick - repeat Zebra are dungi. | sentence|-
 targetA 4 silent - describe zână zăpadă | -
 mixed 0 silent neutral repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick exclamation repeat Zarul e pe ziar. | sentence|-
+mixed 0 silent exclamation repeat Zarul e pe ziar. | sentence|-
 mixed 0 silent loud repeat Zebra are dungi. | sentence|-
-mixed 0 quick exclamation twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick question repeat Zâna zâmbește. | sentence|-
+mixed 0 silent exclamation twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
+mixed 0 silent question repeat Zâna zâmbește. | sentence|-
 mixed 0 silent question twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
 mixed 0 silent exclamation twister Zâna Zara zice: zbor, zbor, zbor prin zăpadă! | -
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent fast repeat Zâna zâmbește. | sentence|-
-mixed 0 quick neutral repeat Albina zboară pe frunză. | sentence|-
-mixed 0 quick - describe zebră ziar | -
+mixed 0 silent neutral repeat Albina zboară pe frunză. | sentence|-
+mixed 0 silent - describe zebră ziar | -
 closing 0 quick - repeat zână | word|-
 mission 0 silent - mission Vezi o albină? Bâzâie ca ea: zzz! | -
 # sound j isolated fourToFive 0 24
@@ -3617,11 +3617,11 @@ targetB 0 teach - repeat oj | syllable|-
 targetB 0 teach - repeat aja | syllable|-
 mixed 0 teach slow repeat uju | syllable|-
 mixed 0 teach loud repeat jo | syllable|-
-mixed 0 quick loud repeat joc | word|-
+mixed 0 silent loud repeat joc | word|-
 mixed 0 silent neutral repeat jeleu | word|-
-mixed 0 quick loud repeat jos | word|-
+mixed 0 silent loud repeat jos | word|-
 mixed 0 teach neutral repeat ji | syllable|-
-mixed 0 quick neutral repeat joc | word|-
+mixed 0 silent neutral repeat joc | word|-
 mixed 0 silent slow repeat jos | word|-
 mixed 0 teach loud repeat eje | syllable|-
 mixed 0 teach loud repeat uj | syllable|-
@@ -3694,15 +3694,15 @@ targetA 4 teach - repeat joc | word|-
 targetA 4 silent - repeat jeleu | word|-
 mixed 0 teach loud repeat iji | syllable|-
 mixed 0 teach loud repeat aj | syllable|-
-mixed 0 quick exclamation repeat joc | word|-
+mixed 0 silent exclamation repeat joc | word|-
 mixed 0 teach loud repeat ij | syllable|-
-mixed 0 quick fast repeat jeleu | word|-
+mixed 0 silent fast repeat jeleu | word|-
 mixed 0 teach loud repeat jo | syllable|-
 mixed 0 teach fast repeat eje | syllable|-
 mixed 0 silent question repeat jos | word|-
-mixed 0 quick neutral repeat jeleu | word|-
+mixed 0 silent neutral repeat jeleu | word|-
 mixed 0 teach exclamation repeat ojo | syllable|-
-mixed 0 quick slow repeat jos | word|-
+mixed 0 silent slow repeat jos | word|-
 closing 0 teach - repeat ji | syllable|-
 # sound j wordsMedial fourToFive 0 24
 opening 0 teach - intro - | -
@@ -3725,17 +3725,17 @@ targetB 0 teach - repeat jeleu | word|-
 targetB 0 silent - repeat jos | word|-
 targetB 0 teach - repeat jeleu | word|-
 targetB 0 teach - repeat joc | word|-
-mixed 0 quick loud name ojă | -
+mixed 0 silent loud name ojă | -
 mixed 0 silent neutral repeat jeleu | word|-
-mixed 0 quick loud repeat joc | word|-
+mixed 0 silent loud repeat joc | word|-
 mixed 0 silent loud repeat cojoc | word|-
-mixed 0 quick loud repeat pijama | word|-
+mixed 0 silent loud repeat pijama | word|-
 mixed 0 silent slow repeat cojoc | word|-
-mixed 0 quick neutral repeat jos | word|-
+mixed 0 silent neutral repeat jos | word|-
 mixed 0 silent slow repeat jeleu | word|-
-mixed 0 quick neutral repeat jos | word|-
+mixed 0 silent neutral repeat jos | word|-
 mixed 0 silent slow repeat joc | word|-
-mixed 0 quick neutral repeat pijama | word|-
+mixed 0 silent neutral repeat pijama | word|-
 closing 0 quick - repeat jeleu | word|-
 # sound j wordsMedial teenAdult 3 66
 listening 0 quick - hear ușă | false
@@ -3802,17 +3802,17 @@ targetA 4 silent - repeat cojoc | word|-
 targetA 4 teach - name ojă | -
 targetA 4 teach - repeat cojoc | word|-
 targetA 4 teach - repeat pijama | word|-
-mixed 0 quick fast repeat cojoc | word|-
+mixed 0 silent fast repeat cojoc | word|-
 mixed 0 silent fast name ojă | -
-mixed 0 quick fast repeat pijama | word|-
+mixed 0 silent fast repeat pijama | word|-
 mixed 0 silent slow repeat cojoc | word|-
-mixed 0 quick fast repeat jeleu | word|-
+mixed 0 silent fast repeat jeleu | word|-
 mixed 0 silent loud name ojă | -
-mixed 0 quick question repeat joc | word|-
+mixed 0 silent question repeat joc | word|-
 mixed 0 silent question repeat jos | word|-
-mixed 0 quick fast repeat pijama | word|-
+mixed 0 silent fast repeat pijama | word|-
 mixed 0 silent question name ojă | -
-mixed 0 quick exclamation repeat cojoc | word|-
+mixed 0 silent exclamation repeat cojoc | word|-
 closing 0 quick - repeat joc | word|-
 # sound j wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -3835,17 +3835,17 @@ targetB 0 silent - name ojă | -
 targetB 0 teach - repeat pijama | word|-
 targetB 0 teach - repeat cojoc | word|-
 targetB 0 teach - name ojă | -
-mixed 0 quick slow repeat garaj | word|-
-mixed 0 silent loud name bagaj | -
-mixed 0 quick slow repeat peisaj | word|-
-mixed 0 silent neutral repeat pijama | word|-
-mixed 0 quick neutral name ojă | -
-mixed 0 silent slow name bagaj | -
-mixed 0 quick loud repeat cojoc | word|-
 mixed 0 silent slow repeat garaj | word|-
-mixed 0 quick neutral repeat peisaj | word|-
+mixed 0 silent loud name bagaj | -
+mixed 0 silent slow repeat peisaj | word|-
+mixed 0 silent neutral repeat pijama | word|-
+mixed 0 silent neutral name ojă | -
+mixed 0 silent slow name bagaj | -
+mixed 0 silent loud repeat cojoc | word|-
+mixed 0 silent slow repeat garaj | word|-
+mixed 0 silent neutral repeat peisaj | word|-
 mixed 0 silent slow name ojă | -
-mixed 0 quick neutral repeat cojoc | word|-
+mixed 0 silent neutral repeat cojoc | word|-
 closing 0 quick - repeat jeleu | word|-
 # sound j wordsFinal teenAdult 3 66
 listening 0 quick - hear jeleu | true
@@ -3912,17 +3912,17 @@ targetA 4 teach - repeat garaj | word|-
 targetA 4 teach - name bagaj | -
 targetA 4 teach - repeat peisaj | word|-
 targetA 4 teach - repeat garaj | word|-
-mixed 0 quick neutral name ojă | -
+mixed 0 silent neutral name ojă | -
 mixed 0 silent loud name bagaj | -
-mixed 0 quick question repeat cojoc | word|-
+mixed 0 silent question repeat cojoc | word|-
 mixed 0 silent question repeat garaj | word|-
-mixed 0 quick loud repeat peisaj | word|-
+mixed 0 silent loud repeat peisaj | word|-
 mixed 0 silent fast repeat garaj | word|-
-mixed 0 quick loud name bagaj | -
+mixed 0 silent loud name bagaj | -
 mixed 0 silent exclamation repeat pijama | word|-
-mixed 0 quick neutral repeat cojoc | word|-
+mixed 0 silent neutral repeat cojoc | word|-
 mixed 0 silent question repeat peisaj | word|-
-mixed 0 quick loud repeat pijama | word|-
+mixed 0 silent loud repeat pijama | word|-
 closing 0 quick - repeat jeleu | word|-
 # sound j clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -3945,17 +3945,17 @@ targetB 0 silent - name bagaj | -
 targetB 0 teach - repeat garaj | word|-
 targetB 0 teach - name bagaj | -
 targetB 0 teach - repeat peisaj | word|-
-mixed 0 quick loud name vrăjitoare | -
+mixed 0 silent loud name vrăjitoare | -
 mixed 0 silent loud repeat pijama | word|-
-mixed 0 quick loud repeat garaj | word|-
+mixed 0 silent loud repeat garaj | word|-
 mixed 0 silent loud name plajă | -
-mixed 0 quick neutral repeat peisaj | word|-
+mixed 0 silent neutral repeat peisaj | word|-
 mixed 0 silent slow repeat pijama | word|-
-mixed 0 quick slow name vrăjitoare | -
+mixed 0 silent slow name vrăjitoare | -
 mixed 0 silent neutral name bagaj | -
-mixed 0 quick loud name plajă | -
+mixed 0 silent loud name plajă | -
 mixed 0 silent slow repeat peisaj | word|-
-mixed 0 quick slow repeat garaj | word|-
+mixed 0 silent slow repeat garaj | word|-
 closing 0 quick - repeat jos | word|-
 # sound j clusters teenAdult 3 66
 listening 0 quick - hear leu | false
@@ -4022,17 +4022,17 @@ targetA 4 silent - name plajă | -
 targetA 4 selfJudge - name vrăjitoare | -
 targetA 4 silent - name plajă | -
 targetA 4 selfJudge - repeat pijama | word|-
-mixed 0 quick exclamation repeat peisaj | word|-
-mixed 0 silent loud name bagaj | -
-mixed 0 quick fast name vrăjitoare | -
-mixed 0 silent question repeat garaj | word|-
-mixed 0 quick loud repeat pijama | word|-
 mixed 0 silent exclamation repeat peisaj | word|-
-mixed 0 quick question repeat garaj | word|-
+mixed 0 silent loud name bagaj | -
+mixed 0 silent fast name vrăjitoare | -
+mixed 0 silent question repeat garaj | word|-
+mixed 0 silent loud repeat pijama | word|-
+mixed 0 silent exclamation repeat peisaj | word|-
+mixed 0 silent question repeat garaj | word|-
 mixed 0 silent question name bagaj | -
-mixed 0 quick slow repeat garaj | word|-
+mixed 0 silent slow repeat garaj | word|-
 mixed 0 silent question name bagaj | -
-mixed 0 quick question name plajă | -
+mixed 0 silent question name plajă | -
 closing 0 quick - repeat jeleu | word|-
 # sound j pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4058,17 +4058,17 @@ targetB 0 quick - name vrăjitoare | -
 targetB 0 selfJudge - name plajă | -
 targetB 0 silent - name vrăjitoare | -
 targetB 0 selfJudge - name plajă | -
-mixed 0 quick slow repeat șoc | word|joc
+mixed 0 silent slow repeat șoc | word|joc
 mixed 0 silent loud repeat joc, șoc | word|-
-mixed 0 quick loud repeat zar | word|jar
+mixed 0 silent loud repeat zar | word|jar
 mixed 0 silent loud name vrăjitoare | -
-mixed 0 quick loud repeat jar | word|zar
+mixed 0 silent loud repeat jar | word|zar
 mixed 0 silent loud repeat jar, zar | word|-
-mixed 0 quick loud repeat joc | word|șoc
+mixed 0 silent loud repeat joc | word|șoc
 mixed 0 silent neutral name plajă | -
-mixed 0 quick slow repeat jar | word|zar
+mixed 0 silent slow repeat jar | word|zar
 mixed 0 silent neutral repeat joc | word|șoc
-mixed 0 quick loud repeat joc, șoc | word|-
+mixed 0 silent loud repeat joc, șoc | word|-
 closing 0 quick - repeat jos | word|-
 # sound j pairs teenAdult 3 66
 listening 0 quick - hear robot | false
@@ -4150,17 +4150,17 @@ targetA 4 quick - repeat joc | word|șoc
 targetA 4 quick - repeat joc, șoc | word|-
 targetA 4 silent - repeat șoc | word|joc
 targetA 4 silent - repeat jar | word|zar
-mixed 0 quick loud name vrăjitoare | -
+mixed 0 silent loud name vrăjitoare | -
 mixed 0 silent slow repeat joc, șoc | word|-
-mixed 0 quick neutral name plajă | -
+mixed 0 silent neutral name plajă | -
 mixed 0 silent question name vrăjitoare | -
-mixed 0 quick loud repeat jar, zar | word|-
+mixed 0 silent loud repeat jar, zar | word|-
 mixed 0 silent exclamation repeat joc | word|șoc
-mixed 0 quick fast repeat zar | word|jar
+mixed 0 silent fast repeat zar | word|jar
 mixed 0 silent loud name plajă | -
-mixed 0 quick fast name vrăjitoare | -
+mixed 0 silent fast name vrăjitoare | -
 mixed 0 silent exclamation repeat șoc | word|joc
-mixed 0 quick exclamation name plajă | -
+mixed 0 silent exclamation name plajă | -
 closing 0 quick - repeat jos | word|-
 # sound j sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4184,16 +4184,16 @@ targetB 0 silent - repeat joc, șoc | word|-
 targetB 0 silent - repeat jar, zar | word|-
 targetB 0 quick - repeat șoc | word|joc
 mixed 0 silent loud repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick slow repeat joc, șoc | word|-
+mixed 0 silent slow repeat joc, șoc | word|-
 mixed 0 silent neutral repeat zar | word|jar
-mixed 0 quick loud repeat șoc | word|joc
-mixed 0 quick neutral repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent loud repeat șoc | word|joc
+mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
 mixed 0 silent slow repeat joc | word|șoc
 mixed 0 silent neutral repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick neutral repeat Jucăria e pe jos. | sentence|-
-mixed 0 quick slow repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent slow repeat Ne jucăm pe plajă. | sentence|-
 mixed 0 silent neutral repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick slow repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent slow repeat Ne jucăm pe plajă. | sentence|-
 closing 0 quick - repeat jeleu | word|-
 # sound j sentences teenAdult 3 66
 listening 0 quick - choose șoc | joc|-
@@ -4260,17 +4260,17 @@ targetA 4 silent - repeat Mă joc cu jucăriile mele. | sentence|-
 targetA 4 quick - repeat Jucăria e pe jos. | sentence|-
 targetA 4 silent - repeat Mă joc cu jucăriile mele. | sentence|-
 targetA 4 quick - repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick slow repeat joc | word|șoc
+mixed 0 silent slow repeat joc | word|șoc
 mixed 0 silent slow repeat joc, șoc | word|-
 mixed 0 silent slow twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
-mixed 0 quick exclamation repeat jar | word|zar
+mixed 0 silent exclamation repeat jar | word|zar
 mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
-mixed 0 quick neutral repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
+mixed 0 silent neutral repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
 mixed 0 silent neutral repeat șoc | word|joc
 mixed 0 silent neutral twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
-mixed 0 quick slow repeat jar, zar | word|-
-mixed 0 quick loud twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
+mixed 0 silent slow repeat jar, zar | word|-
+mixed 0 silent loud twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
 closing 0 quick - repeat jeleu | word|-
 # sound j retell fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4293,17 +4293,17 @@ targetB 0 silent - repeat Ne jucăm pe plajă. | sentence|-
 targetB 0 quick - repeat Jucăria e pe jos. | sentence|-
 targetB 0 quick - repeat Mă joc cu jucăriile mele. | sentence|-
 targetB 0 silent - repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick neutral repeat Mă joc cu jucăriile mele. | sentence|-
+mixed 0 silent neutral repeat Mă joc cu jucăriile mele. | sentence|-
 mixed 0 silent loud repeat Ne jucăm pe plajă. | sentence|-
 mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
-mixed 0 quick loud repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
-mixed 0 quick loud repeat Ne jucăm pe plajă. | sentence|-
 mixed 0 silent loud repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick slow repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent - retell Povestea de azi | -
+mixed 0 silent loud repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent loud repeat Mă joc cu jucăriile mele. | sentence|-
 mixed 0 silent slow repeat Jucăria e pe jos. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent slow repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent - retell Povestea de azi | -
 closing 0 quick - repeat jeleu | word|-
 # sound j retell teenAdult 3 66
 listening 0 quick - choose jar | zar|-
@@ -4370,17 +4370,17 @@ targetA 4 quick - retell Vântul Vâjâilă | -
 targetA 4 silent - repeat Jucăria e pe jos. | sentence|-
 targetA 4 quick - repeat Mă joc cu jucăriile mele. | sentence|-
 targetA 4 silent - describe jaguar jucărie | -
-mixed 0 quick slow twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
+mixed 0 silent slow twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
 mixed 0 silent loud repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent question repeat Jucăria e pe jos. | sentence|-
 mixed 0 silent slow repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick - describe jaguar plajă | -
-mixed 0 quick loud repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent - describe jaguar plajă | -
+mixed 0 silent loud repeat Jucăria e pe jos. | sentence|-
 mixed 0 silent neutral twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
 mixed 0 silent neutral twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
-mixed 0 quick exclamation repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick fast repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent exclamation repeat Mă joc cu jucăriile mele. | sentence|-
+mixed 0 silent fast repeat Ne jucăm pe plajă. | sentence|-
 closing 0 quick - repeat jeleu | word|-
 # sound j everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4403,15 +4403,15 @@ targetB 0 silent - repeat Ne jucăm pe plajă. | sentence|-
 targetB 0 quick - repeat Jucăria e pe jos. | sentence|-
 targetB 0 silent - repeat Mă joc cu jucăriile mele. | sentence|-
 targetB 0 quick - repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick slow repeat Mă joc cu jucăriile mele. | sentence|-
+mixed 0 silent slow repeat Mă joc cu jucăriile mele. | sentence|-
 mixed 0 silent loud repeat Mă joc cu jucăriile mele. | sentence|-
 mixed 0 silent slow repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick - describe bagaj plajă | -
-mixed 0 quick neutral repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent - describe bagaj plajă | -
+mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
 mixed 0 silent - retell Vântul Vâjâilă | -
 mixed 0 silent - describe jaguar jucărie | -
-mixed 0 quick slow repeat Ne jucăm pe plajă. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent slow repeat Ne jucăm pe plajă. | sentence|-
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent loud repeat Ne jucăm pe plajă. | sentence|-
 mixed 0 silent slow repeat Jucăria e pe jos. | sentence|-
 closing 0 quick - repeat jos | word|-
@@ -4482,16 +4482,16 @@ targetA 4 silent - describe jaguar plajă | -
 targetA 4 silent - describe bagaj plajă | -
 targetA 4 quick - retell Vântul Vâjâilă | -
 mixed 0 silent - describe jaguar jucărie | -
-mixed 0 quick neutral repeat Jucăria e pe jos. | sentence|-
+mixed 0 silent neutral repeat Jucăria e pe jos. | sentence|-
 mixed 0 silent question repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
-mixed 0 quick loud twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
+mixed 0 silent fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
+mixed 0 silent loud twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
 mixed 0 silent neutral repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
+mixed 0 silent fast twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
 mixed 0 silent loud repeat Ne jucăm pe plajă. | sentence|-
 mixed 0 silent slow repeat Mă joc cu jucăriile mele. | sentence|-
-mixed 0 quick slow twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
-mixed 0 quick question twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
+mixed 0 silent slow twister Jeni se joacă jos cu jucăriile, lângă garaj. | -
+mixed 0 silent question twister Jumătate de jeleu e jos, jos e jumătate de jeleu. | -
 closing 0 quick - repeat joc | word|-
 mission 0 silent - mission Cere ajutor: „Mă ajuți, te rog?” | -
 # sound ț isolated fourToFive 0 24
@@ -4739,7 +4739,7 @@ targetB 0 teach - repeat ți | syllable|-
 targetB 0 silent - repeat iț | syllable|-
 targetB 0 teach - repeat ața | syllable|-
 targetB 0 teach - repeat uțu | syllable|-
-mixed 0 quick neutral repeat țap | word|-
+mixed 0 silent neutral repeat țap | word|-
 mixed 0 teach neutral repeat ețe | syllable|-
 mixed 0 teach neutral repeat țo | syllable|-
 mixed 0 silent loud name țintă | -
@@ -4749,7 +4749,7 @@ mixed 0 teach loud repeat țe | syllable|-
 mixed 0 silent loud name țintă | -
 mixed 0 teach slow repeat aț | syllable|-
 mixed 0 teach loud repeat oț | syllable|-
-mixed 0 quick slow name țestoasă | -
+mixed 0 silent slow name țestoasă | -
 closing 0 teach - repeat țe | syllable|-
 # sound ț wordsInitial teenAdult 3 66
 listening 0 quick - choose sap | țap|-
@@ -4816,17 +4816,17 @@ targetA 4 silent - name țestoasă | -
 targetA 4 teach - name țintă | -
 targetA 4 teach - name țestoasă | -
 targetA 4 teach - repeat țap | word|-
-mixed 0 quick slow name țintă | -
+mixed 0 silent slow name țintă | -
 mixed 0 teach loud repeat ți | syllable|-
 mixed 0 teach neutral repeat țe | syllable|-
 mixed 0 silent loud repeat țap | word|-
 mixed 0 teach slow repeat uțu | syllable|-
 mixed 0 teach slow repeat ețe | syllable|-
-mixed 0 quick neutral name țestoasă | -
+mixed 0 silent neutral name țestoasă | -
 mixed 0 teach exclamation repeat țu | syllable|-
-mixed 0 quick loud repeat țap | word|-
+mixed 0 silent loud repeat țap | word|-
 mixed 0 teach fast repeat oțo | syllable|-
-mixed 0 quick loud name țestoasă | -
+mixed 0 silent loud name țestoasă | -
 closing 0 teach - repeat ța | syllable|-
 # sound ț wordsMedial fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4849,17 +4849,17 @@ targetB 0 silent - name țintă | -
 targetB 0 teach - repeat țap | word|-
 targetB 0 teach - name țestoasă | -
 targetB 0 teach - name țintă | -
-mixed 0 quick neutral name țestoasă | -
+mixed 0 silent neutral name țestoasă | -
 mixed 0 silent loud repeat fetiță | word|-
-mixed 0 quick slow repeat căsuță | word|-
-mixed 0 silent neutral name ață | -
-mixed 0 quick slow name țintă | -
 mixed 0 silent slow repeat căsuță | word|-
-mixed 0 quick loud repeat țap | word|-
+mixed 0 silent neutral name ață | -
+mixed 0 silent slow name țintă | -
+mixed 0 silent slow repeat căsuță | word|-
+mixed 0 silent loud repeat țap | word|-
 mixed 0 silent slow name țestoasă | -
-mixed 0 quick slow name țintă | -
+mixed 0 silent slow name țintă | -
 mixed 0 silent loud repeat fetiță | word|-
-mixed 0 quick neutral repeat țap | word|-
+mixed 0 silent neutral repeat țap | word|-
 closing 0 quick - repeat țestoasă | word|-
 # sound ț wordsMedial teenAdult 3 66
 listening 0 quick - hear jos | false
@@ -4926,17 +4926,17 @@ targetA 4 teach - repeat căsuță | word|-
 targetA 4 silent - name ață | -
 targetA 4 teach - name cuțit | -
 targetA 4 teach - repeat căsuță | word|-
-mixed 0 quick loud name țintă | -
+mixed 0 silent loud name țintă | -
 mixed 0 silent question repeat fetiță | word|-
-mixed 0 quick loud name ață | -
+mixed 0 silent loud name ață | -
 mixed 0 silent fast repeat țap | word|-
-mixed 0 quick slow name țestoasă | -
+mixed 0 silent slow name țestoasă | -
 mixed 0 silent question repeat țap | word|-
-mixed 0 quick question repeat fetiță | word|-
+mixed 0 silent question repeat fetiță | word|-
 mixed 0 silent question name țintă | -
-mixed 0 quick neutral name țestoasă | -
+mixed 0 silent neutral name țestoasă | -
 mixed 0 silent loud repeat țap | word|-
-mixed 0 quick exclamation name cuțit | -
+mixed 0 silent exclamation name cuțit | -
 closing 0 quick - repeat țestoasă | word|-
 # sound ț wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -4959,17 +4959,17 @@ targetB 0 teach - repeat căsuță | word|-
 targetB 0 teach - name cuțit | -
 targetB 0 teach - name ață | -
 targetB 0 teach - name cuțit | -
-mixed 0 quick loud repeat pătuț | word|-
+mixed 0 silent loud repeat pătuț | word|-
 mixed 0 silent slow repeat fetiță | word|-
-mixed 0 quick loud repeat căluț | word|-
+mixed 0 silent loud repeat căluț | word|-
 mixed 0 silent neutral name ursuleț | -
-mixed 0 quick slow repeat pătuț | word|-
+mixed 0 silent slow repeat pătuț | word|-
 mixed 0 silent neutral name ursuleț | -
-mixed 0 quick neutral repeat căluț | word|-
+mixed 0 silent neutral repeat căluț | word|-
 mixed 0 silent slow repeat căsuță | word|-
-mixed 0 quick loud name cuțit | -
+mixed 0 silent loud name cuțit | -
 mixed 0 silent loud name ață | -
-mixed 0 quick slow repeat căsuță | word|-
+mixed 0 silent slow repeat căsuță | word|-
 closing 0 quick - repeat țap | word|-
 # sound ț wordsFinal teenAdult 3 66
 listening 0 quick - choose Țțțț | Ssssss|-
@@ -5036,17 +5036,17 @@ targetA 4 teach - name ursuleț | -
 targetA 4 teach - repeat pătuț | word|-
 targetA 4 silent - repeat căluț | word|-
 targetA 4 teach - name ursuleț | -
-mixed 0 quick question repeat pătuț | word|-
+mixed 0 silent question repeat pătuț | word|-
 mixed 0 silent exclamation name cuțit | -
-mixed 0 quick slow name ursuleț | -
+mixed 0 silent slow name ursuleț | -
 mixed 0 silent neutral repeat căluț | word|-
-mixed 0 quick question repeat fetiță | word|-
+mixed 0 silent question repeat fetiță | word|-
 mixed 0 silent loud repeat pătuț | word|-
-mixed 0 quick fast name ursuleț | -
+mixed 0 silent fast name ursuleț | -
 mixed 0 silent exclamation name ață | -
-mixed 0 quick neutral repeat căsuță | word|-
+mixed 0 silent neutral repeat căsuță | word|-
 mixed 0 silent neutral repeat căluț | word|-
-mixed 0 quick neutral repeat pătuț | word|-
+mixed 0 silent neutral repeat pătuț | word|-
 closing 0 quick - repeat țap | word|-
 # sound ț clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -5069,17 +5069,17 @@ targetB 0 teach - repeat căluț | word|-
 targetB 0 teach - repeat pătuț | word|-
 targetB 0 teach - repeat căluț | word|-
 targetB 0 teach - name ursuleț | -
-mixed 0 quick loud repeat pătuț | word|-
+mixed 0 silent loud repeat pătuț | word|-
 mixed 0 silent loud name țestoasă | -
-mixed 0 quick loud name ursuleț | -
+mixed 0 silent loud name ursuleț | -
 mixed 0 silent loud repeat căluț | word|-
-mixed 0 quick neutral name ursuleț | -
+mixed 0 silent neutral name ursuleț | -
 mixed 0 silent neutral repeat pătuț | word|-
-mixed 0 quick slow repeat căluț | word|-
+mixed 0 silent slow repeat căluț | word|-
 mixed 0 silent loud repeat fetiță | word|-
-mixed 0 quick slow repeat pătuț | word|-
+mixed 0 silent slow repeat pătuț | word|-
 mixed 0 silent slow name ursuleț | -
-mixed 0 quick neutral name dinți | -
+mixed 0 silent neutral name dinți | -
 closing 0 quick - repeat țap | word|-
 # sound ț clusters teenAdult 3 66
 listening 0 quick - choose ațe | ace|-
@@ -5146,17 +5146,17 @@ targetA 4 quick - repeat căsuță | word|-
 targetA 4 silent - name lanț | -
 targetA 4 selfJudge - repeat dulceață | word|-
 targetA 4 silent - repeat fetiță | word|-
-mixed 0 quick exclamation repeat căluț | word|-
+mixed 0 silent exclamation repeat căluț | word|-
 mixed 0 silent fast repeat pătuț | word|-
-mixed 0 quick question name ursuleț | -
+mixed 0 silent question name ursuleț | -
 mixed 0 silent slow repeat albinuță | word|-
-mixed 0 quick exclamation name dinți | -
+mixed 0 silent exclamation name dinți | -
 mixed 0 silent loud name lanț | -
-mixed 0 quick fast repeat căsuță | word|-
+mixed 0 silent fast repeat căsuță | word|-
 mixed 0 silent exclamation repeat albinuță | word|-
-mixed 0 quick question repeat dulceață | word|-
+mixed 0 silent question repeat dulceață | word|-
 mixed 0 silent exclamation repeat pătuț | word|-
-mixed 0 quick question name munți | -
+mixed 0 silent question name munți | -
 closing 0 quick - repeat țap | word|-
 # sound ț pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -5182,17 +5182,17 @@ targetB 0 silent - name munți | -
 targetB 0 quick - repeat albinuță | word|-
 targetB 0 selfJudge - name lanț | -
 targetB 0 silent - repeat albinuță | word|-
-mixed 0 quick slow repeat sap | word|țap
+mixed 0 silent slow repeat sap | word|țap
 mixed 0 silent neutral repeat ațe | word|ace
-mixed 0 quick loud repeat dulceață | word|-
+mixed 0 silent loud repeat dulceață | word|-
 mixed 0 silent neutral name dinți | -
-mixed 0 quick slow repeat sap | word|țap
+mixed 0 silent slow repeat sap | word|țap
 mixed 0 silent loud repeat țeapă | word|ceapă
-mixed 0 quick slow repeat ace | word|ațe
+mixed 0 silent slow repeat ace | word|ațe
 mixed 0 silent slow name munți | -
-mixed 0 quick loud repeat țap, sap | word|-
+mixed 0 silent loud repeat țap, sap | word|-
 mixed 0 silent slow repeat ceapă | word|țeapă
-mixed 0 quick neutral name lanț | -
+mixed 0 silent neutral name lanț | -
 closing 0 quick - repeat țintă | word|-
 # sound ț pairs teenAdult 3 66
 listening 0 quick - hear pisică | false
@@ -5274,17 +5274,17 @@ targetA 4 silent - repeat ace | word|ațe
 targetA 4 silent - repeat țap | word|sap
 targetA 4 quick - repeat țap, sap | word|-
 targetA 4 silent - repeat ace | word|ațe
-mixed 0 quick exclamation repeat dulceață | word|-
+mixed 0 silent exclamation repeat dulceață | word|-
 mixed 0 silent question repeat țeapă | word|ceapă
-mixed 0 quick exclamation repeat ațe | word|ace
+mixed 0 silent exclamation repeat ațe | word|ace
 mixed 0 silent exclamation repeat ceapă | word|țeapă
-mixed 0 quick loud name lanț | -
+mixed 0 silent loud name lanț | -
 mixed 0 silent fast name munți | -
-mixed 0 quick loud repeat țap | word|sap
+mixed 0 silent loud repeat țap | word|sap
 mixed 0 silent question repeat sap | word|țap
-mixed 0 quick fast repeat ațe | word|ace
+mixed 0 silent fast repeat ațe | word|ace
 mixed 0 silent neutral repeat țap, sap | word|-
-mixed 0 quick neutral repeat țap | word|sap
+mixed 0 silent neutral repeat țap | word|sap
 closing 0 quick - repeat țintă | word|-
 # sound ț sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -5308,16 +5308,16 @@ targetB 0 silent - repeat sap | word|țap
 targetB 0 quick - repeat ceapă | word|țeapă
 targetB 0 silent - repeat țap | word|sap
 mixed 0 silent loud repeat ace | word|ațe
-mixed 0 quick slow repeat țeapă | word|ceapă
-mixed 0 quick loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent slow repeat țeapă | word|ceapă
+mixed 0 silent loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 mixed 0 silent slow repeat Mai vreau puțin. | sentence|-
 mixed 0 silent loud repeat sap | word|țap
-mixed 0 quick loud repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick slow repeat ațe | word|ace
+mixed 0 silent loud repeat Ursulețul doarme în pătuț. | sentence|-
+mixed 0 silent slow repeat ațe | word|ace
 mixed 0 silent slow repeat Mai vreau puțin. | sentence|-
 mixed 0 silent loud repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick loud repeat țap | word|sap
-mixed 0 quick slow repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent loud repeat țap | word|sap
+mixed 0 silent slow repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 closing 0 quick - repeat țap | word|-
 # sound ț sentences teenAdult 3 66
 listening 0 quick - choose ceapă | țeapă|-
@@ -5384,17 +5384,17 @@ targetA 4 silent - repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 targetA 4 quick - repeat Ursulețul doarme în pătuț. | sentence|-
 targetA 4 quick - repeat Mai vreau puțin. | sentence|-
 targetA 4 silent - repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick exclamation repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent exclamation repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 mixed 0 silent question twister Fetița are un ursuleț, un căluț și un pătuț. | -
 mixed 0 silent exclamation repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick exclamation twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
+mixed 0 silent exclamation twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
 mixed 0 silent slow repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick exclamation twister Fetița are un ursuleț, un căluț și un pătuț. | -
+mixed 0 silent exclamation twister Fetița are un ursuleț, un căluț și un pătuț. | -
 mixed 0 silent slow repeat Mai vreau puțin. | sentence|-
-mixed 0 quick exclamation repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick neutral twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
+mixed 0 silent exclamation repeat Fetița are un ursuleț. | sentence|-
+mixed 0 silent neutral twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
 mixed 0 silent neutral twister Fetița are un ursuleț, un căluț și un pătuț. | -
-mixed 0 quick loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 closing 0 quick - repeat țintă | word|-
 # sound ț retell fourToFive 0 24
 opening 0 teach - intro - | -
@@ -5417,15 +5417,15 @@ targetB 0 quick - repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 targetB 0 silent - repeat Mai vreau puțin. | sentence|-
 targetB 0 silent - repeat Fetița are un ursuleț. | sentence|-
 targetB 0 quick - repeat Țânțarul țipă: ț-ț-ț! | sentence|-
-mixed 0 quick slow repeat Ursulețul doarme în pătuț. | sentence|-
+mixed 0 silent slow repeat Ursulețul doarme în pătuț. | sentence|-
 mixed 0 silent loud repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick - retell Șoricelul Țuțu | -
+mixed 0 silent - retell Șoricelul Țuțu | -
 mixed 0 silent loud repeat Mai vreau puțin. | sentence|-
 mixed 0 silent - describe țestoasă țintă | -
-mixed 0 quick loud repeat Fetița are un ursuleț. | sentence|-
+mixed 0 silent loud repeat Fetița are un ursuleț. | sentence|-
 mixed 0 silent loud repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick - retell Șoricelul Țuțu | -
-mixed 0 quick loud repeat Mai vreau puțin. | sentence|-
+mixed 0 silent - retell Șoricelul Țuțu | -
+mixed 0 silent loud repeat Mai vreau puțin. | sentence|-
 mixed 0 silent - describe țestoasă țintă | -
 mixed 0 silent - describe rață țânțar | -
 closing 0 quick - repeat țap | word|-
@@ -5495,16 +5495,16 @@ targetA 4 silent - retell Povestea de azi | -
 targetA 4 quick - retell Șoricelul Țuțu | -
 targetA 4 silent - repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 mixed 0 silent slow repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick slow repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick slow repeat Ursulețul doarme în pătuț. | sentence|-
+mixed 0 silent slow repeat Fetița are un ursuleț. | sentence|-
+mixed 0 silent slow repeat Ursulețul doarme în pătuț. | sentence|-
 mixed 0 silent neutral repeat Mai vreau puțin. | sentence|-
-mixed 0 quick - describe rață țânțar | -
+mixed 0 silent - describe rață țânțar | -
 mixed 0 silent - describe țestoasă țintă | -
-mixed 0 quick - describe ursuleț pătuț | -
+mixed 0 silent - describe ursuleț pătuț | -
 mixed 0 silent exclamation repeat Țânțarul țipă: ț-ț-ț! | sentence|-
-mixed 0 quick fast repeat Mai vreau puțin. | sentence|-
+mixed 0 silent fast repeat Mai vreau puțin. | sentence|-
 mixed 0 silent - describe țestoasă țintă | -
-mixed 0 quick loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent loud repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 closing 0 quick - repeat țestoasă | word|-
 # sound ț everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -5528,16 +5528,16 @@ targetB 0 silent - repeat Fetița are un ursuleț. | sentence|-
 targetB 0 quick - repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 targetB 0 silent - repeat Mai vreau puțin. | sentence|-
 mixed 0 silent loud repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick neutral repeat Ursulețul doarme în pătuț. | sentence|-
-mixed 0 quick - describe rață țânțar | -
+mixed 0 silent neutral repeat Ursulețul doarme în pătuț. | sentence|-
+mixed 0 silent - describe rață țânțar | -
 mixed 0 silent neutral repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick slow repeat Țânțarul țipă: ț-ț-ț! | sentence|-
+mixed 0 silent slow repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 mixed 0 silent loud repeat Mai vreau puțin. | sentence|-
-mixed 0 quick slow repeat Mai vreau puțin. | sentence|-
+mixed 0 silent slow repeat Mai vreau puțin. | sentence|-
 mixed 0 silent - describe țestoasă țintă | -
-mixed 0 quick - describe rață țânțar | -
+mixed 0 silent - describe rață țânțar | -
 mixed 0 silent - describe ursuleț pătuț | -
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 closing 0 quick - repeat țintă | word|-
 mission 0 silent - mission La spălatul pe dinți, spune: „Dinți curați!” | -
 # sound ț everyday teenAdult 3 66
@@ -5605,17 +5605,17 @@ targetA 4 silent - describe rață țânțar | -
 targetA 4 quick - describe țestoasă țintă | -
 targetA 4 quick - repeat Fetița are un ursuleț. | sentence|-
 targetA 4 silent - describe rață țânțar | -
-mixed 0 quick - describe ursuleț pătuț | -
+mixed 0 silent - describe ursuleț pătuț | -
 mixed 0 silent neutral repeat Țânțarul țipă: ț-ț-ț! | sentence|-
 mixed 0 silent slow twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
-mixed 0 quick fast twister Fetița are un ursuleț, un căluț și un pătuț. | -
-mixed 0 quick slow repeat Ursulețul doarme în pătuț. | sentence|-
+mixed 0 silent fast twister Fetița are un ursuleț, un căluț și un pătuț. | -
+mixed 0 silent slow repeat Ursulețul doarme în pătuț. | sentence|-
 mixed 0 silent exclamation repeat Țânțarul țipă: ț-ț-ț! | sentence|-
-mixed 0 quick neutral twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
+mixed 0 silent neutral twister Țânțarul țipă, țapul țopăie, țestoasa tace. | -
 mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent question twister Fetița are un ursuleț, un căluț și un pătuț. | -
-mixed 0 quick slow repeat Fetița are un ursuleț. | sentence|-
-mixed 0 quick slow repeat Mai vreau puțin. | sentence|-
+mixed 0 silent slow repeat Fetița are un ursuleț. | sentence|-
+mixed 0 silent slow repeat Mai vreau puțin. | sentence|-
 closing 0 quick - repeat țestoasă | word|-
 mission 0 silent - mission La spălatul pe dinți, spune: „Dinți curați!” | -
 # sound ce isolated fourToFive 0 24
@@ -5863,17 +5863,17 @@ targetB 0 teach - repeat ce | syllable|-
 targetB 0 teach - repeat ici | syllable|-
 targetB 0 teach - repeat acea | syllable|-
 targetB 0 silent - repeat aci | syllable|-
-mixed 0 quick slow name ceas | -
+mixed 0 silent slow name ceas | -
 mixed 0 silent neutral name ceapă | -
 mixed 0 teach slow repeat ocio | syllable|-
 mixed 0 teach loud repeat ece | syllable|-
 mixed 0 teach loud repeat ci | syllable|-
 mixed 0 teach neutral repeat uciu | syllable|-
-mixed 0 quick neutral name ceas | -
+mixed 0 silent neutral name ceas | -
 mixed 0 teach neutral repeat cio | syllable|-
 mixed 0 teach neutral repeat ciu | syllable|-
 mixed 0 teach neutral repeat uci | syllable|-
-mixed 0 quick neutral name ceai | -
+mixed 0 silent neutral name ceai | -
 closing 0 teach - repeat cio | syllable|-
 # sound ce wordsInitial teenAdult 3 66
 listening 0 quick - choose ace | ațe|-
@@ -5942,13 +5942,13 @@ targetA 4 silent - name ceapă | -
 targetA 4 teach - name ceas | -
 mixed 0 teach slow repeat ciu | syllable|-
 mixed 0 teach question repeat ci | syllable|-
-mixed 0 quick loud name ceai | -
+mixed 0 silent loud name ceai | -
 mixed 0 teach fast repeat ce | syllable|-
-mixed 0 quick question name ciocolată | -
+mixed 0 silent question name ciocolată | -
 mixed 0 silent question name ceai | -
-mixed 0 quick exclamation name ceas | -
+mixed 0 silent exclamation name ceas | -
 mixed 0 teach loud repeat acea | syllable|-
-mixed 0 quick neutral name ciocolată | -
+mixed 0 silent neutral name ciocolată | -
 mixed 0 teach question repeat oci | syllable|-
 mixed 0 teach slow repeat ici | syllable|-
 closing 0 teach - repeat ci | syllable|-
@@ -5973,17 +5973,17 @@ targetB 0 teach - name ceas | -
 targetB 0 silent - name ceapă | -
 targetB 0 teach - name ceas | -
 targetB 0 teach - name ceai | -
-mixed 0 quick slow name ciocolată | -
+mixed 0 silent slow name ciocolată | -
 mixed 0 silent slow name ceapă | -
-mixed 0 quick loud name ceas | -
+mixed 0 silent loud name ceas | -
 mixed 0 silent loud name ceai | -
-mixed 0 quick slow name bicicletă | -
+mixed 0 silent slow name bicicletă | -
 mixed 0 silent slow repeat fericit | word|-
-mixed 0 quick slow name ciocolată | -
+mixed 0 silent slow name ciocolată | -
 mixed 0 silent neutral repeat felicitare | word|-
-mixed 0 quick slow repeat fericit | word|-
+mixed 0 silent slow repeat fericit | word|-
 mixed 0 silent neutral name bicicletă | -
-mixed 0 quick loud name ceapă | -
+mixed 0 silent loud name ceapă | -
 closing 0 quick - repeat ciocolată | word|-
 # sound ce wordsMedial teenAdult 3 66
 listening 0 quick - choose ceapă | țeapă|-
@@ -6050,17 +6050,17 @@ targetA 4 teach - name bicicletă | -
 targetA 4 teach - repeat felicitare | word|-
 targetA 4 teach - name bicicletă | -
 targetA 4 silent - repeat fericit | word|-
-mixed 0 quick exclamation name ceas | -
+mixed 0 silent exclamation name ceas | -
 mixed 0 silent loud name ciocolată | -
-mixed 0 quick slow repeat felicitare | word|-
-mixed 0 silent fast repeat fericit | word|-
-mixed 0 quick loud name bicicletă | -
-mixed 0 silent loud repeat fericit | word|-
-mixed 0 quick question name ceapă | -
 mixed 0 silent slow repeat felicitare | word|-
-mixed 0 quick exclamation name bicicletă | -
+mixed 0 silent fast repeat fericit | word|-
+mixed 0 silent loud name bicicletă | -
+mixed 0 silent loud repeat fericit | word|-
+mixed 0 silent question name ceapă | -
+mixed 0 silent slow repeat felicitare | word|-
+mixed 0 silent exclamation name bicicletă | -
 mixed 0 silent fast name ceai | -
-mixed 0 quick slow repeat felicitare | word|-
+mixed 0 silent slow repeat felicitare | word|-
 closing 0 quick - repeat ceapă | word|-
 # sound ce wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6083,17 +6083,17 @@ targetB 0 teach - repeat felicitare | word|-
 targetB 0 teach - name bicicletă | -
 targetB 0 teach - repeat fericit | word|-
 targetB 0 teach - repeat felicitare | word|-
-mixed 0 quick slow name bicicletă | -
+mixed 0 silent slow name bicicletă | -
 mixed 0 silent neutral name nuci | -
-mixed 0 quick slow repeat felicitare | word|-
+mixed 0 silent slow repeat felicitare | word|-
 mixed 0 silent loud name vaci | -
-mixed 0 quick neutral repeat fericit | word|-
+mixed 0 silent neutral repeat fericit | word|-
 mixed 0 silent neutral name bicicletă | -
-mixed 0 quick neutral repeat fericit | word|-
+mixed 0 silent neutral repeat fericit | word|-
 mixed 0 silent loud repeat felicitare | word|-
-mixed 0 quick slow name arici | -
+mixed 0 silent slow name arici | -
 mixed 0 silent slow repeat fericit | word|-
-mixed 0 quick loud repeat felicitare | word|-
+mixed 0 silent loud repeat felicitare | word|-
 closing 0 quick - repeat ciocolată | word|-
 # sound ce wordsFinal teenAdult 3 66
 listening 0 quick - choose cer | ger|-
@@ -6160,17 +6160,17 @@ targetA 4 silent - name nuci | -
 targetA 4 teach - name vaci | -
 targetA 4 teach - repeat raci | word|-
 targetA 4 teach - name vaci | -
-mixed 0 quick exclamation name nuci | -
+mixed 0 silent exclamation name nuci | -
 mixed 0 silent exclamation name arici | -
-mixed 0 quick neutral repeat fericit | word|-
+mixed 0 silent neutral repeat fericit | word|-
 mixed 0 silent loud repeat felicitare | word|-
-mixed 0 quick exclamation name vaci | -
+mixed 0 silent exclamation name vaci | -
 mixed 0 silent exclamation name bicicletă | -
-mixed 0 quick fast name arici | -
+mixed 0 silent fast name arici | -
 mixed 0 silent neutral repeat raci | word|-
-mixed 0 quick question repeat felicitare | word|-
+mixed 0 silent question repeat felicitare | word|-
 mixed 0 silent question name nuci | -
-mixed 0 quick question name vaci | -
+mixed 0 silent question name vaci | -
 closing 0 quick - repeat ceai | word|-
 # sound ce clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6193,17 +6193,17 @@ targetB 0 teach - repeat raci | word|-
 targetB 0 teach - name vaci | -
 targetB 0 teach - name arici | -
 targetB 0 silent - name vaci | -
-mixed 0 quick loud name nuci | -
+mixed 0 silent loud name nuci | -
 mixed 0 silent neutral name cizme | -
-mixed 0 quick loud repeat raci | word|-
+mixed 0 silent loud repeat raci | word|-
 mixed 0 silent slow repeat dulceață | word|-
-mixed 0 quick neutral name ciocolată | -
+mixed 0 silent neutral name ciocolată | -
 mixed 0 silent neutral name vaci | -
-mixed 0 quick loud repeat raci | word|-
+mixed 0 silent loud repeat raci | word|-
 mixed 0 silent neutral name bicicletă | -
-mixed 0 quick neutral name ciocolată | -
+mixed 0 silent neutral name ciocolată | -
 mixed 0 silent slow name bicicletă | -
-mixed 0 quick neutral name melci | -
+mixed 0 silent neutral name melci | -
 closing 0 quick - repeat ceai | word|-
 # sound ce clusters teenAdult 3 66
 listening 0 quick - choose ace | ațe|-
@@ -6270,17 +6270,17 @@ targetA 4 selfJudge - name melci | -
 targetA 4 selfJudge - name ciocolată | -
 targetA 4 selfJudge - repeat dulceață | word|-
 targetA 4 silent - name bicicletă | -
-mixed 0 quick slow repeat raci | word|-
+mixed 0 silent slow repeat raci | word|-
 mixed 0 silent neutral name cizme | -
-mixed 0 quick fast name bicicletă | -
+mixed 0 silent fast name bicicletă | -
 mixed 0 silent exclamation name ciocolată | -
-mixed 0 quick slow name arici | -
+mixed 0 silent slow name arici | -
 mixed 0 silent neutral name nuci | -
-mixed 0 quick neutral repeat dulceață | word|-
+mixed 0 silent neutral repeat dulceață | word|-
 mixed 0 silent question name vaci | -
-mixed 0 quick loud name nuci | -
+mixed 0 silent loud name nuci | -
 mixed 0 silent question name melci | -
-mixed 0 quick loud name bicicletă | -
+mixed 0 silent loud name bicicletă | -
 closing 0 quick - repeat ceai | word|-
 # sound ce pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6306,17 +6306,17 @@ targetB 0 silent - name melci | -
 targetB 0 quick - name cizme | -
 targetB 0 selfJudge - repeat dulceață | word|-
 targetB 0 silent - name melci | -
-mixed 0 quick loud repeat ceapă | word|țeapă
+mixed 0 silent loud repeat ceapă | word|țeapă
 mixed 0 silent loud repeat cer | word|ger
-mixed 0 quick neutral repeat ger | word|cer
+mixed 0 silent neutral repeat ger | word|cer
 mixed 0 silent slow name cizme | -
-mixed 0 quick slow repeat dulceață | word|-
+mixed 0 silent slow repeat dulceață | word|-
 mixed 0 silent slow name melci | -
-mixed 0 quick slow repeat dulceață | word|-
+mixed 0 silent slow repeat dulceață | word|-
 mixed 0 silent neutral name melci | -
-mixed 0 quick neutral name cizme | -
+mixed 0 silent neutral name cizme | -
 mixed 0 silent neutral repeat ațe | word|ace
-mixed 0 quick loud name melci | -
+mixed 0 silent loud name melci | -
 closing 0 quick - repeat ciocolată | word|-
 # sound ce pairs teenAdult 3 66
 listening 0 quick - choose Ci-ci-ci | Țțțț|-
@@ -6398,17 +6398,17 @@ targetA 4 quick - repeat ceapă | word|țeapă
 targetA 4 quick - repeat ger | word|cer
 targetA 4 silent - repeat ace | word|ațe
 targetA 4 quick - repeat ațe | word|ace
-mixed 0 quick question name cizme | -
+mixed 0 silent question name cizme | -
 mixed 0 silent neutral repeat țeapă | word|ceapă
-mixed 0 quick neutral repeat ace | word|ațe
+mixed 0 silent neutral repeat ace | word|ațe
 mixed 0 silent loud repeat cer | word|ger
-mixed 0 quick question repeat dulceață | word|-
+mixed 0 silent question repeat dulceață | word|-
 mixed 0 silent loud repeat ațe | word|ace
-mixed 0 quick exclamation repeat ger | word|cer
+mixed 0 silent exclamation repeat ger | word|cer
 mixed 0 silent neutral name melci | -
-mixed 0 quick slow repeat ceapă | word|țeapă
+mixed 0 silent slow repeat ceapă | word|țeapă
 mixed 0 silent fast repeat ațe | word|ace
-mixed 0 quick exclamation name cizme | -
+mixed 0 silent exclamation name cizme | -
 closing 0 quick - repeat ceas | word|-
 # sound ce sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6431,17 +6431,17 @@ targetB 0 quick - repeat cer | word|ger
 targetB 0 silent - repeat ger | word|cer
 targetB 0 silent - repeat ațe | word|ace
 targetB 0 quick - repeat ace | word|ațe
-mixed 0 quick neutral repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent neutral repeat Ce cireșe dulci! | sentence|-
 mixed 0 silent neutral repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent neutral repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick loud repeat țeapă | word|ceapă
+mixed 0 silent loud repeat țeapă | word|ceapă
 mixed 0 silent slow repeat ace | word|ațe
-mixed 0 quick loud repeat ger | word|cer
+mixed 0 silent loud repeat ger | word|cer
 mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick slow repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent slow repeat Ce cireșe dulci! | sentence|-
 mixed 0 silent neutral repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick slow repeat cer | word|ger
-mixed 0 quick loud repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent slow repeat cer | word|ger
+mixed 0 silent loud repeat Ce cireșe dulci! | sentence|-
 closing 0 quick - repeat ceapă | word|-
 # sound ce sentences teenAdult 3 66
 listening 0 quick - hear țestoasă | false
@@ -6508,17 +6508,17 @@ targetA 4 quick - repeat Vreau un ceai cald. | sentence|-
 targetA 4 silent - repeat Ceasul arată cinci. | sentence|-
 targetA 4 quick - repeat Ce cireșe dulci! | sentence|-
 targetA 4 silent - repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick slow repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent slow repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent question repeat cer | word|ger
-mixed 0 quick slow repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent loud twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
 mixed 0 silent exclamation twister Ariciul culege cireșe, cinci câte cinci. | -
-mixed 0 quick exclamation repeat ațe | word|ace
+mixed 0 silent exclamation repeat ațe | word|ace
 mixed 0 silent neutral twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
-mixed 0 quick slow repeat țeapă | word|ceapă
+mixed 0 silent slow repeat țeapă | word|ceapă
 mixed 0 silent question repeat ceapă | word|țeapă
-mixed 0 quick loud repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick question twister Ariciul culege cireșe, cinci câte cinci. | -
+mixed 0 silent loud repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent question twister Ariciul culege cireșe, cinci câte cinci. | -
 closing 0 quick - repeat ciocolată | word|-
 # sound ce retell fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6541,15 +6541,15 @@ targetB 0 silent - repeat Ce cireșe dulci! | sentence|-
 targetB 0 quick - repeat Ceasul arată cinci. | sentence|-
 targetB 0 quick - repeat Ariciul are o ciupercă. | sentence|-
 targetB 0 silent - repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick neutral repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent neutral repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent loud repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick loud repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent loud repeat Ce cireșe dulci! | sentence|-
 mixed 0 silent - describe melc cireșe | -
-mixed 0 quick slow repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent slow repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent slow repeat Ceasul arată cinci. | sentence|-
 mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick - describe melc cireșe | -
-mixed 0 quick slow repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent - describe melc cireșe | -
+mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent slow repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent neutral repeat Ce cireșe dulci! | sentence|-
 closing 0 quick - repeat ceai | word|-
@@ -6618,17 +6618,17 @@ targetA 4 silent - repeat Ariciul are o ciupercă. | sentence|-
 targetA 4 quick - repeat Ce cireșe dulci! | sentence|-
 targetA 4 silent - retell Stropitoarea Cici | -
 targetA 4 quick - repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick question repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent question repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent question twister Ariciul culege cireșe, cinci câte cinci. | -
 mixed 0 silent - describe melc cireșe | -
-mixed 0 quick - describe arici ciupercă | -
+mixed 0 silent - describe arici ciupercă | -
 mixed 0 silent loud repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick exclamation twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
+mixed 0 silent exclamation twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
 mixed 0 silent fast repeat Ce cireșe dulci! | sentence|-
-mixed 0 quick slow repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent fast twister Ariciul culege cireșe, cinci câte cinci. | -
-mixed 0 quick fast repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick exclamation twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
+mixed 0 silent fast repeat Ceasul arată cinci. | sentence|-
+mixed 0 silent exclamation twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
 closing 0 quick - repeat ceai | word|-
 # sound ce everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -6651,16 +6651,16 @@ targetB 0 quick - repeat Ceasul arată cinci. | sentence|-
 targetB 0 silent - repeat Ce cireșe dulci! | sentence|-
 targetB 0 silent - repeat Ceasul arată cinci. | sentence|-
 targetB 0 quick - repeat Ce cireșe dulci! | sentence|-
-mixed 0 quick loud repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent loud repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick slow repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent slow repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent neutral repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent neutral repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick neutral repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent neutral repeat Ce cireșe dulci! | sentence|-
 mixed 0 silent loud repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick loud repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent loud repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent - retell Stropitoarea Cici | -
-mixed 0 quick slow repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
 mixed 0 silent loud repeat Ceasul arată cinci. | sentence|-
 closing 0 quick - repeat ceapă | word|-
 mission 0 silent - mission Seara, cere: „Îmi citești o poveste?” | -
@@ -6730,16 +6730,16 @@ targetA 4 silent - describe ceas ceai | -
 targetA 4 silent - retell Povestea de azi | -
 targetA 4 quick - describe arici ciupercă | -
 mixed 0 silent fast repeat Ceasul arată cinci. | sentence|-
-mixed 0 quick neutral repeat Ceasul arată cinci. | sentence|-
+mixed 0 silent neutral repeat Ceasul arată cinci. | sentence|-
 mixed 0 silent exclamation repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick - retell Stropitoarea Cici | -
+mixed 0 silent - retell Stropitoarea Cici | -
 mixed 0 silent exclamation twister Ariciul culege cireșe, cinci câte cinci. | -
-mixed 0 quick question repeat Ariciul are o ciupercă. | sentence|-
+mixed 0 silent question repeat Ariciul are o ciupercă. | sentence|-
 mixed 0 silent - describe melc cireșe | -
-mixed 0 quick fast twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
+mixed 0 silent fast twister Cinci arici cu ciorapi cenușii cântă cu cinci cocoși. | -
 mixed 0 silent neutral repeat Ariciul are o ciupercă. | sentence|-
-mixed 0 quick slow repeat Vreau un ceai cald. | sentence|-
-mixed 0 quick neutral repeat Ce cireșe dulci! | sentence|-
+mixed 0 silent slow repeat Vreau un ceai cald. | sentence|-
+mixed 0 silent neutral repeat Ce cireșe dulci! | sentence|-
 closing 0 quick - repeat ciocolată | word|-
 mission 0 silent - mission Seara, cere: „Îmi citești o poveste?” | -
 # sound ge isolated fourToFive 0 24
@@ -6987,17 +6987,17 @@ targetB 0 teach - repeat ege | syllable|-
 targetB 0 teach - repeat gi | syllable|-
 targetB 0 teach - repeat igi | syllable|-
 targetB 0 silent - repeat agi | syllable|-
-mixed 0 quick loud repeat gem | word|-
+mixed 0 silent loud repeat gem | word|-
 mixed 0 teach neutral repeat agea | syllable|-
-mixed 0 quick neutral name geam | -
+mixed 0 silent neutral name geam | -
 mixed 0 teach loud repeat ogio | syllable|-
 mixed 0 teach loud repeat ugiu | syllable|-
 mixed 0 silent slow repeat geacă | word|-
-mixed 0 quick slow repeat gem | word|-
+mixed 0 silent slow repeat gem | word|-
 mixed 0 teach loud repeat gio | syllable|-
-mixed 0 quick loud repeat geacă | word|-
+mixed 0 silent loud repeat geacă | word|-
 mixed 0 silent loud name geam | -
-mixed 0 quick loud repeat gem | word|-
+mixed 0 silent loud repeat gem | word|-
 closing 0 teach - repeat gio | syllable|-
 # sound ge wordsInitial teenAdult 3 66
 listening 0 quick - choose Gi-gi-gi | Ci-ci-ci|-
@@ -7064,17 +7064,17 @@ targetA 4 teach - repeat geacă | word|-
 targetA 4 teach - repeat gem | word|-
 targetA 4 silent - repeat geacă | word|-
 targetA 4 teach - name geam | -
-mixed 0 quick loud repeat geacă | word|-
+mixed 0 silent loud repeat geacă | word|-
 mixed 0 silent loud name geam | -
 mixed 0 teach neutral repeat giu | syllable|-
 mixed 0 silent fast repeat gem | word|-
-mixed 0 quick neutral name geam | -
+mixed 0 silent neutral name geam | -
 mixed 0 teach fast repeat ge | syllable|-
 mixed 0 teach loud repeat ogio | syllable|-
 mixed 0 silent neutral repeat gem | word|-
 mixed 0 teach loud repeat ugiu | syllable|-
 mixed 0 teach fast repeat agea | syllable|-
-mixed 0 quick fast repeat geacă | word|-
+mixed 0 silent fast repeat geacă | word|-
 closing 0 teach - repeat giu | syllable|-
 # sound ge wordsMedial fourToFive 0 24
 opening 0 teach - intro - | -
@@ -7097,17 +7097,17 @@ targetB 0 teach - name geam | -
 targetB 0 teach - repeat geacă | word|-
 targetB 0 teach - name geam | -
 targetB 0 silent - repeat gem | word|-
-mixed 0 quick neutral repeat geacă | word|-
-mixed 0 silent loud repeat pagină | word|-
-mixed 0 quick loud name geam | -
-mixed 0 silent neutral repeat magician | word|-
-mixed 0 quick slow repeat gem | word|-
-mixed 0 silent loud repeat magie | word|-
-mixed 0 quick slow name geam | -
-mixed 0 silent loud repeat magician | word|-
-mixed 0 quick slow repeat gem | word|-
 mixed 0 silent neutral repeat geacă | word|-
-mixed 0 quick slow repeat magie | word|-
+mixed 0 silent loud repeat pagină | word|-
+mixed 0 silent loud name geam | -
+mixed 0 silent neutral repeat magician | word|-
+mixed 0 silent slow repeat gem | word|-
+mixed 0 silent loud repeat magie | word|-
+mixed 0 silent slow name geam | -
+mixed 0 silent loud repeat magician | word|-
+mixed 0 silent slow repeat gem | word|-
+mixed 0 silent neutral repeat geacă | word|-
+mixed 0 silent slow repeat magie | word|-
 closing 0 quick - repeat geacă | word|-
 # sound ge wordsMedial teenAdult 3 66
 listening 0 quick - choose ger | cer|-
@@ -7174,17 +7174,17 @@ targetA 4 teach - repeat magie | word|-
 targetA 4 teach - repeat magician | word|-
 targetA 4 silent - repeat pagină | word|-
 targetA 4 teach - repeat magie | word|-
-mixed 0 quick exclamation repeat pagină | word|-
+mixed 0 silent exclamation repeat pagină | word|-
 mixed 0 silent loud repeat magie | word|-
-mixed 0 quick exclamation repeat magician | word|-
+mixed 0 silent exclamation repeat magician | word|-
 mixed 0 silent fast repeat geacă | word|-
-mixed 0 quick slow repeat magie | word|-
+mixed 0 silent slow repeat magie | word|-
 mixed 0 silent fast repeat gem | word|-
-mixed 0 quick loud name geam | -
+mixed 0 silent loud name geam | -
 mixed 0 silent fast repeat gem | word|-
-mixed 0 quick loud repeat pagină | word|-
+mixed 0 silent loud repeat pagină | word|-
 mixed 0 silent neutral repeat geacă | word|-
-mixed 0 quick question name geam | -
+mixed 0 silent question name geam | -
 closing 0 quick - repeat geam | word|-
 # sound ge wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -7207,17 +7207,17 @@ targetB 0 teach - repeat magician | word|-
 targetB 0 silent - repeat pagină | word|-
 targetB 0 teach - repeat magie | word|-
 targetB 0 teach - repeat magician | word|-
-mixed 0 quick slow repeat pagină | word|-
+mixed 0 silent slow repeat pagină | word|-
 mixed 0 silent neutral repeat fugi | word|-
-mixed 0 quick loud repeat magician | word|-
+mixed 0 silent loud repeat magician | word|-
 mixed 0 silent slow repeat colegi | word|-
-mixed 0 quick slow repeat magie | word|-
+mixed 0 silent slow repeat magie | word|-
 mixed 0 silent neutral repeat pagină | word|-
-mixed 0 quick neutral repeat magie | word|-
+mixed 0 silent neutral repeat magie | word|-
 mixed 0 silent loud name fulgi | -
-mixed 0 quick neutral repeat magician | word|-
+mixed 0 silent neutral repeat magician | word|-
 mixed 0 silent loud repeat colegi | word|-
-mixed 0 quick neutral repeat pagină | word|-
+mixed 0 silent neutral repeat pagină | word|-
 closing 0 quick - repeat geacă | word|-
 # sound ge wordsFinal teenAdult 3 66
 listening 0 quick - hear iepure | false
@@ -7284,17 +7284,17 @@ targetA 4 teach - name fulgi | -
 targetA 4 teach - repeat colegi | word|-
 targetA 4 teach - repeat fugi | word|-
 targetA 4 silent - name fulgi | -
-mixed 0 quick question repeat colegi | word|-
+mixed 0 silent question repeat colegi | word|-
 mixed 0 silent neutral repeat magie | word|-
-mixed 0 quick exclamation repeat fugi | word|-
+mixed 0 silent exclamation repeat fugi | word|-
 mixed 0 silent exclamation repeat magician | word|-
-mixed 0 quick slow repeat pagină | word|-
+mixed 0 silent slow repeat pagină | word|-
 mixed 0 silent slow repeat magie | word|-
-mixed 0 quick loud repeat magician | word|-
+mixed 0 silent loud repeat magician | word|-
 mixed 0 silent question repeat pagină | word|-
-mixed 0 quick slow name fulgi | -
+mixed 0 silent slow name fulgi | -
 mixed 0 silent exclamation repeat magician | word|-
-mixed 0 quick loud repeat colegi | word|-
+mixed 0 silent loud repeat colegi | word|-
 closing 0 quick - repeat geam | word|-
 # sound ge clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -7317,17 +7317,17 @@ targetB 0 teach - repeat colegi | word|-
 targetB 0 teach - repeat fugi | word|-
 targetB 0 teach - repeat colegi | word|-
 targetB 0 silent - name fulgi | -
-mixed 0 quick slow repeat colegi | word|-
+mixed 0 silent slow repeat colegi | word|-
 mixed 0 silent neutral name fulgi | -
-mixed 0 quick slow repeat colegi | word|-
+mixed 0 silent slow repeat colegi | word|-
 mixed 0 silent slow name geantă | -
-mixed 0 quick neutral repeat fugi | word|-
+mixed 0 silent neutral repeat fugi | word|-
 mixed 0 silent loud name gimnastică | -
-mixed 0 quick neutral name fulgi | -
-mixed 0 silent neutral repeat colegi | word|-
-mixed 0 quick neutral repeat magician | word|-
 mixed 0 silent neutral name fulgi | -
-mixed 0 quick loud repeat fugi | word|-
+mixed 0 silent neutral repeat colegi | word|-
+mixed 0 silent neutral repeat magician | word|-
+mixed 0 silent neutral name fulgi | -
+mixed 0 silent loud repeat fugi | word|-
 closing 0 quick - repeat gem | word|-
 # sound ge clusters teenAdult 3 66
 listening 0 quick - choose Ci-ci-ci | Gi-gi-gi|-
@@ -7394,17 +7394,17 @@ targetA 4 silent - name geantă | -
 targetA 4 selfJudge - repeat colegi | word|-
 targetA 4 selfJudge - name fulgi | -
 targetA 4 selfJudge - repeat pagină | word|-
-mixed 0 quick fast name gimnastică | -
+mixed 0 silent fast name gimnastică | -
 mixed 0 silent exclamation repeat colegi | word|-
-mixed 0 quick loud repeat pagină | word|-
+mixed 0 silent loud repeat pagină | word|-
 mixed 0 silent slow name geantă | -
-mixed 0 quick slow repeat colegi | word|-
+mixed 0 silent slow repeat colegi | word|-
 mixed 0 silent neutral repeat fugi | word|-
-mixed 0 quick loud name fulgi | -
+mixed 0 silent loud name fulgi | -
 mixed 0 silent question repeat fugi | word|-
-mixed 0 quick question repeat magician | word|-
+mixed 0 silent question repeat magician | word|-
 mixed 0 silent slow name fulgi | -
-mixed 0 quick question name gimnastică | -
+mixed 0 silent question name gimnastică | -
 closing 0 quick - repeat gem | word|-
 # sound ge pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -7430,17 +7430,17 @@ targetB 0 selfJudge - name fulgi | -
 targetB 0 selfJudge - name gimnastică | -
 targetB 0 silent - name fulgi | -
 targetB 0 selfJudge - name geantă | -
-mixed 0 quick slow name fulgi | -
+mixed 0 silent slow name fulgi | -
 mixed 0 silent loud name geantă | -
-mixed 0 quick neutral repeat ger | word|cer
+mixed 0 silent neutral repeat ger | word|cer
 mixed 0 silent slow repeat cer | word|ger
-mixed 0 quick loud name gimnastică | -
+mixed 0 silent loud name gimnastică | -
 mixed 0 silent slow repeat ger | word|cer
-mixed 0 quick slow repeat cer | word|ger
+mixed 0 silent slow repeat cer | word|ger
 mixed 0 silent slow repeat ger | word|cer
-mixed 0 quick slow repeat cer | word|ger
+mixed 0 silent slow repeat cer | word|ger
 mixed 0 silent loud name geantă | -
-mixed 0 quick neutral name gimnastică | -
+mixed 0 silent neutral name gimnastică | -
 closing 0 quick - repeat gem | word|-
 # sound ge pairs teenAdult 3 66
 listening 0 quick - choose Gi-gi-gi | Ci-ci-ci|-
@@ -7522,17 +7522,17 @@ targetA 4 quick - repeat cer | word|ger
 targetA 4 silent - repeat ger | word|cer
 targetA 4 quick - repeat cer | word|ger
 targetA 4 silent - repeat ger | word|cer
-mixed 0 quick exclamation name fulgi | -
+mixed 0 silent exclamation name fulgi | -
 mixed 0 silent fast name gimnastică | -
-mixed 0 quick slow repeat cer | word|ger
+mixed 0 silent slow repeat cer | word|ger
 mixed 0 silent question name geantă | -
-mixed 0 quick loud repeat ger | word|cer
+mixed 0 silent loud repeat ger | word|cer
 mixed 0 silent question name gimnastică | -
-mixed 0 quick question repeat cer | word|ger
+mixed 0 silent question repeat cer | word|ger
 mixed 0 silent exclamation repeat ger | word|cer
-mixed 0 quick slow name geantă | -
+mixed 0 silent slow name geantă | -
 mixed 0 silent question name fulgi | -
-mixed 0 quick slow name gimnastică | -
+mixed 0 silent slow name gimnastică | -
 closing 0 quick - repeat geam | word|-
 # sound ge sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -7556,15 +7556,15 @@ targetB 0 silent - repeat cer | word|ger
 targetB 0 silent - repeat ger | word|cer
 targetB 0 quick - repeat cer | word|ger
 mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick loud repeat Îngerul are aripi. | sentence|-
+mixed 0 silent loud repeat Îngerul are aripi. | sentence|-
 mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick neutral repeat Îngerul are aripi. | sentence|-
+mixed 0 silent neutral repeat Îngerul are aripi. | sentence|-
 mixed 0 silent loud repeat Gigel se uită pe geam. | sentence|-
-mixed 0 quick slow repeat Girafa are o geantă. | sentence|-
+mixed 0 silent slow repeat Girafa are o geantă. | sentence|-
 mixed 0 silent loud repeat ger | word|cer
-mixed 0 quick slow repeat Gigel se uită pe geam. | sentence|-
+mixed 0 silent slow repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent loud repeat cer | word|ger
-mixed 0 quick slow repeat ger | word|cer
+mixed 0 silent slow repeat ger | word|cer
 mixed 0 silent neutral repeat Girafa are o geantă. | sentence|-
 closing 0 quick - repeat geacă | word|-
 # sound ge sentences teenAdult 3 66
@@ -7633,15 +7633,15 @@ targetA 4 silent - repeat Gigel se uită pe geam. | sentence|-
 targetA 4 quick - repeat Girafa are o geantă. | sentence|-
 targetA 4 silent - repeat Covrigii sunt calzi. | sentence|-
 mixed 0 silent fast repeat Îngerul are aripi. | sentence|-
-mixed 0 quick fast repeat Gigel se uită pe geam. | sentence|-
+mixed 0 silent fast repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent exclamation repeat ger | word|cer
-mixed 0 quick exclamation twister Gigel și Gina se uită pe geam: e ger! | -
-mixed 0 quick slow repeat cer | word|ger
+mixed 0 silent exclamation twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent slow repeat cer | word|ger
 mixed 0 silent question twister Gigel și Gina mănâncă gem cu covrigi. | -
-mixed 0 quick fast twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent fast twister Gigel și Gina se uită pe geam: e ger! | -
 mixed 0 silent fast repeat ger | word|cer
 mixed 0 silent exclamation repeat Îngerul are aripi. | sentence|-
-mixed 0 quick question repeat Gigel se uită pe geam. | sentence|-
+mixed 0 silent question repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent slow repeat Covrigii sunt calzi. | sentence|-
 closing 0 quick - repeat geam | word|-
 # sound ge retell fourToFive 0 24
@@ -7666,16 +7666,16 @@ targetB 0 quick - repeat Covrigii sunt calzi. | sentence|-
 targetB 0 quick - repeat Girafa are o geantă. | sentence|-
 targetB 0 silent - repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent slow repeat Îngerul are aripi. | sentence|-
-mixed 0 quick - describe girafă geantă | -
+mixed 0 silent - describe girafă geantă | -
 mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent loud repeat Girafa are o geantă. | sentence|-
-mixed 0 quick neutral repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick slow repeat Gigel se uită pe geam. | sentence|-
+mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent slow repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent loud repeat Îngerul are aripi. | sentence|-
-mixed 0 quick slow repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent slow repeat Covrigii sunt calzi. | sentence|-
 mixed 0 silent slow repeat Îngerul are aripi. | sentence|-
-mixed 0 quick loud repeat Gigel se uită pe geam. | sentence|-
+mixed 0 silent loud repeat Gigel se uită pe geam. | sentence|-
 closing 0 quick - repeat geacă | word|-
 # sound ge retell teenAdult 3 66
 listening 0 quick - choose Ci-ci-ci | Gi-gi-gi|-
@@ -7742,16 +7742,16 @@ targetA 4 quick - repeat Gigel se uită pe geam. | sentence|-
 targetA 4 silent - describe girafă geantă | -
 targetA 4 silent - describe girafă gem | -
 targetA 4 quick - repeat Îngerul are aripi. | sentence|-
-mixed 0 quick slow twister Gigel și Gina mănâncă gem cu covrigi. | -
+mixed 0 silent slow twister Gigel și Gina mănâncă gem cu covrigi. | -
 mixed 0 silent neutral repeat Gigel se uită pe geam. | sentence|-
 mixed 0 silent loud repeat Îngerul are aripi. | sentence|-
-mixed 0 quick exclamation repeat Girafa are o geantă. | sentence|-
-mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick exclamation twister Gigel și Gina se uită pe geam: e ger! | -
-mixed 0 silent exclamation twister Gigel și Gina mănâncă gem cu covrigi. | -
-mixed 0 quick slow twister Gigel și Gina se uită pe geam: e ger! | -
 mixed 0 silent exclamation repeat Girafa are o geantă. | sentence|-
-mixed 0 quick - describe înger covrigi | -
+mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent exclamation twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent exclamation twister Gigel și Gina mănâncă gem cu covrigi. | -
+mixed 0 silent slow twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent exclamation repeat Girafa are o geantă. | sentence|-
+mixed 0 silent - describe înger covrigi | -
 mixed 0 silent loud repeat Covrigii sunt calzi. | sentence|-
 closing 0 quick - repeat geam | word|-
 # sound ge everyday fourToFive 0 24
@@ -7775,17 +7775,17 @@ targetB 0 silent - repeat Girafa are o geantă. | sentence|-
 targetB 0 quick - repeat Gigel se uită pe geam. | sentence|-
 targetB 0 quick - repeat Îngerul are aripi. | sentence|-
 targetB 0 silent - repeat Gigel se uită pe geam. | sentence|-
-mixed 0 quick neutral repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
 mixed 0 silent - describe girafă geantă | -
-mixed 0 quick loud repeat Girafa are o geantă. | sentence|-
+mixed 0 silent loud repeat Girafa are o geantă. | sentence|-
 mixed 0 silent - retell Povestea de azi | -
-mixed 0 quick slow repeat Girafa are o geantă. | sentence|-
+mixed 0 silent slow repeat Girafa are o geantă. | sentence|-
 mixed 0 silent loud repeat Covrigii sunt calzi. | sentence|-
 mixed 0 silent loud repeat Gigel se uită pe geam. | sentence|-
-mixed 0 quick loud repeat Girafa are o geantă. | sentence|-
+mixed 0 silent loud repeat Girafa are o geantă. | sentence|-
 mixed 0 silent slow repeat Girafa are o geantă. | sentence|-
-mixed 0 quick - describe înger covrigi | -
-mixed 0 quick slow repeat Îngerul are aripi. | sentence|-
+mixed 0 silent - describe înger covrigi | -
+mixed 0 silent slow repeat Îngerul are aripi. | sentence|-
 closing 0 quick - repeat geam | word|-
 mission 0 silent - mission La micul dejun, cere: „Pâine cu gem!” | -
 # sound ge everyday teenAdult 3 66
@@ -7854,16 +7854,16 @@ targetA 4 quick - retell Povestea de azi | -
 targetA 4 quick - retell Motorașul Gigel | -
 targetA 4 silent - repeat Îngerul are aripi. | sentence|-
 mixed 0 silent exclamation repeat Gigel se uită pe geam. | sentence|-
-mixed 0 quick question repeat Covrigii sunt calzi. | sentence|-
-mixed 0 quick - describe girafă gem | -
+mixed 0 silent question repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent - describe girafă gem | -
 mixed 0 silent - describe girafă geantă | -
 mixed 0 silent - describe înger covrigi | -
-mixed 0 quick slow twister Gigel și Gina mănâncă gem cu covrigi. | -
+mixed 0 silent slow twister Gigel și Gina mănâncă gem cu covrigi. | -
 mixed 0 silent loud repeat Girafa are o geantă. | sentence|-
-mixed 0 quick exclamation twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent exclamation twister Gigel și Gina se uită pe geam: e ger! | -
 mixed 0 silent exclamation twister Gigel și Gina mănâncă gem cu covrigi. | -
-mixed 0 quick fast twister Gigel și Gina se uită pe geam: e ger! | -
-mixed 0 quick neutral repeat Covrigii sunt calzi. | sentence|-
+mixed 0 silent fast twister Gigel și Gina se uită pe geam: e ger! | -
+mixed 0 silent neutral repeat Covrigii sunt calzi. | sentence|-
 closing 0 quick - repeat gem | word|-
 mission 0 silent - mission La micul dejun, cere: „Pâine cu gem!” | -
 # sound r isolated fourToFive 0 24
@@ -8115,15 +8115,15 @@ targetB 0 teach - repeat ere | syllable|-
 targetB 0 teach - repeat uru | syllable|-
 mixed 0 teach neutral repeat ru | syllable|-
 mixed 0 teach loud repeat er | syllable|-
-mixed 0 quick loud name rochie | -
+mixed 0 silent loud name rochie | -
 mixed 0 silent loud name rață | -
 mixed 0 teach loud repeat or | syllable|-
 mixed 0 silent slow name rac | -
-mixed 0 quick neutral name roată | -
+mixed 0 silent neutral name roată | -
 mixed 0 teach slow repeat ara | syllable|-
 mixed 0 teach slow repeat iri | syllable|-
 mixed 0 silent neutral name robot | -
-mixed 0 quick neutral name rinocer | -
+mixed 0 silent neutral name rinocer | -
 closing 0 teach - repeat re | syllable|-
 # sound r wordsInitial teenAdult 3 66
 listening 0 quick - choose ramă | lamă|-
@@ -8190,17 +8190,17 @@ targetA 4 silent - name robot | -
 targetA 4 teach - name rață | -
 targetA 4 teach - name rochie | -
 targetA 4 teach - name roată | -
-mixed 0 quick loud name rață | -
+mixed 0 silent loud name rață | -
 mixed 0 teach neutral repeat or | syllable|-
-mixed 0 quick neutral name roată | -
+mixed 0 silent neutral name roată | -
 mixed 0 teach fast repeat ir | syllable|-
 mixed 0 teach fast repeat ri | syllable|-
 mixed 0 teach loud repeat ere | syllable|-
 mixed 0 teach question repeat re | syllable|-
 mixed 0 silent fast name rinocer | -
-mixed 0 quick neutral name rochie | -
+mixed 0 silent neutral name rochie | -
 mixed 0 silent neutral name rac | -
-mixed 0 quick neutral name robot | -
+mixed 0 silent neutral name robot | -
 closing 0 teach - repeat re | syllable|-
 # sound r wordsMedial fourToFive 0 24
 opening 0 teach - intro - | -
@@ -8223,17 +8223,17 @@ targetB 0 teach - name rochie | -
 targetB 0 teach - name roată | -
 targetB 0 teach - name robot | -
 targetB 0 silent - name rac | -
-mixed 0 quick slow name iepure | -
+mixed 0 silent slow name iepure | -
 mixed 0 silent loud name girafă | -
-mixed 0 quick slow name coroană | -
+mixed 0 silent slow name coroană | -
 mixed 0 silent loud name rochie | -
-mixed 0 quick loud name pară | -
+mixed 0 silent loud name pară | -
 mixed 0 silent slow name robot | -
-mixed 0 quick slow name iepure | -
+mixed 0 silent slow name iepure | -
 mixed 0 silent slow name rață | -
-mixed 0 quick loud name rac | -
+mixed 0 silent loud name rac | -
 mixed 0 silent slow name rinocer | -
-mixed 0 quick neutral name girafă | -
+mixed 0 silent neutral name girafă | -
 closing 0 quick - repeat rochie | word|-
 # sound r wordsMedial teenAdult 3 66
 listening 0 quick - hear cuțit | false
@@ -8300,17 +8300,17 @@ targetA 4 teach - name girafă | -
 targetA 4 teach - name iepure | -
 targetA 4 teach - name girafă | -
 targetA 4 teach - name iepure | -
-mixed 0 quick neutral name rac | -
+mixed 0 silent neutral name rac | -
 mixed 0 silent fast name rochie | -
-mixed 0 quick neutral name rinocer | -
+mixed 0 silent neutral name rinocer | -
 mixed 0 silent neutral name robot | -
-mixed 0 quick loud name coroană | -
+mixed 0 silent loud name coroană | -
 mixed 0 silent fast name roată | -
-mixed 0 quick question name pară | -
+mixed 0 silent question name pară | -
 mixed 0 silent fast name rață | -
-mixed 0 quick slow name iepure | -
+mixed 0 silent slow name iepure | -
 mixed 0 silent exclamation name roată | -
-mixed 0 quick slow name rac | -
+mixed 0 silent slow name rac | -
 closing 0 quick - repeat rinocer | word|-
 # sound r wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -8333,17 +8333,17 @@ targetB 0 silent - name pară | -
 targetB 0 teach - name coroană | -
 targetB 0 teach - name girafă | -
 targetB 0 teach - name coroană | -
-mixed 0 quick slow name pară | -
+mixed 0 silent slow name pară | -
 mixed 0 silent neutral name dinozaur | -
-mixed 0 quick neutral name iepure | -
+mixed 0 silent neutral name iepure | -
 mixed 0 silent loud name măr | -
-mixed 0 quick loud name pară | -
+mixed 0 silent loud name pară | -
 mixed 0 silent loud name iepure | -
-mixed 0 quick slow name girafă | -
+mixed 0 silent slow name girafă | -
 mixed 0 silent loud name zar | -
-mixed 0 quick neutral name nor | -
+mixed 0 silent neutral name nor | -
 mixed 0 silent slow name coroană | -
-mixed 0 quick slow name iepure | -
+mixed 0 silent slow name iepure | -
 closing 0 quick - repeat rac | word|-
 # sound r wordsFinal teenAdult 3 66
 listening 0 quick - choose lac | rac|-
@@ -8410,17 +8410,17 @@ targetA 4 teach - name nor | -
 targetA 4 teach - name zar | -
 targetA 4 teach - name măr | -
 targetA 4 silent - repeat car | word|-
-mixed 0 quick neutral name girafă | -
+mixed 0 silent neutral name girafă | -
 mixed 0 silent neutral name dinozaur | -
-mixed 0 quick neutral repeat car | word|-
+mixed 0 silent neutral repeat car | word|-
 mixed 0 silent loud name iepure | -
-mixed 0 quick loud name coroană | -
+mixed 0 silent loud name coroană | -
 mixed 0 silent exclamation name măr | -
-mixed 0 quick loud name zar | -
+mixed 0 silent loud name zar | -
 mixed 0 silent slow name pară | -
-mixed 0 quick exclamation name coroană | -
+mixed 0 silent exclamation name coroană | -
 mixed 0 silent exclamation name pară | -
-mixed 0 quick neutral name iepure | -
+mixed 0 silent neutral name iepure | -
 closing 0 quick - repeat rochie | word|-
 # sound r clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -8443,17 +8443,17 @@ targetB 0 silent - name dinozaur | -
 targetB 0 teach - name măr | -
 targetB 0 teach - name zar | -
 targetB 0 teach - name măr | -
-mixed 0 quick neutral repeat car | word|-
+mixed 0 silent neutral repeat car | word|-
 mixed 0 silent neutral name zebră | -
-mixed 0 quick slow name frunză | -
+mixed 0 silent slow name frunză | -
 mixed 0 silent neutral name tractor | -
-mixed 0 quick neutral name urs | -
+mixed 0 silent neutral name urs | -
 mixed 0 silent slow name girafă | -
-mixed 0 quick slow name rinocer | -
+mixed 0 silent slow name rinocer | -
 mixed 0 silent neutral name nor | -
-mixed 0 quick loud name dinozaur | -
 mixed 0 silent loud name dinozaur | -
-mixed 0 quick neutral name zar | -
+mixed 0 silent loud name dinozaur | -
+mixed 0 silent neutral name zar | -
 closing 0 quick - repeat robot | word|-
 # sound r clusters teenAdult 3 66
 listening 0 quick - hear pară | true
@@ -8520,17 +8520,17 @@ targetA 4 selfJudge - name coroană | -
 targetA 4 selfJudge - name girafă | -
 targetA 4 quick - repeat brațe | word|-
 targetA 4 selfJudge - name dinozaur | -
-mixed 0 quick loud name nor | -
+mixed 0 silent loud name nor | -
 mixed 0 silent exclamation name tractor | -
-mixed 0 quick exclamation name zar | -
+mixed 0 silent exclamation name zar | -
 mixed 0 silent exclamation name nor | -
-mixed 0 quick fast name dinozaur | -
+mixed 0 silent fast name dinozaur | -
 mixed 0 silent loud name morcov | -
-mixed 0 quick question repeat car | word|-
+mixed 0 silent question repeat car | word|-
 mixed 0 silent fast name măr | -
-mixed 0 quick question name zar | -
+mixed 0 silent question name zar | -
 mixed 0 silent neutral name dinozaur | -
-mixed 0 quick fast name coroană | -
+mixed 0 silent fast name coroană | -
 closing 0 quick - repeat roată | word|-
 # sound r pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -8556,17 +8556,17 @@ targetB 0 quick - name șarpe | -
 targetB 0 selfJudge - name morcov | -
 targetB 0 silent - name zebră | -
 targetB 0 selfJudge - name urs | -
-mixed 0 quick neutral repeat lac | word|rac
+mixed 0 silent neutral repeat lac | word|rac
 mixed 0 silent loud repeat rac | word|lac
-mixed 0 quick loud repeat brațe | word|-
+mixed 0 silent loud repeat brațe | word|-
 mixed 0 silent loud repeat car, cal | word|-
-mixed 0 quick slow repeat car | word|cal
+mixed 0 silent slow repeat car | word|cal
 mixed 0 silent loud name frunză | -
-mixed 0 quick loud repeat lac | word|rac
+mixed 0 silent loud repeat lac | word|rac
 mixed 0 silent slow name trandafir | -
-mixed 0 quick loud repeat cal | word|car
+mixed 0 silent loud repeat cal | word|car
 mixed 0 silent neutral repeat ramă | word|lamă
-mixed 0 quick neutral name urs | -
+mixed 0 silent neutral name urs | -
 closing 0 quick - repeat rochie | word|-
 # sound r pairs teenAdult 3 66
 listening 0 quick - hear pătuț | false
@@ -8648,17 +8648,17 @@ targetA 4 silent - repeat cal | word|car
 targetA 4 silent - repeat ramă, lamă | word|-
 targetA 4 quick - repeat cal | word|car
 targetA 4 quick - repeat lac | word|rac
-mixed 0 quick fast repeat ramă | word|lamă
+mixed 0 silent fast repeat ramă | word|lamă
 mixed 0 silent slow name urs | -
-mixed 0 quick slow repeat rac | word|lac
+mixed 0 silent slow repeat rac | word|lac
 mixed 0 silent fast name trandafir | -
-mixed 0 quick loud name zebră | -
+mixed 0 silent loud name zebră | -
 mixed 0 silent slow name trandafir | -
-mixed 0 quick neutral repeat car | word|cal
+mixed 0 silent neutral repeat car | word|cal
 mixed 0 silent question name brânză | -
-mixed 0 quick fast name frunză | -
+mixed 0 silent fast name frunză | -
 mixed 0 silent question name tractor | -
-mixed 0 quick slow repeat lamă | word|ramă
+mixed 0 silent slow repeat lamă | word|ramă
 closing 0 quick - repeat rață | word|-
 # sound r sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -8681,16 +8681,16 @@ targetB 0 silent - repeat ramă | word|lamă
 targetB 0 quick - repeat lac | word|rac
 targetB 0 silent - repeat cal | word|car
 targetB 0 quick - repeat ramă, lamă | word|-
-mixed 0 quick loud repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent loud repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent neutral repeat Rică repară robotul. | sentence|-
 mixed 0 silent loud repeat lamă | word|ramă
-mixed 0 quick slow repeat Pe raft sunt trei pere. | sentence|-
-mixed 0 quick slow repeat rac, lac | word|-
+mixed 0 silent slow repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent slow repeat rac, lac | word|-
 mixed 0 silent neutral repeat Rică repară robotul. | sentence|-
-mixed 0 quick loud repeat rac | word|lac
+mixed 0 silent loud repeat rac | word|lac
 mixed 0 silent slow repeat Rața roșie râde. | sentence|-
 mixed 0 silent slow repeat Tigrul mârâie: rrr! | sentence|-
-mixed 0 quick neutral repeat lamă | word|ramă
+mixed 0 silent neutral repeat lamă | word|ramă
 mixed 0 silent neutral repeat car, cal | word|-
 closing 0 quick - repeat rinocer | word|-
 # sound r sentences teenAdult 3 66
@@ -8759,14 +8759,14 @@ targetA 4 silent - repeat Rața roșie râde. | sentence|-
 targetA 4 quick - repeat Tigrul mârâie: rrr! | sentence|-
 targetA 4 silent - repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent slow twister Rică ridică roșii rotunde de pe raft. | -
-mixed 0 quick exclamation repeat rac | word|lac
-mixed 0 quick fast repeat cal | word|car
+mixed 0 silent exclamation repeat rac | word|lac
+mixed 0 silent fast repeat cal | word|car
 mixed 0 silent fast repeat lac | word|rac
-mixed 0 quick neutral repeat car, cal | word|-
+mixed 0 silent neutral repeat car, cal | word|-
 mixed 0 silent question repeat cal | word|car
-mixed 0 quick neutral repeat Rică repară robotul. | sentence|-
+mixed 0 silent neutral repeat Rică repară robotul. | sentence|-
 mixed 0 silent loud repeat Rața roșie râde. | sentence|-
-mixed 0 quick neutral repeat lamă | word|ramă
+mixed 0 silent neutral repeat lamă | word|ramă
 mixed 0 silent exclamation twister Capra calcă piatra, piatra crapă-n patru. | -
 mixed 0 silent fast repeat rac, lac | word|-
 closing 0 quick - repeat rinocer | word|-
@@ -8791,15 +8791,15 @@ targetB 0 quick - repeat Rața roșie râde. | sentence|-
 targetB 0 silent - repeat Rică repară robotul. | sentence|-
 targetB 0 quick - repeat Tigrul mârâie: rrr! | sentence|-
 targetB 0 silent - repeat Rică repară robotul. | sentence|-
-mixed 0 quick neutral repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent neutral repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent - retell Tigrul Rică | -
-mixed 0 quick slow repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent slow repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent slow repeat Tigrul mârâie: rrr! | sentence|-
 mixed 0 silent - describe rață rac | -
-mixed 0 quick loud repeat Rața roșie râde. | sentence|-
+mixed 0 silent loud repeat Rața roșie râde. | sentence|-
 mixed 0 silent slow repeat Tigrul mârâie: rrr! | sentence|-
-mixed 0 quick neutral repeat Rața roșie râde. | sentence|-
-mixed 0 quick - describe robot roată | -
+mixed 0 silent neutral repeat Rața roșie râde. | sentence|-
+mixed 0 silent - describe robot roată | -
 mixed 0 silent - describe iepure morcov | -
 mixed 0 silent neutral repeat Rică repară robotul. | sentence|-
 closing 0 quick - repeat rață | word|-
@@ -8868,16 +8868,16 @@ targetA 4 quick - repeat Rică repară robotul. | sentence|-
 targetA 4 silent - repeat Pe raft sunt trei pere. | sentence|-
 targetA 4 quick - repeat Rică repară robotul. | sentence|-
 targetA 4 silent - repeat Rața roșie râde. | sentence|-
-mixed 0 quick - describe rață rac | -
+mixed 0 silent - describe rață rac | -
 mixed 0 silent - retell Tigrul Rică | -
-mixed 0 quick fast repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent fast repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent exclamation repeat Tigrul mârâie: rrr! | sentence|-
-mixed 0 quick - describe robot roată | -
+mixed 0 silent - describe robot roată | -
 mixed 0 silent slow repeat Rața roșie râde. | sentence|-
 mixed 0 silent loud repeat Tigrul mârâie: rrr! | sentence|-
-mixed 0 quick exclamation repeat Rică repară robotul. | sentence|-
+mixed 0 silent exclamation repeat Rică repară robotul. | sentence|-
 mixed 0 silent neutral twister Capra calcă piatra, piatra crapă-n patru. | -
-mixed 0 quick slow repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent slow repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent - retell Povestea de azi | -
 closing 0 quick - repeat rinocer | word|-
 # sound r everyday fourToFive 0 24
@@ -8902,16 +8902,16 @@ targetB 0 silent - repeat Pe raft sunt trei pere. | sentence|-
 targetB 0 quick - repeat Tigrul mârâie: rrr! | sentence|-
 targetB 0 silent - repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent slow repeat Rața roșie râde. | sentence|-
-mixed 0 quick neutral repeat Rică repară robotul. | sentence|-
+mixed 0 silent neutral repeat Rică repară robotul. | sentence|-
 mixed 0 silent loud repeat Tigrul mârâie: rrr! | sentence|-
-mixed 0 quick - retell Povestea de azi | -
+mixed 0 silent - retell Povestea de azi | -
 mixed 0 silent loud repeat Rică repară robotul. | sentence|-
-mixed 0 quick slow repeat Rața roșie râde. | sentence|-
-mixed 0 quick slow repeat Tigrul mârâie: rrr! | sentence|-
+mixed 0 silent slow repeat Rața roșie râde. | sentence|-
+mixed 0 silent slow repeat Tigrul mârâie: rrr! | sentence|-
 mixed 0 silent neutral repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent slow repeat Rică repară robotul. | sentence|-
-mixed 0 quick neutral repeat Pe raft sunt trei pere. | sentence|-
-mixed 0 quick neutral repeat Tigrul mârâie: rrr! | sentence|-
+mixed 0 silent neutral repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent neutral repeat Tigrul mârâie: rrr! | sentence|-
 closing 0 quick - repeat roată | word|-
 mission 0 silent - mission În parc, căutați trei lucruri roșii. | -
 # sound r everyday teenAdult 3 66
@@ -8979,17 +8979,17 @@ targetA 4 quick - retell Tigrul Rică | -
 targetA 4 silent - repeat Tigrul mârâie: rrr! | sentence|-
 targetA 4 quick - retell Tigrul Rică | -
 targetA 4 silent - describe rață rac | -
-mixed 0 quick exclamation twister Capra calcă piatra, piatra crapă-n patru. | -
+mixed 0 silent exclamation twister Capra calcă piatra, piatra crapă-n patru. | -
 mixed 0 silent slow repeat Tigrul mârâie: rrr! | sentence|-
 mixed 0 silent loud repeat Rața roșie râde. | sentence|-
-mixed 0 quick exclamation repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent exclamation repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent neutral twister Rică ridică roșii rotunde de pe raft. | -
-mixed 0 quick question repeat Rică repară robotul. | sentence|-
-mixed 0 quick question repeat Pe raft sunt trei pere. | sentence|-
+mixed 0 silent question repeat Rică repară robotul. | sentence|-
+mixed 0 silent question repeat Pe raft sunt trei pere. | sentence|-
 mixed 0 silent - describe iepure morcov | -
 mixed 0 silent exclamation twister Capra calcă piatra, piatra crapă-n patru. | -
-mixed 0 quick fast repeat Rică repară robotul. | sentence|-
-mixed 0 quick fast repeat Tigrul mârâie: rrr! | sentence|-
+mixed 0 silent fast repeat Rică repară robotul. | sentence|-
+mixed 0 silent fast repeat Tigrul mârâie: rrr! | sentence|-
 closing 0 quick - repeat rață | word|-
 mission 0 silent - mission În parc, căutați trei lucruri roșii. | -
 # sound l isolated fourToFive 0 24
@@ -9247,7 +9247,7 @@ mixed 0 teach loud repeat al | syllable|-
 mixed 0 silent neutral name lac | -
 mixed 0 teach neutral repeat olo | syllable|-
 mixed 0 silent slow name lămâie | -
-mixed 0 quick slow name lună | -
+mixed 0 silent slow name lună | -
 closing 0 teach - repeat li | syllable|-
 # sound l wordsInitial teenAdult 3 66
 listening 0 quick - hear țintă | false
@@ -9314,17 +9314,17 @@ targetA 4 teach - name leu | -
 targetA 4 teach - name lac | -
 targetA 4 teach - name lună | -
 targetA 4 silent - name lalea | -
-mixed 0 quick slow name lac | -
+mixed 0 silent slow name lac | -
 mixed 0 silent slow name lalea | -
 mixed 0 teach question repeat il | syllable|-
 mixed 0 teach question repeat li | syllable|-
-mixed 0 quick question name lămâie | -
+mixed 0 silent question name lămâie | -
 mixed 0 silent fast name leu | -
 mixed 0 teach fast repeat ele | syllable|-
 mixed 0 silent neutral name lună | -
 mixed 0 teach neutral repeat la | syllable|-
 mixed 0 teach question repeat olo | syllable|-
-mixed 0 quick exclamation name lalea | -
+mixed 0 silent exclamation name lalea | -
 closing 0 teach - repeat le | syllable|-
 # sound l wordsMedial fourToFive 0 24
 opening 0 teach - intro - | -
@@ -9347,17 +9347,17 @@ targetB 0 teach - name lalea | -
 targetB 0 teach - name lac | -
 targetB 0 silent - name lămâie | -
 targetB 0 teach - name lună | -
-mixed 0 quick slow name lalea | -
+mixed 0 silent slow name lalea | -
 mixed 0 silent loud name balon | -
-mixed 0 quick slow name lac | -
+mixed 0 silent slow name lac | -
 mixed 0 silent loud name telefon | -
-mixed 0 quick loud name lămâie | -
+mixed 0 silent loud name lămâie | -
 mixed 0 silent loud name salată | -
-mixed 0 quick neutral name leu | -
-mixed 0 silent loud name telefon | -
-mixed 0 quick neutral name lalea | -
 mixed 0 silent neutral name leu | -
-mixed 0 quick loud name balon | -
+mixed 0 silent loud name telefon | -
+mixed 0 silent neutral name lalea | -
+mixed 0 silent neutral name leu | -
+mixed 0 silent loud name balon | -
 closing 0 quick - repeat lalea | word|-
 # sound l wordsMedial teenAdult 3 66
 listening 0 quick - choose car | cal|-
@@ -9424,17 +9424,17 @@ targetA 4 teach - name salată | -
 targetA 4 silent - name balon | -
 targetA 4 teach - name telefon | -
 targetA 4 teach - name salată | -
-mixed 0 quick fast name lună | -
+mixed 0 silent fast name lună | -
 mixed 0 silent neutral name balon | -
-mixed 0 quick loud name salată | -
+mixed 0 silent loud name salată | -
 mixed 0 silent neutral name telefon | -
-mixed 0 quick question name balon | -
+mixed 0 silent question name balon | -
 mixed 0 silent fast name telefon | -
-mixed 0 quick slow name lalea | -
+mixed 0 silent slow name lalea | -
 mixed 0 silent loud name lună | -
-mixed 0 quick loud name salată | -
+mixed 0 silent loud name salată | -
 mixed 0 silent fast name balon | -
-mixed 0 quick fast name lămâie | -
+mixed 0 silent fast name lămâie | -
 closing 0 quick - repeat lac | word|-
 # sound l wordsFinal fourToFive 0 24
 opening 0 teach - intro - | -
@@ -9457,17 +9457,17 @@ targetB 0 teach - name balon | -
 targetB 0 silent - name telefon | -
 targetB 0 teach - name balon | -
 targetB 0 teach - name salată | -
-mixed 0 quick loud name cal | -
+mixed 0 silent loud name cal | -
 mixed 0 silent slow name balon | -
-mixed 0 quick loud name cățel | -
+mixed 0 silent loud name cățel | -
 mixed 0 silent slow name salată | -
-mixed 0 quick slow name telefon | -
+mixed 0 silent slow name telefon | -
 mixed 0 silent slow name inel | -
-mixed 0 quick slow name balon | -
+mixed 0 silent slow name balon | -
 mixed 0 silent loud name val | -
-mixed 0 quick loud name salată | -
+mixed 0 silent loud name salată | -
 mixed 0 silent slow name cal | -
-mixed 0 quick slow name cățel | -
+mixed 0 silent slow name cățel | -
 closing 0 quick - repeat lună | word|-
 # sound l wordsFinal teenAdult 3 66
 listening 0 quick - choose lac | rac|-
@@ -9534,17 +9534,17 @@ targetA 4 teach - name cățel | -
 targetA 4 teach - name val | -
 targetA 4 silent - name cal | -
 targetA 4 teach - name inel | -
-mixed 0 quick neutral name salată | -
+mixed 0 silent neutral name salată | -
 mixed 0 silent question name val | -
-mixed 0 quick neutral name balon | -
+mixed 0 silent neutral name balon | -
 mixed 0 silent question name cățel | -
-mixed 0 quick fast name inel | -
+mixed 0 silent fast name inel | -
 mixed 0 silent neutral name cățel | -
-mixed 0 quick neutral name telefon | -
+mixed 0 silent neutral name telefon | -
 mixed 0 silent slow name val | -
-mixed 0 quick exclamation name cal | -
+mixed 0 silent exclamation name cal | -
 mixed 0 silent loud name cățel | -
-mixed 0 quick fast name cal | -
+mixed 0 silent fast name cal | -
 closing 0 quick - repeat leu | word|-
 # sound l clusters fourToFive 0 24
 opening 0 teach - intro - | -
@@ -9567,17 +9567,17 @@ targetB 0 teach - name cățel | -
 targetB 0 teach - name inel | -
 targetB 0 teach - name cal | -
 targetB 0 teach - name cățel | -
-mixed 0 quick neutral name melc | -
+mixed 0 silent neutral name melc | -
 mixed 0 silent loud name bluză | -
-mixed 0 quick neutral name castel | -
+mixed 0 silent neutral name castel | -
 mixed 0 silent loud name inel | -
-mixed 0 quick neutral name telefon | -
+mixed 0 silent neutral name telefon | -
 mixed 0 silent loud name val | -
-mixed 0 quick loud name inel | -
+mixed 0 silent loud name inel | -
 mixed 0 silent slow name cal | -
-mixed 0 quick neutral name val | -
+mixed 0 silent neutral name val | -
 mixed 0 silent slow name cățel | -
-mixed 0 quick neutral name melc | -
+mixed 0 silent neutral name melc | -
 closing 0 quick - repeat lămâie | word|-
 # sound l clusters teenAdult 3 66
 listening 0 quick - choose cal | car|-
@@ -9644,17 +9644,17 @@ targetA 4 silent - name plajă | -
 targetA 4 selfJudge - name salată | -
 targetA 4 quick - name lapte | -
 targetA 4 silent - name elefant | -
-mixed 0 quick fast name castel | -
+mixed 0 silent fast name castel | -
 mixed 0 silent fast name bluză | -
-mixed 0 quick exclamation name spital | -
+mixed 0 silent exclamation name spital | -
 mixed 0 silent loud name melc | -
-mixed 0 quick loud name cal | -
+mixed 0 silent loud name cal | -
 mixed 0 silent slow name val | -
-mixed 0 quick neutral name inel | -
+mixed 0 silent neutral name inel | -
 mixed 0 silent slow name salată | -
-mixed 0 quick fast name cățel | -
+mixed 0 silent fast name cățel | -
 mixed 0 silent question name cal | -
-mixed 0 quick loud name cățel | -
+mixed 0 silent loud name cățel | -
 closing 0 quick - repeat lalea | word|-
 # sound l pairs fourToFive 0 24
 opening 0 teach - intro - | -
@@ -9680,17 +9680,17 @@ targetB 0 quick - name spital | -
 targetB 0 selfJudge - name elefant | -
 targetB 0 silent - name bluză | -
 targetB 0 selfJudge - name melc | -
-mixed 0 quick slow repeat cal | word|car
+mixed 0 silent slow repeat cal | word|car
 mixed 0 silent slow repeat lac, rac | word|-
-mixed 0 quick loud name lapte | -
+mixed 0 silent loud name lapte | -
 mixed 0 silent slow repeat car | word|cal
-mixed 0 quick neutral name clopoțel | -
+mixed 0 silent neutral name clopoțel | -
 mixed 0 silent loud repeat lac, rac | word|-
-mixed 0 quick loud name castel | -
+mixed 0 silent loud name castel | -
 mixed 0 silent slow repeat cal, car | word|-
-mixed 0 quick neutral name bluză | -
+mixed 0 silent neutral name bluză | -
 mixed 0 silent loud name plajă | -
-mixed 0 quick slow name spital | -
+mixed 0 silent slow name spital | -
 closing 0 quick - repeat lună | word|-
 # sound l pairs teenAdult 3 66
 listening 0 quick - choose ramă | lamă|-
@@ -9772,17 +9772,17 @@ targetA 4 silent - repeat ramă | word|lamă
 targetA 4 quick - repeat car | word|cal
 targetA 4 silent - repeat cal, car | word|-
 targetA 4 silent - repeat rac | word|lac
-mixed 0 quick neutral name elefant | -
+mixed 0 silent neutral name elefant | -
 mixed 0 silent neutral repeat lamă | word|ramă
-mixed 0 quick exclamation repeat lac, rac | word|-
+mixed 0 silent exclamation repeat lac, rac | word|-
 mixed 0 silent slow repeat cal | word|car
-mixed 0 quick question repeat cal, car | word|-
+mixed 0 silent question repeat cal, car | word|-
 mixed 0 silent loud name clopoțel | -
-mixed 0 quick fast name spital | -
+mixed 0 silent fast name spital | -
 mixed 0 silent question repeat rac | word|lac
-mixed 0 quick slow repeat lac | word|rac
+mixed 0 silent slow repeat lac | word|rac
 mixed 0 silent loud repeat lamă | word|ramă
-mixed 0 quick neutral name castel | -
+mixed 0 silent neutral name castel | -
 closing 0 quick - repeat lămâie | word|-
 # sound l sentences fourToFive 0 24
 opening 0 teach - intro - | -
@@ -9805,17 +9805,17 @@ targetB 0 silent - repeat car | word|cal
 targetB 0 quick - repeat cal | word|car
 targetB 0 silent - repeat lac, rac | word|-
 targetB 0 quick - repeat ramă | word|lamă
-mixed 0 quick slow repeat Leul are un balon. | sentence|-
+mixed 0 silent slow repeat Leul are un balon. | sentence|-
 mixed 0 silent neutral repeat Lalelele sunt lângă castel. | sentence|-
-mixed 0 quick slow repeat rac | word|lac
+mixed 0 silent slow repeat rac | word|lac
 mixed 0 silent neutral repeat Luna luminează lacul. | sentence|-
-mixed 0 quick loud repeat lac | word|rac
+mixed 0 silent loud repeat lac | word|rac
 mixed 0 silent neutral repeat cal, car | word|-
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
-mixed 0 quick neutral repeat Luna luminează lacul. | sentence|-
-mixed 0 quick neutral repeat cal | word|car
+mixed 0 silent neutral repeat Luna luminează lacul. | sentence|-
+mixed 0 silent neutral repeat cal | word|car
 mixed 0 silent neutral repeat Lalelele sunt lângă castel. | sentence|-
-mixed 0 quick loud repeat ramă | word|lamă
+mixed 0 silent loud repeat ramă | word|lamă
 closing 0 quick - repeat leu | word|-
 # sound l sentences teenAdult 3 66
 listening 0 quick - hear bagaj | false
@@ -9883,14 +9883,14 @@ targetA 4 quick - repeat Luna luminează lacul. | sentence|-
 targetA 4 quick - repeat Lalelele sunt lângă castel. | sentence|-
 targetA 4 silent - repeat Leul are un balon. | sentence|-
 mixed 0 silent fast repeat Luna luminează lacul. | sentence|-
-mixed 0 quick fast twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent fast twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
-mixed 0 quick neutral twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent neutral twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent loud repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent fast repeat car | word|cal
-mixed 0 quick question twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick neutral repeat Leul are un balon. | sentence|-
+mixed 0 silent question twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent neutral repeat Leul are un balon. | sentence|-
 mixed 0 silent exclamation twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent loud repeat cal | word|car
 closing 0 quick - repeat lămâie | word|-
@@ -9915,17 +9915,17 @@ targetB 0 quick - repeat Luna luminează lacul. | sentence|-
 targetB 0 silent - repeat Leul are un balon. | sentence|-
 targetB 0 silent - repeat Lalelele sunt lângă castel. | sentence|-
 targetB 0 quick - repeat Luna luminează lacul. | sentence|-
-mixed 0 quick - describe leu balon | -
+mixed 0 silent - describe leu balon | -
 mixed 0 silent neutral repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
-mixed 0 quick neutral repeat Luna luminează lacul. | sentence|-
-mixed 0 quick - describe cal castel | -
+mixed 0 silent neutral repeat Luna luminează lacul. | sentence|-
+mixed 0 silent - describe cal castel | -
 mixed 0 silent loud repeat Luna luminează lacul. | sentence|-
 mixed 0 silent loud repeat Lalelele sunt lângă castel. | sentence|-
-mixed 0 quick loud repeat Luna luminează lacul. | sentence|-
+mixed 0 silent loud repeat Luna luminează lacul. | sentence|-
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
-mixed 0 quick - describe leu balon | -
-mixed 0 quick neutral repeat Lalelele sunt lângă castel. | sentence|-
+mixed 0 silent - describe leu balon | -
+mixed 0 silent neutral repeat Lalelele sunt lângă castel. | sentence|-
 closing 0 quick - repeat lămâie | word|-
 # sound l retell teenAdult 3 66
 listening 0 quick - choose car | cal|-
@@ -9993,16 +9993,16 @@ targetA 4 quick - describe lună lac | -
 targetA 4 quick - retell Povestea de azi | -
 targetA 4 silent - repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent question repeat Luna luminează lacul. | sentence|-
-mixed 0 quick loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent fast twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick - describe cal castel | -
-mixed 0 quick - retell Leul Lalalu | -
+mixed 0 silent - describe cal castel | -
+mixed 0 silent - retell Leul Lalalu | -
 mixed 0 silent loud repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent question twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick neutral twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick - describe cal castel | -
+mixed 0 silent neutral twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent - describe cal castel | -
 mixed 0 silent - describe leu balon | -
-mixed 0 quick slow repeat Leul are un balon. | sentence|-
+mixed 0 silent slow repeat Leul are un balon. | sentence|-
 closing 0 quick - repeat lămâie | word|-
 # sound l everyday fourToFive 0 24
 opening 0 teach - intro - | -
@@ -10026,14 +10026,14 @@ targetB 0 silent - repeat Luna luminează lacul. | sentence|-
 targetB 0 quick - repeat Lalelele sunt lângă castel. | sentence|-
 targetB 0 silent - repeat Leul are un balon. | sentence|-
 mixed 0 silent - describe lună lac | -
-mixed 0 quick loud repeat Lalelele sunt lângă castel. | sentence|-
+mixed 0 silent loud repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
-mixed 0 quick loud repeat Luna luminează lacul. | sentence|-
-mixed 0 quick loud repeat Luna luminează lacul. | sentence|-
+mixed 0 silent loud repeat Luna luminează lacul. | sentence|-
+mixed 0 silent loud repeat Luna luminează lacul. | sentence|-
 mixed 0 silent - describe leu balon | -
-mixed 0 quick slow repeat Lalelele sunt lângă castel. | sentence|-
+mixed 0 silent slow repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent - describe cal castel | -
-mixed 0 quick loud repeat Leul are un balon. | sentence|-
+mixed 0 silent loud repeat Leul are un balon. | sentence|-
 mixed 0 silent slow repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent neutral repeat Leul are un balon. | sentence|-
 closing 0 quick - repeat lună | word|-
@@ -10104,16 +10104,16 @@ targetA 4 quick - repeat Leul are un balon. | sentence|-
 targetA 4 quick - describe cal castel | -
 targetA 4 silent - retell Leul Lalalu | -
 mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick loud repeat Lalelele sunt lângă castel. | sentence|-
-mixed 0 quick loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent loud repeat Lalelele sunt lângă castel. | sentence|-
+mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent - retell Povestea de azi | -
-mixed 0 quick neutral twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent neutral twister Lili lăsa lalele lângă lacul liniștit. | -
 mixed 0 silent slow repeat Leul are un balon. | sentence|-
 mixed 0 silent - describe lună lac | -
-mixed 0 quick question repeat Lalelele sunt lângă castel. | sentence|-
-mixed 0 quick loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent question repeat Lalelele sunt lângă castel. | sentence|-
 mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
-mixed 0 quick loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
+mixed 0 silent loud twister Lili lăsa lalele lângă lacul liniștit. | -
 closing 0 quick - repeat lalea | word|-
 mission 0 silent - mission Dimineața, cere: „Vreau lapte, te rog!” | -
 # meet s 0

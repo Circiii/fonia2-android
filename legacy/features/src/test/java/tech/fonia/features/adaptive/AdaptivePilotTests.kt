@@ -119,6 +119,8 @@ class AdaptivePilotTests {
     private fun play(run: SessionRun, outcome: (Trial) -> Attempt.Outcome) {
         var guard = 0
         while (run.phase == SessionRun.Phase.Trial && guard++ < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             if (trial.countsAsAttempt) run.finishAttempt(trial.exercise, machine = outcome(trial), adult = null, take = null) else run.advance()
         }

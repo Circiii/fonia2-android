@@ -184,7 +184,7 @@ class SessionBuilder(
         // The last mixed item gives its place to an easy one, so the dose stays the same and the session ends on
         // something the learner can already do. The mixed block is drawn whole first, so the items before it come out
         // of the random stream exactly as they always have.
-        val mixed = mixedBlock(mixedTrials, deckA, deckB, extras = extras, age = request.age, random = random)
+        val mixed = mixedBlock(mixedTrials, deckA, deckB, extras = extras, age = request.age, delaysVerdicts = true, random = random)
         trials += mixed.dropLast(1)
         val mission = if (rung == Rung.Everyday) random.shuffled(sound.missions).firstOrNull() else null
         val easy = closingPool(sound, rung, request)
@@ -574,6 +574,12 @@ class SessionBuilder(
     /**
      * Random across both targets, with a response on every other attempt. Syllable-level items and held sounds always
      * get the live visual, because they are still being set up.
+     *
+     * With [delaysVerdicts], the takes that would answer at once say nothing in the moment either: the learner hears
+     * only the soft "heard you", and the block ends by playing back a few of their own good takes (`SessionRun`).
+     * Speech Motor Chaining delays knowledge of results in its random practice (Preston et al. 2019). The evidence on
+     * how often to give it is mixed (Maas et al. 2012), so the change is cheap to undo. Items come out of the random
+     * stream as they always have.
      */
     private fun mixedBlock(
         count: Int,
@@ -582,6 +588,7 @@ class SessionBuilder(
         extras: List<Exercise>,
         age: AgeBand,
         usesProsody: Boolean = true,
+        delaysVerdicts: Boolean = false,
         random: SeededRandom,
     ): List<Trial> {
         val extraDeck = Deck(extras, emptySet(), random)
@@ -591,9 +598,10 @@ class SessionBuilder(
                 1 -> deckB.draw(random)
                 else -> extraDeck.draw(random)
             }
+            val answers = !delaysVerdicts && index % 2 == 0
             val feedback = when {
                 isStillBeingSetUp(exercise) -> FeedbackLevel.Teach
-                index % 2 == 0 -> FeedbackLevel.Quick
+                answers -> FeedbackLevel.Quick
                 else -> FeedbackLevel.Silent
             }
             // Only drawn when both hold, as Swift's && short-circuits.

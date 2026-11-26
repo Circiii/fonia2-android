@@ -75,6 +75,8 @@ class SessionPilotTests {
         var retried = false
         var guard = 0
         while (run.phase == SessionRun.Phase.Trial && guard++ < 500) {
+            // The end of a mixed block holds the next trial until its takes have played.
+            if (run.playback != null) { run.endPlayback(); continue }
             val trial = run.current ?: break
             if (trial.countsAsAttempt || trial.exercise.isIdentification) {
                 // One retry, one take the phone couldn't hear, the rest good.

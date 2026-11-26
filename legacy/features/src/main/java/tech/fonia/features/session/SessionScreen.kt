@@ -3,6 +3,7 @@ package tech.fonia.features.session
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import tech.fonia.features.home.isWarmup
 import tech.fonia.features.app.shortLetter
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,6 +54,7 @@ import tech.fonia.design.SceneBackdrop
 import tech.fonia.design.SessionBar
 import tech.fonia.design.StyledButton
 import tech.fonia.design.ToolButtonStyle
+import tech.fonia.design.easeOut
 import tech.fonia.design.fHeadline
 import tech.fonia.design.scene
 import tech.fonia.design.swiftSpring
@@ -237,9 +240,18 @@ fun SessionScreen(ticket: SessionTicket, profile: Profile, app: AppModel, onDone
                 }
                 val chapter = current.chapter
                 val chapterSound = current.ticket.sound
+                val playback = current.playback
                 if (current.isTellingChapter && chapter != null && chapterSound != null) {
                     Box(Modifier.weight(1f)) {
                         ChapterBeat(app.content.sound(chapterSound).hero, chapter, current.field, app) { current.finishChapter() }
+                    }
+                } else if (playback != null) {
+                    // `.id(playback.id)`, faded in as iOS animates `run.playback?.id`.
+                    key(playback.id) {
+                        val shown = remember { MutableTransitionState(false).apply { targetState = true } }
+                        AnimatedVisibility(shown, Modifier.weight(1f), enter = fadeIn(easeOut(0.3))) {
+                            PlaybackBeat(playback, current.field, app, isChild = current.profile.isChild) { current.endPlayback() }
+                        }
                     }
                 } else {
                     if (drill != null) {
