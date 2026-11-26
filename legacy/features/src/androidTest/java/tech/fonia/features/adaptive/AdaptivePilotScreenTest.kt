@@ -168,7 +168,7 @@ class AdaptivePilotScreenTest {
             }
         }
         // The settings ask for an adult while a child is on the phone; the number is the one the check shows.
-        rule.runOnIdle { app.gate.check(app.gate.number.toString()) }
+        rule.runOnIdle { app.gate.answer(app.gate.question.answer) }
         waitFor(button("Mod adaptiv (pilot)"))
         screenshot("00-grownups-row")
         tap(button("Mod adaptiv (pilot)"))

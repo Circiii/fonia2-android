@@ -1,48 +1,38 @@
 package tech.fonia.features.grownups
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import tech.fonia.features.app.RowLabel
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
-import tech.fonia.design.MascotPose
-import tech.fonia.design.MascotView
 import tech.fonia.design.Palette
 import tech.fonia.design.PracticeWeight
 import tech.fonia.design.ProvideTouchFloor
@@ -55,7 +45,6 @@ import tech.fonia.design.TouchFloor
 import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fCaption
-import tech.fonia.design.fLead
 import tech.fonia.design.practice
 import tech.fonia.domain.Plural
 import tech.fonia.domain.Progression
@@ -65,15 +54,12 @@ import tech.fonia.features.app.AdultGateBody
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.ButtonRow
-import tech.fonia.features.app.Destination
-import tech.fonia.features.app.DetailRow
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.HeaderPage
 import tech.fonia.features.app.InsetGroupedList
+import tech.fonia.features.app.LocalDismiss
 import tech.fonia.features.app.ListRow
 import tech.fonia.features.app.ListSection
-import tech.fonia.features.app.ListSectionScope
-import tech.fonia.features.app.NavigationRow
 import tech.fonia.features.app.SystemColors
 import tech.fonia.features.app.ToggleRow
 import tech.fonia.features.app.ValueRow
@@ -89,7 +75,6 @@ import tech.fonia.features.app.title
 import tech.fonia.features.home.DayActivity
 import tech.fonia.features.home.PathModel
 import tech.fonia.features.home.displayName
-import tech.fonia.features.home.rememberPushDestination
 import tech.fonia.features.journal.dayAndMonth
 import tech.fonia.features.progress.play
 import tech.fonia.features.setup.ChildSetup
@@ -104,50 +89,24 @@ import tech.fonia.store.localDay
 import java.time.Instant
 import java.time.ZoneId
 import java.util.UUID
-import tech.fonia.features.app.FoniaPreferences
-import tech.fonia.features.app.rememberStoredBoolean
-import tech.fonia.features.home.DailyRounds
-import tech.fonia.features.session.FrontTeeth
 
 /**
- * How it's going, the notes and the settings. A plain settings page: no door, no question.
+ * The adult's settings for the one who practises now (iOS `ParentsScreen`): how it's going, the notes, how the
+ * practice is set up and the app itself, on one page. With a child on the phone the adult check comes first.
  */
 @Composable
-fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, onShowGrownups: (Boolean) -> Unit) {
+fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, @Suppress("UNUSED_PARAMETER") onShowGrownups: (Boolean) -> Unit) {
     // No grown-ups' door any more (v2-flow, owner 2026-11-24): the one who practises opens his own settings.
+    val dismiss = LocalDismiss.current
     HeaderPage("Setări", closes = true) {
         // With a child on the phone, the settings are the adult's (iOS AdultGate): the check comes first.
         if (app.needsAdultGate) {
-            AdultGateBody(app.gate, onPass = {}, Modifier.weight(1f))
+            AdultGateBody(app.gate, onPass = {}, Modifier.weight(1f), lead = "Aici intră doar adulții. Găsești ce s-a lucrat, notițele și setările.")
         } else {
             // The adult's page: an adult's touch floor, even with a child's profile on the phone.
-            ProvideTouchFloor(TouchFloor.adult) { Rooms(profile, app, path, onShowGrownups) }
-        }
-    }
-}
-
-@Composable
-private fun Rooms(profile: Profile, app: AppModel, path: PathModel, onShowGrownups: (Boolean) -> Unit) {
-    val push = rememberPushDestination()
-    val context = LocalContext.current
-    InsetGroupedList {
-        ListSection(header = profile.name ?: if (profile.isChild) "Copilul" else "Eu", clear = true) {
-            row { WeekStrip(path.week) }
-        }
-        ListSection {
-            profileActivityRows(profile, app, context, push)
-        }
-        ListSection(header = "Reglaje") {
-            row {
-                DetailRow(
-                    "Calibrare pe vocea ta",
-                    "Douăzeci de secunde: liniște, apoi „aaa”, „sss”, „șșș”. Telefonul învață camera, vocea și S-ul și Ș-ul tău.",
-                    onClick = { app.calibrating = true },
-                )
+            ProvideTouchFloor(TouchFloor.adult) {
+                SettingsPage(profile, app, onClose = dismiss, modifier = Modifier.weight(1f), week = path.week)
             }
-            profileSetupRows(profile, push, app.preferences)
-            row { NavigationRow("Cine exersează", onClick = { push(Destination.Who) }) }
-            row { ButtonRow("Alte setări", onClick = { onShowGrownups(true) }, color = Palette.ink) }
         }
     }
 }
@@ -177,67 +136,6 @@ fun WeekStrip(days: List<DayActivity>) {
                     }
                 }
             }
-        }
-    }
-}
-
-/** What an adult looks at for one person. */
-fun ListSectionScope.profileActivityRows(profile: Profile, app: AppModel, context: Context, push: (Destination) -> Unit) {
-    if (profile.isChild) {
-        row { DetailRow("Cum merge", "Sunete, încercări, ce a auzit telefonul", onClick = { push(Destination.HowItGoes(profile.id)) }) }
-        row { DetailRow(WeekCopy.TITLE, WeekCopy.ROW_DETAIL, onClick = { push(Destination.Week(profile.id)) }) }
-        if (app.arguments.drafts) row { DetailRow("Citire", "Un minut de citit cu voce tare. Tu atingi cuvintele, telefonul măsoară timpul.", onClick = { push(Destination.Reading(profile.id)) }) }
-    }
-    row { NavigationRow(AudienceCopy.notesTitle(profile.isChild), onClick = { push(Destination.Notes(profile.id)) }) }
-    row {
-        DetailRow(
-            AudienceCopy.exportTitle(profile.isChild),
-            AudienceCopy.exportDetail(profile.isChild),
-            onClick = { app.scope.launch { ProfileExport.share(context, app.repository, profile.id, app.pilot, profile, app.adaptive) } },
-            chevron = false,
-        )
-    }
-    if (profile.isChild) row { PracticeReportRow(profile, app, context) }
-}
-
-/**
- * The PDF the logoped can read in a minute (iOS `reportRow`). It leaves the phone, so it sits behind the adult check
- * with the rest of this page; with nothing practised yet the row only says so.
- */
-@Composable
-private fun PracticeReportRow(profile: Profile, app: AppModel, context: Context) {
-    var hasPractice by remember(profile.id) { mutableStateOf(false) }
-    LaunchedEffect(profile.id) { hasPractice = runCatching { PracticeReportPdf.hasPractice(app.repository, profile.id) }.getOrDefault(false) }
-    if (hasPractice) {
-        DetailRow(
-            "Raportul pentru logoped",
-            "Un PDF scurt, fără numele copilului și fără voce.",
-            onClick = { app.scope.launch { PracticeReportPdf.share(context, app.repository, app.content, profile.id) } },
-            chevron = false,
-        )
-    } else {
-        ListRow(Modifier.alpha(0.6f)) {
-            RowLabel("Raportul pentru logoped", "Încă nu e nimic de arătat. Raportul apare după prima zi de exersare.", Modifier.weight(1f))
-        }
-    }
-}
-
-/** What an adult changes for one person. */
-fun ListSectionScope.profileSetupRows(profile: Profile, push: (Destination) -> Unit, preferences: FoniaPreferences?) {
-    if (profile.isChild) {
-        row { NavigationRow("Ce sunete exersează", onClick = { push(Destination.SoundChoice(profile.id)) }) }
-        row { DetailRow(AdultCards.SCREEN_TITLE, AdultCards.SCREEN_DETAIL, onClick = { push(Destination.AdultCards) }) }
-        childDayRows(profile, preferences)
-        // The adaptive pilot (docs/PLAN.md §7.4): off until an adult switches it on.
-        row { NavigationRow("Mod adaptiv (pilot)", onClick = { push(Destination.Adaptive(profile.id)) }) }
-    }
-    if (profile.isChild || profile.voiceGroup != Profile.VoiceGroup.Child) {
-        row {
-            DetailRow(
-                "Reglează S și Ș pentru vocea asta",
-                AudienceCopy.calibrationDetail(profile.isChild),
-                onClick = { push(Destination.Calibration(profile.id)) },
-            )
         }
     }
 }
@@ -523,23 +421,4 @@ internal suspend fun <T> orEmpty(fetch: suspend () -> List<T>): List<T> = try {
     throw cancelled
 } catch (_: Exception) {
     emptyList()
-}
-
-/**
- * Two of a child's own switches, kept per child (iOS `ChildDayRows`): a second short round on the same day for the
- * youngest ([DailyRounds]), and the front teeth being out ([FrontTeeth]).
- */
-fun ListSectionScope.childDayRows(profile: Profile, preferences: FoniaPreferences?) {
-    if (DailyRounds.isOffered(profile)) {
-        row {
-            var on by rememberStoredBoolean(preferences, DailyRounds.key(profile.id))
-            ToggleRow(DailyRounds.TITLE, on, detail = DailyRounds.DETAIL) { on = it }
-        }
-    }
-    if (FrontTeeth.isOffered(profile)) {
-        row {
-            var out by rememberStoredBoolean(preferences, FrontTeeth.key(profile.id))
-            ToggleRow(FrontTeeth.TITLE, out, detail = FrontTeeth.DETAIL) { out = it }
-        }
-    }
 }

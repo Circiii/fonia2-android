@@ -26,8 +26,8 @@ import org.junit.Rule
  *
  * Every journey starts from nothing (`foniaResetData`), takes come from the recorded clips (`foniaFixtures`, always
  * on in the iOS simulator), and `foniaReduceMotion` stills what never stops moving (Foni, the sky, the voice meters),
- * because a Compose test waits for the screen to be idle. `foniaGate` fixes the number the adult check asks
- * ([GATE_NUMBER]), so a journey can pass it the way an adult does. `foniaNoAdultCards` keeps the card for the adult
+ * because a Compose test waits for the screen to be idle. `foniaGate` fixes the multiplication the adult check asks
+ * (7 × 8, answer [GATE_NUMBER]), so a journey can pass it the way an adult does. `foniaNoAdultCards` keeps the card for the adult
  * out of the way of the lessons; the cards have their own tests.
  */
 abstract class Journeys {
@@ -95,19 +95,14 @@ abstract class Journeys {
         node.performSemanticsAction(SemanticsActions.OnClick)
     }
 
-    /** The adult check is on screen: the hold ring, not yet the number. */
-    protected fun waitForAdultCheck(seconds: Long = 5): Boolean = waitFor(button(HOLD_LABEL), seconds)
+    /** The adult check is on screen: the multiplication (iOS `adultGatePrompt`). */
+    protected fun waitForAdultCheck(seconds: Long = 5): Boolean = waitFor(element(GATE_PROMPT), seconds)
 
-    /**
-     * Passes the adult check as TalkBack does: its double tap stands for the three-second hold (a test can't time a
-     * hold against the frame clock), then the number is typed on the keypad.
-     */
+    /** Passes the adult check as an adult does: taps the right answer of the fixed multiplication. */
     protected fun passAdultCheck() {
         assertTrue("adult check", waitForAdultCheck())
-        rule.onAllNodes(button(HOLD_LABEL)).onFirst().performSemanticsAction(SemanticsActions.OnClick)
-        assertTrue(waitFor(staticText("patruzeci și șapte")))
-        for (digit in GATE_NUMBER.toString()) tap(button(digit.toString()))
-        rule.waitUntil(5_000) { !exists(staticText("patruzeci și șapte")) }
+        tap(button(GATE_NUMBER.toString()))
+        rule.waitUntil(5_000) { !exists(element(GATE_PROMPT)) }
     }
 
     protected fun goBack() {
@@ -177,7 +172,8 @@ abstract class Journeys {
     }
 
     companion object {
-        const val GATE_NUMBER = 47
-        const val HOLD_LABEL = "Ține apăsat trei secunde pentru zona adultului"
+        /** `foniaGate 56`: the check always asks 7 × 8, with 49, 56, 63 and 64 to tap. */
+        const val GATE_NUMBER = 56
+        const val GATE_PROMPT = "Cât face 7 × 8?"
     }
 }

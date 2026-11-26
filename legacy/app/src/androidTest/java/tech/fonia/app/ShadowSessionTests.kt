@@ -121,8 +121,10 @@ class ShadowSessionTests : Journeys() {
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
         passAdultCheck()
-        assertTrue(waitFor(button("Alte setări")))
-        tap(button("Alte setări"))
+        // The pilot's switches are folded away under "Studiu și funcții noi".
+        assertTrue(waitFor(buttonStartingWith("Studiu și funcții noi")))
+        rule.onAllNodes(buttonStartingWith("Studiu și funcții noi")).onFirst().performScrollTo()
+        tap(buttonStartingWith("Studiu și funcții noi"))
         assertTrue(waitFor(staticText("Ascultare pe sunete, în probă"), 10))
         assertTrue(exists(button("Șterge pachetul (${ModelCatalog.ZIPA.megabytes} MB)")))
         assertTrue(exists(button("Acordul cu ZIPA în lecție")))

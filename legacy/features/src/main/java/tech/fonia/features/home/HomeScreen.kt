@@ -100,6 +100,7 @@ import tech.fonia.domain.Plural
 import tech.fonia.domain.SoundDef
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.AppRoute
+import tech.fonia.features.app.TallyFocus
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.lowercasedFirstLetter
 import tech.fonia.features.app.shortLetter
@@ -155,7 +156,7 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             .scrollViewport(viewport, coveredBottom = bottomInset)
             .verticalScroll(scroll),
     ) {
-        Hero(app, path, hasArrived, onSettings = { push(AppRoute.Settings) }) { scroll.value }
+        Hero(app, path, hasArrived, onSettings = { push(AppRoute.Settings) }, onTally = { push(AppRoute.Tally(it)) }) { scroll.value }
         Column(
             Modifier
                 .fillMaxWidth()
@@ -204,7 +205,7 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
 
 /** The sky at the top: the two counters, the greeting, and Foni next to today's letter. It drifts as the page scrolls. */
 @Composable
-private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, onSettings: () -> Unit, scrolled: () -> Int) {
+private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, onSettings: () -> Unit, onTally: (TallyFocus) -> Unit, scrolled: () -> Int) {
     val unit = path.continuing?.unit
     val sound = unit?.sound?.let { app.content.sound(it) }
     val didPracticeToday = path.week.firstOrNull { it.isToday }?.hasPractice == true
@@ -242,14 +243,19 @@ private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, onSettings
             // As on iOS: a check and "N zile", no flame; a day missed breaks nothing. The counts wait for the first
             // lesson; two zeros greet nobody.
             if (path.totalDays > 0) {
-                CountPill(
-                    FoniaIcon.check, Palette.accentText, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " în care ai exersat",
-                    unit = Plural.form(path.totalDays, Plural.Noun.Zi),
-                )
+                // Each count opens its page: the days on a calendar, the stars on a wall.
+                StyledButton(onClick = { onTally(TallyFocus.Days) }, style = PressableStyle(), onClickLabel = "Deschide zilele tale") {
+                    CountPill(
+                        FoniaIcon.check, Palette.accentText, path.totalDays, Plural.format(path.totalDays, Plural.Noun.Zi) + " în care ai exersat",
+                        unit = Plural.form(path.totalDays, Plural.Noun.Zi),
+                    )
+                }
             }
             Spacer(Modifier.weight(1f))
             if (path.totalLessons > 0) {
-                CountPill(FoniaIcon.star, Palette.starTint, path.totalLessons, Plural.format(path.totalLessons, Plural.Noun.Stea))
+                StyledButton(onClick = { onTally(TallyFocus.Stars) }, style = PressableStyle(), onClickLabel = "Deschide stelele tale") {
+                    CountPill(FoniaIcon.star, Palette.starTint, path.totalLessons, Plural.format(path.totalLessons, Plural.Noun.Stea))
+                }
                 Spacer(Modifier.width(8.dp))
             }
             // The grown-ups' area, behind the same gate as from Progres.

@@ -34,6 +34,7 @@ import tech.fonia.store.localDay
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
 import kotlin.math.ceil
@@ -277,18 +278,38 @@ class PathModel(profile: Profile, val content: FoniaContent) {
     val totalMinutes: Int get() = sessions.groupBy { it.localDay }.values.sumOf { dayMinutes(it) }
     val totalAttempts: Int get() = sessions.sumOf { it.attempts }
     val totalLessons: Int get() = sessions.count { it.endedAt != null }
-    val totalDays: Int get() = sessions.filter { it.endedAt != null || it.attempts > 0 }.map { it.localDay }.toSet().size
+    val totalDays: Int get() = practisedDays.size
 
-    private companion object {
-        fun practised(ofDay: List<SessionRecord>): Boolean = ofDay.any { it.endedAt != null || it.attempts > 0 }
+    /** Every day with practice, as "yyyy-MM-dd". */
+    val practisedDays: Set<String> get() = sessions.filter { it.endedAt != null || it.attempts > 0 }.map { it.localDay }.toSet()
+
+    /** The most days in a row that ever had practice. A record, not a streak: a day off never lowers it. */
+    val longestRun: Int get() = longestRun(practisedDays)
+
+    companion object {
+        /** The most days in a row among [days] ("yyyy-MM-dd"), across a month's or a year's end. */
+        fun longestRun(days: Set<String>): Int {
+            val dates = days.mapNotNull { runCatching { LocalDate.parse(it) }.getOrNull() }.sorted()
+            var best = 0
+            var run = 0
+            var last: LocalDate? = null
+            for (date in dates) {
+                run = if (last != null && last.plusDays(1) == date) run + 1 else 1
+                best = max(best, run)
+                last = date
+            }
+            return best
+        }
+
+        private fun practised(ofDay: List<SessionRecord>): Boolean = ofDay.any { it.endedAt != null || it.attempts > 0 }
 
         /**
          * A day's minutes: the finished lessons' time, a started minute counted whole, and at least one on a day with
          * any practice, even a lesson left halfway.
          */
-        fun dayMinutes(ofDay: List<SessionRecord>): Int = if (practised(ofDay)) max(minutes(ofDay), 1) else 0
+        private fun dayMinutes(ofDay: List<SessionRecord>): Int = if (practised(ofDay)) max(minutes(ofDay), 1) else 0
 
-        fun minutes(sessions: List<SessionRecord>): Int {
+        private fun minutes(sessions: List<SessionRecord>): Int {
             val seconds = sessions.fold(0.0) { sum, session ->
                 val end = session.endedAt ?: return@fold sum
                 sum + Duration.between(session.startedAt, end).toNanos() / 1e9
@@ -297,7 +318,7 @@ class PathModel(profile: Profile, val content: FoniaContent) {
         }
 
         /** `(try? await …) ?? []`. */
-        suspend fun <T> orEmpty(fetch: suspend () -> List<T>): List<T> = try {
+        private suspend fun <T> orEmpty(fetch: suspend () -> List<T>): List<T> = try {
             fetch()
         } catch (cancelled: CancellationException) {
             throw cancelled

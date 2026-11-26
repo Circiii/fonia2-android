@@ -57,6 +57,9 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.UUID
 
+/** Which of the two counts [AppRoute.Tally] opens on. */
+enum class TallyFocus { Days, Stars }
+
 /** Where a tap can lead: the pages pushed on the one navigation stack of the tabs. */
 sealed interface AppRoute {
     data class Guide(val sound: SoundID) : AppRoute
@@ -85,6 +88,9 @@ sealed interface AppRoute {
     data object Speaking : AppRoute
 
     data object Settings : AppRoute
+
+    /** The days and stars behind the two counts on Home. */
+    data class Tally(val focus: TallyFocus) : AppRoute
 
     /** „La cameră”: the speech coach. [launch] (debug) = `<seconds>:<promptId>[:go]`. */
     data class SpeechCoach(val launch: String? = null) : AppRoute
@@ -187,7 +193,7 @@ data class LaunchArguments(
     val face: String? = null,
     /** Android only, debug: every take reads this WAV (a path on the device) instead of the microphone. */
     val micFile: String? = null,
-    /** Debug only (iOS `-foniaGate`): the adult check always asks this number, so a test can pass it. */
+    /** Debug only (iOS `-foniaGate`): the adult check always asks the multiplication with this answer (56: 7 × 8). */
     val gateNumber: Int? = null,
     /** Debug only (iOS `-foniaNoAdultCards`): the first-time cards for the adult stay out of the way of a UI test. */
     val hidesAdultCards: Boolean = false,
@@ -225,7 +231,7 @@ data class LaunchArguments(
                 reduceMotion = debug && flag("foniaReduceMotion"),
                 face = if (debug) value("foniaFace") else null,
                 micFile = if (debug) value("foniaMicFile") else null,
-                gateNumber = if (debug) (extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull())?.takeIf(AdultGate::canAsk) else null,
+                gateNumber = if (debug) AdultGate.fixedNumber(extras.getInt("foniaGate", 0).takeIf { it != 0 } ?: value("foniaGate")?.toIntOrNull()) else null,
                 hidesAdultCards = debug && flag("foniaNoAdultCards"),
                 missionSample = debug && flag("foniaMissionSample"),
                 weekSample = debug && flag("foniaWeekSample"),

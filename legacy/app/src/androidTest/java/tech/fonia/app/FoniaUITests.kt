@@ -1,8 +1,5 @@
 package tech.fonia.app
 
-import androidx.compose.ui.semantics.SemanticsActions
-import androidx.compose.ui.test.onFirst
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -134,26 +131,23 @@ class FoniaUITests : Journeys() {
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
         assertTrue(waitFor(buttonStartingWith("Cum merge")))
-        assertFalse(exists(button(HOLD_LABEL)))
+        assertFalse(exists(element(GATE_PROMPT)))
     }
 
     @Test
-    fun testAWrongNumberBringsANewOneAndNoWrongWord() {
+    fun testAWrongAnswerBringsAnotherQuestionAndNoWrongWord() {
         reachChildHome()
         tap(button("Progres"))
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
 
         assertTrue(waitForAdultCheck())
-        rule.onAllNodes(button(HOLD_LABEL)).onFirst().performSemanticsAction(SemanticsActions.OnClick)
-        assertTrue(waitFor(staticText("patruzeci și șapte")))
-        tap(button("1"))
-        tap(button("2"))
-        assertTrue(waitFor(staticText("Un număr nou. Scrie-l cu cifre:")))
+        tap(button("63"))
+        assertTrue(waitFor(staticText("Altă întrebare. Alege răspunsul:")))
         assertFalse(exists(buttonStartingWith("Cum merge")))
         for (word in listOf("Greșit", "greșit")) assertFalse(exists(staticText(word)))
-        tap(button("4"))
-        tap(button("7"))
+        // One wrong answer asks no rest; `foniaGate` keeps the same question.
+        tap(button(GATE_NUMBER.toString()))
         assertTrue(waitFor(buttonStartingWith("Cum merge")))
     }
 
@@ -208,6 +202,6 @@ class FoniaUITests : Journeys() {
         assertTrue(waitFor(button("Setări")))
         tap(button("Setări"))
         assertTrue(waitFor(buttonStartingWith("Notițe")))
-        assertFalse(exists(button(HOLD_LABEL)))
+        assertFalse(exists(element(GATE_PROMPT)))
     }
 }

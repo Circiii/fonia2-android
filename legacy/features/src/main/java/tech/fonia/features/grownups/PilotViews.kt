@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
@@ -28,73 +27,17 @@ import tech.fonia.design.fCaption
 import tech.fonia.design.practice
 import tech.fonia.domain.Plural
 import tech.fonia.domain.SoundID
-import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.app.AppModel
-import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.ListSection
-import tech.fonia.features.app.ProgressRow
-import tech.fonia.features.app.ToggleRow
 import tech.fonia.features.app.ValueRow
 import tech.fonia.features.app.field
-import tech.fonia.features.app.rememberStoredBoolean
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.journal.dayAndMonth
-import tech.fonia.features.ml.ModelCatalog
-import tech.fonia.features.ml.ModelEntry
-import tech.fonia.features.ml.ModelsHub
 import tech.fonia.features.pilot.DoseSummary
 import tech.fonia.features.pilot.IntensiveWeek
 import tech.fonia.features.pilot.SoundDose
-import tech.fonia.features.session.ShadowBadgeSettings
 import tech.fonia.store.Profile
 import java.time.LocalDate
-
-/**
- * The settings for the new ML (docs/PLAN.md §6): the phone scorer of shadow mode, with its size before anything is
- * fetched and a delete; in debug builds, the switch for the agreement badge in lessons.
- */
-@Composable
-internal fun ModelSections(app: AppModel) {
-    val ml = app.ml ?: return
-    val entry = ModelCatalog.ZIPA
-    val state = ml.models.state(entry)
-    val footer = buildString {
-        append("Un al doilea fel de a asculta, tot pe telefon. Notează ce a auzit doar în jurnalul pentru logoped, fără voce. Copilul vede și aude la fel. Se descarcă doar pe Wi-Fi.")
-        if (!app.isPilotLogOn) append(" Notează doar cu jurnalul de exersare pornit.")
-        if (state is ModelsHub.State.Failed && state.noNetwork) append(" Acum nu e Wi-Fi.")
-    }
-    // The shipped app has no internet permission (app/src/main/AndroidManifest.xml), so it can't fetch the package:
-    // the row would only fail. It shows where the permission is there (a build that asks for it).
-    val context = LocalContext.current
-    val canFetch = remember { context.checkSelfPermission(android.Manifest.permission.INTERNET) == android.content.pm.PackageManager.PERMISSION_GRANTED }
-    if (canFetch || state != ModelsHub.State.Absent) {
-        ListSection(header = "Ascultare pe sunete, în probă", footer = footer) {
-            row { ShadowModelRow(ml.models, entry) }
-        }
-    }
-    if (IS_DEBUG_BUILD) {
-        var badge by rememberStoredBoolean(app.preferences, ShadowBadgeSettings.KEY)
-        ListSection(
-            header = "Pentru dezvoltare",
-            footer = "Doar în varianta de test. În lecție apar, sus, verdictul ZIPA lângă al telefonului și acordul dintre ele.",
-        ) {
-            row { ToggleRow("Acordul cu ZIPA în lecție", badge) { badge = it } }
-        }
-    }
-}
-
-@Composable
-private fun ShadowModelRow(models: ModelsHub, entry: ModelEntry) {
-    if (!models.isSupported) {
-        ValueRow("Nu merge pe acest telefon", "")
-        return
-    }
-    when (val state = models.state(entry)) {
-        ModelsHub.State.Ready -> ButtonRow("Șterge pachetul (${entry.megabytes} MB)", onClick = { models.remove(entry) }, destructive = true)
-        is ModelsHub.State.Downloading -> ProgressRow("Se descarcă…", state.fraction)
-        ModelsHub.State.Absent, is ModelsHub.State.Failed -> ButtonRow("Descarcă pachetul (${entry.megabytes} MB)", onClick = { models.download(entry) })
-    }
-}
 
 private val weekLetters = listOf("L", "M", "M", "J", "V", "S", "D")
 

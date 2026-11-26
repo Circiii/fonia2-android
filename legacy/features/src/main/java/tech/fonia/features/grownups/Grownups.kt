@@ -15,19 +15,14 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tech.fonia.design.FoniaText
 import tech.fonia.design.QuietButtonStyle
@@ -39,233 +34,57 @@ import tech.fonia.design.fCaption
 import tech.fonia.design.fHeadline
 import tech.fonia.dsp.DSPThresholds
 import tech.fonia.features.adaptive.AdaptiveStore
-import tech.fonia.features.app.ActionRole
-import tech.fonia.features.app.AdultGateScreen
+import tech.fonia.features.app.AdultGateBody
 import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.AppModel
-import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.Destination
-import tech.fonia.features.app.DialogAction
-import tech.fonia.features.app.FoniaAlert
-import tech.fonia.features.app.FoniaConfirmationDialog
-import tech.fonia.features.app.FullWipe
-import tech.fonia.features.app.FoniaSheet
-import tech.fonia.features.app.InsetGroupedList
 import tech.fonia.features.app.LocalDismiss
 import tech.fonia.features.app.NavStack
 import tech.fonia.features.app.NavigationHost
-import tech.fonia.features.app.NavigationRow
-import tech.fonia.features.app.ListSection
-import tech.fonia.features.app.ProgressRow
-import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.SystemNavigationBar
-import tech.fonia.features.app.ToggleRow
-import tech.fonia.features.app.ValueRow
-import tech.fonia.features.app.rememberStoredBoolean
-import tech.fonia.features.guide.AdultCardsSeen
 import tech.fonia.features.home.DestinationScreen
-import tech.fonia.features.home.displayName
-import tech.fonia.features.home.rememberPushDestination
 import tech.fonia.features.pilot.PilotLog
-import tech.fonia.features.session.Settings
-import tech.fonia.features.speaking.SpeakingMemory
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import java.io.File
 import java.util.UUID
 
 /**
- * The "Setări" sheet: who practises, the sound switches, the speech package, what stays on the phone, and wiping
- * everything. It has its own navigation stack, as on iOS, so a profile opens inside the sheet.
+ * The "Setări" sheet when nobody is chosen yet (iOS `GrownupsHome`): the profiles, the app, what stays on the phone,
+ * and wiping everything. It has its own navigation stack, as on iOS, so a profile opens inside the sheet.
  */
 @Composable
 fun GrownupsHome(app: AppModel, onDone: () -> Unit) {
     // With a child on the phone, the settings are the adult's (iOS AdultGate): the check comes first.
     if (app.needsAdultGate) {
-        AdultGateScreen(app.gate, onPass = {}, onClose = onDone)
+        Column(Modifier.fillMaxSize().background(Palette.paper)) {
+            SystemNavigationBar("Setări", onDone = onDone)
+            AdultGateBody(app.gate, onPass = {}, Modifier.weight(1f), lead = "Aici intră doar adulții.")
+        }
         return
     }
     val stack = remember { NavStack() }
     NavigationHost(stack) { destination ->
         if (destination == Destination.Root) {
-            GrownupsList(app, onDone)
+            Column(Modifier.fillMaxSize().background(Palette.paper)) {
+                SystemNavigationBar("Setări", onDone = onDone)
+                SettingsPage(null, app, onClose = onDone, modifier = Modifier.weight(1f))
+            }
         } else {
             DestinationScreen(destination, app, path = null, onShowGrownups = {})
         }
     }
 }
 
-@Composable
-private fun GrownupsList(app: AppModel, onDone: () -> Unit) {
-    val push = rememberPushDestination()
-    val context = LocalContext.current
-    var keepRecordings by rememberStoredBoolean(app.preferences, Settings.keepRecordings)
-    var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
-    var faceGuides by rememberStoredBoolean(app.preferences, Settings.faceGuides)
-    var cameraCoach by rememberStoredBoolean(app.preferences, Settings.cameraCoach)
-    var addingChild by remember { mutableStateOf(false) }
-    var confirmWipe by remember { mutableStateOf(false) }
-    /** What stayed on the phone after "Șterge tot" (null: no failure to show). */
-    var wipeLeft by remember { mutableStateOf<List<String>?>(null) }
-    var isWiping by remember { mutableStateOf(false) }
-    /** Everything goes, or the adult hears what didn't. Once it worked the app is back at its first run. */
-    fun wipe() {
-        if (isWiping) return
-        isWiping = true
-        app.scope.launch {
-            val left = try {
-                app.wipeEverything()
-            } finally {
-                isWiping = false
-            }
-            if (left.isEmpty()) onDone() else wipeLeft = left
-        }
-    }
-    var showLegal by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxSize().background(Palette.paper)) {
-        SystemNavigationBar("Setări", onDone = onDone)
-        InsetGroupedList(Modifier.weight(1f)) {
-            ListSection(header = "Cine exersează") {
-                for (profile in app.profiles) {
-                    row { NavigationRow(profile.displayName, onClick = { push(Destination.ProfileDetail(profile.id)) }) }
-                }
-                row { ButtonRow("Adaugă un copil", onClick = { addingChild = true }) }
-            }
-            ListSection(footer = "Dacă o lași oprită, telefonul ascultă și uită. Dacă o pornești, păstrăm ultimele 3 înregistrări la fiecare sunet, cel mult 90 de zile.") {
-                row {
-                    ToggleRow("Sunete în aplicație", !effectsOff) { on ->
-                        effectsOff = !on
-                        app.audio.effectsMuted = !on
-                    }
-                }
-                row { ToggleRow("Păstrează înregistrările copiilor", keepRecordings) { keepRecordings = it } }
-            }
-            ReminderSection(app)
-            ListSection(header = "Recunoașterea vorbirii", footer = "Fără ea, telefonul nu înțelege engleza și propozițiile.") {
-                row { ModelRow(app.speech) }
-            }
-            ListSection(
-                header = "Pentru probă",
-                footer = "Notează pentru logoped câte încercări au fost în fiecare zi, doar ca numere. Fără voce. Pornit doar dacă îl pornești tu.",
-            ) {
-                row { ToggleRow("Jurnalul de exersare", app.isPilotLogOn) { app.setPilotLog(it) } }
-            }
-            // As on iOS: what depends on the camera waits here, off, until it has been tried on a real phone.
-            ListSection(header = "Experimental") {
-                row {
-                    ToggleRow(
-                        "Ghidaje pe față în oglindă",
-                        faceGuides,
-                        detail = "Folosește camera din față. Nimic nu pleacă de pe telefon.",
-                    ) { faceGuides = it }
-                }
-                row {
-                    ToggleRow(
-                        "Vorbit în public în fața camerei",
-                        cameraCoach,
-                        detail = "Un pas nou la „Vorbit în public”: te vezi pe ecran și primești semne pe loc. Folosește camera din față. Nimic nu pleacă de pe telefon.",
-                    ) { cameraCoach = it }
-                }
-            }
-            ModelSections(app)
-            ListSection {
-                row { ButtonRow("Ce păstrăm pe telefon", onClick = { showLegal = true }) }
-                row { NavigationRow("Licențe", onClick = { push(Destination.Licences) }) }
-                row { ButtonRow("Ajutor", onClick = { LegalInfo.open(context, LegalInfo.SUPPORT_URL) }) }
-                row { ValueRow("Versiunea", LegalInfo.version(context)) }
-                row { ButtonRow("Șterge tot de pe telefon", onClick = { confirmWipe = true }, destructive = true) }
-            }
-        }
-    }
-    AddChildSheet(app, isPresented = addingChild, onDone = { addingChild = false })
-    FoniaSheet(isPresented = showLegal, onDismiss = { showLegal = false }) {
-        PrivacyNote(onDone = { showLegal = false }, withReading = app.arguments.drafts, onOpenLink = { LegalInfo.open(context, it) })
-    }
-    FoniaConfirmationDialog(
-        isPresented = confirmWipe,
-        onDismiss = { confirmWipe = false },
-        title = "Ștergi tot?",
-        message = "Profilurile, încercările, înregistrările, jurnalul și alegerile din Setări dispar de pe telefon. Nu se pot recupera.",
-        actions = listOf(
-            DialogAction("Șterge tot", ActionRole.Destructive) { wipe() },
-            DialogAction("Anulează", ActionRole.Cancel),
-        ),
-    )
-    FoniaAlert(
-        isPresented = wipeLeft != null,
-        onDismiss = { wipeLeft = null },
-        title = "Nu am putut șterge tot",
-        message = wipeLeft?.let { FullWipe.leftLine(it) },
-        actions = listOf(
-            DialogAction("Încearcă din nou") {
-                wipeLeft = null
-                wipe()
-            },
-            DialogAction("Anulează", ActionRole.Cancel),
-        ),
-    )
-}
-
-@Composable
-private fun ModelRow(speech: SpeechHub) {
-    when (val state = speech.state) {
-        SpeechHub.State.Ready -> ButtonRow("Șterge pachetul (${speech.megabytes} MB)", onClick = { speech.remove() }, destructive = true)
-        is SpeechHub.State.Downloading -> ProgressRow("Se descarcă…", state.fraction)
-        SpeechHub.State.Absent, SpeechHub.State.Failed -> ButtonRow("Descarcă pachetul (${speech.megabytes} MB)", onClick = { speech.download() })
-    }
-}
-
-/** One person, as the settings list them. */
+/** One person, as the settings list them: the same page, for them. */
 @Composable
 fun ProfileDetail(profileID: UUID, app: AppModel) {
     val profile = app.profiles.firstOrNull { it.id == profileID } ?: return
-    val push = rememberPushDestination()
     val dismiss = LocalDismiss.current
-    val context = LocalContext.current
-    var confirmDelete by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(Palette.paper)) {
-        SystemNavigationBar(profile.name ?: "Profil", onBack = dismiss)
-        InsetGroupedList(Modifier.weight(1f)) {
-            ListSection {
-                profileActivityRows(profile, app, context, push)
-                profileSetupRows(profile, push, app.preferences)
-            }
-            ListSection {
-                row { ButtonRow("Șterge profilul", onClick = { confirmDelete = true }, destructive = true) }
-            }
-        }
+        SystemNavigationBar(settingsName(profile), onBack = dismiss)
+        SettingsPage(profile, app, onClose = dismiss, modifier = Modifier.weight(1f))
     }
-    FoniaConfirmationDialog(
-        isPresented = confirmDelete,
-        onDismiss = { confirmDelete = false },
-        title = "Ștergi profilul?",
-        message = "Dispar și încercările și înregistrările acestui profil. Nu se pot recupera.",
-        actions = listOf(
-            DialogAction("Șterge", ActionRole.Destructive) {
-                app.scope.launch {
-                    try {
-                        app.repository.deleteProfile(profileID)
-                    } catch (cancelled: CancellationException) {
-                        throw cancelled
-                    } catch (_: Exception) {
-                    }
-                    AdultCardsSeen.forget(profileID, app.preferences)
-                    SpeakingMemory.forget(profileID, app.preferences)
-                    tech.fonia.features.home.DailyRounds.forget(profileID, app.preferences)
-                    tech.fonia.features.session.FrontTeeth.forget(profileID, app.preferences)
-                    // And every row of the pilot log about this profile.
-                    try {
-                        app.pilot?.deleteProfile(profileID)
-                    } catch (cancelled: CancellationException) {
-                        throw cancelled
-                    } catch (_: Exception) {
-                    }
-                    dismiss()
-                }
-            },
-            DialogAction("Anulează", ActionRole.Cancel),
-        ),
-    )
 }
 
 /**

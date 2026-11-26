@@ -371,6 +371,7 @@ private fun RouteScreen(route: AppRoute, app: AppModel, path: PathModel, onShowG
         AppRoute.Speaking -> SpeakingHome(path.profile, app, path)
         is AppRoute.SpeechCoach -> tech.fonia.features.speaking.coach.SpeechCoachScreen(path.profile, app, route.launch)
         AppRoute.Settings -> ParentsScreen(path.profile, app, path, onShowGrownups)
+        is AppRoute.Tally -> tech.fonia.features.progress.TallyScreen(path, app, route.focus)
         is AppRoute.Training -> tech.fonia.features.diction.TrainingScreen(route.sound, app, path.profile.id)
     }
 }

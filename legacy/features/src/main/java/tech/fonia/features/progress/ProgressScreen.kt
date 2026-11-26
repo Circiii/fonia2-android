@@ -66,6 +66,7 @@ import tech.fonia.design.ui
 import tech.fonia.domain.Plural
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.AppRoute
+import tech.fonia.features.app.TallyFocus
 import tech.fonia.features.app.ClipDecoder
 import tech.fonia.features.app.capitalizedFirstLetter
 import tech.fonia.features.app.isChild
@@ -178,19 +179,31 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                         )
                     }
                 } else Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    for (pair in tiles.chunked(2)) {
+                    // The days and the stars open their page; the attempts and minutes are only counts.
+                    val opens = listOf(TallyFocus.Days to "Deschide zilele tale", TallyFocus.Stars to "Deschide stelele tale")
+                    for ((row, pair) in tiles.chunked(2).withIndex()) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            for ((look, label) in pair) {
-                                StatTile(
-                                    look.first,
-                                    look.second,
-                                    look.third,
-                                    label,
-                                    Modifier
-                                        .weight(1f)
-                                        .background(Palette.sheet, ContinuousRoundedRectangle(20.dp))
-                                        .padding(14.dp),
-                                )
+                            for ((column, entry) in pair.withIndex()) {
+                                val (look, label) = entry
+                                val tile: @Composable (Modifier) -> kotlin.Unit = { modifier ->
+                                    StatTile(
+                                        look.first,
+                                        look.second,
+                                        look.third,
+                                        label,
+                                        modifier
+                                            .background(Palette.sheet, ContinuousRoundedRectangle(20.dp))
+                                            .padding(14.dp),
+                                    )
+                                }
+                                val open = if (row == 0) opens.getOrNull(column) else null
+                                if (open != null) {
+                                    StyledButton(onClick = { push(AppRoute.Tally(open.first)) }, style = PressableStyle(), modifier = Modifier.weight(1f), onClickLabel = open.second) {
+                                        tile(Modifier)
+                                    }
+                                } else {
+                                    tile(Modifier.weight(1f))
+                                }
                             }
                         }
                     }

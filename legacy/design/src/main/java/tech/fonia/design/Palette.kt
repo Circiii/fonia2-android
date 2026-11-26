@@ -38,6 +38,10 @@ object Palette {
     /** The ring that closes round a choice's tick as it pops in. */
     val accentSoftEdge = Color.hex(0xA3D9AF)
 
+    /** Deleting: the red text and edge, and the soft tile behind its icon. */
+    val danger = Color.hex(0xB3261E)
+    val dangerSoft = Color.hex(0xFBE4E1)
+
     /**
      * What is done on a bar, a bead or a step, on [progressTrack]: 3:1 against it, so the share reads without a
      * number.
