@@ -5,8 +5,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,6 +61,7 @@ import tech.fonia.design.ToolButtonStyle
 import tech.fonia.design.UIWeight
 import tech.fonia.design.fBody
 import tech.fonia.design.fCaption
+import tech.fonia.design.rowPress
 import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
 
@@ -154,20 +153,11 @@ fun ListRow(
     padding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     content: @Composable RowScope.() -> kotlin.Unit,
 ) {
-    val interactions = remember { MutableInteractionSource() }
-    val pressed by interactions.collectIsPressedAsState()
-    val highlight by animateColorAsState(if (pressed && onClick != null) Color(0xFFE5E5EA) else Color.Transparent, label = "row")
     Row(
         modifier
             .fillMaxWidth()
-            .background(highlight)
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable(interactionSource = interactions, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-                } else {
-                    Modifier
-                },
-            )
+            // `RowPressStyle`: grey under the finger, a little smaller, one quiet tick.
+            .then(if (onClick != null) Modifier.rowPress(enabled = enabled, onClick = onClick) else Modifier)
             .heightIn(min = minHeight)
             .padding(padding),
         verticalAlignment = Alignment.CenterVertically,

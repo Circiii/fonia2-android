@@ -1,8 +1,6 @@
 package tech.fonia.features.journal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +57,7 @@ import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fHeadline
 import tech.fonia.design.fTitle
 import tech.fonia.design.monospacedDigit
+import tech.fonia.design.pressable
 import tech.fonia.design.ui
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
@@ -227,13 +226,7 @@ private fun MonthStep(icon: FoniaIcon, label: String, enabled: Boolean, onClick:
     Box(
         Modifier
             .size(56.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onClick,
-            )
+            .pressable(enabled = enabled, onClick = onClick)
             .semantics { contentDescription = label }
             // A disabled plain button is drawn faded on iOS.
             .alpha(if (enabled) 1f else 0.3f),
@@ -249,7 +242,7 @@ private fun DayCell(day: JournalDay, isToday: Boolean, hasPractice: Boolean, onC
         Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick)
+            .pressable(role = null, onClick = onClick)
             .clearAndSetSemantics {
                 role = Role.Button
                 contentDescription = dayAndMonth(day.date)

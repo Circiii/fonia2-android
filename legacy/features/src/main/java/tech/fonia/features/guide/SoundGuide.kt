@@ -2,8 +2,6 @@ package tech.fonia.features.guide
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -53,6 +50,7 @@ import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fHeadline
 import tech.fonia.design.monospacedDigit
+import tech.fonia.design.pressable
 import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
 import tech.fonia.designsystem.motion.staggeredEntrance
@@ -158,7 +156,7 @@ private fun Steps(lines: List<String>, current: Int, onPick: (Int) -> Unit) {
                 Modifier
                     .fillMaxWidth()
                     .staggeredEntrance(index)
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, role = Role.Button) { onPick(index) }
+                    .pressable { onPick(index) }
                     .semantics { selected = isCurrent }
                     .padding(vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),

@@ -3,8 +3,6 @@ package tech.fonia.features.reading
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +41,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -74,6 +71,7 @@ import tech.fonia.design.fCaption
 import tech.fonia.design.fLead
 import tech.fonia.design.monospacedDigit
 import tech.fonia.design.practice
+import tech.fonia.design.pressable
 import tech.fonia.design.ui
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.DialogAction
@@ -360,6 +358,8 @@ private fun WordChip(
         Modifier
             .testTag("word-$index")
             .alpha(if (isPastLast) 0.35f else 1f)
+            // Before the drawing, so the mark gives under the finger with the word.
+            .pressable(enabled = enabled, onClick = onTap)
             .drawBehind {
                 if (isMarked) {
                     drawOutline(shape.createOutline(size, layoutDirection, this), Palette.notYetSoft)
@@ -377,13 +377,6 @@ private fun WordChip(
                     drawRoundRect(Palette.ink, topLeft = Offset(size.width - w, 2.dp.toPx()), size = Size(w, size.height - 4.dp.toPx()), cornerRadius = CornerRadius(w / 2))
                 }
             }
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onTap,
-            )
             .semantics {
                 contentDescription = text
                 stateDescription = when {

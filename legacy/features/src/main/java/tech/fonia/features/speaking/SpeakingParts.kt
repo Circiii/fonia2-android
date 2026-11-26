@@ -1,7 +1,6 @@
 package tech.fonia.features.speaking
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -51,6 +49,7 @@ import tech.fonia.design.fBody
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fHeadline
 import tech.fonia.design.monospacedDigit
+import tech.fonia.design.pressable
 import tech.fonia.design.ui
 import tech.fonia.domain.Language
 import tech.fonia.features.app.ActivityIndicator
@@ -193,7 +192,7 @@ fun WordFlow(
                 .testTag("text-word-${word.index}")
                 .heightIn(min = if (onTap != null) 36.dp else 0.dp)
             if (onTap != null) {
-                base = base.clickable(role = Role.Button, onClickLabel = tapLabel) { onTap(word) }
+                base = base.pressable(onClickLabel = tapLabel) { onTap(word) }
             }
             Box(
                 base.semantics { look.state?.let { stateDescription = it } },

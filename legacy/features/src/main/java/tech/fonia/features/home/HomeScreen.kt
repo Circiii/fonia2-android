@@ -82,6 +82,7 @@ import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
 import tech.fonia.design.Radius
 import tech.fonia.design.PressableStyle
+import tech.fonia.design.ScrollViewport
 import tech.fonia.design.ProgressPill
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
@@ -92,6 +93,8 @@ import tech.fonia.design.fBody
 import tech.fonia.design.monospacedDigit
 import tech.fonia.design.softShadow
 import tech.fonia.design.swiftSpring
+import tech.fonia.design.scrollSettle
+import tech.fonia.design.scrollViewport
 import tech.fonia.design.ui
 import tech.fonia.domain.Plural
 import tech.fonia.domain.SoundDef
@@ -143,10 +146,13 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
     LaunchedEffect(Unit) { hasArrived = true }
     val push = rememberPush()
     val scroll = rememberScrollState()
+    // What the doors measure themselves against: the page, less the bar over its foot.
+    val viewport = remember { ScrollViewport() }
     Box(Modifier.fillMaxSize()) {
     Column(
         Modifier
             .fillMaxSize()
+            .scrollViewport(viewport, coveredBottom = bottomInset)
             .verticalScroll(scroll),
     ) {
         Hero(app, path, hasArrived, onSettings = { push(AppRoute.Settings) }) { scroll.value }
@@ -167,14 +173,14 @@ fun HomeScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset: Dp
             }
             val list = doors(profile)
             if (!profile.isChild) {
-                list.forEachIndexed { index, item -> DoorButton(item, 2.3f, large = true, index + 3, hasArrived, push) }
+                list.forEachIndexed { index, item -> DoorButton(item, 2.3f, large = true, index + 3, hasArrived, push, viewport) }
             } else {
-                list.firstOrNull()?.let { DoorButton(it, 2.15f, large = true, 3, hasArrived, push) }
+                list.firstOrNull()?.let { DoorButton(it, 2.15f, large = true, 3, hasArrived, push, viewport) }
                 val grid = list.drop(1)
                 grid.chunked(2).forEachIndexed { row, pair ->
                     Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                         pair.forEachIndexed { column, item ->
-                            DoorButton(item, 1.12f, large = false, row * 2 + column + 4, hasArrived, push, Modifier.weight(1f))
+                            DoorButton(item, 1.12f, large = false, row * 2 + column + 4, hasArrived, push, viewport, Modifier.weight(1f))
                         }
                         if (pair.size == 1) Spacer(Modifier.weight(1f))
                     }
@@ -249,7 +255,7 @@ private fun Hero(app: AppModel, path: PathModel, hasArrived: Boolean, onSettings
             // The grown-ups' area, behind the same gate as from Progres.
             StyledButton(
                 onClick = onSettings,
-                style = ToolButtonStyle(diameter = 44.dp),
+                style = ToolButtonStyle(diameter = 44.dp, spins = true),
                 modifier = Modifier.semantics { contentDescription = "Setări" },
             ) {
                 FoniaIconView(FoniaIcon.settings, size = 22f)
@@ -335,9 +341,11 @@ private fun DoorButton(
     order: Int,
     hasArrived: Boolean,
     push: (AppRoute) -> Unit,
+    viewport: ScrollViewport,
     modifier: Modifier = Modifier,
 ) {
-    StyledButton(onClick = { push(item.route) }, style = PressableStyle(), modifier = modifier.arrives(hasArrived, order)) {
+    // A door half out of view gives a little and fades, then settles as it comes fully in.
+    StyledButton(onClick = { push(item.route) }, style = PressableStyle(), modifier = modifier.scrollSettle(viewport).arrives(hasArrived, order)) {
         Box {
             DoorTile(item.scene, item.title, aspect, large, Modifier.zoomSource(item.route))
         }

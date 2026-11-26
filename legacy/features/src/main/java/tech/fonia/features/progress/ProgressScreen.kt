@@ -1,7 +1,6 @@
 package tech.fonia.features.progress
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -62,6 +61,7 @@ import tech.fonia.design.fCaption
 import tech.fonia.design.fHeadline
 import tech.fonia.design.fTitle
 import tech.fonia.design.practice
+import tech.fonia.design.pressable
 import tech.fonia.design.ui
 import tech.fonia.domain.Plural
 import tech.fonia.features.app.AppModel
@@ -109,7 +109,7 @@ fun ProgressScreen(profile: Profile, app: AppModel, path: PathModel, bottomInset
                 Spacer(Modifier.weight(1f))
                 StyledButton(
                     onClick = { push(AppRoute.Settings) },
-                    style = ToolButtonStyle(diameter = 44.dp),
+                    style = ToolButtonStyle(diameter = 44.dp, spins = true),
                     modifier = Modifier.semantics { contentDescription = "Setări" },
                 ) {
                     FoniaIconView(FoniaIcon.settings, size = 22f)
@@ -237,7 +237,7 @@ private fun RecordingsCard(recordings: List<Recording>, app: AppModel) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .clickable(role = Role.Button) { app.play(recording) }
+                        .pressable { app.play(recording) }
                         .heightIn(min = 56.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically,

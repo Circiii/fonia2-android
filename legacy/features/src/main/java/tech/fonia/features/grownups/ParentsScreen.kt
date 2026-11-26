@@ -3,8 +3,6 @@ package tech.fonia.features.grownups
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +46,7 @@ import tech.fonia.design.MascotView
 import tech.fonia.design.Palette
 import tech.fonia.design.PracticeWeight
 import tech.fonia.design.ProvideTouchFloor
+import tech.fonia.design.QuietButtonStyle
 import tech.fonia.design.RungStrip
 import tech.fonia.design.StyledButton
 import tech.fonia.design.Surface
@@ -408,15 +407,11 @@ private fun SoundRow(
     }
 }
 
-/** `Button(title).buttonStyle(.borderless)` in a list row: the tint colour, no row highlight. */
+/** `Button(title).buttonStyle(QuietButtonStyle(color: Palette.accentText))` in a list row: no row highlight. */
 @Composable
 private fun StyledPlainButton(title: String, onClick: () -> Unit) {
-    Box(
-        Modifier
-            .padding(top = 2.dp)
-            .clickable(role = Role.Button, onClick = onClick),
-    ) {
-        FoniaText(title, style = fBodyStrong, color = Palette.accentText)
+    StyledButton(onClick = onClick, style = QuietButtonStyle(Palette.accentText), modifier = Modifier.padding(top = 2.dp)) {
+        FoniaText(title, style = fBodyStrong)
     }
 }
 

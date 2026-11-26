@@ -2,8 +2,6 @@ package tech.fonia.features.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +35,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -55,6 +52,7 @@ import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
 import tech.fonia.design.swiftSpring
+import tech.fonia.design.pressable
 import tech.fonia.design.ui
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.AppRoute
@@ -226,7 +224,7 @@ private fun TabPages(profile: Profile, app: AppModel, path: PathModel, pager: Pa
  * stands in the middle, rising out of the bar.
  */
 /** How far the big button stands above the bar. */
-private val startRise = 25.dp
+private val startRise = 20.dp
 
 @Composable
 private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Unit, modifier: Modifier = Modifier) {
@@ -254,7 +252,8 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
         }
         StyledButton(
             onClick = onStart,
-            style = StartButtonStyle(),
+            // Only the button rises out of the bar; a soft shadow seats it over whatever scrolls behind.
+            style = StartButtonStyle(castsShadow = true),
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = -startRise)
@@ -285,29 +284,33 @@ private fun MainBar(tab: MainTab, onSelect: (MainTab) -> Unit, onStart: () -> Un
 private fun TabItem(value: MainTab, title: String, icon: String, tab: MainTab, onSelect: (MainTab) -> Unit, modifier: Modifier) {
     val isActive = tab == value
     val ink = if (isActive) Palette.ink else Palette.inkSoft
+    // `.sensoryFeedback(.selection, trigger: isActive) { _, now in now }`: a quiet tick as a tab is picked.
+    val haptics = androidx.compose.ui.platform.LocalHapticFeedback.current
+    val first = remember { booleanArrayOf(true) }
+    LaunchedEffect(isActive) {
+        if (first[0]) {
+            first[0] = false
+            return@LaunchedEffect
+        }
+        if (isActive) haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.SegmentTick)
+    }
     Column(
         modifier
             .fillMaxHeight()
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { if (!isActive) onSelect(value) }
-            .semantics {
-                role = Role.Tab
-                selected = isActive
-            },
+            .pressable(role = Role.Tab) { if (!isActive) onSelect(value) }
+            .semantics { selected = isActive },
         verticalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val lift by androidx.compose.animation.core.animateFloatAsState(
-            if (isActive) 1f else 0f,
-            androidx.compose.animation.core.spring(dampingRatio = 0.5f, stiffness = 420f),
-            label = "tab",
-        )
+        // The picked tab's icon lifts a little, from its foot, with a spring, so the switch is felt.
+        val lift by androidx.compose.animation.core.animateFloatAsState(if (isActive) 1f else 0f, swiftSpring(0.35, 0.5), label = "tab")
         FoniaTabIcon(
             if (isActive) "$icon-on" else icon,
             Modifier.size(26.dp).graphicsLayer {
                 val k = 1f + 0.1f * lift
                 scaleX = k
                 scaleY = k
-                translationY = -1.5.dp.toPx() * lift
+                transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 1f)
             },
             tint = ink,
         )

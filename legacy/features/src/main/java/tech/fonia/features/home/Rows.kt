@@ -28,6 +28,7 @@ import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaLabel
 import tech.fonia.design.FoniaText
+import tech.fonia.design.NumericText
 import tech.fonia.design.Palette
 import tech.fonia.design.SessionBar
 import tech.fonia.design.StyledButton
@@ -87,7 +88,8 @@ fun StatTile(icon: FoniaIcon, tint: Color, value: String, label: String, modifie
     ) {
         FoniaIconView(icon, size = 32f, relativeTo = TextRole.title2, tint = tint)
         Column {
-            FoniaText(value, style = ui(22, UIWeight.black, TextRole.title2).monospacedDigit(), color = Palette.ink, maxLines = 1, minimumScaleFactor = 0.6f)
+            // `.contentTransition(.numericText())`: a changed number rolls in place of the old one.
+            NumericText(value, style = ui(22, UIWeight.black, TextRole.title2).monospacedDigit(), color = Palette.ink, maxLines = 1, minimumScaleFactor = 0.6f)
             FoniaText(label, style = fCaption, color = Palette.inkSoft, maxLines = 1, minimumScaleFactor = 0.8f)
         }
         Spacer(Modifier.weight(1f))
