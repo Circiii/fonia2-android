@@ -138,6 +138,8 @@ class SoundJudge(
         /** His own reference (anchors, group, loudness); not thread-safe, so used under its own lock. */
         personal: PersonalReference? = null,
         profileIsAdult: Boolean = false,
+        /** The trial is being said again: the recogniser no longer refuses another word, so it never holds him on it. */
+        isRetry: Boolean = false,
     ): Judged? {
         val judge = ready.await() ?: return null
         val clip = Clip(take.samples, take.sampleRate, take.dropped)
@@ -208,7 +210,8 @@ class SoundJudge(
             check != null -> withWords(bySound, check)
             // One word, praised by the sound heads, but the recogniser is sure another word was said („val” for
             // „pară”): not praised, said again. The practised sound itself is never the recogniser's business.
-            heardNow != null && !isSentence && bySound.cue == Cue.Correct &&
+            // Asked again once at most: on a retry the sound verdict stands.
+            heardNow != null && !isSentence && !isRetry && bySound.cue == Cue.Correct &&
                 tech.fonia.words.OtherWord.isOther(request.text, request.sound.raw, heardNow) -> {
                 Log.i(WORDS_TAG, "take '${request.text}' heard '${heardNow.text}' conf=${"%.2f".format(heardNow.confidence)}: another word, not praised")
                 bySound.copy(

@@ -47,12 +47,13 @@ object OtherWord {
 
     /**
      * Letter edits between [asked] and [heard] with the target sound's letters free: replacing or dropping a free
-     * letter costs nothing, and one extra letter next to it (a sound said in two, „țs”) costs nothing either.
+     * letter costs nothing, and one extra letter next to it (a sound said in two, „țs”) costs nothing either. With
+     * [within], letters heard before or after the word are free too: „steastea” holds „stea”, „zdrață” holds „rață”.
      */
-    internal fun edits(asked: String, free: BooleanArray, heard: String): Int {
+    internal fun edits(asked: String, free: BooleanArray, heard: String, within: Boolean = false): Int {
         val n = asked.length
         val m = heard.length
-        var prev = IntArray(m + 1) { it }
+        var prev = IntArray(m + 1) { if (within) 0 else it }
         for (i in 1..n) {
             val cur = IntArray(m + 1)
             cur[0] = prev[0] + if (free[i - 1]) 0 else 1
@@ -64,7 +65,7 @@ object OtherWord {
             }
             prev = cur
         }
-        return prev[m]
+        return if (within) prev.min() else prev[m]
     }
 
     /**
@@ -78,8 +79,13 @@ object OtherWord {
         val whole = fold(heard.text)
         if (whole.isEmpty()) return false
         // The closest of: everything heard as one word, or any single heard word (a breath or an "ă" beside it).
-        var best = edits(a, free, whole)
-        for (w in heard.words) best = min(best, edits(a, free, fold(w.text)))
+        val pieces = listOf(whole) + heard.words.map { fold(it.text) }
+        // The word said whole inside a piece (said twice, or with a sound before it) is the word.
+        if (pieces.any { edits(a, free, it, within = true) == 0 }) return false
+        val (best, closest) = pieces.map { edits(a, free, it) to it }.minBy { it.first }
+        // A scrap of two letters or less, half the word at most („ri” for „sare”), is the recogniser losing the word,
+        // not another word. A whole short word („casă” for „păsărică”) is still another word.
+        if (closest.length <= 2 && 2 * closest.length <= a.length) return false
         val fixed = free.count { !it }
         return best >= max(MIN_EDITS, (fixed + 1) / 2)
     }

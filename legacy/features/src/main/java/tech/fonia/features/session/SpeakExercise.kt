@@ -387,6 +387,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 talker = app.talkers.tracker(profile),
                 personal = app.voice.personal(profile.id),
                 profileIsAdult = !profile.isChild,
+                isRetry = run.isRetryHere,
             )?.also { j ->
                 app.talkers.remember(profile)
                 // No audio is kept: his reference (when this take joined it) and the few numbers of what it looked like.

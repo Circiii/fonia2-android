@@ -112,6 +112,10 @@ class SessionRun(
     /** Bumps when the same trial starts over, so its view restarts cleanly. */
     var retryToken: Int by mutableIntStateOf(0)
         private set
+    private var retryAtEntry = 0
+
+    /** The trial on screen was already said once and is being said again („Încă o dată”, or a retake). */
+    val isRetryHere: Boolean get() = retryToken > retryAtEntry
     var needsAdultNext: Rung? by mutableStateOf(null)
         private set
 
@@ -651,6 +655,7 @@ class SessionRun(
         val easy = lastSaidWell
         if (session.trials[next].block.kind == SessionBlock.Kind.Closing && easy != null) useForClosing(easy, next)
         index = next
+        retryAtEntry = retryToken
         trialSettled = false
     }
 

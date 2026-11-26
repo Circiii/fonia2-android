@@ -39,4 +39,15 @@ class OtherWordTests {
         // A breath or a filler beside the word does not make it another word.
         assertFalse(OtherWord.isOther("rac", "r", heard("ă rac")))
     }
+
+    @Test
+    fun partsAndRepeatsAreTheWord() {
+        // Half the word heard: the recogniser lost it („sare” heard as „ri”, a clean take, iOS 2026-11-26).
+        assertFalse(OtherWord.isOther("sare", "s", heard("ri")))
+        // The word whole inside what was heard: said twice, or with a sound before it.
+        assertFalse(OtherWord.isOther("stea", "s", heard("steastea")))
+        assertFalse(OtherWord.isOther("rață", "ț", heard("zdrață")))
+        assertTrue(OtherWord.isOther("pară", "r", heard("val")))
+        assertTrue(OtherWord.isOther("păsărică", "s", heard("casă")))
+    }
 }
