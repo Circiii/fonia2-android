@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.5.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.5.1)" variant="all" version="9.5.1">
+
+    <issue
+        id="ObsoleteLintCustomCheck"
+        message="Library lint checks reference invalid APIs; these checks **will be skipped**!&#xA;&#xA;Lint found an issue registry (`androidx.lifecycle.lint.LifecycleRuntimeIssueRegistry`)&#xA;which contains some references to invalid API:&#xA;org.jetbrains.kotlin.asJava.elements.KtLightModifierList#getKotlinOrigin(): org.jetbrains.kotlin.psi.KtModifierList&#xA;(Referenced from androidx/lifecycle/lint/LifecycleWhenChecksKt.class)&#xA;&#xA;Therefore, this lint check library is **not** included&#xA;in analysis. This affects the following lint checks:&#xA;`UnsafeLifecycleWhenUsage`,`RepeatOnLifecycleWrongUsage`&#xA;&#xA;To use this lint check, upgrade to a more recent version&#xA;of the library.">
+        <location
+            file="$GRADLE_USER_HOME/caches/9.8.2/transforms/3b04e44a3eea16f12b17b237fb5fee39/transformed/lifecycle-runtime-release/jars/lint.jar"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="fun FoniaLabel(title: String, icon: FoniaIcon, iconSize: Float = 22f, modifier: Modifier = Modifier) ="
+        errorLine2="                                                                      ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Controls.kt"
+            line="110"
+            column="71"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="fun IconOverTitle(title: String, icon: FoniaIcon, iconSize: Float = 20f, modifier: Modifier = Modifier) {"
+        errorLine2="                                                                         ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Controls.kt"
+            line="410"
+            column="74"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="fun Spray(trigger: Any?, enabled: Boolean = true, particleSize: Dp = 14.dp, modifier: Modifier = Modifier, particle: @Composable () -> Unit) {"
+        errorLine2="                                                                            ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Effects.kt"
+            line="285"
+            column="77"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="fun SkyLife(isNight: Boolean = false, modifier: Modifier = Modifier) {"
+        errorLine2="                                      ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Motion.kt"
+            line="162"
+            column="39"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios."
+        errorLine1="            android:screenOrientation=&quot;portrait&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/AndroidManifest.xml"
+            line="13"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableDoubleStateOf` instead of `mutableStateOf`"
+        errorLine1="    var session by remember { mutableStateOf(0.0) }"
+        errorLine2="                              ~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/java/tech/fonia/design/DesignGallery.kt"
+            line="260"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withTranslation` instead?"
+        errorLine1="        canvas.save()"
+        errorLine2="        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Cards.kt"
+            line="351"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Controls.kt"
+            line="552"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withMatrix` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Foni.kt"
+            line="414"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX function `createBitmap` instead?"
+        errorLine1="        val bitmap = Bitmap.createBitmap(side, side, Bitmap.Config.ARGB_8888)"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/FoniaAssets.kt"
+            line="121"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Motion.kt"
+            line="59"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="        canvas.save()"
+        errorLine2="        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/Motion.kt"
+            line="231"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withClip` instead?"
+        errorLine1="            context.save()"
+        errorLine2="            ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/MouthView.kt"
+            line="177"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withClip` instead?"
+        errorLine1="                context.save()"
+        errorLine2="                ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/MouthView.kt"
+            line="186"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withTranslation` instead?"
+        errorLine1="        context.save()"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/SagittalPainter.kt"
+            line="162"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withClip` instead?"
+        errorLine1="        context.save()"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/SagittalPainter.kt"
+            line="236"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withClip` instead?"
+        errorLine1="        context.save()"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/SagittalPainter.kt"
+            line="299"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="                        canvas.save()"
+        errorLine2="                        ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/StartButton.kt"
+            line="134"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/VoiceVisuals.kt"
+            line="182"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withScale` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/design/VoiceVisuals.kt"
+            line="213"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseTomlInstead"
+        message="Use the existing version catalog reference (`libs.androidx.activity.compose`) instead"
+        errorLine1="    debugImplementation(&quot;androidx.activity:activity-compose:1.13.0&quot;)"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="45"
+            column="25"/>
+    </issue>
+
+</issues>

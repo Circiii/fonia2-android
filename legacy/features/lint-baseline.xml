@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.5.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.5.1)" variant="all" version="9.5.1">
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="fun MeasureBlock(title: String, value: String, reference: String?, note: String? = null, modifier: Modifier = Modifier) {"
+        errorLine2="                                                                                         ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/speaking/SpeakingParts.kt"
+            line="256"
+            column="90"/>
+    </issue>
+
+    <issue
+        id="ModifierParameter"
+        message="Modifier parameter should be the first optional parameter"
+        errorLine1="    modifier: Modifier = Modifier,"
+        errorLine2="    ~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/SystemList.kt"
+            line="282"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 29"
+        errorLine1="        val build = if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else @Suppress(&quot;DEPRECATION&quot;) info.versionCode.toLong()"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/grownups/PrivacyText.kt"
+            line="23"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="FrequentlyChangingValue"
+        message="Reading a value annotated with @FrequentlyChangingValue inside composition"
+        errorLine1="                val offset = (pager.currentPage - page) + pager.currentPageOffsetFraction"
+        errorLine2="                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/speaking/coach/CoachSetup.kt"
+            line="127"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="    var checksVersion: Int by mutableStateOf(0)"
+        errorLine2="                              ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/AppModel.kt"
+            line="204"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableLongStateOf` instead of `mutableStateOf`"
+        errorLine1="    var preparationStart by remember { mutableStateOf(0L) }"
+        errorLine2="                                       ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/speaking/bac/BacOralScreen.kt"
+            line="126"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="    var index by rememberSaveable { mutableStateOf(0) }"
+        errorLine2="                                    ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/grownups/Calibration.kt"
+            line="77"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateValueProperty"
+        message="Reading `value` will cause an autoboxing operation. Use `floatValue` to avoid unnecessary allocations."
+        errorLine1="                        val t = startPulse.value"
+        errorLine2="                                           ~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/home/MainTabs.kt"
+            line="262"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateValueProperty"
+        message="Reading `value` will cause an autoboxing operation. Use `floatValue` to avoid unnecessary allocations."
+        errorLine1="                        val k = 1f + 0.03f * kotlin.math.sin(startPulse.value * 2f * Math.PI.toFloat())"
+        errorLine2="                                                                        ~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/home/MainTabs.kt"
+            line="272"
+            column="73"/>
+    </issue>
+
+    <issue
+        id="UseOfNonLambdaOffsetOverload"
+        message="State backed values should use the lambda overload of Modifier.offset"
+        errorLine1="                .offset(x = knob, y = 2.dp)"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/SystemList.kt"
+            line="244"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="                        listOf(FoniaPreferences.FILE, &quot;fonia_talker&quot;).all { name -> app.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit() }"
+        errorLine2="                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/AppModel.kt"
+            line="609"
+            column="85"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX function `createBitmap` instead?"
+        errorLine1="        val calm = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888).also {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/java/tech/fonia/features/guide/MirrorFixture.kt"
+            line="62"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX function `createBitmap` instead?"
+        errorLine1="    private fun shrink(src: Bitmap, k: Float): Bitmap = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888).also {"
+        errorLine2="                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/java/tech/fonia/features/guide/MirrorFixture.kt"
+            line="102"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Bitmap.get` instead?"
+        errorLine1="        c.drawColor(src.getPixel(4, 4))"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/java/tech/fonia/features/guide/MirrorFixture.kt"
+            line="104"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX function `createBitmap` instead?"
+        errorLine1="    private fun darken(src: Bitmap, k: Float): Bitmap = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888).also {"
+        errorLine2="                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/debug/java/tech/fonia/features/guide/MirrorFixture.kt"
+            line="112"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withTranslation` instead?"
+        errorLine1="            on.save()"
+        errorLine2="            ~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/grownups/PracticeReportPdf.kt"
+            line="165"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        preferences.edit().putBoolean(key, value).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="23"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        preferences.edit().putString(key, value).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="29"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        preferences.edit().putInt(key, value).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="35"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        preferences.edit().putLong(key, value).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="41"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        preferences.edit().remove(key).apply()"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="45"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="    fun clear(): Boolean = preferences.edit().clear().commit()"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/app/Preferences.kt"
+            line="49"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `String.toUri` instead?"
+        errorLine1="        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))"
+        errorLine2="                                                         ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/grownups/PrivacyText.kt"
+            line="32"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX function `createBitmap` instead?"
+        errorLine1="                        val bitmap = Bitmap.createBitmap(widthPx, widthPx * page.height / page.width, Bitmap.Config.ARGB_8888)"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/reading/ReadingReportPdf.kt"
+            line="83"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withTranslation` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/reading/ReadingReportPdf.kt"
+            line="178"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `Canvas.withTranslation` instead?"
+        errorLine1="            canvas.save()"
+        errorLine2="            ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/reading/ReadingReportPdf.kt"
+            line="233"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="        prefs.edit().putBoolean(&quot;gazeOffered.${profile.id}&quot;, true).apply()"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/speaking/coach/SpeechCoach.kt"
+            line="211"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="                    prefs.edit().putString(&quot;gaze.${profile.id}&quot;, result.encode()).apply()"
+        errorLine2="                    ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/speaking/coach/SpeechCoach.kt"
+            line="234"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="                { k, v -> prefs.edit().putString(k, v).apply() },"
+        errorLine2="                          ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/session/TalkerMemory.kt"
+            line="82"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        errorLine1="                { keep -> prefs.edit().apply { prefs.all.keys.filterNot(keep).forEach { remove(it) } }.apply() },"
+        errorLine2="                          ~~~~~~~~~~~~">
+        <location
+            file="src/main/java/tech/fonia/features/session/TalkerMemory.kt"
+            line="83"
+            column="27"/>
+    </issue>
+
+</issues>
