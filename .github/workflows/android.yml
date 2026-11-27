@@ -1,9 +1,10 @@
 # JVM tests and lint on every pull request and push to main.
 #
-# content/ is the private Circiii/fonia-content repository: give the workflow a fine-grained token with
-# Contents: read on it as the CONTENT_TOKEN secret. The speech models are downloaded and SHA-256 checked by the
-# build into ~/.gradle/fonia-models, cached here by spec/models/manifest.json. Parakeet-Ro is not downloadable,
-# so CI builds without it, as any machine without the file does.
+# content/ is the private Circiii/fonia-content repository, owned by a personal account: the CONTENT_TOKEN
+# secret is a fine-grained token made by that account, limited to fonia-content with Contents: read. The speech
+# models are downloaded and SHA-256 checked by the build into ~/.gradle/fonia-models, cached here by
+# spec/models/manifest.json. Parakeet-Ro is not downloadable, so CI builds without it, as any machine without
+# the file does.
 name: android
 
 on:
@@ -26,9 +27,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          submodules: recursive
-          token: ${{ secrets.CONTENT_TOKEN || github.token }}
           persist-credentials: false
+      # The repository comes with the workflow's own token; CONTENT_TOKEN is used for the content submodule
+      # alone and is passed with -c, so it is never written to a git config.
+      - name: Fetch submodules
+        env:
+          CONTENT_TOKEN: ${{ secrets.CONTENT_TOKEN }}
+        run: >-
+          git -c "url.https://x-access-token:${CONTENT_TOKEN}@github.com/Circiii/fonia-content.insteadOf=https://github.com/Circiii/fonia-content"
+          submodule update --init --recursive
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
@@ -54,11 +61,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          submodules: recursive
-          token: ${{ secrets.CONTENT_TOKEN || github.token }}
           persist-credentials: false
           # Spotless checks only the files changed since origin/main, so it needs that history.
           fetch-depth: 0
+      - name: Fetch submodules
+        env:
+          CONTENT_TOKEN: ${{ secrets.CONTENT_TOKEN }}
+        run: >-
+          git -c "url.https://x-access-token:${CONTENT_TOKEN}@github.com/Circiii/fonia-content.insteadOf=https://github.com/Circiii/fonia-content"
+          submodule update --init --recursive
       - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
