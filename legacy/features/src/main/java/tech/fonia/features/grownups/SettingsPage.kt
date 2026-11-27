@@ -1,24 +1,10 @@
 package tech.fonia.features.grownups
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -34,80 +20,54 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.disabled
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.progressBarRangeInfo
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
-import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MascotPose
 import tech.fonia.design.MascotView
-import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
 import tech.fonia.design.PressableStyle
 import tech.fonia.design.Radius
 import tech.fonia.design.StyledButton
-import tech.fonia.design.TemplateImage
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
 import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fCaption
 import tech.fonia.design.softShadow
-import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
 import tech.fonia.domain.SoundID
-import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.app.ActionRole
 import tech.fonia.features.app.AppModel
-import tech.fonia.features.app.InstallCount
 import tech.fonia.features.app.Destination
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaAlert
 import tech.fonia.features.app.FoniaConfirmationDialog
 import tech.fonia.features.app.FoniaSheet
-import tech.fonia.features.app.FoniaSwitch
 import tech.fonia.features.app.FullWipe
-import tech.fonia.features.app.SpeechHub
 import tech.fonia.features.app.isChild
 import tech.fonia.features.app.rememberAdultGate
 import tech.fonia.features.app.rememberStoredBoolean
@@ -116,11 +76,6 @@ import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.guide.AdultCardsSeen
 import tech.fonia.features.home.DayActivity
 import tech.fonia.features.home.rememberPushDestination
-import tech.fonia.features.ml.ModelCatalog
-import tech.fonia.features.ml.ModelEntry
-import tech.fonia.features.ml.ModelsHub
-import tech.fonia.features.session.Settings
-import tech.fonia.features.session.ShadowBadgeSettings
 import tech.fonia.features.speaking.SpeakingMemory
 import tech.fonia.store.Profile
 import tech.fonia.features.home.DailyRounds
@@ -484,440 +439,5 @@ private fun Practice(profile: Profile, app: AppModel, modifier: Modifier, push: 
                 chevron = true,
             ) { app.calibrating = true }
         }
-    }
-}
-
-// MARK: The app
-
-/** Once the code has gone the switch has nothing left to stop, and the line says so. */
-@Composable
-private fun InstallCountRow(app: AppModel) {
-    var countInstall by rememberStoredBoolean(app.preferences, InstallCount.ON_KEY, InstallCount.DEFAULT_ON)
-    val installSent by rememberStoredBoolean(app.preferences, InstallCount.SENT_KEY)
-    SwitchRow(
-        FoniaIcon.chart.rawValue,
-        "Numără instalarea",
-        countInstall,
-        if (installSent) {
-            "Codul a plecat. Nu se mai trimite altul, decât după „Șterge tot”."
-        } else {
-            "La o zi după primul profil, trimite o dată un cod făcut la întâmplare, ca să știm câte instalări sunt. Fără nume și fără nimic din exerciții."
-        },
-    ) { countInstall = it }
-}
-
-@Composable
-private fun AppGroup(app: AppModel, modifier: Modifier) {
-    var keepRecordings by rememberStoredBoolean(app.preferences, Settings.keepRecordings)
-    var effectsOff by rememberStoredBoolean(app.preferences, Settings.effectsOff)
-    SettingsGroup("Aplicația", SettingsTint.Gold, modifier) {
-        SwitchRow(FoniaIcon.speaker.rawValue, "Sunete în aplicație", !effectsOff) { on ->
-            effectsOff = !on
-            app.audio.effectsMuted = !on
-        }
-        RowDivider()
-        SwitchRow(
-            FoniaIcon.microphone.rawValue,
-            "Păstrează înregistrările copiilor",
-            keepRecordings,
-            "Dacă o lași oprită, telefonul ascultă și uită. Dacă o pornești, păstrăm ultimele 3 înregistrări la fiecare sunet, cel mult 90 de zile.",
-        ) { keepRecordings = it }
-        RowDivider()
-        SpeechModelRow(app.speech)
-        if (app.preferences != null) {
-            RowDivider()
-            ReminderRow(app)
-        }
-    }
-}
-
-/** The speech package (Android: it comes as a download): what it's for, and its download or delete. */
-@Composable
-private fun SpeechModelRow(speech: SpeechHub) {
-    ActionRow(FoniaIcon.waves.rawValue, "Recunoașterea vorbirii", "Fără ea, telefonul nu înțelege engleza și propozițiile.") {
-        when (val state = speech.state) {
-            SpeechHub.State.Ready -> Pill("Șterge pachetul (${speech.megabytes} MB)") { speech.remove() }
-            is SpeechHub.State.Downloading -> DownloadBar(state.fraction)
-            SpeechHub.State.Absent, SpeechHub.State.Failed -> Pill("Descarcă pachetul (${speech.megabytes} MB)") { speech.download() }
-        }
-    }
-}
-
-// MARK: The study and the experiments
-
-/**
- * The trial's own switches and the experiments, folded away until an adult opens them. All of them start off, and none
- * changes what a child sees or hears. The group stays in release builds, because the pilot runs on them.
- */
-@Composable
-private fun MoreGroup(app: AppModel, modifier: Modifier) {
-    var showsMore by remember { mutableStateOf(false) }
-    var faceGuides by rememberStoredBoolean(app.preferences, Settings.faceGuides)
-    var cameraCoach by rememberStoredBoolean(app.preferences, Settings.cameraCoach)
-    val reduceMotion = LocalReduceMotion.current
-    // How many of the folded switches are on, so nothing turned on stays out of sight unnoticed.
-    val on = listOf(app.isPilotLogOn, faceGuides, cameraCoach).count { it }
-    val summary = when (on) {
-        0 -> "Toate sunt oprite"
-        1 -> "Una e pornită"
-        else -> "$on sunt pornite"
-    }
-    val turn by animateFloatAsState(if (showsMore) 180f else 0f, swiftSpring(0.4, 0.15), label = "moreChevron")
-    val shape = ContinuousRoundedRectangle(Radius.card)
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        StyledButton(
-            onClick = { showsMore = !showsMore },
-            style = PressableStyle(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .semantics { stateDescription = if (showsMore) "Deschis" else "Închis" },
-            onClickLabel = "Opțiunile pentru studiul cu logopezii și cele experimentale",
-        ) {
-            Row(
-                Modifier.fillMaxWidth().background(Palette.sheet, shape).padding(horizontal = 14.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CompositionLocalProvider(LocalSettingsTint provides SettingsTint.Grey) { SettingsIconTile(FoniaIcon.target.rawValue) }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    FoniaText("Studiu și funcții noi", style = fBodyStrong, color = Palette.ink)
-                    FoniaText(summary, style = fCaption, color = Palette.inkSoft)
-                }
-                FoniaIconView(FoniaIcon.down, Modifier.rotate(turn), size = 13f, tint = Palette.inkSoft)
-            }
-        }
-        AnimatedVisibility(
-            visible = showsMore,
-            enter = if (reduceMotion) fadeIn() else fadeIn() + expandVertically(swiftSpring(0.4, 0.15)) + slideInVertically(swiftSpring(0.4, 0.15)) { -it / 6 },
-            exit = if (reduceMotion) fadeOut() else fadeOut(tween(150)) + shrinkVertically(swiftSpring(0.4, 0.15)),
-        ) {
-            Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
-                PilotGroup(app)
-                SettingsGroup("Experimental", SettingsTint.Grey) {
-                    SwitchRow(FoniaIcon.mirror.rawValue, "Ghidaje pe față în oglindă", faceGuides, "Folosește camera din față. Nimic nu pleacă de pe telefon.") { faceGuides = it }
-                    RowDivider()
-                    SwitchRow(
-                        FoniaIcon.loud.rawValue,
-                        "Vorbit în public în fața camerei",
-                        cameraCoach,
-                        "Un pas nou la „Vorbit în public”: te vezi pe ecran și primești semne pe loc. Folosește camera din față. Nimic nu pleacă de pe telefon.",
-                    ) { cameraCoach = it }
-                }
-            }
-        }
-    }
-}
-
-/**
- * The trial's switches: the practice log, the phone scorer of shadow mode with its size before anything is fetched and
- * a delete, and in debug builds the switch for the agreement badge in lessons.
- */
-@Composable
-private fun PilotGroup(app: AppModel) {
-    SettingsGroup("Pentru studiul cu logopezii", SettingsTint.Grey) {
-        SwitchRow(
-            SettingsIcons.NOTE,
-            "Jurnalul de exersare",
-            app.isPilotLogOn,
-            "Notează pentru logoped câte încercări au fost în fiecare zi, doar ca numere. Fără voce. Pornit doar dacă îl pornești tu.",
-        ) { app.setPilotLog(it) }
-        val ml = app.ml
-        if (ml != null) {
-            val entry = ModelCatalog.ZIPA
-            val state = ml.models.state(entry)
-            // The shipped app has no internet permission (app/src/main/AndroidManifest.xml), so it can't fetch the
-            // package: the row would only fail. It shows where the permission is there (a build that asks for it).
-            val context = LocalContext.current
-            val canFetch = remember { context.checkSelfPermission(android.Manifest.permission.INTERNET) == android.content.pm.PackageManager.PERMISSION_GRANTED }
-            if (canFetch || state != ModelsHub.State.Absent) {
-                val detail = buildString {
-                    append("Un al doilea fel de a asculta, tot pe telefon. Notează ce a auzit doar în jurnalul pentru logoped, fără voce. Copilul vede și aude la fel. Se descarcă doar pe Wi-Fi.")
-                    if (!app.isPilotLogOn) append(" Notează doar cu jurnalul de exersare pornit.")
-                    if (state is ModelsHub.State.Failed && state.noNetwork) append(" Acum nu e Wi-Fi.")
-                }
-                RowDivider()
-                ActionRow(FoniaIcon.download.rawValue, "Ascultare pe sunete, în probă", detail) { ShadowModelAction(ml.models, entry) }
-            }
-            if (IS_DEBUG_BUILD) {
-                var badge by rememberStoredBoolean(app.preferences, ShadowBadgeSettings.KEY)
-                RowDivider()
-                SwitchRow(
-                    FoniaIcon.check.rawValue,
-                    "Acordul cu ZIPA în lecție",
-                    badge,
-                    "Doar în varianta de test. În lecție apar, sus, verdictul ZIPA lângă al telefonului și acordul dintre ele.",
-                ) { badge = it }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShadowModelAction(models: ModelsHub, entry: ModelEntry) {
-    if (!models.isSupported) {
-        FoniaText("Nu merge pe acest telefon", style = fCaption, color = Palette.inkSoft)
-        return
-    }
-    when (val state = models.state(entry)) {
-        ModelsHub.State.Ready -> Pill("Șterge pachetul (${entry.megabytes} MB)") { models.remove(entry) }
-        is ModelsHub.State.Downloading -> DownloadBar(state.fraction)
-        ModelsHub.State.Absent, is ModelsHub.State.Failed -> Pill("Descarcă pachetul (${entry.megabytes} MB)") { models.download(entry) }
-    }
-}
-
-// MARK: The footer
-
-@Composable
-private fun Footer(version: String) {
-    Column(
-        Modifier.fillMaxWidth().padding(top = 4.dp).semantics(mergeDescendants = true) {},
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(Modifier.size(36.dp).alpha(0.8f).clearAndSetSemantics {}) { MascotView(MascotPose.easy, Modifier.size(36.dp)) }
-        FoniaText("Fonia $version", style = fCaption, color = Palette.inkSoft)
-        FoniaText("Totul rămâne pe telefon.", style = fCaption, color = Palette.inkSoft)
-    }
-}
-
-// MARK: The pieces
-
-/** The colour of a group's icons, so each part of the page is told apart at a glance (iOS `SettingsTint`). */
-internal enum class SettingsTint(val ink: Color, val soft: Color) {
-    Green(Palette.accentText, Palette.accentSoft),
-    Blue(Palette.cold, Palette.coldSoft),
-    Gold(Palette.tipDeep, Palette.tipSoft),
-    Rose(Palette.warm, Palette.warmSoft),
-    Grey(Palette.notYet, Palette.notYetSoft),
-    Danger(Palette.danger, Palette.dangerSoft),
-}
-
-/**
- * The icons iOS added for this page (`FoniaIcon.chart`, `.note`, `.share`, `.trash`), by their file in `images/icons`.
- * They stay here until `FoniaIcon` has them.
- */
-internal object SettingsIcons {
-    const val CHART = "chart-line-up-duotone"
-    const val NOTE = "note-pencil-duotone"
-    const val SHARE = "export-duotone"
-    const val TRASH = "trash-duotone"
-}
-
-/** `FoniaIconView` by file name: grows with the text, no semantics of its own. */
-@Composable
-internal fun SettingsIcon(name: String, size: Float, tint: Color, modifier: Modifier = Modifier) {
-    val side = size * LocalDensity.current.fontScale
-    TemplateImage(name, modifier.size(side.dp), tint)
-}
-
-private val LocalSettingsTint = compositionLocalOf { SettingsTint.Green }
-
-/** A group's name over its card. */
-@Composable
-private fun GroupTitle(title: String) {
-    FoniaText(title, Modifier.padding(start = 6.dp).semantics { heading() }, style = ui(14, UIWeight.bold, TextRole.footnote), color = Palette.inkSoft)
-}
-
-/** A title over one white card of rows. The danger group has a red edge. */
-@Composable
-private fun SettingsGroup(title: String, tint: SettingsTint, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    val shape = ContinuousRoundedRectangle(Radius.card)
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        GroupTitle(title)
-        CompositionLocalProvider(LocalSettingsTint provides tint) {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    // The shadow sits under the card's fill, outside the clip.
-                    .softShadow(shape)
-                    .background(Palette.sheet, shape)
-                    .then(if (tint == SettingsTint.Danger) Modifier.border(1.dp, Palette.danger.copy(alpha = 0.25f), shape) else Modifier)
-                    .clip(shape),
-                content = content,
-            )
-        }
-    }
-}
-
-/** The icon of a row, on its soft tile. [pulse] rings it once in the accent when it turns true. */
-@Composable
-private fun SettingsIconTile(icon: String, destructive: Boolean = false, pulse: Boolean = false) {
-    val tint = if (destructive) SettingsTint.Danger else LocalSettingsTint.current
-    val reduceMotion = LocalReduceMotion.current
-    val ring = remember { Animatable(1f) }
-    var last by remember { mutableStateOf(pulse) }
-    LaunchedEffect(pulse) {
-        val turnedOn = pulse && !last
-        last = pulse
-        if (!turnedOn || reduceMotion) return@LaunchedEffect
-        ring.snapTo(0f)
-        ring.animateTo(1f, tween(700))
-    }
-    val accent = Palette.accent
-    Box(
-        Modifier
-            .size(38.dp)
-            .drawWithContent {
-                drawContent()
-                val t = ring.value
-                if (t < 1f) {
-                    // Pow's pulse: a ring that grows out of the tile and fades.
-                    val grow = 10.dp.toPx() * t
-                    val radius = 11.dp.toPx() + grow
-                    drawRoundRect(
-                        accent.copy(alpha = (1f - t) * 0.9f),
-                        topLeft = Offset(-grow, -grow),
-                        size = Size(size.width + 2 * grow, size.height + 2 * grow),
-                        cornerRadius = CornerRadius(radius),
-                        style = Stroke(2.dp.toPx()),
-                    )
-                }
-            }
-            .background(tint.soft, ContinuousRoundedRectangle(11.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        SettingsIcon(icon, 21f, tint.ink)
-    }
-}
-
-/** An icon on a soft tile, a name, and a line saying what's inside; top-aligned so a long line keeps the tile by the name. */
-@Composable
-private fun SettingsRowLabel(icon: String, title: String, detail: String?, destructive: Boolean, modifier: Modifier = Modifier) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-        SettingsIconTile(icon, destructive)
-        Column(Modifier.weight(1f).heightIn(min = 38.dp), verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically)) {
-            FoniaText(title, style = fBodyStrong, color = if (destructive) Palette.danger else Palette.ink)
-            if (detail != null) FoniaText(detail, style = fCaption, color = Palette.inkSoft)
-        }
-    }
-}
-
-/** A row that opens something or does it. It lights up under the finger, the way a system list does. */
-@Composable
-private fun SettingsRow(
-    icon: String,
-    title: String,
-    detail: String? = null,
-    chevron: Boolean = false,
-    destructive: Boolean = false,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-) {
-    val interactions = remember { MutableInteractionSource() }
-    val pressed by interactions.collectIsPressedAsState()
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .background(if (pressed) Palette.cloud else Color.Transparent)
-            .clickable(interactionSource = interactions, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-            .heightIn(min = 60.dp)
-            .padding(horizontal = 14.dp, vertical = 11.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        SettingsRowLabel(icon, title, detail, destructive, Modifier.weight(1f))
-        if (chevron) FoniaIconView(FoniaIcon.forward, size = 13f, tint = Palette.inkSoft)
-    }
-}
-
-/** A row that explains something, with its action under the words (iOS `soundsModelRow`). */
-@Composable
-private fun ActionRow(icon: String, title: String, detail: String, action: @Composable () -> Unit) {
-    Column(
-        Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        SettingsRowLabel(icon, title, detail, destructive = false, modifier = Modifier.semantics(mergeDescendants = true) {})
-        Box(Modifier.padding(start = 50.dp)) { action() }
-    }
-}
-
-/**
- * A switch on the line of its name, with what it does underneath: beside the switch, a long explanation would be
- * squeezed into a narrow column. The icon rings once when it is turned on.
- */
-@Composable
-internal fun SwitchRow(
-    icon: String,
-    title: String,
-    checked: Boolean,
-    detail: String? = null,
-    /** False when the row sits inside a padded block of its own (the reminder). */
-    inset: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    Row(
-        Modifier.fillMaxWidth().then(if (inset) Modifier.padding(horizontal = 14.dp, vertical = 11.dp) else Modifier),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        SettingsIconTile(icon, pulse = checked)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            // The switch says the name itself; the line underneath is read on its own.
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 38.dp)
-                    .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                FoniaText(title, Modifier.weight(1f), style = fBodyStrong, color = Palette.ink)
-                FoniaSwitch(checked)
-            }
-            if (detail != null) FoniaText(detail, style = fCaption, color = Palette.inkSoft)
-        }
-    }
-}
-
-/** The rule between two rows, from under the text. */
-@Composable
-internal fun RowDivider() {
-    Box(Modifier.padding(start = 64.dp).fillMaxWidth().height(1.dp).background(Palette.cloud))
-}
-
-/** A small action under a row's words. */
-@Composable
-internal fun Pill(title: String, onClick: () -> Unit) {
-    StyledButton(onClick = onClick, style = MiniPillStyle(), modifier = Modifier.heightIn(min = 44.dp)) { FoniaText(title) }
-}
-
-/** `ProgressView(value:)` under "Se descarcă…". */
-@Composable
-private fun DownloadBar(fraction: Double) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        FoniaText("Se descarcă…", style = fCaption, color = Palette.inkSoft)
-        val track = Palette.progressTrack
-        val fill = Palette.accent
-        Canvas(
-            Modifier
-                .widthIn(max = 240.dp)
-                .fillMaxWidth()
-                .height(4.dp)
-                .semantics { progressBarRangeInfo = ProgressBarRangeInfo(fraction.toFloat().coerceIn(0f, 1f), 0f..1f) },
-        ) {
-            val radius = CornerRadius(size.height / 2)
-            drawRoundRect(track, cornerRadius = radius)
-            drawRoundRect(fill, size = Size(size.width * fraction.toFloat().coerceIn(0f, 1f), size.height), cornerRadius = radius)
-        }
-    }
-}
-
-/**
- * Each part of the page settles into place a beat after the one above it: it fades in and comes up 14 dp on a soft
- * spring, 40 ms after the part above. With Reduce Motion it is simply there.
- */
-@Composable
-internal fun Modifier.arriving(order: Int, step: Long = 40, duration: Double = 0.45, bounce: Double = 0.12): Modifier {
-    val reduceMotion = LocalReduceMotion.current
-    val progress = remember { Animatable(if (reduceMotion) 1f else 0f) }
-    LaunchedEffect(Unit) {
-        if (progress.value >= 1f) return@LaunchedEffect
-        delay(order * step)
-        progress.animateTo(1f, swiftSpring(duration, bounce))
-    }
-    return graphicsLayer {
-        alpha = progress.value.coerceIn(0f, 1f)
-        translationY = (1f - progress.value) * 14.dp.toPx()
     }
 }
