@@ -184,10 +184,10 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
     // them on with `--es foniaFaceGuides 1` for screenshots. The framing follows the mouth either way.
     val guidesOn = remember {
         (app.preferences?.bool(Settings.faceGuides) ?: false) ||
-            (tech.fonia.features.IS_DEBUG_BUILD && launchExtra(context, "foniaFaceGuides") != null)
+            app.arguments.faceGuides
     }
     // Debug builds: `--es foniaCoachHint smile` shows one correction whatever the camera says (screenshots).
-    val forcedHint = remember { if (tech.fonia.features.IS_DEBUG_BUILD) launchExtra(context, "foniaCoachHint")?.let { n -> Correction.entries.firstOrNull { it.name.equals(n, ignoreCase = true) } } else null }
+    val forcedHint = remember { app.arguments.coachHint?.let { n -> Correction.entries.firstOrNull { it.name.equals(n, ignoreCase = true) } } }
     // The side view (the tongue) waits for a speech therapist in release builds; debug builds show it for review.
     tech.fonia.mouth3d.Mouth3DReview.showUnapprovedInside = tech.fonia.features.IS_DEBUG_BUILD
     val mouthData by produceState<tech.fonia.mouth3d.Mouth3DData?>(null, context) {
@@ -647,16 +647,6 @@ private fun logMouthStats(stats: tech.fonia.mouth3d.Mouth3DFrameStats) {
     if (now - lastStatsLog < 2_000_000_000L) return
     lastStatsLog = now
     android.util.Log.i("FoniaCoach", "mouth3d avg=%.2fms max=%.2fms frames=%d msaa=%d".format(stats.averageMs, stats.maxMs, stats.frames, stats.msaaSamples))
-}
-
-/** A string extra of the activity that opened the app (debug launch switches), or null. */
-private fun launchExtra(context: android.content.Context, name: String): String? {
-    var c: android.content.Context? = context
-    while (c is android.content.ContextWrapper) {
-        if (c is android.app.Activity) return c.intent?.getStringExtra(name)
-        c = c.baseContext
-    }
-    return null
 }
 
 @Composable
