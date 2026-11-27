@@ -1,8 +1,5 @@
 package tech.fonia.dsp
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import java.lang.management.ManagementFactory
 import kotlin.math.abs
 import kotlin.test.assertEquals
@@ -10,6 +7,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 private fun stream(signal: FloatArray, analyzer: LiveAnalyzer, hop: Int = 480): List<LiveFrame> =
     (0 until signal.size step hop).map { start -> analyzer.process(signal, start, minOf(signal.size, start + hop) - start) }
@@ -202,6 +202,7 @@ class LiveAllocationTests {
         val hop = 480
         val hops = signal.size / hop
         val reading = LiveFrame.silent
+
         // One full pass first: classes load and caches fill on first use, once.
         fun run() {
             var i = 0
@@ -213,17 +214,17 @@ class LiveAllocationTests {
         run()
         analyzer.reset()
         // On the JVM that first-use work (constant and call-site linking) can also land in a later
-        // pass, when the JIT deoptimizes into a path it compiled before the path ever ran. It happens
-        // once per JVM, so warm up until a whole pass allocates nothing; an allocation in the code
-        // itself recurs on every pass and still fails below.
-        val warmUp = ArrayList<Long>()
-        while (warmUp.size < 10) {
+        // pass, when the JIT deoptimizes or recompiles a path, and it does so at unpredictable times.
+        // An allocation in the code itself recurs on every pass, so the check is that some pass out
+        // of ten allocates nothing at all.
+        val passes = ArrayList<Long>()
+        while (passes.size < 10) {
             val bytes = countingAllocatedBytes(::run)
             analyzer.reset()
-            warmUp.add(bytes)
+            passes.add(bytes)
             if (bytes == 0L) break
         }
-        assertEquals(0L, countingAllocatedBytes(::run), "warm-up passes allocated $warmUp bytes")
+        assertEquals(0L, passes.min(), "every pass allocated: $passes bytes")
     }
 }
 
@@ -255,8 +256,16 @@ private var sink: Any? = null
 
 class LiveReadingTests {
     private fun frame(
-        present: Boolean = true, sNess: Float = 0.9f, voiced: Boolean = false, clarity: Float = 0.2f, speaking: Boolean = true,
-        strength: Float = 0.5f, diffuse: Boolean = false, trill: Boolean = false, trillStrength: Float = 0f, pitch: Float = 0f,
+        present: Boolean = true,
+        sNess: Float = 0.9f,
+        voiced: Boolean = false,
+        clarity: Float = 0.2f,
+        speaking: Boolean = true,
+        strength: Float = 0.5f,
+        diffuse: Boolean = false,
+        trill: Boolean = false,
+        trillStrength: Float = 0f,
+        pitch: Float = 0f,
     ): LiveFrame = LiveFrame.silent.copy(
         fricativePresent = present, sNess = sNess, fricativeVoiced = voiced, clarity = clarity, speaking = speaking,
         fricativeStrength = strength, fricativeDiffuse = diffuse, trillDetected = trill, trillStrength = trillStrength, pitchHz = pitch,

@@ -1,5 +1,9 @@
 package tech.fonia.features.app
 
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,10 +25,6 @@ import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import tech.fonia.store.Recording
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.time.Instant
 
 /** "Șterge tot" takes everything Android keeps, and says what stayed instead of hiding it (iOS 007bfcf). */
 class FullWipeTests {
@@ -36,7 +36,10 @@ class FullWipeTests {
         val left = FullWipe.run(
             listOf(
                 FullWipe.Part("a") { ran += "a" },
-                FullWipe.Part("b") { ran += "b"; throw IOException("locked") },
+                FullWipe.Part("b") {
+                    ran += "b"
+                    throw IOException("locked")
+                },
                 FullWipe.Part("c") { ran += "c" },
             ),
         )
@@ -96,14 +99,21 @@ class FullWipeTests {
                 exportFolders = listOf(export),
                 pilotFolder = File(root, "FoniaPilot"),
                 // A settings file that can't be written is said, not hidden.
-                clearSettings = { settingsCleared = true; false },
+                clearSettings = {
+                    settingsCleared = true
+                    false
+                },
                 recordingFolders = listOf(recordings),
                 copyFolders = listOf(testRun),
             ),
         )
         val child = Profile(
-            kind = Profile.Kind.Child, ageBand = Profile.AgeBand.SixToSeven, voiceGroup = Profile.VoiceGroup.Child,
-            color = "cold", targetSounds = listOf("s"), track = Profile.Track.Ro,
+            kind = Profile.Kind.Child,
+            ageBand = Profile.AgeBand.SixToSeven,
+            voiceGroup = Profile.VoiceGroup.Child,
+            color = "cold",
+            targetSounds = listOf("s"),
+            track = Profile.Track.Ro,
         )
         app.repository.saveProfile(child)
         app.voice.addDot(child.id, TakeDot(atMillis = 1, sound = "s", outcome = "correct"))
@@ -119,8 +129,8 @@ class FullWipeTests {
             app.repository.recordingFileURL(take).writeText("take")
             app.repository.addRecording(take)
         }
-        // A take whose row never got written.
-        File(recordings, "${child.id}/stray.m4a").writeText("take")
+        // A take whose row never got written, in the profile's own folder (named as the store names it).
+        File(app.repository.recordingFileURL(first).parentFile, "stray.m4a").writeText("take")
 
         val left = app.wipeEverything()
 
