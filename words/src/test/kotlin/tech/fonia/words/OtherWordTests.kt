@@ -42,7 +42,7 @@ class OtherWordTests {
 
     @Test
     fun partsAndRepeatsAreTheWord() {
-        // Half the word heard: the recogniser lost it („sare” heard as „ri”, a clean take, iOS 2026-11-26).
+        // Half the word heard: the recogniser lost it („sare” heard as „ri”, a clean take).
         assertFalse(OtherWord.isOther("sare", "s", heard("ri")))
         // The word whole inside what was heard: said twice, or with a sound before it.
         assertFalse(OtherWord.isOther("stea", "s", heard("steastea")))

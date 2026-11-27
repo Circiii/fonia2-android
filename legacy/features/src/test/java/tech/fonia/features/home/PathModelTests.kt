@@ -105,7 +105,7 @@ class PathModelTests {
     }
 
     /**
-     * v2-flow decision (differs from iOS): with chosen sounds, the big button keeps to today's sound, the first chosen
+     * Product rule (differs from iOS): with chosen sounds, the big button keeps to today's sound, the first chosen
      * one with lessons left, one sound at a time, even after a lesson of another sound was opened by hand.
      */
     @Test

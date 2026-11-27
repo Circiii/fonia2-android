@@ -17,7 +17,7 @@ import tech.fonia.domain.SoundID
 import java.io.File
 import kotlin.random.Random
 
-/** Owner, 2026-11-24: "ce auzi se repetă de fiecare dată". Each run hears other items, the builder stays as on iOS. */
+/** Each run hears other items, while the session builder stays as on iOS. */
 class ListeningVarietyTests {
     private val contentDir = File(System.getProperty("fonia.content") ?: error("fonia.content is not set"))
     private val content by lazy { FoniaContent.load(ContentSource.directory(contentDir)) }

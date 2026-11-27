@@ -72,7 +72,7 @@ class TakeJudge(
         }
         if (captureGate != null) return gated(captureGate, baseReport)
         val f0 = summary.pitch.medianHz
-        // The adult-voice gate is off in the app (`adultVoiceRatio` 0 in population.json, owner 2026-11-23): whoever
+        // The adult-voice gate is off in the app (`adultVoiceRatio` 0 in population.json): whoever
         // speaks is judged on their own voice, with the talker group heard from it (TalkerVoice, measureForVoice).
         if (cap.adultVoiceRatio > 0f && request.talker == TalkerGroup.Child && f0 > 0f &&
             f0 < cap.adultVoiceRatio * (request.childF0Hz ?: cap.childF0Hz)

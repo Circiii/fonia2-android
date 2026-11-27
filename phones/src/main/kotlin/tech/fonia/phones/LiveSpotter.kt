@@ -6,9 +6,9 @@ import kotlin.math.min
 
 /**
  * "Is the target sound being said right now?", from the phoneme model's frame posteriors of the last second of audio.
- * The living letter moves and lights on this (owner, 2026-11-25: "să nu reacționeze la orice, doar când se aude litera
- * sau sunetul"): acoustic measurements alone lit on a vacuum cleaner and on other hisses (`tools/eval/out/live_aim.md`),
- * the phoneme model does not (`tools/eval/out/live_spot.md`).
+ * The living letter moves and lights on this and not on just anything: acoustic measurements alone lit on a vacuum
+ * cleaner and on other hisses (`tools/eval/out/live_aim.md`), the phoneme model does not
+ * (`tools/eval/out/live_spot.md`).
  *
  * Pure. A single-token sound scores the highest posterior of its tokens over the recent frames; an affricate (Ț, CE,
  * GE: ZIPA has no affricate symbols) needs its stop within [STOP_GAP] frames before its hiss.

@@ -18,7 +18,7 @@ data class PopulationThresholds(
     val capture: CaptureThresholds = CaptureThresholds(),
     val word: WordThresholds = WordThresholds(),
     val measure: MeasureThresholds = MeasureThresholds(),
-    /** v2 (2026-11-24): context, praise, bursts, the visual block, personal references. Absent = all off. */
+    /** v2: context, praise, bursts, the visual block, personal references. Absent = all off. */
     val judge2: Judge2Thresholds = Judge2Thresholds(),
 )
 
@@ -75,7 +75,7 @@ data class AffricateGate(
 data class FinalLThresholds(val minGlideNats: Float = 0f, val mask: Boolean = false)
 
 /**
- * Praise when both heads agree (owner 2026-11-24: "when he says a sound right the app must say so"): with a reliable
+ * Praise when both heads agree (when he says a sound right the app must say so): with a reliable
  * full head, Correct when p_full ≥ [full] AND p_fast ≥ [fast] AND the phoneme model's best candidate is the target,
  * even under `tauOk`. 2 = off.
  */

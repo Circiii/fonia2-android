@@ -5,7 +5,7 @@ import kotlin.math.min
 
 /**
  * "Was another word said?" for a one-word take, from what the Romanian recogniser heard. The sound judge praised a
- * different word when its alignment happened to fit („val” said for „pară”, emulator, 2026-11-25); the recogniser
+ * different word when its alignment happened to fit („val” said for „pară”); the recogniser
  * knows words, so it can refuse that.
  *
  * It never judges the practised sound: the letters of the target sound are free (a child who says „lac” for „rac” said

@@ -103,7 +103,7 @@ class LetterEngine(val font: AlloOutlines) {
     // ---- sticker sets
     var baseSet: StickerSet = FoniaSticker.Voice
         set(value) {
-            // A letter at rest follows its base set at once (it used to keep showing Voice until the first cue).
+            // A letter at rest follows its base set at once (it does not wait for the first cue).
             val atBase = verdictSet == null && curSet == field
             field = value
             if (atBase) { curSet = value; prevSet = value }

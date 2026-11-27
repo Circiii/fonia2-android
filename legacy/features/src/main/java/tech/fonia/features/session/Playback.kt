@@ -4,8 +4,8 @@ import tech.fonia.audio.CapturedClip
 import java.util.UUID
 
 /**
- * The end of a lesson's mixed block (iOS `Session/Playback.swift`). Its takes said nothing in the moment, only the soft
- * "heard you"; now the learner hears up to three of their own good ones again, from memory. Nothing of it is written
+ * The end of a lesson's mixed block (iOS `Session/Playback.swift`). Its takes say nothing in the moment, only the soft
+ * "heard you"; then the learner hears up to three of their own good ones again, from memory. Nothing of it is written
  * anywhere. A child is never told a count, and with fewer than three good takes hears only praise for going all the way.
  */
 class Playback(

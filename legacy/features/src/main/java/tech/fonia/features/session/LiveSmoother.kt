@@ -4,8 +4,8 @@ import kotlin.math.abs
 import kotlin.math.exp
 
 /**
- * What counts as "the target sound is heard" live. The letter moves and lights only for this (owner, 2026-11-25: "să
- * nu reacționeze la orice, doar când se aude litera sau sunetul").
+ * What counts as "the target sound is heard" live. The letter moves and lights only for this, never for just
+ * anything.
  */
 sealed interface LiveAim {
     /**
@@ -37,7 +37,7 @@ sealed interface LiveAim {
 }
 
 /**
- * The calm side of the live chain (owner, 2026-11-24: "totul se mișcă prea repede, să nu mai tremure"): every raw
+ * The calm side of the live chain, so nothing moves too fast or trembles: every raw
  * 10 ms value is smoothed with a time constant (attack ~70 ms, release ~320 ms, from [Pacing]), changes under a dead
  * zone are ignored, the S ↔ Ș place is held for a moment after the hiss stops instead of jumping back to "none", and
  * "target heard" has hysteresis, so the letter lights after ~120 ms of the right sound and does not flicker.

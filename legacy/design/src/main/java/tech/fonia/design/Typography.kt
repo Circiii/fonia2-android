@@ -34,7 +34,7 @@ object FoniaFonts {
     private val balooCache = java.util.concurrent.ConcurrentHashMap<Int, FontFamily>()
 
     /**
-     * Baloo 2 (variable, OFL; `assets/type/`): the one face of everything a person reads (owner, 2026-11-21). Only the
+     * Baloo 2 (variable, OFL; `assets/type/`): the one face of everything a person reads. Only the
      * living-letter stickers of :core:designsystem stay in Allo.
      */
     fun baloo(weight: Int): FontFamily? {
@@ -75,13 +75,13 @@ object FoniaFonts {
         }
     }
 
-    /** Inter; the system font until [register] has run. Unused since the move to Baloo 2; kept for the asset tests. */
+    /** Inter; the system font until [register] has run. Unused; kept for the asset tests. */
     val inter: FontFamily get() = interFamily ?: FontFamily.Default
 
     private val alloCache = java.util.concurrent.ConcurrentHashMap<Long, FontFamily>()
 
     /**
-     * Allo (the variable font of :core:designsystem) at fixed axes: the whole app's face (owner's order, 2026-11-21).
+     * Allo (the variable font of :core:designsystem) at fixed axes.
      * ROND rounder for headings than for reading text; opsz follows the size. Cached per (weight, ROND, size).
      */
     fun allo(weight: FontWeight, rond: Float, sizeSp: Float): FontFamily {
@@ -89,7 +89,7 @@ object FoniaFonts {
         return alloCache.getOrPut(key) { tech.fonia.designsystem.theme.alloFamily(weight.weight.toFloat(), rond, sizeSp) }
     }
 
-    /** Andika. Unused since the move to Baloo 2; kept for the asset tests. */
+    /** Andika. Unused; kept for the asset tests. */
     val andika: FontFamily get() = andikaFamily ?: FontFamily.Default
 }
 
@@ -118,7 +118,7 @@ enum class PracticeWeight(val rawValue: String, val fontWeight: FontWeight) {
 enum class TextRole { largeTitle, title, title2, title3, headline, subheadline, body, callout, footnote, caption, caption2 }
 
 /**
- * Interface text: Baloo 2 everywhere, so a page reads as one voice (owner's order, 2026-11-21). [practice] is Baloo
+ * Interface text: Baloo 2 everywhere, so a page reads as one voice. [practice] is Baloo
  * too; Allo is kept only for the living letters.
  */
 fun ui(size: Number, weight: UIWeight = UIWeight.regular, @Suppress("UNUSED_PARAMETER") relativeTo: TextRole = TextRole.body): TextStyle {
@@ -153,9 +153,9 @@ fun ui(size: Number, weight: UIWeight = UIWeight.regular, @Suppress("UNUSED_PARA
 }
 
 /**
- * Everything being practised: letters, words, sentences. Baloo 2 like the interface (owner, 2026-11-21: "font bun peste
- * tot, adică Baloo"), one step heavier than its name so a thin child's-eye stroke never appears; only the living-letter
- * stickers (`LiveLetter`/`StickerText`) stay in Allo, whose outlines their animation is built on. Baloo's natural line
+ * Everything being practised: letters, words, sentences. Baloo 2 like the interface, one step heavier than its name
+ * so a thin child's-eye stroke never appears; only the living-letter stickers (`LiveLetter`/`StickerText`) stay in
+ * Allo, whose outlines their animation is built on. Baloo's natural line
  * is 1.6 em (ascent 1.078 + descent 0.524); a fixed line keeps words on his baselines while leaving room above for
  * Ă Â Î and below for the comma of Ș Ț. All of ș ț ă â î and „ ” are Baloo glyphs (checked in the font's cmap).
  */

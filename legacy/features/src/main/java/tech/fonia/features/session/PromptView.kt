@@ -179,8 +179,8 @@ private fun Naming(item: WordItem, sound: SoundDef?, accent: Color, phase: Speak
 }
 
 /**
- * A sentence to say. With a target sound ([hero]) its letter stands alive above the words (owner, 2026-11-24: on a
- * sentence nothing reacted while he spoke): it grows with his voice and lights while the sound itself is heard.
+ * A sentence to say. With a target sound ([hero]) its letter stands alive above the words, so something reacts while
+ * he speaks: it grows with his voice and lights while the sound itself is heard.
  */
 @Composable
 private fun Sentence(

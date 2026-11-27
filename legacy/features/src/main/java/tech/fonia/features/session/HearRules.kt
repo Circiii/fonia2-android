@@ -5,7 +5,7 @@ import kotlin.math.exp
 import kotlin.math.min
 
 /**
- * "Something always happens" (owner, 2026-11-23: "nu se întâmplă nimic"): the pure rules behind what the practice
+ * "Something always happens": the pure rules behind what the practice
  * screens show while the microphone is open. Every sound gets an answer at once; the target sound gets more of it.
  */
 object HearRules {

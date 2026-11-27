@@ -21,7 +21,7 @@ import tech.fonia.live.Clip
 import tech.fonia.model.SoundId
 
 /**
- * The whole judge with the phoneme model on the device (v2, 2026-11-24): the committed spec files, ZIPA from this test
+ * The whole judge with the phoneme model on the device (v2): the committed spec files, ZIPA from this test
  * APK's assets, a 48 kHz take → `measure` + `ZipaHost.score` + `decide`; the FULL head must decide. Logs the time of
  * each stage under `FoniaMl` (`adb logcat -d -s FoniaMl`). No UI.
  */

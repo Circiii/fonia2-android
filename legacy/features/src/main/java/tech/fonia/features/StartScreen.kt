@@ -224,7 +224,7 @@ internal fun StartScreen() {
 private fun logoPlayer(context: Context): MediaPlayer? = runCatching {
     val audio = context.getSystemService(AudioManager::class.java)
     if (audio != null && audio.ringerMode != AudioManager.RINGER_MODE_NORMAL) return null
-    // No sound for now: the owner turned down every candidate (2026-11-24). The animation keeps the same timing.
+    // The logo plays no sound while LogoSoundOn is off; the animation keeps the same timing.
     if (!LogoSoundOn) return null
     val file = context.assets.openFd("sfx/logo.ogg")
     MediaPlayer().apply {

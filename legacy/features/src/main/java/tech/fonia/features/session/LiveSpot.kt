@@ -15,8 +15,8 @@ import tech.fonia.phones.LiveSpotter
 import tech.fonia.phones.TargetSound
 
 /**
- * The live "is the target sound being said now?" of a take (owner, 2026-11-25: "să nu reacționeze la orice, doar când
- * se aude litera sau sunetul"). While the microphone is open it keeps the last second of audio and asks the phoneme
+ * The live "is the target sound being said now?" of a take: the letter must not react to just anything, only when its
+ * letter or sound is heard. While the microphone is open it keeps the last second of audio and asks the phoneme
  * model about it five times a second ([LiveSpotter]); the living letter and the held bar read [value].
  *
  * One per [tech.fonia.features.app.AudioHub]. Nothing is stored and nothing leaves the phone. Without the model in the

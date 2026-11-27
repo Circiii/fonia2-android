@@ -598,8 +598,8 @@ class ClipReportTests {
     fun recordedPracticeTextsKeepTheirClips() {
         val index = Fixture.voiceIndex
         // iOS wraps the sentence, twister and hero checks in `withKnownIssue("rewritten practice texts wait for their
-        // recordings")` since fonia-content f3215a1. On Android the ElevenLabs clips of 2026-11-21 (tools/voice) recorded
-        // them all, so the check is strict again: no rewritten text may lose its clip.
+        // recordings")`. On Android the ElevenLabs clips (tools/voice) cover them all, so the check is strict: no
+        // rewritten text may lose its clip.
         for (sound in content.sounds) {
             for (text in sound.sentences + sound.twisters.map { it.text } + listOf(sound.hero.says, sound.hero.story)) {
                 assertTrue(index.hasClip(text, Language.Ro, Voice.Ro), "no clip: $text")

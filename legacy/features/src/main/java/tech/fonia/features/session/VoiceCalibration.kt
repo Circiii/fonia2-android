@@ -165,8 +165,8 @@ private enum class CalStep(val letter: String?, val fixture: String, val field: 
 private data class CalResult(val room: PersonalReference.Room, val active: Boolean, val anchorsS: Int, val anchorsSh: Int)
 
 /**
- * „Calibrare”: about 20 seconds, guided by the screen (owner, 2026-11-24: "nu e deloc calibrat pentru voce și pentru
- * sunete"). Two seconds of quiet, then a held "aaa", "sss" and "șșș", each with its living letter answering the voice.
+ * „Calibrare”: about 20 seconds, guided by the screen, so the app is calibrated to his voice and his sounds. Two
+ * seconds of quiet, then a held "aaa", "sss" and "șșș", each with its living letter answering the voice.
  * What it measures goes into his [PersonalReference] (room floor, speaking level, F0 / group, his own S and Ș anchors):
  * the live analysis then listens with his floor, his range and his S/Ș boundary, and the judge with his anchors and
  * group. The result is drawn, not told: his two letters, where his S and Ș fall on the axis, his room and his voice.

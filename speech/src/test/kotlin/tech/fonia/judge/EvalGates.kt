@@ -5,7 +5,7 @@ import java.io.File
 import java.util.Locale
 
 /**
- * The opt-in judge gates of 2026-11-25 on the evaluation set ([EvalV2Runner]); all of them are off in the shipped spec
+ * The opt-in judge gates on the evaluation set ([EvalV2Runner]); all of them are off in the shipped spec
  * (`docs/JUDECATOR_AFRICATE.md`). Writes, next to `cases.csv`:
  *
  *  - `gates.md` 1: how the affricate onset (`stopOnset` and its parts) sits per expected label, with the older
@@ -41,7 +41,7 @@ class EvalGates(private val runner: EvalV2Runner) {
     private fun grid(sound: SoundId): List<Setting> = when (sound) {
         SoundId.Ce, SoundId.Ge -> {
             val out = ArrayList<Setting>()
-            // On the prompt voice good CE / GE sit around 0.3 and Ș / J around 0.15–0.25 (2026-11-25), so the grid goes low.
+            // On the prompt voice good CE / GE sit around 0.3 and Ș / J around 0.15–0.25, so the grid goes low.
             for (t in listOf(2f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f)) for (v in listOf(-1f, 0.05f, 0.1f, 0.15f, 0.2f, 0.3f))
                 out += Setting(AffricateGate(t, if (t <= 1f) fricatives.getValue(sound) else emptyList(), v))
             out

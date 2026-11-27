@@ -4,7 +4,7 @@ package tech.fonia.face
  * Which of the face model's 478 landmarks reach `:engine:face`, and in which order (docs/v2/04 §2).
  *
  * Checked against MediaPipe's `face_mesh_connections.py` (`FACEMESH_LIPS`, `FACEMESH_LEFT_IRIS`,
- * `FACEMESH_RIGHT_IRIS`, Apache-2.0) on 2026-11-21: both lip rings are the closed loops of `FACEMESH_LIPS`, walked
+ * `FACEMESH_RIGHT_IRIS`, Apache-2.0): both lip rings are the closed loops of `FACEMESH_LIPS`, walked
  * from the corner on the person's right (image left), over the upper lip, to the other corner and back under the
  * lower lip. `FaceMeshIndexTests` also checks them on MediaPipe's own landmarks of real photos.
  *

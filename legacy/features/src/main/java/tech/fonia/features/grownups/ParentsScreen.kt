@@ -96,7 +96,7 @@ import java.util.UUID
  */
 @Composable
 fun ParentsScreen(profile: Profile, app: AppModel, path: PathModel, @Suppress("UNUSED_PARAMETER") onShowGrownups: (Boolean) -> Unit) {
-    // No grown-ups' door any more (v2-flow, owner 2026-11-24): the one who practises opens his own settings.
+    // There is no grown-ups' door: the one who practises opens his own settings.
     val dismiss = LocalDismiss.current
     HeaderPage("Setări", closes = true) {
         // With a child on the phone, the settings are the adult's (iOS AdultGate): the check comes first.

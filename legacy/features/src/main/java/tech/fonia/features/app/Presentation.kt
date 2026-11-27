@@ -253,8 +253,8 @@ private fun sheetScrollConnection(state: AnchoredDraggableState<SheetValue>) = o
 
 /**
  * Settles on the next anchor in the fling's direction, or the nearest one for a slow release. `settle(velocity)` is the
- * deprecated overload that throws when the state was built without thresholds (QA 2026-11-21: flinging a settings sheet
- * crashed the app).
+ * deprecated overload that throws when the state was built without thresholds (it crashed a flung
+ * settings sheet).
  */
 private suspend fun AnchoredDraggableState<SheetValue>.settleBy(velocity: Float) {
     val at = offset

@@ -37,7 +37,7 @@ import tech.fonia.designsystem.letter.StickerText
 import tech.fonia.designsystem.tokens.FoniaClassicSticker
 
 /*
- * The session's motion on top of his screens (owner, 2026-11-21: "animations much better"): titles whose letters drop
+ * The session's motion on top of his screens: titles whose letters drop
  * in one after another, the sound's letter in a title as a sticker, praise that pops, Foni hopping on a good take.
  * Reduce motion: everything appears in place.
  */

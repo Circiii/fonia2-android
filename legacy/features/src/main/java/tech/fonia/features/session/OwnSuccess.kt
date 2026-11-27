@@ -7,7 +7,7 @@ import tech.fonia.domain.ProgressionStep
 import tech.fonia.domain.Rung
 
 /**
- * The learner's own success (v2-flow, 2026-11-24), with the lock of the plan (docs/v2/06, „Lacătul”) kept:
+ * The learner's own success, with the lock of the plan (docs/v2/06, „Lacătul”) kept:
  *
  * - The plain sound heard right [TARGET] times (good takes on the isolated rung, counted from the stored blocks,
  *   shown as [TARGET] dots) is what makes the next step possible.

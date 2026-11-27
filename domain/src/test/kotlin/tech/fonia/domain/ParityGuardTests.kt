@@ -123,7 +123,6 @@ class ParityGuardTests {
         )
         val s = catalog.unit(Fixture.content.sound(SoundID.S))
         assertEquals("Sunetul S", s.title)
-        // The hero was renamed in fonia-content f3215a1 ("Șarpele Sâsâilă" → "Sâsâilă").
         assertEquals("Sâsâilă", s.subtitle)
         assertEquals("S", s.mark)
         assertEquals("1f40d", s.art)
@@ -142,13 +141,11 @@ class ParityGuardTests {
         assertEquals("GE sau CE?", catalog.unit(Fixture.content.sound(SoundID.Ge)).lessons.first { it.id == "ge-pairs" }.title)
 
         assertEquals(
-            // full-fool and cut-cat came in with their ElevenLabs recordings (fonia-content voice-elevenlabs, 2026-11-21).
             listOf("stress", "schwa", "ship-sheep", "full-fool", "th", "bad-bed", "cut-cat", "pin-bin", "work-walk", "bed-bet", "w-v").map { "en-$it" },
             catalog.contrastUnits.map { it.id },
         )
         val schwa = catalog.contrastUnits.first { it.id == "en-schwa" }
         assertEquals(listOf("en-schwa-say", "en-schwa-sentences"), schwa.lessons.map { it.id })
-        // english.json was rewritten in fonia-content 1e1f135.
         assertEquals("Silabele fără accent se spun scurt, ca un „ă” abia atins", schwa.subtitle)
         assertEquals("ə", schwa.mark)
         val th = catalog.contrastUnits.first { it.id == "en-th" }

@@ -366,7 +366,7 @@ class JudgeEvalTest {
         // Background noise at about 0 dB SNR in 4–8 kHz.
         val level = rmsOf(pcm, 0, n)
         run(source, group, talker, FloatArray(n) { pcm[it] + (g.unit() * 2 - 1) * level * 1.2f }, rate, w, sound, Level.Word, pos, "retake|unsure", "noise ~0 dB")
-        // The same adult voice, judged as a child's take: no adult-voice gate any more (2026-11-23), only the priors move.
+        // The same adult voice, judged as a child's take: no adult-voice gate, only the priors move.
         run(source, group, TalkerGroup.Child, pcm, rate, w, sound, Level.Word, pos, "info:childGroup", "talker=child")
     }
 
@@ -408,7 +408,7 @@ class JudgeEvalTest {
             }
         }
 
-        // One word per file (ElevenLabs, 2026-11-21): <audio>/words_v1/<voice>/<word>.mp3. Real words are judged as
+        // One word per file (ElevenLabs): <audio>/words_v1/<voice>/<word>.mp3. Real words are judged as
         // themselves (and cross-tested, as above); the "error" words stand for a substitution the child makes.
         val wordsDir = audioDir?.let { File(it, "words_v1") }?.takeIf { it.isDirectory }
         if (wordsDir != null) {

@@ -13,7 +13,7 @@ class CalibrationGuardTests {
     private fun s(n: Int) = List(n) { SibilantAnchor(SibilantPlace.S, 8200f + it * 50, 8000f, 2f, 8f) }
     private fun sh(n: Int) = List(n) { SibilantAnchor(SibilantPlace.SH, 4100f + it * 50, 3900f, 9f, -6f) }
 
-    /** What a dead microphone gave on the emulator (2026-11-25): the same noise for S and for Ș, speech at -64 dBFS. */
+    /** What a dead microphone gave on the emulator: the same noise for S and for Ș, speech at -64 dBFS. */
     private fun noise(place: SibilantPlace, n: Int) = List(n) { SibilantAnchor(place, 14000f, 12890f, -14.7f, 5.9f) }
 
     private val room = PersonalReference.Room(floorDb = -62f, speechDb = -28f, f0Hz = 260f)

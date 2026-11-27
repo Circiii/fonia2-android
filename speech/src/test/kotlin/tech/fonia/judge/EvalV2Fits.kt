@@ -83,7 +83,7 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
         val out = ArrayList<FullHeadParams>()
         for (a in listOf(0.25f, 0.5f, 0.75f, 1f, 1.5f)) for (c in listOf(0.25f, 0.5f, 0.75f, 1.25f))
             for (cp in if (place) listOf<Float?>(null, 0f, 0.25f, 0.5f) else listOf<Float?>(null))
-                // 2026-11-25: the correct-bias range goes past 1 and the GOP weight is free: on CE/GE the chosen values
+                // The correct-bias range goes past 1 and the GOP weight is free: on CE/GE the chosen values
                 // sat at the grid's edge (b = 1), and ZIPA's GOP is low on good [tʃ]/[dʒ] (heard as s / ʒ).
                 for (b in listOf(-1f, -0.5f, 0f, 0.5f, 1f, 1.5f, 2f, 3f)) for (g in listOf(0f, 0.25f, 0.5f)) out += FullHeadParams(a, c, g, b, cp)
         return out

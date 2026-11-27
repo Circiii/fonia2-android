@@ -250,8 +250,8 @@ class SoundJudge(
 
     /**
      * The full head's budget for a take of [seconds]: 600 ms on phones (N6) plus 300 ms per second of take over one,
-     * at most 1.5 s (`spec/pacing.json`); twice that on an x86 emulator. A fixed 600 ms sent the owner's long, correct
-     * sentences back to the fast head (full=602ms) and so to "Mai spune o dată" (2026-11-24).
+     * at most 1.5 s (`spec/pacing.json`); twice that on an x86 emulator. A fixed 600 ms sent long, correct
+     * sentences back to the fast head (full=602ms) and so to "Mai spune o dată".
      */
     private fun fullBudgetMs(seconds: Double): Long = Pacing.current.judgeBudget(seconds, isEmulator)
 
@@ -434,7 +434,7 @@ class SoundJudge(
         }
 
         /**
-         * The one line under a named error, per target sound (owner, 2026-11-24: an L sentence said "A sunat ca S").
+         * The one line under a named error, per target sound (an L sentence must not say "A sunat ca S").
          * Only a swap the sound can really make is named; every other kind says what to do, in at most 8 words.
          */
         fun namedTitle(id: SoundID, letter: String, kind: ErrorKind, heardAs: SoundId?): String {

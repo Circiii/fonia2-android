@@ -86,10 +86,9 @@ fun stickerFor(field: Field): StickerSet = when (field) {
  * model's voice, which makes the letter beat along, gently). Reads only volatile fields: no recomposition, except
  * [LetterLink.hit] flipping (at most a few times a second, with hysteresis).
  *
- * While listening every sound shows at once (owner, 2026-11-23: "nu se întâmplă nimic"), calmly (2026-11-24: "totul se
- * mișcă prea repede, să nu mai tremure"): the raw 10 ms values go through a [LiveSmoother] (attack ~70 ms, release
- * ~320 ms, dead zone, from `spec/pacing.json`); the letter swells with the voice up to [Pacing.voiceInflationTop] and
- * the rest of the way, plus its light and the "good" sticker, only while the target sound itself is heard
+ * While listening every sound shows at once, calmly: the raw 10 ms values go through a [LiveSmoother] (attack ~70 ms,
+ * release ~320 ms, dead zone, from `spec/pacing.json`); the letter swells with the voice up to
+ * [Pacing.voiceInflationTop] and the rest of the way, plus its light and the "good" sticker, only while the target sound itself is heard
  * ([LiveAim]). Nothing noisy reaches its outline: no voicing boil, a third of the 11 Hz energy buzz.
  * [baseInflation] is its resting size (the held share in the sustain exercise). [heard] receives the envelope each
  * frame, for the "Te aud" ring.

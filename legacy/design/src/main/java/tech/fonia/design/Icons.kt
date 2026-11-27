@@ -136,7 +136,7 @@ fun FoniaImage(
         Image(painter = painter, contentDescription = null, modifier = modifier, alignment = alignment, contentScale = contentScale, alpha = alpha)
         return
     }
-    // Not decoded yet (QA 2026-11-21: big scenes decoded on the main thread held a page's first frame for seconds).
+    // Not decoded yet: big scenes decoded on the main thread held a page's first frame for seconds.
     // The picture keeps its place from the file's header, decodes off the main thread and fades in.
     val bounds = remember(name, assets) { assets.bounds(name) }
     if (bounds == null) {

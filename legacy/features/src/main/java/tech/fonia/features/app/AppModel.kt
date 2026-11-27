@@ -743,8 +743,8 @@ class AppModel(
                 return null
             }
             val voices = runCatching { VoiceIndex.load(source) }.getOrNull()
-            // His `voice/sfx` player is retired (2026-11-21): every effect plays from `assets/sfx` through FoniaSfx's
-            // one gate, so no old effect can sound anywhere.
+            // There is no `voice/sfx` player: every effect plays from `assets/sfx` through FoniaSfx's one gate, so no
+            // other effect can sound anywhere.
             val effects: ClipLocation? = null
             val fixtures = arguments.fixtures
             // A phone whose audio can't be set up still opens; its takes then can't start, which every screen handles.

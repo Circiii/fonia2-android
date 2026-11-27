@@ -12,7 +12,7 @@ import tech.fonia.domain.WordItem
 import kotlin.random.Random
 
 /**
- * New listening items on every run (owner, 2026-11-24: "la sunete, ce auzi se repetă de fiecare dată").
+ * New listening items on every run, so what he hears does not repeat each time.
  *
  * Why it repeated: the session builder (kept identical to iOS, `ios-sessions.txt`) draws the listening block from tiny
  * pools: „Ce ai auzit?” plays all six `voicingPairs` every time, only shuffled; a sound's identification deck has its

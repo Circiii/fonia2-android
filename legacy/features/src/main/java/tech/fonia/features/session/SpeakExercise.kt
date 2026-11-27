@@ -244,11 +244,11 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             result.rating != null -> letter.almost()
             else -> Unit
         }
-        // The sound of the outcome is his `app.audio.effect(...)` in showResult (now the new set, through the gate).
+        // The sound of the outcome is his `app.audio.effect(...)` in showResult, through the gate.
     }
 
     /**
-     * The phone could not judge the take. Never a silent reset (owner, 2026-11-23): a dead microphone says "Nu te aud"
+     * The phone could not judge the take. Never a silent reset: a dead microphone says "Nu te aud"
      * and what to do; otherwise the letter shows its retake mark, the capsule says "Mai spune o dată" and counts 3-2-1
      * before it opens again; after [SessionRun.maxAutoRetakes] it is a kind "almost" and the session moves on by itself.
      */
@@ -305,7 +305,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     /** The feedback schedule decides how much is said and whether the flow waits for anyone. */
     suspend fun showResult(result: TakeVerdict) {
         cueLetter(result)
-        // No adult question any more (owner, 2026-11-21): what the phone can't judge moves on with "Mai departe".
+        // No adult question: what the phone can't judge moves on with "Mai departe".
         val asked = trial.feedback == FeedbackLevel.SelfJudge
         val feedback = trial.feedback
         when {

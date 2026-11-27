@@ -22,7 +22,7 @@ data class TalkerEstimate(
 )
 
 /**
- * A pitch estimate for the talker group that does not fall for octave errors (owner 2026-11-24: the DSP tracker
+ * A pitch estimate for the talker group that does not fall for octave errors (the DSP tracker
  * sometimes halves a woman's F0, turning her into a man, and the S/Ș boundary with her).
  *
  * Two estimators: a YIN-style cumulative-mean-normalised difference on 40 ms frames of the take decimated to about

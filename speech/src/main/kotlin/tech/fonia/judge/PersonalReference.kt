@@ -8,7 +8,7 @@ import tech.fonia.model.SoundId
 import tech.fonia.model.Verdict
 
 /**
- * The person's own reference (owner 2026-11-24, "make the app fit HIM"): after takes that BOTH heads accept with high
+ * The person's own reference (the app fits HIM): after takes that BOTH heads accept with high
  * confidence, his own S and Ș spectra become the anchors of the S↔Ș boundary (the DSP's [TalkerCalibration] fit), his
  * F0 fixes his talker group, and his own fricative loudness sets the "more air" floor. Later takes are measured
  * against HIS references first ([apply]); until [PersonalThresholds.minPerPlace] anchors per place exist, the group

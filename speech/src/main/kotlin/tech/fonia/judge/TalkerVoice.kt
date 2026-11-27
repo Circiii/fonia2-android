@@ -6,7 +6,7 @@ import kotlin.math.exp
 import kotlin.math.ln
 
 /**
- * Who is speaking, heard from the voice itself rather than taken from the profile (owner, 2026-11-23: a teenager with
+ * Who is speaking, heard from the voice itself rather than taken from the profile (a teenager with
  * a man's voice picks "Un copil" and must still be judged on HIS voice). The S/Ș boundary depends on the group, so the
  * group decides which priors the judge and the live letter use. Nothing is ever rejected for being an adult.
  *

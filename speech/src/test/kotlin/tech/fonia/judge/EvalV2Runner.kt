@@ -32,7 +32,7 @@ import kotlin.math.sqrt
  *   ./gradlew :engine:judge:test --rerun --tests tech.fonia.judge.EvalV2Runner -Pfonia.judge.zipa=true
  * ```
  *
- * FONIA_EVAL_TALKER: `dsp` (the app's 2026-11-23 rule, the DSP tracker's median F0), `estimator` (TalkerEstimator),
+ * FONIA_EVAL_TALKER: `dsp` (the app's rule, the DSP tracker's median F0), `estimator` (TalkerEstimator),
  * default `estimator` when the class exists. Every voice is synthetic: nothing here is evidence about children.
  */
 class EvalV2Runner {

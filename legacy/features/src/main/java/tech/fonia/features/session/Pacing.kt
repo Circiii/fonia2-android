@@ -2,8 +2,8 @@ package tech.fonia.features.session
 
 /**
  * How fast the practice screens move and how calm the live letter is: data in `spec/pacing.json` (copied into the APK
- * by `specAssets`), with these defaults equal to it (PacingTest). Owner, 2026-11-24: "totul se mișcă prea repede, să
- * nu mai tremure atât": verdicts stay long enough to read, live values are smoothed with a dead zone, and the full
+ * by `specAssets`), with these defaults equal to it (PacingTest). Nothing moves too fast or trembles:
+ * verdicts stay long enough to read, live values are smoothed with a dead zone, and the full
  * judge gets time in proportion to the take.
  */
 data class Pacing(

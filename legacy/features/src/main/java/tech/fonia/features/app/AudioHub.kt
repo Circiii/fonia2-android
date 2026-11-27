@@ -306,8 +306,8 @@ class AudioHub(
 
     /**
      * Says a text with its recorded clip; Foni's mouth follows it through `levels.talk`.
-     * A text with no clip stays silent and is only shown on screen: never the phone's synthetic voice (owner's
-     * decision, 2026-11-21; iOS still falls back to `AVSpeechSynthesizer`). What still has no clip is listed in
+     * A text with no clip stays silent and is only shown on screen: never the phone's synthetic voice (iOS
+     * still falls back to `AVSpeechSynthesizer`). What still has no clip is listed in
      * domain/src/test/resources/missing-clips.txt and tools/voice/REPORT.md.
      */
     suspend fun say(text: String, language: Language = Language.Ro, voice: Voice? = null) {
@@ -512,10 +512,10 @@ class AudioHub(
 
         /**
          * The live analysis' noise floor, for the letter and the end of the take only (the judge reads the clip with
-         * [analysisThresholds]): v1 lets the floor climb 30 dB/s for the first 1.2 s, so a "sss" started right after the
-         * beep became the floor within a second and the held bar stopped (a man's held S, 2026-11-23: 108 of 362 hiss
-         * hops heard). The floor now starts at -55 dB and learns fast only 0.5 s at 12 dB/s, and a voice is 9 dB above
-         * it: an immediate hiss stays heard (362 of 362), a -45 dB room is still learnt as the floor.
+         * [analysisThresholds]): the floor starts at -55 dB, learns fast only 0.5 s at 12 dB/s, and a voice is 9 dB
+         * above it, so an immediate hiss stays heard (a man's held S: 362 of 362 hops) and a -45 dB room is still learnt
+         * as the floor. A floor that climbs 30 dB/s for the first 1.2 s lets a "sss" started right after the beep become
+         * the floor within a second and stops the held bar (108 of 362 hiss hops heard).
          */
         fun live(thresholds: DSPThresholds, room: tech.fonia.judge.PersonalReference.Room? = null): DSPThresholds = thresholds.copy(
             live = thresholds.live.copy(

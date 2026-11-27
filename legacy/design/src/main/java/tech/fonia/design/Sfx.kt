@@ -1,7 +1,7 @@
 package tech.fonia.design
 
 /**
- * Fonia's sound effects (owner, 2026-11-21). The app calls [FoniaSfx.play] at each [SfxCue]; every request goes
+ * Fonia's sound effects. The app calls [FoniaSfx.play] at each [SfxCue]; every request goes
  * through ONE gate ([SfxGate]) that enforces the quiet rule (nothing while the microphone is open, nor 150 ms around
  * it), the 120 ms anti-stacking rule, the in-app sound switch and the phone's silent / Do Not Disturb state. Only then
  * does the installed [Sfx] sink play it (`SfxPlayer`: a preloaded `SoundPool`, media volume), with its haptic.

@@ -56,8 +56,8 @@ class FaceCheckTests {
         val content = assertNotNull(System.getProperty("fonia.content"), "the content submodule path")
         val json = File(content, "json/coach_plans.json").readText(Charsets.UTF_8)
         val faces = Regex(""""face"\s*:\s*"([^"]+)"""").findAll(json).map { it.groupValues[1] }.toList()
-        // fonia-content 66c53b7 rewrote the mouth plans and no step asks for "lipBite" or "relaxed" any more
-        // (18 → 16 face steps). The face module keeps both checks, so content may bring them back.
+        // The mouth plans have 16 face steps and none asks for "lipBite" or "relaxed". The face module keeps both
+        // checks, so content may bring them back.
         assertEquals(16, faces.size)
         assertTrue(faces.all { FaceCheck.fromRawValue(it) != null }, "unknown check in $faces")
         assertEquals(FaceCheck.entries.map { it.rawValue }.toSet() - setOf("lipBite", "relaxed"), faces.toSet())

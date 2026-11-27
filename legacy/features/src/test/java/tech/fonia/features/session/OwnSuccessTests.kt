@@ -15,7 +15,7 @@ import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
 import java.time.Instant
 
-/** v2-flow: the learner's own success moves him on, except past the plain sound while the lock waits for an adult. */
+/** The learner's own success moves him on, except past the plain sound while the lock waits for an adult. */
 class OwnSuccessTests {
     private val profile = Profile(
         kind = Profile.Kind.Child, ageBand = Profile.AgeBand.EightToTen, voiceGroup = Profile.VoiceGroup.Child,

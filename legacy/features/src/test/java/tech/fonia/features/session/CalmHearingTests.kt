@@ -9,7 +9,7 @@ import tech.fonia.model.ErrorKind
 import tech.fonia.model.SoundId
 import java.io.File
 
-/** Owner, 2026-11-24: the letter must answer his voice, calmly; no nonsense line; no retake because of a timer. */
+/** The letter must answer his voice, calmly; no nonsense line; no retake because of a timer. */
 class CalmHearingTests {
     private val letters = mapOf(
         SoundID.S to "S", SoundID.Sh to "Ș", SoundID.Z to "Z", SoundID.J to "J", SoundID.Ts to "Ț",

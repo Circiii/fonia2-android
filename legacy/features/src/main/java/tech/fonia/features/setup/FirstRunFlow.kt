@@ -128,7 +128,7 @@ fun FirstRunFlow(app: AppModel) {
             app.select(profile)
             // The first run ends on the quick check's invitation („Hai să vedem ce sunete exersăm”).
             app.offerCheck = profile.track == Profile.Track.Ro
-            // Twenty seconds on his own voice first (owner, 2026-11-24): the room, his voice, his S and Ș.
+            // Twenty seconds on his own voice first: the room, his voice, his S and Ș.
             app.calibrating = profile.track == Profile.Track.Ro
         }
     }

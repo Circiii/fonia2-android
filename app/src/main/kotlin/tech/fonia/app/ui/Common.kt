@@ -67,7 +67,7 @@ enum class FoniPose { Idle, Listens, Cheers, Points, AsksAdult }
  */
 @Composable
 fun FoniMascot(modifier: Modifier = Modifier, size: Dp = 64.dp, pose: FoniPose = FoniPose.Idle) {
-    // The real parrot now lives in the design system; the old drawn stand-in below is kept only as dead reference.
+    // The parrot is the design system's; the drawn stand-in below is unreachable and kept only as reference.
     if (true) { Foni(pose.mood(), modifier, size * 1.2f); return }
     val c = FoniaTheme.colors
     val reduce = FoniaTheme.reduceMotion

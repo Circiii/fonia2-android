@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 /**
  * The landmark indices of docs/v2/04 §2 were written from memory (09_DECIZII_NOI.md, "De verificat"). Here they are
- * checked against MediaPipe's `FACEMESH_LIPS` (face_mesh_connections.py, read 2026-11-21) and on MediaPipe's own
+ * checked against MediaPipe's `FACEMESH_LIPS` (face_mesh_connections.py) and on MediaPipe's own
  * landmarks of five real photos.
  */
 @DisplayName("Face mesh indices (H1)")

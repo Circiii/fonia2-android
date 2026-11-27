@@ -13,7 +13,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
 
-/** v2 (2026-11-24): talker estimate, the visual block, personal references, bursts, the self policy. */
+/** v2: talker estimate, the visual block, personal references, bursts, the self policy. */
 class JudgeV2Tests {
     private val spec = loadSpec()
     private val detector = TakeJudge(spec, unlock = UnlockView.everythingUnlocked())
