@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import java.io.File
+import java.io.FileNotFoundException
+import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,20 +20,16 @@ import tech.fonia.domain.DictionAreaID
 import tech.fonia.domain.EnglishFocus
 import tech.fonia.domain.Exercise
 import tech.fonia.domain.FeedbackLevel
-import tech.fonia.domain.Language
-import tech.fonia.domain.RepeatPrompt
-import tech.fonia.domain.SessionBlock
-import tech.fonia.domain.Trial
-import tech.fonia.features.check.CheckStore
-import tech.fonia.features.check.FileCheckStore
-import tech.fonia.features.check.MemoryCheckStore
-import tech.fonia.features.check.QuickCheckRules
 import tech.fonia.domain.FoniaContent
+import tech.fonia.domain.Language
 import tech.fonia.domain.Lesson
-import tech.fonia.domain.Rung
 import tech.fonia.domain.ProbeLists
+import tech.fonia.domain.RepeatPrompt
+import tech.fonia.domain.Rung
+import tech.fonia.domain.SessionBlock
 import tech.fonia.domain.SessionFocus
 import tech.fonia.domain.SoundID
+import tech.fonia.domain.Trial
 import tech.fonia.domain.VoiceIndex
 import tech.fonia.dsp.FricativeSegment
 import tech.fonia.dsp.SibilantPlace
@@ -39,6 +38,10 @@ import tech.fonia.face.FaceSource
 import tech.fonia.face.FakeFaceSource
 import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.features.adaptive.AdaptiveStore
+import tech.fonia.features.check.CheckStore
+import tech.fonia.features.check.FileCheckStore
+import tech.fonia.features.check.MemoryCheckStore
+import tech.fonia.features.check.QuickCheckRules
 import tech.fonia.features.grownups.addSampleWeek
 import tech.fonia.features.ml.MlHub
 import tech.fonia.features.pilot.PilotLog
@@ -55,9 +58,6 @@ import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import tech.fonia.store.SessionRecord
-import java.io.File
-import java.io.FileNotFoundException
-import java.util.UUID
 
 /** `AppModel`: the app's state. Snapshot state instead of `@Observable`; main thread only, as `@MainActor`. */
 class AppModel(
@@ -249,8 +249,13 @@ class AppModel(
                 ignoringFailure {
                     repository.saveProfile(
                         Profile(
-                            kind = Profile.Kind.Child, ageBand = Profile.AgeBand.SixToSeven, voiceGroup = Profile.VoiceGroup.Child,
-                            color = "cold", targetSounds = listOf("s"), track = Profile.Track.Ro, requireConfirmation = false,
+                            kind = Profile.Kind.Child,
+                            ageBand = Profile.AgeBand.SixToSeven,
+                            voiceGroup = Profile.VoiceGroup.Child,
+                            color = "cold",
+                            targetSounds = listOf("s"),
+                            track = Profile.Track.Ro,
+                            requireConfirmation = false,
                         ),
                     )
                 }
@@ -269,7 +274,12 @@ class AppModel(
             adaptive?.let { store -> scope.launch { ignoringFailure { store.keepOnly(list.map { it.id }.toSet()) } } }
             // And its voice: his own reference, the dots of his takes, the talker heard ("Șterge tot" empties the list).
             val voiceIds = list.map { it.id }.toSet()
-            scope.launch(Dispatchers.IO) { ignoringFailure { voice.keepOnly(voiceIds); talkers.keepOnly(voiceIds) } }
+            scope.launch(Dispatchers.IO) {
+                ignoringFailure {
+                    voice.keepOnly(voiceIds)
+                    talkers.keepOnly(voiceIds)
+                }
+            }
             // And the best result of each diction drill.
             scope.launch { ignoringFailure { drills.keepOnly(voiceIds) } }
             // And its „Cuvinte noi” probes.
@@ -321,23 +331,30 @@ class AppModel(
         val parts = start.split(":")
         when (parts[0]) {
             "check" -> startCheck()
+
             // The guided calibration, for tests and screenshots.
             "calibrare" -> calibrating = true
+
             // The invitation the first run ends on, for screenshots.
             "offer" -> offerCheck = true
+
             "drill" -> {
                 val sound = parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }
                 val index = parts.getOrNull(2)?.toIntOrNull()
                 if (sound != null && index != null) startDrill(sound, index)
             }
+
             "en" -> parts.getOrNull(1)?.let { contrast ->
                 ticket = SessionTicket(focus = SessionFocus.English(EnglishFocus.Speaking(contrast = contrast)), title = contrast, sound = null)
             }
+
             "melody" -> ticket = SessionTicket(focus = SessionFocus.English(EnglishFocus.Melody(lesson = 0)), title = "melody", sound = null)
+
             "dictie" -> {
                 val area = parts.getOrNull(1)
                 ticket = SessionTicket(focus = SessionFocus.Diction(area?.let { DictionAreaID.fromRawValue(it) } ?: DictionAreaID.Pitch), title = area ?: "", sound = null)
             }
+
             else -> {
                 val sound = SoundID.fromRawValue(parts[0])
                 val rung = parts.getOrNull(1)?.let { Rung.fromRawValue(it) }
@@ -507,12 +524,16 @@ class AppModel(
             // A test run (fixtures or a WAV in place of the microphone) works on a fresh copy of his data, so its
             // attempts, stars and drills never land in his real history.
             val testRun = arguments.fixtures || arguments.micFile != null
-            val home = if (!testRun) context.noBackupFilesDir else File(context.noBackupFilesDir, "TestRun").also { dir ->
-                runCatching {
-                    dir.deleteRecursively()
-                    for (part in listOf("Fonia/Database", "Fonia/Voice")) {
-                        val from = File(context.noBackupFilesDir, part)
-                        if (from.exists()) from.copyRecursively(File(dir, part), overwrite = true)
+            val home = if (!testRun) {
+                context.noBackupFilesDir
+            } else {
+                File(context.noBackupFilesDir, "TestRun").also { dir ->
+                    runCatching {
+                        dir.deleteRecursively()
+                        for (part in listOf("Fonia/Database", "Fonia/Voice")) {
+                            val from = File(context.noBackupFilesDir, part)
+                            if (from.exists()) from.copyRecursively(File(dir, part), overwrite = true)
+                        }
                     }
                 }
             }
@@ -532,6 +553,7 @@ class AppModel(
             // A bare name is looked up in the app's own external folder (adb push … /sdcard/Android/data/<app>/files/).
             val micFile = arguments.micFile?.let { if (it.startsWith("/")) File(it) else File(context.getExternalFilesDir(null), it) }
             val audio = AudioHub(voices, backend, fixtures, assets = assets, microphone = microphone, micFile = micFile)
+
             // The diction training: the original v2 texts and their generated clips (ElevenLabs), when bundled.
             fun text(path: String) = assets.open(path).use { it.readBytes().toString(Charsets.UTF_8) }
             val v2 = runCatching { tech.fonia.lessons.LessonContent.load { text("spec/content/v2/$it") } }.getOrNull()

@@ -23,11 +23,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -74,12 +74,12 @@ import tech.fonia.features.app.rememberStoredBoolean
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.guide.AdultCardsSeen
+import tech.fonia.features.home.DailyRounds
 import tech.fonia.features.home.DayActivity
 import tech.fonia.features.home.rememberPushDestination
+import tech.fonia.features.session.FrontTeeth
 import tech.fonia.features.speaking.SpeakingMemory
 import tech.fonia.store.Profile
-import tech.fonia.features.home.DailyRounds
-import tech.fonia.features.session.FrontTeeth
 
 /**
  * Everything an adult can look at or change (iOS `SettingsPage`), on one page and in the order they need it: who this
@@ -96,6 +96,7 @@ fun SettingsPage(profile: Profile?, app: AppModel, onClose: () -> Unit, modifier
     var addingChild by remember { mutableStateOf(false) }
     var confirmWipe by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+
     /** What stayed on the phone after "Șterge tot" (null: no failure to show). */
     var wipeLeft by remember { mutableStateOf<List<String>?>(null) }
     var isWiping by remember { mutableStateOf(false) }
@@ -402,7 +403,10 @@ private fun Practice(profile: Profile, app: AppModel, modifier: Modifier, push: 
     if (!profile.isChild && !tunesVoice && !checksRoom) return
     SettingsGroup("Exersarea", SettingsTint.Blue, modifier) {
         var first = true
-        val divider: @Composable () -> Unit = { if (!first) RowDivider(); first = false }
+        val divider: @Composable () -> Unit = {
+            if (!first) RowDivider()
+            first = false
+        }
         if (profile.isChild) {
             divider()
             SettingsRow(FoniaIcon.mouth.rawValue, "Ce sunete exersează", "Ordinea lor și cum avansează", chevron = true) { push(Destination.SoundChoice(profile.id)) }

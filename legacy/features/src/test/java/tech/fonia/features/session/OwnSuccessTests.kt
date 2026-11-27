@@ -1,5 +1,6 @@
 package tech.fonia.features.session
 
+import java.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -13,17 +14,22 @@ import tech.fonia.domain.SoundID
 import tech.fonia.features.app.progressionState
 import tech.fonia.store.Profile
 import tech.fonia.store.SoundProgress
-import java.time.Instant
 
 /** The learner's own success moves him on, except past the plain sound while the lock waits for an adult. */
 class OwnSuccessTests {
     private val profile = Profile(
-        kind = Profile.Kind.Child, ageBand = Profile.AgeBand.EightToTen, voiceGroup = Profile.VoiceGroup.Child,
-        color = "cold", targetSounds = listOf("s"), track = Profile.Track.Ro,
+        kind = Profile.Kind.Child,
+        ageBand = Profile.AgeBand.EightToTen,
+        voiceGroup = Profile.VoiceGroup.Child,
+        color = "cold",
+        targetSounds = listOf("s"),
+        track = Profile.Track.Ro,
     )
 
     private fun progress(vararg goods: Int) = SoundProgress(
-        profileId = profile.id, sound = "s", rung = 0,
+        profileId = profile.id,
+        sound = "s",
+        rung = 0,
         blockHistory = goods.map { SoundProgress.Block(rung = 0, good = it, total = 6, endedAt = Instant.EPOCH) },
     )
 

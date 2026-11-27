@@ -1,5 +1,6 @@
 package tech.fonia.features.session
 
+import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -7,7 +8,6 @@ import org.junit.Test
 import tech.fonia.domain.SoundID
 import tech.fonia.model.ErrorKind
 import tech.fonia.model.SoundId
-import java.io.File
 
 /** The letter must answer his voice, calmly; no nonsense line; no retake because of a timer. */
 class CalmHearingTests {
@@ -25,22 +25,28 @@ class CalmHearingTests {
 
     @Test
     fun everyNamedLineFitsItsSound() {
-        for (id in SoundID.entries) for (kind in ErrorKind.entries) for (heard in listOf<SoundId?>(null) + SoundId.entries) {
-            val title = SoundJudge.namedTitle(id, letters.getValue(id), kind, heard)
-            val words = title.split(' ').filter { it.isNotBlank() }
-            assertTrue("$id $kind $heard: '$title' is longer than 8 words", words.size <= 8)
-            assertFalse(title.contains("greșit", ignoreCase = true))
-            if (title.startsWith("Aproape. A sunat ca ")) {
-                val named = title.removePrefix("Aproape. A sunat ca ")
-                assertTrue("$id $kind $heard: '$title'", named in plausible.getValue(id))
+        for (id in SoundID.entries) {
+            for (kind in ErrorKind.entries) {
+                for (heard in listOf<SoundId?>(null) + SoundId.entries) {
+                    val title = SoundJudge.namedTitle(id, letters.getValue(id), kind, heard)
+                    val words = title.split(' ').filter { it.isNotBlank() }
+                    assertTrue("$id $kind $heard: '$title' is longer than 8 words", words.size <= 8)
+                    assertFalse(title.contains("greșit", ignoreCase = true))
+                    if (title.startsWith("Aproape. A sunat ca ")) {
+                        val named = title.removePrefix("Aproape. A sunat ca ")
+                        assertTrue("$id $kind $heard: '$title'", named in plausible.getValue(id))
+                    }
+                }
             }
         }
     }
 
     @Test
     fun anLSentenceNeverSaysItSoundedLikeS() {
-        for (kind in ErrorKind.entries) for (heard in listOf<SoundId?>(null) + SoundId.entries) {
-            assertFalse(SoundJudge.namedTitle(SoundID.L, "L", kind, heard).contains("ca S"))
+        for (kind in ErrorKind.entries) {
+            for (heard in listOf<SoundId?>(null) + SoundId.entries) {
+                assertFalse(SoundJudge.namedTitle(SoundID.L, "L", kind, heard).contains("ca S"))
+            }
         }
         assertEquals("Aproape. Lipește limba sus", SoundJudge.namedTitle(SoundID.L, "L", ErrorKind.LtoGlide, null))
         assertEquals("Aproape. A sunat ca R", SoundJudge.namedTitle(SoundID.L, "L", ErrorKind.LtoR, SoundId.S))
@@ -207,7 +213,8 @@ class CalibrationOnAMansVoiceTests {
         val ref = tech.fonia.judge.PersonalReference()
         val active = ref.calibrate(
             tech.fonia.judge.PersonalReference.Room(floor, floor + 40f, 110f),
-            anchors(s, tech.fonia.dsp.SibilantPlace.S), anchors(sh, tech.fonia.dsp.SibilantPlace.SH),
+            anchors(s, tech.fonia.dsp.SibilantPlace.S),
+            anchors(sh, tech.fonia.dsp.SibilantPlace.SH),
         )
         assertTrue("five anchors per place", active)
         fun place(x: FloatArray, cal: tech.fonia.dsp.TalkerCalibration?) =

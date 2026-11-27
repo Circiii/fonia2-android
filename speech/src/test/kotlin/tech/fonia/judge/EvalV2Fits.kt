@@ -1,8 +1,8 @@
 package tech.fonia.judge
 
-import tech.fonia.model.SoundId
 import java.io.File
 import java.util.Locale
+import tech.fonia.model.SoundId
 
 /**
  * The leave-one-voice-out fits of the v2 evaluation ([EvalV2Runner]). Three stages, each chosen on the other voices
@@ -27,16 +27,20 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
         private fun named(l: String) = l != "correct" && l != "almost" && l != "unsure" && !l.startsWith("retake")
 
         fun cost(expected: String, label: String): Double =
-            if (expected == "correct") when {
-                label == "correct" -> 0.0
-                label == "almost" -> 1.2
-                named(label) -> 6.0
-                else -> 2.0
-            } else when {
-                named(label) && kindOf(label) == kindOf(expected) -> 0.0
-                named(label) -> 3.0
-                label == "correct" -> 5.0
-                else -> 1.0
+            if (expected == "correct") {
+                when {
+                    label == "correct" -> 0.0
+                    label == "almost" -> 1.2
+                    named(label) -> 6.0
+                    else -> 2.0
+                }
+            } else {
+                when {
+                    named(label) && kindOf(label) == kindOf(expected) -> 0.0
+                    named(label) -> 3.0
+                    label == "correct" -> 5.0
+                    else -> 1.0
+                }
             }
     }
 
@@ -52,8 +56,13 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
             val p = c.heads[s] ?: return@mapValues f
             f.copy(fullFrom = p, heads = f.heads + ("full" to FullHead.build(f, p)))
         }
-        val j2 = base.population.judge2.copy(version = "fit", contextShift = c.shift, placeTrust = c.placeTrust, praise = c.praise,
-            burst = BurstThresholds(minFound = 2))
+        val j2 = base.population.judge2.copy(
+            version = "fit",
+            contextShift = c.shift,
+            placeTrust = c.placeTrust,
+            praise = c.praise,
+            burst = BurstThresholds(minFound = 2),
+        )
         val spec = JudgeSpec(base.population.copy(judge2 = j2), fusion, base.unlock, base.feedback)
         return TakeJudge(spec, unlock = UnlockView.everythingUnlocked())
     }
@@ -67,11 +76,13 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
     private fun meanCost(subset: List<EvalV2Runner.Item>, labels: List<String>, keep: (String) -> Boolean): Double {
         val sum = HashMap<String, Double>()
         val w = HashMap<String, Double>()
-        for ((i, it) in subset.withIndex()) if (keep(it.voice)) {
-            // Runner-made edits (cut, −24 dB, burst) are crude: half the weight of a said or cross-tested take.
-            val weight = if (it.role == "edit") 0.5 else 1.0
-            sum[it.voice] = (sum[it.voice] ?: 0.0) + weight * cost(it.expected, labels[i])
-            w[it.voice] = (w[it.voice] ?: 0.0) + weight
+        for ((i, it) in subset.withIndex()) {
+            if (keep(it.voice)) {
+                // Runner-made edits (cut, −24 dB, burst) are crude: half the weight of a said or cross-tested take.
+                val weight = if (it.role == "edit") 0.5 else 1.0
+                sum[it.voice] = (sum[it.voice] ?: 0.0) + weight * cost(it.expected, labels[i])
+                w[it.voice] = (w[it.voice] ?: 0.0) + weight
+            }
         }
         return if (w.isEmpty()) Double.MAX_VALUE else sum.keys.sumOf { sum.getValue(it) / w.getValue(it) } / w.size
     }
@@ -81,11 +92,15 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
     private fun headGrid(sound: SoundId): List<FullHeadParams> {
         val place = sound !in setOf(SoundId.R, SoundId.L)
         val out = ArrayList<FullHeadParams>()
-        for (a in listOf(0.25f, 0.5f, 0.75f, 1f, 1.5f)) for (c in listOf(0.25f, 0.5f, 0.75f, 1.25f))
-            for (cp in if (place) listOf<Float?>(null, 0f, 0.25f, 0.5f) else listOf<Float?>(null))
-                // The correct-bias range goes past 1 and the GOP weight is free: on CE/GE the chosen values
-                // sat at the grid's edge (b = 1), and ZIPA's GOP is low on good [tʃ]/[dʒ] (heard as s / ʒ).
-                for (b in listOf(-1f, -0.5f, 0f, 0.5f, 1f, 1.5f, 2f, 3f)) for (g in listOf(0f, 0.25f, 0.5f)) out += FullHeadParams(a, c, g, b, cp)
+        for (a in listOf(0.25f, 0.5f, 0.75f, 1f, 1.5f)) {
+            for (c in listOf(0.25f, 0.5f, 0.75f, 1.25f)) {
+                for (cp in if (place) listOf<Float?>(null, 0f, 0.25f, 0.5f) else listOf<Float?>(null)) {
+                    // The correct-bias range goes past 1 and the GOP weight is free: on CE/GE the chosen values
+                    // sat at the grid's edge (b = 1), and ZIPA's GOP is low on good [tʃ]/[dʒ] (heard as s / ʒ).
+                    for (b in listOf(-1f, -0.5f, 0f, 0.5f, 1f, 1.5f, 2f, 3f)) for (g in listOf(0f, 0.25f, 0.5f)) out += FullHeadParams(a, c, g, b, cp)
+                }
+            }
+        }
         return out
     }
     private val praiseGrid = listOf(PraiseThresholds()) +
@@ -144,8 +159,14 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
             for (it in sub) {
                 val r = j.decide(it.measured, it.phones)
                 val h = r.visual?.hint
-                held[it.id] = listOf(runner.labelOf(j, it, full = true), r.topError?.raw ?: "", fmt2(r.topErrorProbability),
-                    fmt2(r.probabilities["correct"] ?: Float.NaN), h?.key?.raw ?: "", fmt2(h?.confidence ?: Float.NaN)).joinToString(",")
+                held[it.id] = listOf(
+                    runner.labelOf(j, it, full = true),
+                    r.topError?.raw ?: "",
+                    fmt2(r.topErrorProbability),
+                    fmt2(r.probabilities["correct"] ?: Float.NaN),
+                    h?.key?.raw ?: "",
+                    fmt2(h?.confidence ?: Float.NaN),
+                ).joinToString(",")
             }
             lines += "- held out **$v**: shift ${c.shift}, placeTrust ${c.placeTrust}, praise ${c.praise}, heads " +
                 c.heads.entries.joinToString("; ") { (s, p) -> "${s.raw} ${fmt(p)}" }
@@ -158,18 +179,24 @@ class EvalV2Fits(private val runner: EvalV2Runner) {
         lines += "- placeTrust ${all.placeTrust}"
         lines += "- praise ${all.praise}"
         for ((s, p) in all.heads) lines += "- ${s.raw}: ${fmt(p)}"
-        File(out, "lovo.csv").writeText("id,heldout,topError,pTop,pCorrect,hint,hintConf\n" +
-            items.joinToString("\n") { "${it.id},${held[it.id] ?: ",,,,,"}" } + "\n")
-        File(out, "chosen.json").writeText(buildString {
-            append("{\n  \"contextShift\": {")
-            append(all.shift.entries.joinToString(", ") { "\"${it.key}\": ${it.value}" })
-            append("},\n  \"placeTrust\": ${all.placeTrust},\n  \"praise\": {\"fast\": ${all.praise.fast}, \"full\": ${all.praise.full}},\n  \"heads\": {\n")
-            append(all.heads.entries.joinToString(",\n") { (s, p) ->
-                "    \"${s.raw}\": {\"alpha\": ${p.alpha}, \"c\": ${p.c}, \"g\": ${p.g}, \"correctBias\": ${p.correctBias}" +
-                    (p.cPlace?.let { ", \"cPlace\": $it" } ?: "") + "}"
-            })
-            append("\n  }\n}\n")
-        })
+        File(out, "lovo.csv").writeText(
+            "id,heldout,topError,pTop,pCorrect,hint,hintConf\n" +
+                items.joinToString("\n") { "${it.id},${held[it.id] ?: ",,,,,"}" } + "\n",
+        )
+        File(out, "chosen.json").writeText(
+            buildString {
+                append("{\n  \"contextShift\": {")
+                append(all.shift.entries.joinToString(", ") { "\"${it.key}\": ${it.value}" })
+                append("},\n  \"placeTrust\": ${all.placeTrust},\n  \"praise\": {\"fast\": ${all.praise.fast}, \"full\": ${all.praise.full}},\n  \"heads\": {\n")
+                append(
+                    all.heads.entries.joinToString(",\n") { (s, p) ->
+                        "    \"${s.raw}\": {\"alpha\": ${p.alpha}, \"c\": ${p.c}, \"g\": ${p.g}, \"correctBias\": ${p.correctBias}" +
+                            (p.cPlace?.let { ", \"cPlace\": $it" } ?: "") + "}"
+                    },
+                )
+                append("\n  }\n}\n")
+            },
+        )
     }
 
     private fun fmt2(v: Float) = if (v.isNaN()) "" else String.format(Locale.ROOT, "%.3f", v)

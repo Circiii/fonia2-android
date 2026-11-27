@@ -1,17 +1,17 @@
 package tech.fonia.judge
 
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.sin
+import kotlin.test.assertNotNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import kotlin.test.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import tech.fonia.model.ErrorKind
 import tech.fonia.model.SoundId
 import tech.fonia.model.Verdict
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.sin
 
 /** v2: talker estimate, the visual block, personal references, bursts, the self policy. */
 class JudgeV2Tests {
@@ -140,14 +140,29 @@ class JudgeV2Tests {
 
     private fun fakeResult(sound: SoundId, sNess: Float, centroid: Float, pFull: Float = 0.95f, pFast: Float = 0.9f, head: Head = Head.Full) =
         TakeResult(
-            verdict = Verdict.Correct, confidence = pFull, head = head,
+            verdict = Verdict.Correct,
+            confidence = pFull,
+            head = head,
             evidence = JudgeEvidence(
-                mapOf(Features.S_NESS to sNess, Features.CENTROID to centroid, Features.PEAK to centroid * 0.9f,
-                    Features.BAND_RATIO to (if (sNess > 0.5f) 8f else -4f), Features.TILT to 0f, Features.F0 to 120f,
-                    Features.REL_LEVEL to -10f, Features.FRIC_DUR to 120f),
-                null, null, emptyList(), emptySet(), emptyList(),
+                mapOf(
+                    Features.S_NESS to sNess,
+                    Features.CENTROID to centroid,
+                    Features.PEAK to centroid * 0.9f,
+                    Features.BAND_RATIO to (if (sNess > 0.5f) 8f else -4f),
+                    Features.TILT to 0f,
+                    Features.F0 to 120f,
+                    Features.REL_LEVEL to -10f,
+                    Features.FRIC_DUR to 120f,
+                ),
+                null,
+                null,
+                emptyList(),
+                emptySet(),
+                emptyList(),
             ),
-            versions = SpecVersions("", "", "", "", ""), sound = sound, fastCorrect = pFast,
+            versions = SpecVersions("", "", "", "", ""),
+            sound = sound,
+            fastCorrect = pFast,
         )
 
     @Test

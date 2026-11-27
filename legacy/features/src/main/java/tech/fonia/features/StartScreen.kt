@@ -1,8 +1,15 @@
 package tech.fonia.features
 
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,40 +18,33 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import android.content.Context
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.MediaPlayer
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.runtime.withFrameNanos
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
 import androidx.compose.ui.unit.dp
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.spring
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import tech.fonia.design.Foni
 import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaImage
@@ -101,9 +101,11 @@ internal fun StartScreen() {
     }
     LaunchedEffect(Unit) {
         val start = withFrameNanos { it }
-        while (true) withFrameNanos {
-            song[0] *= 0.90f
-            clock.floatValue = (it - start) / 1e9f
+        while (true) {
+            withFrameNanos {
+                song[0] *= 0.90f
+                clock.floatValue = (it - start) / 1e9f
+            }
         }
     }
     LaunchedEffect(Unit) {

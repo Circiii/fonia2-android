@@ -1,10 +1,10 @@
 package tech.fonia.features.app
 
-import tech.fonia.domain.Trial
+import java.util.UUID
 import tech.fonia.domain.SessionFocus
 import tech.fonia.domain.SoundID
+import tech.fonia.domain.Trial
 import tech.fonia.features.probe.ProbePlan
-import java.util.UUID
 
 /** What's on screen as a full-screen cover: a practice session. */
 data class SessionTicket(

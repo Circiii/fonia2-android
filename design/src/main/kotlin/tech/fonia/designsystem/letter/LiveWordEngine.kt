@@ -1,5 +1,9 @@
 package tech.fonia.designsystem.letter
 
+import java.text.Normalizer
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 import tech.fonia.designsystem.motion.Motion
 import tech.fonia.designsystem.motion.Spring1D
 import tech.fonia.designsystem.tokens.FoniaLetterTokens as L
@@ -12,10 +16,6 @@ import tech.fonia.glyphs.GlyphOutline
 import tech.fonia.glyphs.OutlineOps
 import tech.fonia.glyphs.QuadOutline
 import tech.fonia.glyphs.VariationInterpolator
-import java.text.Normalizer
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sin
 
 /**
  * The brain of [LiveWord]: 2–50 letters on fixed slots (nothing jumps while a target inflates), target letters as
@@ -36,6 +36,7 @@ class LiveWordEngine(val font: AlloOutlines) {
     private var target = BooleanArray(0)
     private var outlines = emptyArray<GlyphOutline>()
     private var poses = emptyArray<LetterPose>()
+
     /** Slot left edge and width, font units at scale 1. */
     private var slotX = FloatArray(0)
     private var slotW = FloatArray(0)
@@ -64,9 +65,13 @@ class LiveWordEngine(val font: AlloOutlines) {
             // A letter at rest follows its base set at once (it does not wait for the first cue).
             val atBase = curSet == field
             field = value
-            if (atBase) { curSet = value; prevSet = value }
+            if (atBase) {
+                curSet = value
+                prevSet = value
+            }
         }
     var flatSet: StickerSet = FoniaSticker.FlatOnPaper
+
     /** The sets Correct and Almost switch to. */
     var verdicts: tech.fonia.designsystem.tokens.VerdictStickers = tech.fonia.designsystem.tokens.VerdictStickers.Default
     var prevSet: StickerSet = FoniaSticker.Voice
@@ -76,6 +81,7 @@ class LiveWordEngine(val font: AlloOutlines) {
     private var setChangedAt = -10f
     var setMix = 1f
         private set
+
     /** Per-letter weight for plain letters (karaoke, stress), mode B of §3.4; null = 300. */
     var weightAt: ((Int) -> Float)? = null
 
@@ -85,15 +91,24 @@ class LiveWordEngine(val font: AlloOutlines) {
         private set
 
     // results per frame
-    var inflation = 0.55f; private set
-    var targetWght = 576f; private set
-    var targetRond = 55f; private set
-    var targetScale = 1f; private set
-    var rimEm = 0.15f; private set
-    var edgeEm = 0.08f; private set
+    var inflation = 0.55f
+        private set
+    var targetWght = 576f
+        private set
+    var targetRond = 55f
+        private set
+    var targetScale = 1f
+        private set
+    var rimEm = 0.15f
+        private set
+    var edgeEm = 0.08f
+        private set
+
     /** Slot-drop pulse: index and 0–1 strength (drawn as a Sun blob in the slot). */
-    var pulseIndex = -1; private set
-    var pulse = 0f; private set
+    var pulseIndex = -1
+        private set
+    var pulse = 0f
+        private set
 
     // layout (pixels)
     var emPx = 100f
@@ -134,14 +149,17 @@ class LiveWordEngine(val font: AlloOutlines) {
             val g = glyph[i]
             if (prev >= 0) x += font.kerning(prev, g) * 0.6f
             val w = if (target[i]) (reservedVi.advance(g) + L.RIM_MAX_EM * 0.8f * upm) * TARGET_MAX_SCALE * 0.94f else viPlain.advance(g)
-            slotX[i] = x; slotW[i] = w
+            slotX[i] = x
+            slotW[i] = w
             x += w
             prev = g
         }
         width = x
     }
 
-    fun cue(c: LetterCue) { pending.addLast(c) }
+    fun cue(c: LetterCue) {
+        pending.addLast(c)
+    }
 
     val busy: Boolean get() {
         for (k in 0 until activeCount) {
@@ -151,22 +169,38 @@ class LiveWordEngine(val font: AlloOutlines) {
         return false
     }
 
-    val activeCueNames: String get() = buildString { for (k in 0 until activeCount) { if (k > 0) append(' '); append(active[k]?.name) } }
+    val activeCueNames: String get() = buildString {
+        for (k in 0 until activeCount) {
+            if (k > 0) append(' ')
+            append(active[k]?.name)
+        }
+    }
 
     fun idle(d: LetterDrive): Boolean = !busy && pending.isEmpty() && sInfl.settled && sLevel.settled && d.level < 0.01f &&
         !d.speaking && kotlin.math.abs(sInfl.target - d.inflation) < 1e-3f && setMix >= 1f && now - lastCueAt > 0.4f
     private var lastCueAt = 0f
 
     fun advance(frameNanos: Long, d: LetterDrive) {
-        if (startNanos == 0L) { startNanos = frameNanos; lastNanos = frameNanos }
+        if (startNanos == 0L) {
+            startNanos = frameNanos
+            lastNanos = frameNanos
+        }
         val dt = min((frameNanos - lastNanos) / 1e9f, 0.1f)
         lastNanos = frameNanos
         now = (frameNanos - startNanos) / 1e9f
-        while (pending.isNotEmpty()) { lastCueAt = now; start(pending.removeFirst()) }
+        while (pending.isNotEmpty()) {
+            lastCueAt = now
+            start(pending.removeFirst())
+        }
 
-        if (reduceMotion) { sInfl.snap(d.inflation); sLevel.snap(0f) } else {
-            sInfl.target = d.inflation.coerceIn(0f, 1f); sInfl.update(dt)
-            sLevel.target = d.level.coerceIn(0f, 1f); sLevel.update(dt)
+        if (reduceMotion) {
+            sInfl.snap(d.inflation)
+            sLevel.snap(0f)
+        } else {
+            sInfl.target = d.inflation.coerceIn(0f, 1f)
+            sInfl.update(dt)
+            sLevel.target = d.level.coerceIn(0f, 1f)
+            sLevel.update(dt)
         }
         inflation = sInfl.value
         targetWght = Motion.lerp(L.WGHT_MIN + 220f, L.WGHT_MAX, inflation)
@@ -178,7 +212,8 @@ class LiveWordEngine(val font: AlloOutlines) {
 
         // poses
         for (i in 0 until count) poses[i].reset()
-        pulseIndex = -1; pulse = 0f
+        pulseIndex = -1
+        pulse = 0f
         ctx.capEm = font.xHeight / upm
         var k = 0
         while (k < activeCount) {
@@ -186,7 +221,10 @@ class LiveWordEngine(val font: AlloOutlines) {
             val dur = CueMotion.duration(c)
             val t = now - started[k]
             val total = dur + STAGGER * count
-            if (t >= total && !CueMotion.holds(c)) { removeAt(k); continue }
+            if (t >= total && !CueMotion.holds(c)) {
+                removeAt(k)
+                continue
+            }
             applyToLetters(c, t)
             k++
         }
@@ -196,9 +234,13 @@ class LiveWordEngine(val font: AlloOutlines) {
         when (c) {
             LetterCue.DropIn -> for (i in 0 until count) {
                 val ti = if (reduceMotion) 10f else t - i * STAGGER
-                if (ti < 0f) { poses[i].alpha = 0f; continue }
+                if (ti < 0f) {
+                    poses[i].alpha = 0f
+                    continue
+                }
                 CueMotion.apply(c, min(ti, CueMotion.duration(c)), poses[i], ctx)
             }
+
             is LetterCue.SlotDrop -> {
                 val i = c.index.coerceIn(0, max(0, count - 1))
                 if (count == 0) return
@@ -209,9 +251,16 @@ class LiveWordEngine(val font: AlloOutlines) {
                 if (drop < 0f) poses[i].alpha = 0f else CueMotion.apply(LetterCue.DropIn, min(drop, 0.95f), poses[i], ctx)
                 // the neighbours feel the landing
                 val k = Motion.kick(drop - 0.34f, FoniaMotion.bounce)
-                if (i > 0) { poses[i - 1].sy *= 1f - 0.06f * k; poses[i - 1].rot -= 3f * k }
-                if (i < count - 1) { poses[i + 1].sy *= 1f - 0.06f * k; poses[i + 1].rot += 3f * k }
+                if (i > 0) {
+                    poses[i - 1].sy *= 1f - 0.06f * k
+                    poses[i - 1].rot -= 3f * k
+                }
+                if (i < count - 1) {
+                    poses[i + 1].sy *= 1f - 0.06f * k
+                    poses[i + 1].rot += 3f * k
+                }
             }
+
             is LetterCue.Syllable -> {
                 var n = 0
                 for (i in c.range) {
@@ -220,12 +269,16 @@ class LiveWordEngine(val font: AlloOutlines) {
                     n++
                     if (ti < 0f) continue
                     val s = if (c.stressed) 1.5f else 1f
-                    if (reduceMotion) { poses[i].wghtAdd += 150f * s; continue }
+                    if (reduceMotion) {
+                        poses[i].wghtAdd += 150f * s
+                        continue
+                    }
                     CueMotion.apply(LetterCue.Beat(s), min(ti, 0.36f), poses[i], ctx)
                     poses[i].badgeKind = if (ti < 0.33f) 9 else 0 // marks "Voice for the beat"
                     if (c.stressed) poses[i].scale *= 1f + 0.12f * Motion.step(ti, FoniaMotion.bounce)
                 }
             }
+
             LetterCue.Unsure -> {
                 var n = 0
                 for (i in 0 until count) {
@@ -240,6 +293,7 @@ class LiveWordEngine(val font: AlloOutlines) {
                     n++
                 }
             }
+
             else -> {
                 // everything else plays on the target letters, 40 ms apart
                 var n = 0
@@ -248,8 +302,11 @@ class LiveWordEngine(val font: AlloOutlines) {
                     val ti = if (reduceMotion && CueMotion.holds(c)) 100f else t - n * STAGGER
                     n++
                     if (ti < 0f) continue
-                    if (reduceMotion && !CueMotion.holds(c)) CueMotion.applyReduced(c, ti, poses[i])
-                    else CueMotion.apply(c, min(ti, CueMotion.duration(c)), poses[i], ctx)
+                    if (reduceMotion && !CueMotion.holds(c)) {
+                        CueMotion.applyReduced(c, ti, poses[i])
+                    } else {
+                        CueMotion.apply(c, min(ti, CueMotion.duration(c)), poses[i], ctx)
+                    }
                 }
             }
         }
@@ -258,13 +315,23 @@ class LiveWordEngine(val font: AlloOutlines) {
     private fun start(c: LetterCue) {
         if (c == LetterCue.Rest) {
             var k = 0
-            while (k < activeCount) { if (CueMotion.holds(active[k]!!)) removeAt(k) else k++ }
+            while (k < activeCount) {
+                if (CueMotion.holds(active[k]!!)) removeAt(k) else k++
+            }
             changeSet(null)
             return
         }
-        if (c is LetterCue.Instruct) { start(LetterCue.resolve(c.kind, firstTargetText(), c.heard)); return }
+        if (c is LetterCue.Instruct) {
+            start(LetterCue.resolve(c.kind, firstTargetText(), c.heard))
+            return
+        }
         if (c == LetterCue.Listen) return
-        if (CueMotion.exclusive(c)) { var k = 0; while (k < activeCount) { if (CueMotion.exclusive(active[k]!!)) removeAt(k) else k++ } }
+        if (CueMotion.exclusive(c)) {
+            var k = 0
+            while (k < activeCount) {
+                if (CueMotion.exclusive(active[k]!!)) removeAt(k) else k++
+            }
+        }
         when (c) {
             LetterCue.Correct -> changeSet(verdicts.correct)
             LetterCue.Almost -> changeSet(verdicts.almost)
@@ -285,11 +352,18 @@ class LiveWordEngine(val font: AlloOutlines) {
 
     private fun changeSet(v: StickerSet?) {
         val next = v ?: baseSet
-        if (next != curSet) { prevSet = if (setMix >= 0.5f) curSet else prevSet; curSet = next; setChangedAt = now }
+        if (next != curSet) {
+            prevSet = if (setMix >= 0.5f) curSet else prevSet
+            curSet = next
+            setChangedAt = now
+        }
     }
 
     private fun removeAt(k: Int) {
-        for (j in k until activeCount - 1) { active[j] = active[j + 1]; started[j] = started[j + 1] }
+        for (j in k until activeCount - 1) {
+            active[j] = active[j + 1]
+            started[j] = started[j + 1]
+        }
         activeCount--
         active[activeCount] = null
     }

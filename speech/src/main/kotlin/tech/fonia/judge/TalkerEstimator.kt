@@ -1,11 +1,11 @@
 package tech.fonia.judge
 
-import tech.fonia.live.Clip
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
+import tech.fonia.live.Clip
 
 /** One take's voice pitch, from several estimators, and the talker group it implies (null: no usable voice). */
 data class TalkerEstimate(
@@ -51,27 +51,38 @@ object TalkerEstimator {
         val frames = yinFrames(samples, sampleRate)
         val yinMedian = median(frames)
         // Fold frames an octave under the take's median up (creak, period doubling) and take the median again.
-        val folded = if (yinMedian.isNaN()) frames else FloatArray(frames.size) { i ->
-            val f = frames[i]
-            if (f / yinMedian in 0.42f..0.6f) f * 2f else f
+        val folded = if (yinMedian.isNaN()) {
+            frames
+        } else {
+            FloatArray(frames.size) { i ->
+                val f = frames[i]
+                if (f / yinMedian in 0.42f..0.6f) f * 2f else f
+            }
         }
         val yin = median(folded)
         val dsp = if (dspMedianHz.isNaN() || dspMedianHz < MIN_HZ || dspMedianHz > MAX_HZ) Float.NaN else dspMedianHz
         val (chosen, note) = when {
             yin.isNaN() && dsp.isNaN() -> Float.NaN to "none"
+
             yin.isNaN() -> dsp to "dspOnly"
+
             dsp.isNaN() -> yin to "yinOnly"
+
             abs(ln(dsp / yin)) <= ln(1.15f) -> kotlin.math.sqrt(dsp * yin) to "agree"
+
             dsp / yin in 0.42f..0.6f -> yin to "dspHalved"
+
             dsp / yin in 1.7f..2.4f -> yin to "dspDoubled"
+
             // Two octaves apart: one halved and the other doubled the same voice; the truth sits between.
             dsp / yin in 0.2f..0.3f || dsp / yin in 3.4f..5f -> kotlin.math.sqrt(dsp * yin) to "twoOctaves"
+
             else -> yin to "disagree"
         }
         val agree = if (chosen.isNaN() || folded.isEmpty()) 0f else folded.count { abs(ln(it / chosen)) <= ln(1.12f) }.toFloat() / folded.size
         return TalkerEstimate(
             f0Hz = chosen,
-            group = if (chosen.isNaN() || folded.size < MIN_FRAMES && dsp.isNaN()) null else TalkerVoice.groupOf(chosen),
+            group = if (chosen.isNaN() || (folded.size < MIN_FRAMES && dsp.isNaN())) null else TalkerVoice.groupOf(chosen),
             confidence = agree,
             voicedFrames = folded.size,
             estimators = mapOf("yin" to yinMedian, "yinCorrected" to yin, "dsp" to dsp),
@@ -121,7 +132,10 @@ object TalkerEstimator {
                 cm[tau] = if (running > 0) (d[tau] * tau / running).toFloat() else 1f
             }
             for (tau in minLag..maxLag) {
-                if (cm[tau] < best) { best = cm[tau]; bestLag = tau }
+                if (cm[tau] < best) {
+                    best = cm[tau]
+                    bestLag = tau
+                }
                 if (pick < 0 && cm[tau] < THRESHOLD) {
                     // Walk down to the bottom of this dip.
                     var t = tau
@@ -129,14 +143,24 @@ object TalkerEstimator {
                     pick = t
                 }
             }
-            val lag = if (pick > 0) pick else if (best < LOOSE) bestLag else -1
+            val lag = if (pick > 0) {
+                pick
+            } else if (best < LOOSE) {
+                bestLag
+            } else {
+                -1
+            }
             if (lag <= 0) continue
             // Parabolic refinement.
             val l = lag.toDouble() + if (lag in 2 until maxLag) {
-                val y0 = cm[lag - 1]; val y1 = cm[lag]; val y2 = cm[lag + 1]
+                val y0 = cm[lag - 1]
+                val y1 = cm[lag]
+                val y2 = cm[lag + 1]
                 val den = y0 - 2 * y1 + y2
                 if (den != 0f) (0.5 * (y0 - y2) / den).coerceIn(-0.5, 0.5) else 0.0
-            } else 0.0
+            } else {
+                0.0
+            }
             val f = (rate / l).toFloat()
             if (f in MIN_HZ..MAX_HZ) out += f
         }

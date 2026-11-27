@@ -16,10 +16,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,12 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.sqrt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,10 +52,10 @@ import tech.fonia.design.Field
 import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
+import tech.fonia.design.FoniaSfx
 import tech.fonia.design.FoniaText
 import tech.fonia.design.Palette
 import tech.fonia.design.SfxCue
-import tech.fonia.design.FoniaSfx
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
 import tech.fonia.design.UIWeight
@@ -68,9 +71,6 @@ import tech.fonia.judge.PersonalReference
 import tech.fonia.judge.TalkerEstimator
 import tech.fonia.judge.TalkerVoice
 import tech.fonia.store.Profile
-import kotlin.math.log10
-import kotlin.math.max
-import kotlin.math.sqrt
 
 /**
  * The numbers of the guided calibration ("Calibrare"): pure, so they are tested on the PC.
@@ -188,7 +188,10 @@ fun VoiceCalibrationScreen(profile: Profile, app: AppModel, onDone: () -> Unit) 
     BackHandler(enabled = !listening) { onDone() }
 
     FeedLetter(
-        letter, levels, listening = listening, modelVoice = false,
+        letter,
+        levels,
+        listening = listening,
+        modelVoice = false,
         placeBias = placeBias(group, app.voice.calibrated(profile.id)),
         aim = when (step) {
             CalStep.Sss -> LiveAim.Place(sharp = true)
@@ -273,7 +276,9 @@ fun VoiceCalibrationScreen(profile: Profile, app: AppModel, onDone: () -> Unit) 
                         Spacer(Modifier.height(20.dp))
                         FoniaText("Liniște", style = ui(40, UIWeight.black, TextRole.largeTitle), color = shownField.foreground)
                     }
+
                     CalStep.Result -> ResultView(result, profile)
+
                     else -> {
                         HeldLetter(shown.letter!!, letter, shown.field, height = 220.dp)
                         FoniaText(
@@ -336,8 +341,10 @@ private fun measure(app: AppModel, profile: Profile, takes: Map<CalStep, FloatAr
     app.voice.savePersonal(profile.id)
     // His voice counts at once for the live analysis' group (three observations move the tracker past its hysteresis).
     if (f0 != null) repeat(3) { app.talkers.observe(profile, f0) }
-    AudioHub.log("calibrare: floor=${"%.0f".format(floor)} speech=${"%.0f".format(speech)} f0=${f0?.let { "%.0f".format(it) } ?: "-"} " +
-        "anchors S=${sA.size} Ș=${shA.size} active=$active place S=${personal.room?.sPlace} Ș=${personal.room?.shPlace}")
+    AudioHub.log(
+        "calibrare: floor=${"%.0f".format(floor)} speech=${"%.0f".format(speech)} f0=${f0?.let { "%.0f".format(it) } ?: "-"} " +
+            "anchors S=${sA.size} Ș=${shA.size} active=$active place S=${personal.room?.sPlace} Ș=${personal.room?.shPlace}",
+    )
     return CalResult(personal.room ?: room, active, sA.size, shA.size)
 }
 
@@ -374,9 +381,11 @@ private fun ResultView(result: CalResult?, profile: Profile) {
     val shLink = rememberLetterLink(profile.id, "sh", result)
     LaunchedEffect(result) {
         if (result.active) {
-            sLink.correct(); shLink.correct()
+            sLink.correct()
+            shLink.correct()
         } else {
-            sLink.almost(); shLink.almost()
+            sLink.almost()
+            shLink.almost()
         }
     }
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {

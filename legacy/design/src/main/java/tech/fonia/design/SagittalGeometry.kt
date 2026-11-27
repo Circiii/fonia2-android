@@ -209,7 +209,14 @@ internal object SagittalAnatomy {
         CGPoint(207.6, 135.6), CGPoint(200.6, 134.8), CGPoint(201.6, 129.8), CGPoint(203.2, 124.8),
     )
     val lowerRoot = listOf(
-        CGPoint(207.6, 135.6), CGPoint(205.6, 144), CGPoint(203, 152), CGPoint(201, 157), CGPoint(198.8, 156), CGPoint(199, 148), CGPoint(199.8, 141), CGPoint(200.6, 134.8),
+        CGPoint(207.6, 135.6),
+        CGPoint(205.6, 144),
+        CGPoint(203, 152),
+        CGPoint(201, 157),
+        CGPoint(198.8, 156),
+        CGPoint(199, 148),
+        CGPoint(199.8, 141),
+        CGPoint(200.6, 134.8),
     )
     val lowerGum = listOf(CGPoint(201.5, 136.2), CGPoint(203, 132), CGPoint(207.2, 132.5), CGPoint(208, 137.5), CGPoint(205, 140), CGPoint(200, 139))
     val mandible = listOf(

@@ -1,8 +1,8 @@
 package tech.fonia.features.session
 
-import tech.fonia.domain.SoundDetector
 import kotlin.math.exp
 import kotlin.math.min
+import tech.fonia.domain.SoundDetector
 
 /**
  * "Something always happens": the pure rules behind what the practice
@@ -73,11 +73,13 @@ object HearRules {
                 }
             }
         }
+
         SoundDetector.Rhotic -> when {
             trill > 0.3f -> CREDIT_RIGHT
             trill > 0.12f -> CREDIT_NEAR
             else -> 0f
         }
+
         SoundDetector.None -> when {
             level > 0.3f -> CREDIT_RIGHT
             level > 0.12f -> CREDIT_NEAR

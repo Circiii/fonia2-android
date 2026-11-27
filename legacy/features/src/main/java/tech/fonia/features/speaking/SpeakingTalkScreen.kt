@@ -1,6 +1,5 @@
 package tech.fonia.features.speaking
 
-import tech.fonia.features.app.wordsTranscriber
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -34,6 +33,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import java.util.Locale
+import java.util.UUID
+import kotlin.math.max
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,8 +43,8 @@ import tech.fonia.audio.CapturedClip
 import tech.fonia.design.CTALabel
 import tech.fonia.design.Field
 import tech.fonia.design.FieldBackdrop
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.Foni
+import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniTone
 import tech.fonia.design.FoniaIcon
@@ -50,8 +52,8 @@ import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.Palette
-import tech.fonia.design.QuietButtonStyle
 import tech.fonia.design.PracticeSheet
+import tech.fonia.design.QuietButtonStyle
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
 import tech.fonia.design.ToolButtonStyle
@@ -68,22 +70,20 @@ import tech.fonia.domain.DictionLesson
 import tech.fonia.domain.Language
 import tech.fonia.domain.Plural
 import tech.fonia.domain.SpeechPrompt
-import tech.fonia.features.app.ActivityIndicator
 import tech.fonia.features.app.ActionRole
+import tech.fonia.features.app.ActivityIndicator
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.DialogAction
 import tech.fonia.features.app.FoniaConfirmationDialog
 import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.calibration
 import tech.fonia.features.app.dspGroup
+import tech.fonia.features.app.wordsTranscriber
 import tech.fonia.features.home.NextStep
 import tech.fonia.features.home.PathModel
 import tech.fonia.store.JSONValue
 import tech.fonia.store.Profile
 import tech.fonia.store.SpeechRecord
-import java.util.Locale
-import java.util.UUID
-import kotlin.math.max
 
 private enum class TalkPhase { Ready, Talking, Thinking, Feeling, Report }
 
@@ -285,7 +285,9 @@ internal fun TalkScreen(
         Crossfade(phase, Modifier.windowInsetsPadding(WindowInsets.systemBars), animationSpec = swiftSpring(0.34, 0.08), label = "talk") { shownPhase ->
             when (shownPhase) {
                 TalkPhase.Ready -> Ready(prompt, seconds, openingOnly, showsNervesTip, micOff, startFailed, onClose = { close() }, onStart = { app.scope.launch { start() } })
+
                 TalkPhase.Talking -> Talking(prompt, elapsed, app, onClose = { close() }) { app.scope.launch { stop() } }
+
                 TalkPhase.Thinking -> Column(Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 8.dp)) {
                     CloseBar { close() }
                     Spacer(Modifier.weight(1f))
@@ -295,6 +297,7 @@ internal fun TalkScreen(
                     }
                     Spacer(Modifier.weight(1f))
                 }
+
                 TalkPhase.Feeling -> FeelingStep(
                     onClose = { close() },
                     onSkip = {
@@ -307,6 +310,7 @@ internal fun TalkScreen(
                     phase = TalkPhase.Report
                     save()
                 }
+
                 TalkPhase.Report -> ReportView(
                     report = report,
                     previous = previous,
@@ -423,6 +427,7 @@ private fun NervesTip(showsInFull: Boolean) {
     var open by remember { mutableStateOf(false) }
     when {
         showsInFull -> FoniaText("Ai emoții? Spune-ți în gând „Abia aștept!”", style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center)
+
         open -> FoniaText(
             "Spune-ți în gând „Abia aștept!”",
             Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -430,6 +435,7 @@ private fun NervesTip(showsInFull: Boolean) {
             color = Palette.inkSoft,
             textAlign = TextAlign.Center,
         )
+
         else -> StyledButton(
             onClick = { open = true },
             style = MiniPillStyle(),

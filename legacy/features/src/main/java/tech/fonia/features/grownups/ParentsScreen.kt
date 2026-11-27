@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -28,6 +28,9 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import java.time.Instant
+import java.time.ZoneId
+import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import tech.fonia.design.FoniaIcon
@@ -52,14 +55,13 @@ import tech.fonia.domain.Rung
 import tech.fonia.domain.SoundDef
 import tech.fonia.features.app.AdultGateBody
 import tech.fonia.features.app.AppModel
-import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.ButtonRow
 import tech.fonia.features.app.FoniaSheet
 import tech.fonia.features.app.HeaderPage
 import tech.fonia.features.app.InsetGroupedList
-import tech.fonia.features.app.LocalDismiss
 import tech.fonia.features.app.ListRow
 import tech.fonia.features.app.ListSection
+import tech.fonia.features.app.LocalDismiss
 import tech.fonia.features.app.SystemColors
 import tech.fonia.features.app.ToggleRow
 import tech.fonia.features.app.ValueRow
@@ -67,11 +69,12 @@ import tech.fonia.features.app.at
 import tech.fonia.features.app.field
 import tech.fonia.features.app.index
 import tech.fonia.features.app.isChild
+import tech.fonia.features.app.needsAdultGate
 import tech.fonia.features.app.orderedSounds
-import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.app.progressionState
 import tech.fonia.features.app.shortLetter
 import tech.fonia.features.app.title
+import tech.fonia.features.guide.AdultCards
 import tech.fonia.features.home.DayActivity
 import tech.fonia.features.home.PathModel
 import tech.fonia.features.home.displayName
@@ -86,9 +89,6 @@ import tech.fonia.store.SoundAgreement
 import tech.fonia.store.SoundOutcomeCounts
 import tech.fonia.store.SoundProgress
 import tech.fonia.store.localDay
-import java.time.Instant
-import java.time.ZoneId
-import java.util.UUID
 
 /**
  * The adult's settings for the one who practises now (iOS `ParentsScreen`): how it's going, the notes, how the
@@ -342,19 +342,25 @@ fun NotesScreen(profileID: UUID, app: AppModel) {
             row {
                 ListRow(
                     Modifier.semantics { if (!canSave) disabled() },
-                    onClick = if (!canSave) null else ({
-                        val note = MoodlessNote(profileId = profileID, localDay = localDay(Instant.now()), text = newNote)
-                        newNote = ""
-                        app.scope.launch {
-                            try {
-                                app.repository.saveNote(note)
-                            } catch (cancelled: CancellationException) {
-                                throw cancelled
-                            } catch (_: Exception) {
+                    onClick = if (!canSave) {
+                        null
+                    } else {
+                        (
+                            {
+                                val note = MoodlessNote(profileId = profileID, localDay = localDay(Instant.now()), text = newNote)
+                                newNote = ""
+                                app.scope.launch {
+                                    try {
+                                        app.repository.saveNote(note)
+                                    } catch (cancelled: CancellationException) {
+                                        throw cancelled
+                                    } catch (_: Exception) {
+                                    }
+                                    notes = orEmpty { app.repository.notes(profileID) }
+                                }
                             }
-                            notes = orEmpty { app.repository.notes(profileID) }
-                        }
-                    }),
+                            )
+                    },
                 ) {
                     FoniaText("Salvează", color = if (canSave) Palette.accentText else SystemColors.tertiaryLabel)
                 }

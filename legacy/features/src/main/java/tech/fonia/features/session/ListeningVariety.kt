@@ -1,5 +1,6 @@
 package tech.fonia.features.session
 
+import kotlin.random.Random
 import tech.fonia.domain.ChoosePrompt
 import tech.fonia.domain.Exercise
 import tech.fonia.domain.FoniaContent
@@ -9,7 +10,6 @@ import tech.fonia.domain.SessionBlock
 import tech.fonia.domain.SessionFocus
 import tech.fonia.domain.SoundID
 import tech.fonia.domain.WordItem
-import kotlin.random.Random
 
 /**
  * New listening items on every run, so what he hears does not repeat each time.

@@ -1,8 +1,15 @@
 package tech.fonia.judge
 
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.Locale
+import kotlin.math.exp
+import kotlin.math.sqrt
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import tech.fonia.live.Clip
@@ -12,13 +19,6 @@ import tech.fonia.phones.Posteriors
 import tech.fonia.phones.TargetSound
 import tech.fonia.phones.ZipaModel
 import tech.fonia.phones.ZipaPhoneScorer
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.Locale
-import kotlin.math.exp
-import kotlin.math.sqrt
 
 /**
  * OPT-IN evaluation v2 (`tools/eval/`): judges every line of `tools/eval/out/manifest.jsonl` (built by
@@ -64,8 +64,17 @@ class EvalV2Runner {
 
     /** One judged take, kept for the fits: the measurement and the phone evidence. */
     class Item(
-        val id: String, val row: JsonObject, val voice: String, val group: String, val expected: String, val role: String,
-        val context: String, val measured: Measured, val phones: PhoneEvidence?, val pcm: FloatArray, val rate: Double,
+        val id: String,
+        val row: JsonObject,
+        val voice: String,
+        val group: String,
+        val expected: String,
+        val role: String,
+        val context: String,
+        val measured: Measured,
+        val phones: PhoneEvidence?,
+        val pcm: FloatArray,
+        val rate: Double,
         val talkerF0: Float,
     ) {
         val sound: SoundId get() = measured.request.sound
@@ -100,7 +109,10 @@ class EvalV2Runner {
     private fun cat(vararg parts: FloatArray): FloatArray {
         val out = FloatArray(parts.sumOf { it.size })
         var o = 0
-        for (p in parts) { p.copyInto(out, o); o += p.size }
+        for (p in parts) {
+            p.copyInto(out, o)
+            o += p.size
+        }
         return out
     }
 
@@ -191,8 +203,10 @@ class EvalV2Runner {
             val measured = detector.measure(request, clip)
             val ph = if (measured.gate == null) phones(file, pcm, rate, request) else null
             val id = str(row, "id")
-            items += Item(id, row, voice, str(row, "group"), str(row, "expected"), str(row, "role"), str(row, "context"),
-                measured, ph, pcm, rate, f0)
+            items += Item(
+                id, row, voice, str(row, "group"), str(row, "expected"), str(row, "role"), str(row, "context"),
+                measured, ph, pcm, rate, f0,
+            )
             // Runner-made edits of S/Ș words: cut, −24 dB, a burst for the frication.
             if (row["edits"]?.jsonPrimitive?.booleanOrNull == true && str(row, "expected") == "correct") {
                 val seg = detector.decide(measured).evidence.segments.firstOrNull() ?: continue
@@ -224,11 +238,13 @@ class EvalV2Runner {
         label(judge.decide(item.measured, if (full) item.phones else null))
 
     private fun writeCases(file: File) {
-        val header = listOf("id", "voice", "group", "sound", "text", "said", "level", "position", "context", "role", "expected",
+        val header = listOf(
+            "id", "voice", "group", "sound", "text", "said", "level", "position", "context", "role", "expected",
             "talker", "talkerF0", "dspF0", "fast", "full", "head", "fastShipped", "fullShipped", "pFast", "pFull", "topFast", "topFull",
             "sNess", "toward", "m1Hz", "fricDurMs", "voicing", "rTap", "dipDb", "lprTop", "zipaReliable", "notes", "centroidHz", "peakHz",
             "zipaFit", "zipaGop", "relLevelDb", "gapMs", "burstDb", "lpr", "stopOnset", "onsetAttackDb", "onsetSpikeDb", "voiceLeadMs",
-            "riseMs", "wordFinal")
+            "riseMs", "wordFinal",
+        )
         val lines = ArrayList<String>()
         lines += header.joinToString(",")
         fun f(v: Float?) = if (v == null || v.isNaN()) "" else String.format(Locale.ROOT, "%.3f", v)
@@ -240,7 +256,8 @@ class EvalV2Runner {
             val sf = shipped.decide(m, it.phones)
             val feats = full.evidence.features
             val lprTop = it.phones?.lpr?.entries?.minByOrNull { e -> e.value }?.let { e -> "${e.key}:${"%.1f".format(Locale.ROOT, e.value)}" } ?: ""
-            lines += listOf(it.id, it.voice, it.group, it.sound.raw, m.request.text, str(it.row, "said"), m.request.level.raw,
+            lines += listOf(
+                it.id, it.voice, it.group, it.sound.raw, m.request.text, str(it.row, "said"), m.request.level.raw,
                 m.request.position.raw, it.context, it.role, it.expected, m.request.talker.raw, f(it.talkerF0), f(m.global[Features.F0]),
                 label(d), label(full), full.head.raw, label(s), label(sf), f(d.probabilities["correct"]), f(full.probabilities["correct"]),
                 d.topError?.raw ?: "", full.topError?.raw ?: "",

@@ -1,14 +1,7 @@
 package tech.fonia.features.guide
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.semantics.Role
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -24,9 +17,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,10 +40,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -58,11 +55,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -70,19 +68,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tech.fonia.design.CelebrationBurst
 import tech.fonia.design.FacePatch
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.Foni
+import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaIconView
 import tech.fonia.design.FoniaText
-import tech.fonia.design.TiedText
 import tech.fonia.design.LocalReduceMotion
 import tech.fonia.design.MiniPillStyle
 import tech.fonia.design.MouthView
@@ -92,6 +91,7 @@ import tech.fonia.design.SagittalPose
 import tech.fonia.design.SagittalView
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
+import tech.fonia.design.TiedText
 import tech.fonia.design.UIWeight
 import tech.fonia.design.VoiceBars
 import tech.fonia.design.fBody
@@ -123,7 +123,6 @@ import tech.fonia.face.FaceSource
 import tech.fonia.face.FaceSourceError
 import tech.fonia.facecamera.CameraFaceSource
 import tech.fonia.facecamera.MouthTracker
-import tech.fonia.model.SoundId
 import tech.fonia.features.app.ActivityIndicator
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.FaceCamera
@@ -142,6 +141,7 @@ import tech.fonia.features.session.TakeJudge
 import tech.fonia.features.session.TakeVerdict
 import tech.fonia.features.session.VerdictWriter
 import tech.fonia.features.session.softenedForChild
+import tech.fonia.model.SoundId
 import tech.fonia.store.Profile
 
 private sealed interface MicState {
@@ -196,6 +196,7 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
     val insideAvailable = target != null && mouthData?.insideAvailable(target) == true
 
     val step: CoachStep? = plan.steps.getOrNull(index)
+
     /** The one syllable try that may be running on the last page. */
     var syllableTry by remember { mutableStateOf<kotlinx.coroutines.Job?>(null) }
     val pageScope = rememberCoroutineScope()
@@ -225,10 +226,12 @@ fun MouthCoach(plan: CoachPlan, profile: Profile, app: AppModel) {
                 val judge = TakeJudge(app.content, profile.dspGroup, profile.calibration, transcriber = null, thresholds = thresholds)
                 judge.judge(Exercise.Repeat(RepeatPrompt(text = spoken, language = Language.Ro, sound = way.sound, level = RepeatPrompt.Level.Syllable)), clip)
             }
+
             CoachEar.Way.Voice -> {
                 val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration, thresholds)
                 CoachEar.voice(heard = heardSpeech(summary, thresholds), voicedSeconds = voicedSeconds(summary, thresholds), needed = needed)
             }
+
             CoachEar.Way.Unjudged -> {
                 val summary = TakeJudge.summarise(clip, profile.dspGroup, profile.calibration, thresholds)
                 CoachEar.unjudged(heard = heardSpeech(summary, thresholds))
@@ -420,7 +423,13 @@ private fun Progress(count: Int, index: Int, isDone: Boolean) {
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         for (position in 0 until count) {
-            val color = if (position < index || isDone) Palette.progress else if (position == index) Palette.accent else Palette.progressTrack
+            val color = if (position < index || isDone) {
+                Palette.progress
+            } else if (position == index) {
+                Palette.accent
+            } else {
+                Palette.progressTrack
+            }
             Box(Modifier.weight(1f).height(6.dp).background(color, RoundedCornerShape(50)))
         }
     }
@@ -559,7 +568,11 @@ private fun CallSelfPane(
                     .align(Alignment.CenterStart)
                     .padding(start = 12.dp)
                     .size(96.dp)
-                    .graphicsLayer { scaleX = cheer; scaleY = cheer; alpha = cheer.coerceIn(0f, 1f) },
+                    .graphicsLayer {
+                        scaleX = cheer
+                        scaleY = cheer
+                        alpha = cheer.coerceIn(0f, 1f)
+                    },
                 mood = FoniMood.happy,
             )
         }
@@ -655,6 +668,7 @@ private fun MicStatus(state: MicState, app: AppModel) {
     val still = LocalStillMeters.current
     when (state) {
         MicState.Idle -> Unit
+
         MicState.Listening -> Row(
             Modifier
                 .heightIn(min = 52.dp)
@@ -667,7 +681,9 @@ private fun MicStatus(state: MicState, app: AppModel) {
             FoniaText("Acum tu", style = fButton, color = Palette.ink, maxLines = 1)
             VoiceBars(isLive = !still, color = Palette.accent, level = { live.level }, modifier = Modifier.weight(1f, fill = false).widthIn(min = 120.dp).height(26.dp))
         }
+
         MicState.Thinking -> ActivityIndicator()
+
         is MicState.Heard -> Column(verticalArrangement = Arrangement.spacedBy(2.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             FoniaText(state.title, style = fHeadline, color = Palette.ink, textAlign = TextAlign.Center)
             state.tip?.let { TiedText(it, style = fBody, color = Palette.inkSoft, textAlign = TextAlign.Center) }
@@ -728,6 +744,7 @@ fun MouthDiagram(diagram: CoachDiagram, modifier: Modifier = Modifier) {
             FacePatch(Modifier.matchParentSize())
             MouthView(shown.mouth.shape, Modifier.fillMaxSize(), isLive = false, zoom = 1.5)
         }
+
         CoachDiagram.View.Side -> Box(
             modifier
                 .background(Color.hex(0xFFF4E4))

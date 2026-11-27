@@ -60,14 +60,20 @@ class TakeJudge(
         // P0: capture problems outrank everything; a bad take is not a pronunciation error.
         val captureGate = when {
             q.isClipped -> RetakeReason.Clipped
+
             // Flat but loud is noise, flat and faint is nothing; only a faint voice with some range is "too quiet".
             q.isTooQuiet && q.dynamicRangeDb < dspThresholds.capture.minDynamicRangeDb && q.speechRmsDb > cap.noisyRmsDb ->
                 RetakeReason.Noisy
+
             q.isTooQuiet && q.dynamicRangeDb < dspThresholds.capture.minDynamicRangeDb -> RetakeReason.NoSpeech
+
             q.isTooQuiet -> RetakeReason.TooQuiet
+
             q.isTooShort ->
                 if (summary.peakDb - summary.floorDb > dspThresholds.capture.minDynamicRangeDb) RetakeReason.TooShort else RetakeReason.NoSpeech
+
             !heardSpeech(summary, dspThresholds) -> RetakeReason.NoSpeech
+
             else -> null
         }
         if (captureGate != null) return gated(captureGate, baseReport)
@@ -96,6 +102,7 @@ class TakeJudge(
         val (occurrences, outcome) = when (family) {
             Family.Sibilant, Family.Affricate ->
                 measurer.sibilants(request, clip.samples, clip.sampleRate, summary, env, notes, blocked)
+
             Family.Rhotic, Family.Lateral ->
                 measurer.rhotic(request, clip.samples, clip.sampleRate, summary, env, notes, blocked)
         }
@@ -155,8 +162,12 @@ class TakeJudge(
         val versions = spec.versions(request.sound)
         val micros = LinkedHashMap(measured.micros)
         fun evidence(features: Map<String, Float>) = JudgeEvidence(
-            features = features, outcome = measured.outcome, capture = measured.capture,
-            segments = measured.occurrences.mapNotNull { it.segment }, blockedKinds = measured.blocked, notes = measured.notes,
+            features = features,
+            outcome = measured.outcome,
+            capture = measured.capture,
+            segments = measured.occurrences.mapNotNull { it.segment },
+            blockedKinds = measured.blocked,
+            notes = measured.notes,
         )
         fun retake(reason: RetakeReason, features: Map<String, Float>) =
             TakeResult(Verdict.Retake, 1f, reason, Head.Gate, evidence = evidence(features), versions = versions, micros = micros)
@@ -180,10 +191,14 @@ class TakeJudge(
         // The full head needs a reliable alignment; an unreliable one is kept in the trace but the fast head decides.
         val useFull = phones != null && phones.reliable && phones.lpr.isNotEmpty() && "full" in fusion.heads
         val which = if (useFull) Head.Full else Head.Fast
-        val zipa: Map<String, Float> = if (phones == null) emptyMap() else buildMap {
-            for ((k, v) in phones.lpr) put(Features.LPR_PREFIX + k, v)
-            phones.gop?.let { put(Features.ZIPA_GOP, it) }
-            phones.fitPerLabel?.let { put(Features.ZIPA_FIT, it) }
+        val zipa: Map<String, Float> = if (phones == null) {
+            emptyMap()
+        } else {
+            buildMap {
+                for ((k, v) in phones.lpr) put(Features.LPR_PREFIX + k, v)
+                phones.gop?.let { put(Features.ZIPA_GOP, it) }
+                phones.fitPerLabel?.let { put(Features.ZIPA_FIT, it) }
+            }
         }
         val notes = ArrayList(measured.notes)
         if (phones != null && !useFull) notes += if (phones.reliable) "noFullHead" else "phonesUnreliable"
@@ -193,7 +208,9 @@ class TakeJudge(
         val dspSegments = measured.occurrences.mapNotNull { it.segment }
         if (useFull && span != null && dspSegments.isNotEmpty() &&
             dspSegments.none { it.first - 0.06 <= span.second && span.first <= it.second + 0.06 }
-        ) notes += "zipaDspApart"
+        ) {
+            notes += "zipaDspApart"
+        }
         val blocked = if (useFull) measured.blocked - measured.pending else measured.blocked
         val v2 = spec.population.judge2
         // Several occurrences (sentences): the one least likely correct speaks for the take. v2 bursts ("ț-ț-ț"): the
@@ -208,7 +225,9 @@ class TakeJudge(
         val (features, probs) = if (burst && found.size >= v2.burst.minFound) {
             notes += "burst:${found.size}/${scored.size}"
             found.sortedBy { it.second.correct }[found.size / 2]
-        } else scored.minBy { it.second.correct }
+        } else {
+            scored.minBy { it.second.correct }
+        }
         val fastCorrect = if (which == Head.Fast) probs.correct else head.probabilities(features, Head.Fast.raw)[0]
         var decision = DecisionPolicy.decide(probs, which, request.sound, unlock, runtime, blocked, measured.capture)
         // v2 praise: both heads lean correct and the phoneme model's best candidate is the target itself. With an opt-in
@@ -264,8 +283,16 @@ class TakeJudge(
             micros = micros,
             sound = request.sound,
             fastCorrect = fastCorrect,
-            visual = TakeVisuals.of(request, features, decision.verdict, decision.topError, decision.topErrorProbability, probs.correct,
-                v2.visual, request.reference),
+            visual = TakeVisuals.of(
+                request,
+                features,
+                decision.verdict,
+                decision.topError,
+                decision.topErrorProbability,
+                probs.correct,
+                v2.visual,
+                request.reference,
+            ),
             talker = request.talker,
         )
     }
@@ -316,7 +343,11 @@ class TakeJudge(
 
     /** [FinalLThresholds.mask]: the glide candidates of a weak word-final glide are masked before the head. */
     private fun maskFinalGlide(
-        features: Map<String, Float>, request: JudgeRequest, fusion: FusionSpec, phones: PhoneEvidence?, v2: Judge2Thresholds,
+        features: Map<String, Float>,
+        request: JudgeRequest,
+        fusion: FusionSpec,
+        phones: PhoneEvidence?,
+        v2: Judge2Thresholds,
     ): Map<String, Float> {
         if (!v2.finalL.mask || !weakFinalGlide(features, request, phones, v2)) return features
         val glides = fusion.phoneMap.filterKeys { FusionSpec.kindOf(it) == ErrorKind.LtoGlide }.values.flatMap { listOf(it) + it.split('+') }
@@ -351,7 +382,11 @@ class TakeJudge(
     private fun withContext(features: Map<String, Float>, request: JudgeRequest, v2: Judge2Thresholds): Map<String, Float> {
         if (v2.contextShift.isEmpty()) return features
         val place = traits(request.sound).place ?: return features
-        val ctx = when (features[Features.FRONT_CONTEXT]) { 1f -> "i"; 2f -> "e"; else -> return features }
+        val ctx = when (features[Features.FRONT_CONTEXT]) {
+            1f -> "i"
+            2f -> "e"
+            else -> return features
+        }
         val shift = v2.contextShift["${if (place == SibilantPlace.S) "s" else "ș"}:$ctx"] ?: return features
         val s = features[Features.S_NESS] ?: return features
         val t = features[Features.TOWARD] ?: Float.NaN

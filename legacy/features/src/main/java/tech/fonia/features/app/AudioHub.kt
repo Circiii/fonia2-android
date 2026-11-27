@@ -2,9 +2,9 @@ package tech.fonia.features.app
 
 import android.content.res.AssetManager
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import tech.fonia.audio.CaptureInfo
@@ -17,7 +17,6 @@ import tech.fonia.audio.SpeechGate
 import tech.fonia.audio.TakeEnd
 import tech.fonia.design.FoniaSfx
 import tech.fonia.design.SfxCue
-import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.domain.Language
 import tech.fonia.domain.Voice
 import tech.fonia.domain.VoiceIndex
@@ -26,6 +25,7 @@ import tech.fonia.dsp.LiveAnalyzer
 import tech.fonia.dsp.LiveFrame
 import tech.fonia.dsp.TalkerCalibration
 import tech.fonia.dsp.VoiceGroup
+import tech.fonia.features.IS_DEBUG_BUILD
 import tech.fonia.judge.TalkerVoice
 
 /**
@@ -91,12 +91,12 @@ class TakeStats(val sampleRate: Double, val source: String) {
     }
 }
 
-/** Feeds the DSP from the capture thread. One instance per take, so nothing is shared across threads. */
 /** A listener on the capture: the samples of one hop and the live analyser's reading after it. Audio thread; keep nothing. */
 fun interface HopTap {
     fun hop(samples: FloatArray, offset: Int, count: Int, frame: LiveFrame)
 }
 
+/** Feeds the DSP from the capture thread. One instance per take, so nothing is shared across threads. */
 private class AnalyzerProcessor(
     sampleRate: Double,
     group: VoiceGroup,
@@ -432,7 +432,14 @@ class AudioHub(
                 )
                 val own = tap?.invoke(rate)
                 val spotTap = spot.tap(rate)
-                val both = if (own != null && spotTap != null) HopTap { s, o, c, f -> own.hop(s, o, c, f); spotTap.hop(s, o, c, f) } else own ?: spotTap
+                val both = if (own != null && spotTap != null) {
+                    HopTap { s, o, c, f ->
+                        own.hop(s, o, c, f)
+                        spotTap.hop(s, o, c, f)
+                    }
+                } else {
+                    own ?: spotTap
+                }
                 AnalyzerProcessor(rate, group, calibration, live(thresholds, room), gate, stats, both)
             }
         } catch (e: Exception) {

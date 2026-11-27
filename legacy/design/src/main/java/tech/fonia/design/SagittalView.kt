@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import kotlinx.coroutines.delay
 import kotlin.math.max
 import kotlin.math.min
+import kotlinx.coroutines.delay
 
 internal object SagittalInk {
     val lipUpper = Color.hex(0xD9566F)
@@ -89,42 +89,58 @@ data class SagittalPose(
         val s = SagittalPose(jaw = 0.08, round = -0.4, lips = 5.0, tongue = Tongue.groove, air = SagittalAir.cold)
         val z = SagittalPose(jaw = 0.08, round = -0.4, lips = 5.0, tongue = Tongue.groove, air = SagittalAir.cold, voiced = true)
         val ts = SagittalPose(
-            jaw = 0.08, round = -0.4, lips = 5.0,
+            jaw = 0.08,
+            round = -0.4,
+            lips = 5.0,
             tongue = Tongue(CGPoint(198.6, 103.4), CGPoint(190, 99), CGPoint(171, 92), CGPoint(140, 89), CGPoint(105, 96), CGPoint(79, 123), CGPoint(192, 116)),
-            air = SagittalAir.cold, stop = true, release = "s",
+            air = SagittalAir.cold,
+            stop = true,
+            release = "s",
         )
         val sh = SagittalPose(jaw = 0.14, round = 1.0, lips = 7.0, tongue = Tongue.cup, air = SagittalAir.warm)
         val zh = SagittalPose(jaw = 0.14, round = 1.0, lips = 7.0, tongue = Tongue.cup, air = SagittalAir.warm, voiced = true)
         val ce = SagittalPose(jaw = 0.12, round = 0.7, lips = 6.0, tongue = Tongue.press, air = SagittalAir.warm, stop = true, release = "ș")
         val ge = SagittalPose(jaw = 0.12, round = 0.7, lips = 6.0, tongue = Tongue.press, air = SagittalAir.warm, voiced = true, stop = true, release = "j")
         val r = SagittalPose(
-            jaw = 0.3, lips = 9.0,
+            jaw = 0.3,
+            lips = 9.0,
             tongue = Tongue(CGPoint(195, 100.8), CGPoint(183, 111), CGPoint(161, 112), CGPoint(130, 104), CGPoint(101, 100), CGPoint(79, 125), CGPoint(187, 120)),
-            air = SagittalAir.cold, voiced = true, vibrate = true, exit = CGPoint(204, 118),
+            air = SagittalAir.cold,
+            voiced = true,
+            vibrate = true,
+            exit = CGPoint(204, 118),
         )
         val l = SagittalPose(
-            jaw = 0.3, lips = 9.0,
+            jaw = 0.3,
+            lips = 9.0,
             tongue = Tongue(CGPoint(198, 102.6), CGPoint(187, 102), CGPoint(166, 106.5), CGPoint(134, 102), CGPoint(103, 103), CGPoint(79, 125), CGPoint(191, 117.5)),
-            voiced = true, exit = CGPoint(205, 121), lateral = true,
+            voiced = true,
+            exit = CGPoint(205, 121),
+            lateral = true,
         )
 
         // Tip sealed on the ridge with the body held higher than for L, so the air has nowhere to go until it lets go.
         val t = SagittalPose(
-            jaw = 0.14, lips = 6.0,
+            jaw = 0.14,
+            lips = 6.0,
             tongue = Tongue(CGPoint(198.4, 103.2), CGPoint(189, 99.5), CGPoint(170, 95), CGPoint(140, 92), CGPoint(105, 98), CGPoint(79, 124), CGPoint(191, 116.5)),
-            air = SagittalAir.cold, stop = true,
+            air = SagittalAir.cold,
+            stop = true,
         )
 
         // Contact only where the back of the tongue meets the soft palate; the front stays low.
         val k = SagittalPose(
-            jaw = 0.24, lips = 8.0,
+            jaw = 0.24,
+            lips = 8.0,
             tongue = Tongue(CGPoint(198, 136), CGPoint(185, 123), CGPoint(158, 110), CGPoint(124, 93), CGPoint(92, 80.5), CGPoint(74, 117), CGPoint(190, 143)),
         )
         val g = SagittalPose(jaw = 0.24, lips = 8.0, tongue = k.tongue, voiced = true)
         val th = SagittalPose(
-            jaw = 0.12, lips = 8.0,
+            jaw = 0.12,
+            lips = 8.0,
             tongue = Tongue(CGPoint(216, 125.5), CGPoint(203, 120), CGPoint(178, 109), CGPoint(142, 99), CGPoint(105, 101), CGPoint(79, 125), CGPoint(205, 131)),
-            air = SagittalAir.cold, exit = CGPoint(214, 122),
+            air = SagittalAir.cold,
+            exit = CGPoint(214, 122),
         )
         val f = SagittalPose(jaw = 0.08, lips = 0.0, air = SagittalAir.cold, lipBite = true, exit = CGPoint(214, 125.5))
         val v = SagittalPose(jaw = 0.08, lips = 0.0, air = SagittalAir.cold, voiced = true, lipBite = true, exit = CGPoint(214, 125.5))

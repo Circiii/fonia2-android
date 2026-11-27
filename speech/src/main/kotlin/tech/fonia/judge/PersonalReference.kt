@@ -194,13 +194,16 @@ class PersonalReference(
         room = room?.copy(sPlace = sPlace.takeIf { !it.isNaN() }, shPlace = shPlace.takeIf { !it.isNaN() })
     }
 
-    fun toJson(): String = JudgeSpec.json.encodeToString(State.serializer(), State(
-        anchors = calibration.anchors.map { AnchorJson(it.place.rawValue, it.centroidHz, it.peakHz, it.bandRatioDb, it.tiltDb) },
-        f0Hz = f0.toList(),
-        sounds = stats.values.toList(),
-        takes = takes,
-        room = room,
-    ))
+    fun toJson(): String = JudgeSpec.json.encodeToString(
+        State.serializer(),
+        State(
+            anchors = calibration.anchors.map { AnchorJson(it.place.rawValue, it.centroidHz, it.peakHz, it.bandRatioDb, it.tiltDb) },
+            f0Hz = f0.toList(),
+            sounds = stats.values.toList(),
+            takes = takes,
+            room = room,
+        ),
+    )
 
     private fun push(list: MutableList<Float>, value: Float) {
         list.add(value)

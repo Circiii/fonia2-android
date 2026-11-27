@@ -161,11 +161,13 @@ object FoniaSfx {
                 sink.play(sound, rate, d.replacesLast)
                 sound.haptic?.let { h -> haptics?.invoke(h) }
             }
+
             is SfxGate.Decision.Defer -> {
                 log(d.describe(sound))
                 val later = scheduler
                 if (later == null) log("drop ${sound.name} reason=no-scheduler") else later(d.delayMs) { request(sound, step) }
             }
+
             is SfxGate.Decision.Drop -> log(d.describe(sound))
         }
     }
@@ -173,21 +175,37 @@ object FoniaSfx {
     private fun soundOf(cue: SfxCue): SfxSound = when (cue) {
         // Round robin, so two taps never sound identical.
         SfxCue.Tap -> taps[tap++ % taps.size]
+
         SfxCue.Card -> SfxSound.Card
+
         SfxCue.NavForward -> SfxSound.NavForward
+
         SfxCue.NavBack -> SfxSound.NavBack
+
         SfxCue.TakeStart -> SfxSound.MicOpen
+
         SfxCue.TakeGood -> SfxSound.Good
+
         SfxCue.TakeAlmost -> SfxSound.Almost
+
         SfxCue.Retake -> SfxSound.Retake
+
         SfxCue.HoldTick -> SfxSound.HoldTick
+
         SfxCue.Pop -> SfxSound.Pop
+
         SfxCue.Star -> SfxSound.Star
+
         SfxCue.BlockDone -> SfxSound.LevelUp
+
         SfxCue.SessionEnd -> SfxSound.SessionEnd
+
         SfxCue.Unlock -> SfxSound.Unlock
+
         SfxCue.MirrorMatch -> SfxSound.MirrorMatch
+
         SfxCue.GuideStep -> SfxSound.GuideStep
+
         SfxCue.FoniChirp -> fonis[foni++ % fonis.size]
     }
 }

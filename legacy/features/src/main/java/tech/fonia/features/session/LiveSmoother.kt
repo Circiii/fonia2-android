@@ -26,25 +26,20 @@ sealed interface LiveAim {
     companion object {
         fun of(id: tech.fonia.domain.SoundID?): LiveAim = when (id) {
             null -> None
+
             // No voice condition live: between vowels the analyser's voiced flag is set for S as often as for Z
             // (measured on the evaluation clips, tools/eval/out/live_raw.tsv), so the pairs S/Z and Ș/J light alike.
             tech.fonia.domain.SoundID.S, tech.fonia.domain.SoundID.Ts, tech.fonia.domain.SoundID.Z -> Place(sharp = true)
+
             tech.fonia.domain.SoundID.Sh, tech.fonia.domain.SoundID.Ce, tech.fonia.domain.SoundID.J, tech.fonia.domain.SoundID.Ge -> Place(sharp = false)
+
             tech.fonia.domain.SoundID.R -> Trill
+
             tech.fonia.domain.SoundID.L -> Voice
         }
     }
 }
 
-/**
- * The calm side of the live chain, so nothing moves too fast or trembles: every raw
- * 10 ms value is smoothed with a time constant (attack ~70 ms, release ~320 ms, from [Pacing]), changes under a dead
- * zone are ignored, the S ↔ Ș place is held for a moment after the hiss stops instead of jumping back to "none", and
- * "target heard" has hysteresis, so the letter lights after ~120 ms of the right sound and does not flicker.
- *
- * Pure: one instance per screen, stepped once per drawn frame with the real frame time, so a 120 Hz phone moves exactly
- * as fast as a 60 Hz one.
- */
 /** A hiss flatter than this is a noise, not a sibilant (see [AimRules.flatMax]). */
 const val HISS_FLAT_MAX = 0.55f
 
@@ -72,6 +67,15 @@ data class AimRules(
     val flatMax: Float = HISS_FLAT_MAX,
 )
 
+/**
+ * The calm side of the live chain, so nothing moves too fast or trembles: every raw
+ * 10 ms value is smoothed with a time constant (attack ~70 ms, release ~320 ms, from [Pacing]), changes under a dead
+ * zone are ignored, the S ↔ Ș place is held for a moment after the hiss stops instead of jumping back to "none", and
+ * "target heard" has hysteresis, so the letter lights after ~120 ms of the right sound and does not flicker.
+ *
+ * Pure: one instance per screen, stepped once per drawn frame with the real frame time, so a 120 Hz phone moves exactly
+ * as fast as a 60 Hz one.
+ */
 class LiveSmoother(private val pacing: Pacing = Pacing.current, private val rules: AimRules = AimRules()) {
     /** Loudness envelope 0..1 above the room (what "Te aud" and the letter's size read). */
     var level = 0f
@@ -112,8 +116,21 @@ class LiveSmoother(private val pacing: Pacing = Pacing.current, private val rule
     private var offFor = 0f
 
     fun reset() {
-        level = 0f; voicing = 0f; fricative = 0f; trill = 0f; blow = 0f; place = Float.NaN; hit = false; glow = 0f; hissVoiced = 0f; flat = 0f
-        levelTarget = 0f; placeTarget = Float.NaN; sinceHiss = Float.POSITIVE_INFINITY; onFor = 0f; offFor = 0f
+        level = 0f
+        voicing = 0f
+        fricative = 0f
+        trill = 0f
+        blow = 0f
+        place = Float.NaN
+        hit = false
+        glow = 0f
+        hissVoiced = 0f
+        flat = 0f
+        levelTarget = 0f
+        placeTarget = Float.NaN
+        sinceHiss = Float.POSITIVE_INFINITY
+        onFor = 0f
+        offFor = 0f
     }
 
     /**
@@ -147,8 +164,11 @@ class LiveSmoother(private val pacing: Pacing = Pacing.current, private val rule
         blow = follow(blow, rawBlow.coerceIn(0f, 1f), dt, pacing.liveAttackMs, pacing.liveReleaseMs)
 
         if (isFricative && !sNess.isNaN()) {
-            hissVoiced = if (sinceHiss * 1000f > pacing.placeHoldMs) (if (fricativeVoiced) 1f else 0f)
-                else follow(hissVoiced, if (fricativeVoiced) 1f else 0f, dt, VOICED_MS, VOICED_MS)
+            hissVoiced = if (sinceHiss * 1000f > pacing.placeHoldMs) {
+                (if (fricativeVoiced) 1f else 0f)
+            } else {
+                follow(hissVoiced, if (fricativeVoiced) 1f else 0f, dt, VOICED_MS, VOICED_MS)
+            }
             flat = if (sinceHiss * 1000f > pacing.placeHoldMs) hissFlatness else follow(flat, hissFlatness, dt, FLAT_MS, FLAT_MS)
             sinceHiss = 0f
             val s = sNess.coerceIn(0f, 1f)
@@ -163,20 +183,30 @@ class LiveSmoother(private val pacing: Pacing = Pacing.current, private val rule
         }
 
         val modelSays = !spotted.isNaN() && aim != LiveAim.None
-        val on = if (modelSays) spotted >= 0.5f else when (aim) {
-            // "Lately": the live hiss flag flickers between 10 ms hops, so a hiss heard in the last 100 ms still counts.
-            is LiveAim.Place -> !place.isNaN() && sinceHiss < HISS_RECENT_S && fricative > HISS_MIN && flat <= rules.flatMax &&
-                (if (aim.sharp) place > rules.sharpMin else place < rules.roundMax) &&
-                (aim.voiced == null || (if (aim.voiced) hissVoiced >= VOICED_SHARE else hissVoiced <= 1f - VOICED_SHARE))
-            LiveAim.Trill -> trill > rules.trillMin
-            LiveAim.Voice -> voicing > rules.voiceClear && fricative < HISS_MIN && sinceHiss > HISS_RECENT_S && level > rules.voiceLevel
-            LiveAim.None -> false
+        val on = if (modelSays) {
+            spotted >= 0.5f
+        } else {
+            when (aim) {
+                // "Lately": the live hiss flag flickers between 10 ms hops, so a hiss heard in the last 100 ms still counts.
+                is LiveAim.Place ->
+                    !place.isNaN() && sinceHiss < HISS_RECENT_S && fricative > HISS_MIN && flat <= rules.flatMax &&
+                        (if (aim.sharp) place > rules.sharpMin else place < rules.roundMax) &&
+                        (aim.voiced == null || (if (aim.voiced) hissVoiced >= VOICED_SHARE else hissVoiced <= 1f - VOICED_SHARE))
+
+                LiveAim.Trill -> trill > rules.trillMin
+
+                LiveAim.Voice -> voicing > rules.voiceClear && fricative < HISS_MIN && sinceHiss > HISS_RECENT_S && level > rules.voiceLevel
+
+                LiveAim.None -> false
+            }
         }
         if (on) {
-            onFor += dt; offFor = 0f
+            onFor += dt
+            offFor = 0f
             if (modelSays || onFor * 1000f >= rules.onMs) hit = true
         } else {
-            offFor += dt; onFor = 0f
+            offFor += dt
+            onFor = 0f
             if (offFor * 1000f >= pacing.onTargetOffMs) hit = false
         }
         glow = follow(glow, if (hit) 1f else 0f, dt, pacing.glowAttackMs, pacing.glowReleaseMs)
@@ -188,7 +218,9 @@ class LiveSmoother(private val pacing: Pacing = Pacing.current, private val rule
      * [Pacing.voiceInflationTop].
      */
     fun inflation(base: Float, voiceMoves: Boolean = false): Float {
-        val voiced = if (!voiceMoves) base else {
+        val voiced = if (!voiceMoves) {
+            base
+        } else {
             val top = pacing.voiceInflationTop.coerceAtLeast(base)
             base + (top - base) * (level * 1.6f).coerceAtMost(1f)
         }

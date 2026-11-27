@@ -36,12 +36,14 @@ object OtherWord {
 
     /** Lowercase letters only; vowels without their marks (the recogniser mixes ă/a and â/î), consonants as they are. */
     internal fun fold(text: String): String = buildString {
-        for (c in text.lowercase()) when (c) {
-            'ă', 'â' -> append('a')
-            'î' -> append('i')
-            'ş' -> append('ș')
-            'ţ' -> append('ț')
-            else -> if (c.isLetter()) append(c)
+        for (c in text.lowercase()) {
+            when (c) {
+                'ă', 'â' -> append('a')
+                'î' -> append('i')
+                'ş' -> append('ș')
+                'ţ' -> append('ț')
+                else -> if (c.isLetter()) append(c)
+            }
         }
     }
 

@@ -45,12 +45,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -65,12 +65,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tech.fonia.design.CTALabel
+import tech.fonia.design.ChoiceTileStyle
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.Dock
+import tech.fonia.design.DockHint
 import tech.fonia.design.Field
 import tech.fonia.design.FieldBackdrop
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.Foni
+import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniTone
 import tech.fonia.design.FoniaIcon
@@ -83,8 +85,6 @@ import tech.fonia.design.SceneBackdrop
 import tech.fonia.design.SceneName
 import tech.fonia.design.StyledButton
 import tech.fonia.design.TextRole
-import tech.fonia.design.ChoiceTileStyle
-import tech.fonia.design.DockHint
 import tech.fonia.design.TileButtonStyle
 import tech.fonia.design.ToolButtonStyle
 import tech.fonia.design.UIWeight
@@ -107,11 +107,11 @@ import tech.fonia.domain.FoniaContent
 import tech.fonia.dsp.VoiceGroup
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.FoniaSheet
+import tech.fonia.features.app.SoundEffect
+import tech.fonia.features.app.field
 import tech.fonia.features.grownups.LegalInfo
 import tech.fonia.features.grownups.PrivacyNote
 import tech.fonia.features.grownups.PrivacyText
-import tech.fonia.features.app.SoundEffect
-import tech.fonia.features.app.field
 import tech.fonia.store.Profile
 
 @Suppress("EnumEntryName")
@@ -146,11 +146,15 @@ fun FirstRunFlow(app: AppModel) {
     ) { shown ->
         when (shown) {
             Step.voice -> VoiceWelcome(app) { step = Step.who }
+
             // The note for the adult next to a child comes only on a child's path; an adult learner reads what stays
             // on the phone on their own setup page.
             Step.who -> WhoIsPractising(onChild = { step = Step.forAdult }, onAdult = { step = Step.adult })
+
             Step.forAdult -> ForTheAdult(withReading = app.arguments.drafts, onBack = { step = Step.who }, onNext = { step = Step.child })
+
             Step.child -> ChildSetup(app, onBack = { step = Step.forAdult }, onDone = { finish(it) })
+
             Step.adult -> AdultSetup(onBack = { step = Step.who }, onDone = { finish(it) })
         }
     }
@@ -221,12 +225,26 @@ private fun VoiceWelcome(app: AppModel, onNext: () -> Unit) {
                 VoiceRings(color = FoniTone.cold.glow, isLive = isListening, level = { levels.level }, modifier = Modifier.widthIn(max = 360.dp))
                 Foni(
                     Modifier.widthIn(max = 210.dp),
-                    mood = if (heard) FoniMood.happy else if (isListening) FoniMood.listening else FoniMood.idle,
+                    mood = if (heard) {
+                        FoniMood.happy
+                    } else if (isListening) {
+                        FoniMood.listening
+                    } else {
+                        FoniMood.idle
+                    },
                     level = { levels.level },
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                val title = if (heard) "Te-am auzit" else if (isListening) "Spune „aaa”" else if (silent) "Nu te-am auzit" else "Eu sunt Foni"
+                val title = if (heard) {
+                    "Te-am auzit"
+                } else if (isListening) {
+                    "Spune „aaa”"
+                } else if (silent) {
+                    "Nu te-am auzit"
+                } else {
+                    "Eu sunt Foni"
+                }
                 Crossfade(title, animationSpec = easeOut(0.18), label = "title") { shown ->
                     FoniaText(shown, style = ui(32, UIWeight.black, TextRole.largeTitle), color = Palette.ink, textAlign = TextAlign.Center)
                 }

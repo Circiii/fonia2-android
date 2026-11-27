@@ -156,15 +156,31 @@ class FaceMeshFrame {
     }
 
     fun copyFrom(o: FaceMeshFrame) {
-        tNanos = o.tNanos; isPresent = o.isPresent; detected = o.detected; imageW = o.imageW; imageH = o.imageH
-        o.lipsOuter.copyInto(lipsOuter); o.lipsInner.copyInto(lipsInner); o.anchors.copyInto(anchors)
-        o.irises.copyInto(irises); o.blendshapes.copyInto(blendshapes)
-        headYaw = o.headYaw; headPitch = o.headPitch; headRoll = o.headRoll; distanceM = o.distanceM
-        presence = o.presence; tongueModelScore = o.tongueModelScore
-        lumaFace = o.lumaFace; lumaMouth = o.lumaMouth; clippedShare = o.clippedShare
+        tNanos = o.tNanos
+        isPresent = o.isPresent
+        detected = o.detected
+        imageW = o.imageW
+        imageH = o.imageH
+        o.lipsOuter.copyInto(lipsOuter)
+        o.lipsInner.copyInto(lipsInner)
+        o.anchors.copyInto(anchors)
+        o.irises.copyInto(irises)
+        o.blendshapes.copyInto(blendshapes)
+        headYaw = o.headYaw
+        headPitch = o.headPitch
+        headRoll = o.headRoll
+        distanceM = o.distanceM
+        presence = o.presence
+        tongueModelScore = o.tongueModelScore
+        lumaFace = o.lumaFace
+        lumaMouth = o.lumaMouth
+        clippedShare = o.clippedShare
         hasCrop = o.hasCrop
         if (o.hasCrop) o.mouthCrop.copyInto(mouthCrop)
-        cropCenterX = o.cropCenterX; cropCenterY = o.cropCenterY; cropSide = o.cropSide; cropAngle = o.cropAngle
+        cropCenterX = o.cropCenterX
+        cropCenterY = o.cropCenterY
+        cropSide = o.cropSide
+        cropAngle = o.cropAngle
     }
 
     /**

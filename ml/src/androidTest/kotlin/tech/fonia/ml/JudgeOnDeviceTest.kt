@@ -60,8 +60,13 @@ class JudgeOnDeviceTest {
                 val i = codec.dequeueInputBuffer(10_000)
                 if (i >= 0) {
                     val n = extractor.readSampleData(codec.getInputBuffer(i)!!, 0)
-                    if (n < 0) { codec.queueInputBuffer(i, 0, 0, 0, android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM); inputDone = true }
-                    else { codec.queueInputBuffer(i, 0, n, extractor.sampleTime, 0); extractor.advance() }
+                    if (n < 0) {
+                        codec.queueInputBuffer(i, 0, 0, 0, android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        inputDone = true
+                    } else {
+                        codec.queueInputBuffer(i, 0, n, extractor.sampleTime, 0)
+                        extractor.advance()
+                    }
                 }
             }
             val o = codec.dequeueOutputBuffer(info, 10_000)
@@ -73,9 +78,15 @@ class JudgeOnDeviceTest {
                 if (info.flags and android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) break
             }
         }
-        codec.stop(); codec.release(); extractor.release(); afd.close()
+        codec.stop()
+        codec.release()
+        extractor.release()
+        afd.close()
         var seed = 5L
-        val pad = FloatArray(rate / 4) { seed = seed * 6364136223846793005L + 1L; (((seed ushr 33) % 2000) / 1000f - 1f) * 0.0003f }
+        val pad = FloatArray(rate / 4) {
+            seed = seed * 6364136223846793005L + 1L
+            (((seed ushr 33) % 2000) / 1000f - 1f) * 0.0003f
+        }
         return Clip(pad + out.toFloatArray() + pad, rate.toDouble(), audioSource = "device-test")
     }
 
@@ -87,7 +98,10 @@ class JudgeOnDeviceTest {
         host.warmUp()
         val warmMs = (System.nanoTime() - w0) / 1e6
         val takes = listOf(
-            Triple("sare", SoundId.S, "sare"), Triple("șarpe", SoundId.Sh, "șarpe"), Triple("rac", SoundId.R, "rac"), Triple("ger", SoundId.Ge, "ger"),
+            Triple("sare", SoundId.S, "sare"),
+            Triple("șarpe", SoundId.Sh, "șarpe"),
+            Triple("rac", SoundId.R, "rac"),
+            Triple("ger", SoundId.Ge, "ger"),
         ).mapNotNull { (file, sound, text) -> decode("judge-takes/$file.mp3")?.let { Triple(it, sound, text) } }
         org.junit.Assume.assumeTrue("no content takes packaged (content submodule missing)", takes.isNotEmpty())
         val measure = ArrayList<Double>()
@@ -108,7 +122,10 @@ class JudgeOnDeviceTest {
                 val t3 = System.nanoTime()
                 val est = TalkerEstimator.estimate(clip)
                 val t4 = System.nanoTime()
-                measure += (t1 - t0) / 1e6; score += (t2 - t1) / 1e6; decide += (t3 - t2) / 1e6; talker += (t4 - t3) / 1e6
+                measure += (t1 - t0) / 1e6
+                score += (t2 - t1) / 1e6
+                decide += (t3 - t2) / 1e6
+                talker += (t4 - t3) / 1e6
                 heads += r.head
                 if (round == 0) log("$text: ${r.verdict} p=${"%.2f".format(r.confidence)} head=${r.head} fast=${r.fastCorrect} f0=${est.f0Hz} hint=${r.visual?.hint}")
             }

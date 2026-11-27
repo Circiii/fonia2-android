@@ -1,5 +1,7 @@
 package tech.fonia.features.session
 
+import java.io.File
+import kotlin.random.Random
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -14,8 +16,6 @@ import tech.fonia.domain.SessionBuilder
 import tech.fonia.domain.SessionFocus
 import tech.fonia.domain.SessionRequest
 import tech.fonia.domain.SoundID
-import java.io.File
-import kotlin.random.Random
 
 /** Each run hears other items, while the session builder stays as on iOS. */
 class ListeningVarietyTests {

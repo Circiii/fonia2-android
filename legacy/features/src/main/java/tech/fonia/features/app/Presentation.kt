@@ -66,6 +66,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
+import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.drop
 import tech.fonia.design.ContinuousRoundedRectangle
 import tech.fonia.design.ContinuousTopRoundedRectangle
@@ -77,7 +78,6 @@ import tech.fonia.design.ProvideTouchFloor
 import tech.fonia.design.UIWeight
 import tech.fonia.design.swiftSpring
 import tech.fonia.design.ui
-import kotlin.math.roundToInt
 
 // SwiftUI's presentations: `.sheet` with detents, `.fullScreenCover`, `.alert` and `.confirmationDialog`. Sheets,
 // alerts and dialogs are windows of their own (a Compose `Dialog`), so they sit over everything, the tab bar and the
@@ -354,7 +354,10 @@ fun FoniaAlert(
 private fun CapsuleButton(item: DialogAction, modifier: Modifier, onClick: () -> kotlin.Unit) {
     val color = when (item.role) {
         ActionRole.Cancel -> SystemColors.label
-        ActionRole.Destructive -> Palette.ink // never red (owner): "stop" is said calmly
+
+        ActionRole.Destructive -> Palette.ink
+
+        // never red (owner): "stop" is said calmly
         ActionRole.Default -> Palette.accentText
     }
     Box(

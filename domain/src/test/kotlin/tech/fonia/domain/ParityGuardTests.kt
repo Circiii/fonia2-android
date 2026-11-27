@@ -98,8 +98,13 @@ class ParityGuardTests {
         val strings = mutableListOf<String>()
         fun walk(node: JsonElement) {
             when (node) {
-                is JsonObject -> node.forEach { (key, value) -> strings += key; walk(value) }
+                is JsonObject -> node.forEach { (key, value) ->
+                    strings += key
+                    walk(value)
+                }
+
                 is JsonArray -> node.forEach(::walk)
+
                 is JsonPrimitive -> if (node.isString) strings += node.content
             }
         }

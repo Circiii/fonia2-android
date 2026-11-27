@@ -1,7 +1,5 @@
 package tech.fonia.features.session
 
-import tech.fonia.features.app.shortLetter
-
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +53,7 @@ import tech.fonia.domain.RepeatPrompt
 import tech.fonia.domain.SoundDef
 import tech.fonia.domain.WordItem
 import tech.fonia.features.app.field
+import tech.fonia.features.app.shortLetter
 import tech.fonia.speech.WordStatus
 
 /**
@@ -82,20 +81,39 @@ fun PromptView(
                 val prompt = exercise.prompt
                 when (prompt.level) {
                     RepeatPrompt.Level.Syllable -> BigSyllable(prompt.text, accent, sound, family, letter)
+
                     RepeatPrompt.Level.Sentence -> Sentence(
-                        prompt.text, prompt.cue, accent, verdict, onTapWord,
-                        hero = if (prompt.language == Language.Ro) sound else null, family = family, letter = letter,
+                        prompt.text,
+                        prompt.cue,
+                        accent,
+                        verdict,
+                        onTapWord,
+                        hero = if (prompt.language == Language.Ro) sound else null,
+                        family = family,
+                        letter = letter,
                     )
+
                     else -> Word(prompt.text, prompt.picture, prompt.cue, isEnglish = prompt.language == Language.En, sound, accent, family, letter)
                 }
             }
+
             is Exercise.Name -> Naming(exercise.item, sound, accent, phase, family, letter)
+
             is Exercise.Twister -> Sentence(
-                exercise.text, null, accent, verdict, onTapWord,
-                hero = if (exercise.language == Language.Ro) sound else null, family = family, letter = letter,
+                exercise.text,
+                null,
+                accent,
+                verdict,
+                onTapWord,
+                hero = if (exercise.language == Language.Ro) sound else null,
+                family = family,
+                letter = letter,
             )
+
             Exercise.Volume -> VoiceTask("Vorbește tare", "Spune o frază, ca să te audă și ultimul rând.", FoniaIcon.loud, accent)
+
             Exercise.Glide -> VoiceTask("Urcă și coboară", "Spune „aaa” de jos în sus, apoi înapoi.", FoniaIcon.glide, accent)
+
             is Exercise.Intonation -> Sentence(
                 if (exercise.ask == IntonationAsk.Question) exercise.question else exercise.statement,
                 if (exercise.ask == IntonationAsk.Question) "Ca o întrebare" else "Ca o afirmație",
@@ -103,12 +121,19 @@ fun PromptView(
                 verdict,
                 onTapWord,
             )
+
             is Exercise.Expression -> Sentence(exercise.text, exercise.cue, accent, verdict, onTapWord)
+
             is Exercise.Pace -> Sentence(exercise.text, null, accent, verdict, onTapWord)
+
             is Exercise.Pauses -> Pauses(exercise.text, accent)
+
             is Exercise.Shadow -> Shadow(exercise.text, accent, verdict)
+
             is Exercise.Retell -> Pictures(exercise.prompt.pictures, exercise.prompt.title, exercise.prompt.prompt)
+
             is Exercise.Describe -> Pictures(exercise.prompt.pictures, null, exercise.prompt.prompt)
+
             else -> Unit
         }
         Spacer(Modifier.weight(1f))

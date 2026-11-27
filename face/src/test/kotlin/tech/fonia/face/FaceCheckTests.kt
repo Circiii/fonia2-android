@@ -1,12 +1,12 @@
 package tech.fonia.face
 
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 /**
  * Not iOS tests: the face checks and the hold arithmetic live in MouthCoach, which iOS only tests

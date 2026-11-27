@@ -56,7 +56,8 @@ enum class FoniaIcon(val rawValue: String) {
     star("star-duotone"),
     target("target-duotone"),
     hourglass("hourglass-medium-duotone"),
-    chart("chart-line-up-duotone");
+    chart("chart-line-up-duotone"),
+    ;
 
     companion object {
         /** The tab bar's larger drawings: `tab-home`, `tab-home-on`, `tab-progress`, `tab-progress-on`. */

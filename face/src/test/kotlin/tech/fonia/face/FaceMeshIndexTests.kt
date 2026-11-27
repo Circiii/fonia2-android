@@ -1,5 +1,8 @@
 package tech.fonia.face
 
+import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
@@ -8,10 +11,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.io.File
 import tech.fonia.face.FaceMeshIndices as I
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * The landmark indices of docs/v2/04 §2 were written from memory (09_DECIZII_NOI.md, "De verificat"). Here they are
@@ -42,16 +42,23 @@ class FaceMeshIndexTests {
         }
         // Every connection is used exactly once by the two loops.
         assertEquals(40, facemeshLips.size)
-        assertEquals(61, I.LIPS_OUTER[I.CORNER_RIGHT]); assertEquals(291, I.LIPS_OUTER[I.CORNER_LEFT])
-        assertEquals(0, I.LIPS_OUTER[I.UPPER_MID]); assertEquals(17, I.LIPS_OUTER[I.LOWER_MID])
-        assertEquals(13, I.LIPS_INNER[I.UPPER_MID]); assertEquals(14, I.LIPS_INNER[I.LOWER_MID])
+        assertEquals(61, I.LIPS_OUTER[I.CORNER_RIGHT])
+        assertEquals(291, I.LIPS_OUTER[I.CORNER_LEFT])
+        assertEquals(0, I.LIPS_OUTER[I.UPPER_MID])
+        assertEquals(17, I.LIPS_OUTER[I.LOWER_MID])
+        assertEquals(13, I.LIPS_INNER[I.UPPER_MID])
+        assertEquals(14, I.LIPS_INNER[I.LOWER_MID])
         assertEquals(listOf(468, 469, 470, 471, 472, 473, 474, 475, 476, 477), I.IRISES.toList())
         assertEquals(MeshBlendshapes.COUNT, MeshBlendshapes.NAMES.size)
         for ((name, index) in listOf(
-            "jawOpen" to MeshBlendshapes.JAW_OPEN, "mouthPucker" to MeshBlendshapes.MOUTH_PUCKER,
-            "mouthFunnel" to MeshBlendshapes.MOUTH_FUNNEL, "mouthSmileLeft" to MeshBlendshapes.MOUTH_SMILE_LEFT,
-            "mouthSmileRight" to MeshBlendshapes.MOUTH_SMILE_RIGHT, "mouthClose" to MeshBlendshapes.MOUTH_CLOSE,
-            "mouthStretchLeft" to MeshBlendshapes.MOUTH_STRETCH_LEFT, "cheekPuff" to MeshBlendshapes.CHEEK_PUFF,
+            "jawOpen" to MeshBlendshapes.JAW_OPEN,
+            "mouthPucker" to MeshBlendshapes.MOUTH_PUCKER,
+            "mouthFunnel" to MeshBlendshapes.MOUTH_FUNNEL,
+            "mouthSmileLeft" to MeshBlendshapes.MOUTH_SMILE_LEFT,
+            "mouthSmileRight" to MeshBlendshapes.MOUTH_SMILE_RIGHT,
+            "mouthClose" to MeshBlendshapes.MOUTH_CLOSE,
+            "mouthStretchLeft" to MeshBlendshapes.MOUTH_STRETCH_LEFT,
+            "cheekPuff" to MeshBlendshapes.CHEEK_PUFF,
         )) {
             assertEquals(name, MeshBlendshapes.NAMES[index])
         }
@@ -94,8 +101,12 @@ class FaceMeshIndexTests {
             assertTrue(x(f.lipsInner, I.CORNER_RIGHT) < x(f.lipsInner, I.CORNER_LEFT), p.name)
             // Top to bottom: nose base, outer upper (0), inner upper (13), inner lower (14), outer lower (17), chin.
             val ys = listOf(
-                y(f.anchors, I.NOSE_BASE), y(f.lipsOuter, I.UPPER_MID), y(f.lipsInner, I.UPPER_MID),
-                y(f.lipsInner, I.LOWER_MID), y(f.lipsOuter, I.LOWER_MID), y(f.anchors, I.CHIN),
+                y(f.anchors, I.NOSE_BASE),
+                y(f.lipsOuter, I.UPPER_MID),
+                y(f.lipsInner, I.UPPER_MID),
+                y(f.lipsInner, I.LOWER_MID),
+                y(f.lipsOuter, I.LOWER_MID),
+                y(f.anchors, I.CHIN),
             )
             for (k in 1 until ys.size) assertTrue(ys[k] >= ys[k - 1] - 0.5f, "${p.name}: order $ys")
             // Every inner point lies inside (or on) the outer ring.

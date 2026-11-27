@@ -1,5 +1,10 @@
 package tech.fonia.designsystem.letter
 
+import java.text.Normalizer
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 import tech.fonia.designsystem.motion.Motion
 import tech.fonia.designsystem.motion.Spring1D
 import tech.fonia.designsystem.tokens.FoniaLetterTokens as L
@@ -13,11 +18,6 @@ import tech.fonia.glyphs.OutlineOps
 import tech.fonia.glyphs.PathSink
 import tech.fonia.glyphs.QuadOutline
 import tech.fonia.glyphs.VariationInterpolator
-import java.text.Normalizer
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sin
 
 /** A [PathSink] that applies an [Affine] (the Compose adapter is one; tests use a recording one). */
 interface AffinePathSink : PathSink {
@@ -80,6 +80,7 @@ class LetterEngine(val font: AlloOutlines) {
     private val sBlow = Spring1D(0.7f, 160f, 0f)
     private val sComma = Spring1D(FoniaMotion.bounce, 1f)
     private var integrated = 0.0f
+
     /** The integrated inflation stays full until the POP bursts, then lets the air out. */
     private var popArmed = false
     private var listenCue = false
@@ -106,9 +107,13 @@ class LetterEngine(val font: AlloOutlines) {
             // A letter at rest follows its base set at once (it does not wait for the first cue).
             val atBase = verdictSet == null && curSet == field
             field = value
-            if (atBase) { curSet = value; prevSet = value }
+            if (atBase) {
+                curSet = value
+                prevSet = value
+            }
         }
     var flatSet: StickerSet = FoniaSticker.FlatOnPaper
+
     /** The sets Correct and Almost switch to. */
     var verdicts: tech.fonia.designsystem.tokens.VerdictStickers = tech.fonia.designsystem.tokens.VerdictStickers.Default
     var prevSet: StickerSet = FoniaSticker.Voice
@@ -128,14 +133,22 @@ class LetterEngine(val font: AlloOutlines) {
         private set
 
     // ---- results of advance() for the painter
-    var wght = 576f; private set
-    var rond = 55f; private set
-    var inflation = 0.55f; private set
-    var scale = 1f; private set
-    var rimEm = 0.15f; private set
-    var edgeEm = 0.08f; private set
+    var wght = 576f
+        private set
+    var rond = 55f
+        private set
+    var inflation = 0.55f
+        private set
+    var scale = 1f
+        private set
+    var rimEm = 0.15f
+        private set
+    var edgeEm = 0.08f
+        private set
+
     /** 0..1 blend from [prevSet] to [curSet]. */
-    var setMix = 1f; private set
+    var setMix = 1f
+        private set
 
     // ---- layout (pixels), set by the painter each draw
     var emPx = 100f
@@ -192,7 +205,9 @@ class LetterEngine(val font: AlloOutlines) {
     }
 
     /** Queue a cue; it starts on the next frame (stamped with that frame's time). */
-    fun cue(c: LetterCue) { pending.addLast(c) }
+    fun cue(c: LetterCue) {
+        pending.addLast(c)
+    }
 
     /** True while an animation is running (held final frames do not count). */
     val busy: Boolean get() {
@@ -219,7 +234,10 @@ class LetterEngine(val font: AlloOutlines) {
     // ================================================================= frame
 
     fun advance(frameNanos: Long, drive: LetterDrive) {
-        if (startNanos == 0L) { startNanos = frameNanos; lastNanos = frameNanos }
+        if (startNanos == 0L) {
+            startNanos = frameNanos
+            lastNanos = frameNanos
+        }
         if (frameNanos <= lastNanos && now > 0f) return
         val dt = min((frameNanos - lastNanos) / 1e9f, 0.1f)
         lastNanos = frameNanos
@@ -239,16 +257,33 @@ class LetterEngine(val font: AlloOutlines) {
             lastCueAt = now
             if (c !is LetterCue.Breathe) removeWhere { it is LetterCue.Breathe }
             when (c) {
-                LetterCue.Listen -> { listenCue = true; continue }
+                LetterCue.Listen -> {
+                    listenCue = true
+                    continue
+                }
+
                 LetterCue.Rest -> {
                     listenCue = false
                     removeWhere { CueMotion.holds(it) }
                     changeSet(null)
                     continue
                 }
-                is LetterCue.Instruct -> { cueNow(LetterCue.resolve(c.kind, text, c.heard)); continue }
-                is LetterCue.SlotDrop -> { cueNow(LetterCue.DropIn); continue }
-                is LetterCue.Syllable -> { cueNow(LetterCue.Beat(if (c.stressed) 1.4f else 1f)); continue }
+
+                is LetterCue.Instruct -> {
+                    cueNow(LetterCue.resolve(c.kind, text, c.heard))
+                    continue
+                }
+
+                is LetterCue.SlotDrop -> {
+                    cueNow(LetterCue.DropIn)
+                    continue
+                }
+
+                is LetterCue.Syllable -> {
+                    cueNow(LetterCue.Beat(if (c.stressed) 1.4f else 1f))
+                    continue
+                }
+
                 else -> cueNow(c)
             }
         }
@@ -257,7 +292,10 @@ class LetterEngine(val font: AlloOutlines) {
     private fun cueNow(c: LetterCue) {
         if (CueMotion.exclusive(c)) removeWhere { CueMotion.exclusive(it) }
         if (c == LetterCue.Pop) removeWhere { it == LetterCue.Pop }
-        if (c == LetterCue.Unsure) { tiltSign = -tiltSign; ctx.tiltSign = tiltSign }
+        if (c == LetterCue.Unsure) {
+            tiltSign = -tiltSign
+            ctx.tiltSign = tiltSign
+        }
         when (c) {
             LetterCue.Correct -> changeSet(verdicts.correct)
             LetterCue.Almost -> changeSet(verdicts.almost)
@@ -289,11 +327,18 @@ class LetterEngine(val font: AlloOutlines) {
 
     private inline fun removeWhere(pred: (LetterCue) -> Boolean) {
         var k = 0
-        while (k < activeCount) { val c = active[k]; if (c != null && pred(c)) removeAt(k) else k++ }
+        while (k < activeCount) {
+            val c = active[k]
+            if (c != null && pred(c)) removeAt(k) else k++
+        }
     }
 
     private fun removeAt(k: Int) {
-        for (j in k until activeCount - 1) { active[j] = active[j + 1]; started[j] = started[j + 1]; prevT[j] = prevT[j + 1] }
+        for (j in k until activeCount - 1) {
+            active[j] = active[j + 1]
+            started[j] = started[j + 1]
+            prevT[j] = prevT[j + 1]
+        }
         activeCount--
         active[activeCount] = null
     }
@@ -313,16 +358,30 @@ class LetterEngine(val font: AlloOutlines) {
         val sharp = d.sharpness
         val rondT = if (sharp.isNaN()) 100f * inflT else Motion.lerp(L.ROND_ROUND, L.ROND_SHARP, sharp.coerceIn(0f, 1f))
         if (reduceMotion) {
-            if (now >= rmNext) { rmInfl = inflT; rmRond = rondT; rmNext = now + FoniaMotion.REDUCED_STEP_MS / 1000f }
-            sInfl.snap(rmInfl); sRond.snap(rmRond)
-            sLevel.snap(0f); sTremble.snap(0f); sTrill.snap(0f); sBlow.snap(0f)
+            if (now >= rmNext) {
+                rmInfl = inflT
+                rmRond = rondT
+                rmNext = now + FoniaMotion.REDUCED_STEP_MS / 1000f
+            }
+            sInfl.snap(rmInfl)
+            sRond.snap(rmRond)
+            sLevel.snap(0f)
+            sTremble.snap(0f)
+            sTrill.snap(0f)
+            sBlow.snap(0f)
         } else {
-            sInfl.target = inflT; sInfl.update(dt)
-            sRond.target = rondT; sRond.update(dt)
-            sLevel.target = if (d.speaking || d.level > 0f) d.level.coerceIn(0f, 1f) else 0f; sLevel.update(dt)
-            sTremble.target = d.trembling.coerceIn(0f, 1f); sTremble.update(dt)
-            sTrill.target = d.trill.coerceIn(0f, 1f); sTrill.update(dt)
-            sBlow.target = d.blow.coerceIn(0f, 1f); sBlow.update(dt)
+            sInfl.target = inflT
+            sInfl.update(dt)
+            sRond.target = rondT
+            sRond.update(dt)
+            sLevel.target = if (d.speaking || d.level > 0f) d.level.coerceIn(0f, 1f) else 0f
+            sLevel.update(dt)
+            sTremble.target = d.trembling.coerceIn(0f, 1f)
+            sTremble.update(dt)
+            sTrill.target = d.trill.coerceIn(0f, 1f)
+            sTrill.update(dt)
+            sBlow.target = d.blow.coerceIn(0f, 1f)
+            sBlow.update(dt)
         }
         sLean.target = if (d.listening || listenCue) 1f else 0f
         if (reduceMotion) sLean.snap(sLean.target) else sLean.update(dt)
@@ -350,7 +409,10 @@ class LetterEngine(val font: AlloOutlines) {
             val c = active[k]!!
             val dur = CueMotion.duration(c)
             val t = now - started[k]
-            if (t >= dur && !CueMotion.holds(c)) { removeAt(k); continue }
+            if (t >= dur && !CueMotion.holds(c)) {
+                removeAt(k)
+                continue
+            }
             if (reduceMotion && !CueMotion.holds(c)) CueMotion.applyReduced(c, t, p) else CueMotion.apply(c, min(t, dur), p, ctx)
             k++
         }
@@ -400,12 +462,22 @@ class LetterEngine(val font: AlloOutlines) {
             val before = prevT[k]
             prevT[k] = t
             if (reduceMotion) {
-                if (c == LetterCue.Pop && before < 0f) { onPop?.invoke(); if (popArmed) { popArmed = false; integrated = 0.1f } }
+                if (c == LetterCue.Pop && before < 0f) {
+                    onPop?.invoke()
+                    if (popArmed) {
+                        popArmed = false
+                        integrated = 0.1f
+                    }
+                }
                 continue
             }
             if (c == LetterCue.Pop && before < CueMotion.POP_BURST_T && t >= CueMotion.POP_BURST_T) {
-                spawnPop(); onPop?.invoke()
-                if (popArmed) { popArmed = false; integrated = 0.1f }
+                spawnPop()
+                onPop?.invoke()
+                if (popArmed) {
+                    popArmed = false
+                    integrated = 0.1f
+                }
             }
             if (c == LetterCue.Correct && before < CueMotion.CORRECT_STARS_T && t >= CueMotion.CORRECT_STARS_T) spawnStars()
         }
@@ -430,7 +502,12 @@ class LetterEngine(val font: AlloOutlines) {
                 commaComp[i] = if (commaAccentId >= 0 && font.isComposite(g)) outlines[i].componentIndexOf(commaAccentId) else -1
             }
             commaGlyph = -1
-            for (i in 0 until glyphCount) if (commaComp[i] >= 0) { commaGlyph = i; break }
+            for (i in 0 until glyphCount) {
+                if (commaComp[i] >= 0) {
+                    commaGlyph = i
+                    break
+                }
+            }
             if (phantomId >= 0) {
                 vi.interpolate(phantomId, phantom)
                 phantomComp = phantom.componentIndexOf(commaAccentId)
@@ -442,7 +519,10 @@ class LetterEngine(val font: AlloOutlines) {
 
     /** Bounds of the body (all glyphs, commas excluded) and of the comma, font units. */
     private fun measure() {
-        var x0 = Float.MAX_VALUE; var x1 = -Float.MAX_VALUE; var y0 = Float.MAX_VALUE; var y1 = -Float.MAX_VALUE
+        var x0 = Float.MAX_VALUE
+        var x1 = -Float.MAX_VALUE
+        var y0 = Float.MAX_VALUE
+        var y1 = -Float.MAX_VALUE
         for (i in 0 until glyphCount) {
             val o = outlines[i]
             val n = if (o.componentCount == 0) 1 else o.componentCount
@@ -451,13 +531,25 @@ class LetterEngine(val font: AlloOutlines) {
                 val s = if (o.componentCount == 0) 0 else o.componentPointStart(ci)
                 val e = if (o.componentCount == 0) o.pointCount else o.componentPointEnd(ci)
                 for (p in s until e) {
-                    val x = o.xy[2 * p] + pen[i]; val y = o.xy[2 * p + 1]
-                    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y
+                    val x = o.xy[2 * p] + pen[i]
+                    val y = o.xy[2 * p + 1]
+                    if (x < x0) x0 = x
+                    if (x > x1) x1 = x
+                    if (y < y0) y0 = y
+                    if (y > y1) y1 = y
                 }
             }
         }
-        if (x0 > x1) { x0 = 0f; x1 = 0f; y0 = 0f; y1 = 0f }
-        bounds[0] = x0; bounds[1] = y0; bounds[2] = x1; bounds[3] = y1
+        if (x0 > x1) {
+            x0 = 0f
+            x1 = 0f
+            y0 = 0f
+            y1 = 0f
+        }
+        bounds[0] = x0
+        bounds[1] = y0
+        bounds[2] = x1
+        bounds[3] = y1
         centerX = (x0 + x1) * 0.5f
         bodyHalfWidth = (x1 - x0) * 0.5f
         vCenter = (if (lowercase) font.xHeight else font.capHeight) * 0.5f
@@ -469,10 +561,17 @@ class LetterEngine(val font: AlloOutlines) {
         }
         val ci = if (commaGlyph >= 0) commaComp[commaGlyph] else phantomComp
         if (o != null && ci >= 0) {
-            var cx0 = Float.MAX_VALUE; var cx1 = -Float.MAX_VALUE; var cy0 = Float.MAX_VALUE; var cy1 = -Float.MAX_VALUE
+            var cx0 = Float.MAX_VALUE
+            var cx1 = -Float.MAX_VALUE
+            var cy0 = Float.MAX_VALUE
+            var cy1 = -Float.MAX_VALUE
             for (p in o.componentPointStart(ci) until o.componentPointEnd(ci)) {
-                val x = o.xy[2 * p]; val y = o.xy[2 * p + 1]
-                if (x < cx0) cx0 = x; if (x > cx1) cx1 = x; if (y < cy0) cy0 = y; if (y > cy1) cy1 = y
+                val x = o.xy[2 * p]
+                val y = o.xy[2 * p + 1]
+                if (x < cx0) cx0 = x
+                if (x > cx1) cx1 = x
+                if (y < cy0) cy0 = y
+                if (y > cy1) cy1 = y
             }
             val px = if (commaGlyph >= 0) pen[commaGlyph] else 0f
             commaCx = (cx0 + cx1) * 0.5f + px
@@ -510,7 +609,10 @@ class LetterEngine(val font: AlloOutlines) {
                 emitEffected(o, sink, if (commaInBody) -1 else commaComp[i])
                 continue
             }
-            if (o.componentCount == 0) { o.emit(sink); continue }
+            if (o.componentCount == 0) {
+                o.emit(sink)
+                continue
+            }
             for (ci in 0 until o.componentCount) {
                 if (ci == commaComp[i] && !commaInBody) continue
                 o.emitComponent(ci, sink)
@@ -548,8 +650,11 @@ class LetterEngine(val font: AlloOutlines) {
             sink.moveTo(sg[4 * s], sg[4 * s + 1])
             for (j in s until e) {
                 val n = if (j + 1 == e) s else j + 1
-                if (q.line[j]) { if (j + 1 != e) sink.lineTo(sg[4 * n], sg[4 * n + 1]) }
-                else sink.quadTo(sg[4 * j + 2], sg[4 * j + 3], sg[4 * n], sg[4 * n + 1])
+                if (q.line[j]) {
+                    if (j + 1 != e) sink.lineTo(sg[4 * n], sg[4 * n + 1])
+                } else {
+                    sink.quadTo(sg[4 * j + 2], sg[4 * j + 3], sg[4 * n], sg[4 * n + 1])
+                }
             }
             sink.close()
         }
@@ -564,7 +669,8 @@ class LetterEngine(val font: AlloOutlines) {
         val s = q.seg
         for (j in 0 until q.segmentCount) {
             for (o in 0..2 step 2) {
-                val x = s[4 * j + o]; val y = s[4 * j + o + 1]
+                val x = s[4 * j + o]
+                val y = s[4 * j + o + 1]
                 val my = Motion.clamp01((cap * 0.52f - y) / (cap * 0.22f))
                 val mx = if (legX0 < -1e8f) 1f else Motion.clamp01((x - legX0) / (0.1f * upm))
                 val m = my * mx
@@ -584,8 +690,18 @@ class LetterEngine(val font: AlloOutlines) {
         val ci: Int
         val penX: Float
         when {
-            p.phantomComma && phantomId >= 0 && phantomComp >= 0 && commaGlyph < 0 -> { o = phantom; ci = phantomComp; penX = 0f }
-            commaGlyph >= 0 && !p.phantomComma -> { o = outlines[commaGlyph]; ci = commaComp[commaGlyph]; penX = pen[commaGlyph] }
+            p.phantomComma && phantomId >= 0 && phantomComp >= 0 && commaGlyph < 0 -> {
+                o = phantom
+                ci = phantomComp
+                penX = 0f
+            }
+
+            commaGlyph >= 0 && !p.phantomComma -> {
+                o = outlines[commaGlyph]
+                ci = commaComp[commaGlyph]
+                penX = pen[commaGlyph]
+            }
+
             else -> return false
         }
         if (p.commaAlpha <= 0.01f) return false
@@ -619,7 +735,12 @@ class LetterEngine(val font: AlloOutlines) {
         val d = outer.b * m.c + outer.d * m.d
         val e = outer.a * m.e + outer.c * m.f + outer.e
         val f = outer.b * m.e + outer.d * m.f + outer.f
-        m.a = a; m.b = b; m.c = c; m.d = d; m.e = e; m.f = f
+        m.a = a
+        m.b = b
+        m.c = c
+        m.d = d
+        m.e = e
+        m.f = f
     }
 
     /** The ghost of swap-glide (flat, heard letter) or closure-snap's small T. False when there is none. */
@@ -631,7 +752,10 @@ class LetterEngine(val font: AlloOutlines) {
             else -> font.glyphFor((if (text.firstOrNull()?.uppercaseChar() in setOf('G', 'J')) 'D' else 'T').code, features)
         }
         if (want < 0) return false
-        if (want != ghostId) { ghostId = want; vi.interpolate(ghostId, ghost) }
+        if (want != ghostId) {
+            ghostId = want
+            vi.interpolate(ghostId, ghost)
+        }
         val k = emPx / upm
         val baseY = vCenter * k
         // centre the ghost on its own advance
@@ -654,7 +778,11 @@ class LetterEngine(val font: AlloOutlines) {
         if (p.badge == 0 || p.badgeScale <= 0.01f) return false
         val g = font.glyphFor(p.badge)
         if (g < 0) return false
-        if (g != badgeId) { badgeId = g; viFixed.setAxes(850f, 100f, true); viFixed.interpolate(g, badgeOutline) }
+        if (g != badgeId) {
+            badgeId = g
+            viFixed.setAxes(850f, 100f, true)
+            viFixed.interpolate(g, badgeOutline)
+        }
         val k = emPx / upm
         val size = 0.36f * p.badgeScale
         val m = sink.matrix
@@ -700,8 +828,14 @@ class LetterEngine(val font: AlloOutlines) {
     /** Height of the cap (or x-height) in em. */
     val capEm: Float get() = vCenter * 2f / upm
 
-    private fun mapBodyX(x: Float, y: Float): Float { bodyMatrix(TMP, 0f); return TMP.mapX(x, y) }
-    private fun mapBodyY(x: Float, y: Float): Float { bodyMatrix(TMP, 0f); return TMP.mapY(x, y) }
+    private fun mapBodyX(x: Float, y: Float): Float {
+        bodyMatrix(TMP, 0f)
+        return TMP.mapX(x, y)
+    }
+    private fun mapBodyY(x: Float, y: Float): Float {
+        bodyMatrix(TMP, 0f)
+        return TMP.mapY(x, y)
+    }
 
     /** Body without pose rotation/jump: where the baseline sits at rest (for props that stay on the ground). */
     fun restBaselinePx(): Float = anchorY + vCenter / upm * emPx * scale
@@ -718,16 +852,29 @@ class LetterEngine(val font: AlloOutlines) {
         bodyMatrix(TMP, pen[0])
         val sp = emPx * scale
         for (i in 0 until n) {
-            val fx = sampleXY[2 * i]; val fy = sampleXY[2 * i + 1]
-            val px = TMP.mapX(fx, fy); val py = TMP.mapY(fx, fy)
+            val fx = sampleXY[2 * i]
+            val fy = sampleXY[2 * i + 1]
+            val px = TMP.mapX(fx, fy)
+            val py = TMP.mapY(fx, fy)
             // normal in screen space (y flipped)
             var nx = TMP.a * sampleN[2 * i] + TMP.c * sampleN[2 * i + 1]
             var ny = TMP.b * sampleN[2 * i] + TMP.d * sampleN[2 * i + 1]
             val l = kotlin.math.sqrt(nx * nx + ny * ny).coerceAtLeast(1e-4f)
-            nx /= l; ny /= l
+            nx /= l
+            ny /= l
             val speed = sp * (1.3f + 1.9f * particles.rnd())
-            val kind = when (i % 7) { 0, 3 -> Particles.KIND_STAR; 5 -> Particles.KIND_HEART; 6 -> Particles.KIND_CONFETTI; else -> Particles.KIND_DOT }
-            val color = when (i % 4) { 0 -> 0; 1 -> 1; 2 -> 3; else -> if (i % 8 == 3) 2 else 0 }
+            val kind = when (i % 7) {
+                0, 3 -> Particles.KIND_STAR
+                5 -> Particles.KIND_HEART
+                6 -> Particles.KIND_CONFETTI
+                else -> Particles.KIND_DOT
+            }
+            val color = when (i % 4) {
+                0 -> 0
+                1 -> 1
+                2 -> 3
+                else -> if (i % 8 == 3) 2 else 0
+            }
             val size = sp * (if (kind == Particles.KIND_DOT) 0.035f + 0.03f * particles.rnd() else 0.10f + 0.05f * particles.rnd())
             particles.spawn(px, py, nx * speed, ny * speed - sp * 0.5f, size, 0.75f + 0.25f * particles.rnd(), kind, color, sp * 3.2f, 2.2f, (particles.rnd() - 0.5f) * 720f)
         }
@@ -753,7 +900,12 @@ class LetterEngine(val font: AlloOutlines) {
     }
 
     // ---- info for tests and the lab
-    val activeCueNames: String get() = buildString { for (k in 0 until activeCount) { if (k > 0) append(' '); append(active[k]?.name) } }
+    val activeCueNames: String get() = buildString {
+        for (k in 0 until activeCount) {
+            if (k > 0) append(' ')
+            append(active[k]?.name)
+        }
+    }
     val glyphs: Int get() = glyphCount
     fun hasComma(): Boolean = commaGlyph >= 0
 

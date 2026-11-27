@@ -21,20 +21,23 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.max
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tech.fonia.audio.CapturedClip
+import tech.fonia.design.Dock
 import tech.fonia.design.Field
-import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.Foni
+import tech.fonia.design.FoniButtonStyle
 import tech.fonia.design.FoniMood
 import tech.fonia.design.FoniaIcon
 import tech.fonia.design.FoniaLabel
 import tech.fonia.design.FoniaText
 import tech.fonia.design.PaceChart
-import tech.fonia.design.Dock
 import tech.fonia.design.Palette
 import tech.fonia.design.PillButtonStyle
 import tech.fonia.design.PressableStyle
@@ -47,6 +50,7 @@ import tech.fonia.design.fBodyStrong
 import tech.fonia.design.fCaption
 import tech.fonia.design.fHeadline
 import tech.fonia.design.ui
+import tech.fonia.designsystem.motion.staggeredEntrance
 import tech.fonia.domain.FoniaContent
 import tech.fonia.domain.Language
 import tech.fonia.dsp.TimeSpan
@@ -66,11 +70,7 @@ import tech.fonia.speech.SpeechReport
 import tech.fonia.speech.SpeechResampler
 import tech.fonia.speech.Transcriber
 import tech.fonia.speech.speechReport
-import tech.fonia.designsystem.motion.staggeredEntrance
 import tech.fonia.store.Profile
-import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.max
 
 @Composable
 internal fun ReportView(
@@ -94,106 +94,116 @@ internal fun ReportView(
     onDrill: (NextStep) -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-    Column(
-        Modifier
-            .weight(1f)
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        CloseBar(onClose)
-        if (report == null) return@Column
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Foni(Modifier.size(84.dp), mood = if (feeling == 1) FoniMood.idle else FoniMood.happy, reactsToTap = true)
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                // What worked first, then the one thing to change.
-                report.strength?.let { FoniaText(it, style = fBodyStrong, color = Palette.accentText) }
-                FoniaText(report.headline, style = ui(22, UIWeight.bold, TextRole.title2), color = Palette.ink)
-                val change = previous?.let { report.change(it) }
-                if (change != null) FoniaText(change, style = fBodyStrong, color = Palette.accentText)
-            }
-        }
-
-        if (noUm != null && noUm.worthPlaying) {
-            NoUmBlock(noUm, cleanView, playing, onView, onPlay, Modifier.staggeredEntrance(1))
-        }
-
-        Column(Modifier.staggeredEntrance(2), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            FoniaText("Ritmul", style = fHeadline, color = Palette.ink)
-            // Too little speech for a pace: the sentence says so, and an empty chart would only repeat it.
-            if (report.hasPace) PaceChart(
-                samples = report.paceTimeline,
-                zone = report.paceZone,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(110.dp)
-                    .semantics { contentDescription = report.paceSentence },
-                maximum = report.paceMax,
-                line = Palette.ink,
-                zoneColor = Palette.accentSoft,
-            )
-            FoniaText(report.paceSentence, style = fBody, color = Palette.inkSoft)
-        }
-
-        val fillers = report.speech?.fillers ?: emptyList()
-        if (fillers.isNotEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                FoniaText("Ce am auzit în plus", style = fHeadline, color = Palette.ink)
-                FoniaText("Atinge ce trebuia să rămână.", style = fCaption, color = Palette.inkSoft)
-                WrapLayout(spacing = 8.dp, lineSpacing = 8.dp) {
-                    fillers.forEachIndexed { index, hit -> FillerChip(hit, index in ignoredFillers) { onToggleFiller(index) } }
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            CloseBar(onClose)
+            if (report == null) return@Column
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Foni(Modifier.size(84.dp), mood = if (feeling == 1) FoniMood.idle else FoniMood.happy, reactsToTap = true)
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    // What worked first, then the one thing to change.
+                    report.strength?.let { FoniaText(it, style = fBodyStrong, color = Palette.accentText) }
+                    FoniaText(report.headline, style = ui(22, UIWeight.bold, TextRole.title2), color = Palette.ink)
+                    val change = previous?.let { report.change(it) }
+                    if (change != null) FoniaText(change, style = fBodyStrong, color = Palette.accentText)
                 }
-                FoniaText(app.content.diction.fillerNote, style = fCaption, color = Palette.inkSoft)
             }
-        }
 
-        for (detail in report.details) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                FoniaText(detail.title, style = fHeadline, color = Palette.ink)
-                FoniaText(detail.sentence, style = fBody, color = Palette.inkSoft)
+            if (noUm != null && noUm.worthPlaying) {
+                NoUmBlock(noUm, cleanView, playing, onView, onPlay, Modifier.staggeredEntrance(1))
             }
-        }
 
-        val transcript = report.transcript
-        val marked = noUm?.markedTranscript(cleanView)
-        if (marked != null) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                FoniaText("Ce ai spus", style = fHeadline, color = Palette.ink)
-                NoUmTranscript(marked)
-            }
-        } else if (!transcript.isNullOrEmpty()) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                FoniaText("Ce ai spus", style = fHeadline, color = Palette.ink)
-                FoniaText(transcript, style = fBody, color = Palette.ink)
-            }
-        } else if (app.speech.state != tech.fonia.features.app.SpeechHub.State.Ready) {
-            ModelNotice(app.speech)
-        }
-    }
-    // The one thing to do next waits under the report, where the reading ends.
-    if (report != null) {
-        Dock(Modifier.background(Palette.paper)) {
-            // One main thing to do next: the same talk again, shorter. The rest stays quiet.
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                StyledButton(onClick = onAgain, style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular)) {
-                    FoniaText(if (openingOnly) "Încă o dată" else if (takes == 0) "Încă o dată, mai scurt" else "Mai încerc o dată")
+            Column(Modifier.staggeredEntrance(2), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                FoniaText("Ritmul", style = fHeadline, color = Palette.ink)
+                // Too little speech for a pace: the sentence says so, and an empty chart would only repeat it.
+                if (report.hasPace) {
+                    PaceChart(
+                        samples = report.paceTimeline,
+                        zone = report.paceZone,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(110.dp)
+                            .semantics { contentDescription = report.paceSentence },
+                        maximum = report.paceMax,
+                        line = Palette.ink,
+                        zoneColor = Palette.accentSoft,
+                    )
                 }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    if (clip != null && noUm?.worthPlaying != true) {
-                        StyledButton(onClick = { app.scope.launch { app.audio.play(clip) } }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
-                            FoniaLabel("Ascultă-te", FoniaIcon.play, iconSize = 16f)
+                FoniaText(report.paceSentence, style = fBody, color = Palette.inkSoft)
+            }
+
+            val fillers = report.speech?.fillers ?: emptyList()
+            if (fillers.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FoniaText("Ce am auzit în plus", style = fHeadline, color = Palette.ink)
+                    FoniaText("Atinge ce trebuia să rămână.", style = fCaption, color = Palette.inkSoft)
+                    WrapLayout(spacing = 8.dp, lineSpacing = 8.dp) {
+                        fillers.forEachIndexed { index, hit -> FillerChip(hit, index in ignoredFillers) { onToggleFiller(index) } }
+                    }
+                    FoniaText(app.content.diction.fillerNote, style = fCaption, color = Palette.inkSoft)
+                }
+            }
+
+            for (detail in report.details) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FoniaText(detail.title, style = fHeadline, color = Palette.ink)
+                    FoniaText(detail.sentence, style = fBody, color = Palette.inkSoft)
+                }
+            }
+
+            val transcript = report.transcript
+            val marked = noUm?.markedTranscript(cleanView)
+            if (marked != null) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FoniaText("Ce ai spus", style = fHeadline, color = Palette.ink)
+                    NoUmTranscript(marked)
+                }
+            } else if (!transcript.isNullOrEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FoniaText("Ce ai spus", style = fHeadline, color = Palette.ink)
+                    FoniaText(transcript, style = fBody, color = Palette.ink)
+                }
+            } else if (app.speech.state != tech.fonia.features.app.SpeechHub.State.Ready) {
+                ModelNotice(app.speech)
+            }
+        }
+        // The one thing to do next waits under the report, where the reading ends.
+        if (report != null) {
+            Dock(Modifier.background(Palette.paper)) {
+                // One main thing to do next: the same talk again, shorter. The rest stays quiet.
+                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    StyledButton(onClick = onAgain, style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular)) {
+                        FoniaText(
+                            if (openingOnly) {
+                                "Încă o dată"
+                            } else if (takes == 0) {
+                                "Încă o dată, mai scurt"
+                            } else {
+                                "Mai încerc o dată"
+                            },
+                        )
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        if (clip != null && noUm?.worthPlaying != true) {
+                            StyledButton(onClick = { app.scope.launch { app.audio.play(clip) } }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
+                                FoniaLabel("Ascultă-te", FoniaIcon.play, iconSize = 16f)
+                            }
+                        }
+                        if (drill != null) {
+                            StyledButton(onClick = { onDrill(drill) }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
+                                FoniaLabel("Exersează asta", FoniaIcon.arrow, iconSize = 16f)
+                            }
                         }
                     }
-                    if (drill != null) {
-                        StyledButton(onClick = { onDrill(drill) }, style = PillButtonStyle(), modifier = Modifier.weight(1f)) {
-                            FoniaLabel("Exersează asta", FoniaIcon.arrow, iconSize = 16f)
-                        }
-                    }
                 }
             }
         }
-    }
     }
 }
 

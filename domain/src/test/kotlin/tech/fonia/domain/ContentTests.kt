@@ -111,7 +111,9 @@ class PictureTests {
                         ?.let { array -> names += array.map { it.jsonPrimitive.content } }
                     node.values.forEach(::walk)
                 }
+
                 is JsonArray -> node.forEach(::walk)
+
                 else -> Unit
             }
         }
@@ -209,7 +211,13 @@ class WordListTests {
                 assertTrue(graphemes.any { word.text.swiftContains(it) }, "${word.text} in ${sound.letter} medial")
             }
             for (word in sound.words.final) {
-                val ending = if (sound.id == SoundID.Ce) listOf("ci") else if (sound.id == SoundID.Ge) listOf("gi") else graphemes
+                val ending = if (sound.id == SoundID.Ce) {
+                    listOf("ci")
+                } else if (sound.id == SoundID.Ge) {
+                    listOf("gi")
+                } else {
+                    graphemes
+                }
                 assertTrue(ending.any { word.text.swiftHasSuffix(it) }, "${word.text} in ${sound.letter} final")
             }
             if (sound.id != SoundID.Ce && sound.id != SoundID.Ge) {

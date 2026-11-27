@@ -1,5 +1,13 @@
 package tech.fonia.judge
 
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.IdentityHashMap
+import kotlin.math.exp
+import kotlin.math.log10
+import kotlin.math.sqrt
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import tech.fonia.dsp.VoiceGroup
@@ -14,14 +22,6 @@ import tech.fonia.phones.Posteriors
 import tech.fonia.phones.TargetSound
 import tech.fonia.phones.ZipaModel
 import tech.fonia.phones.ZipaPhoneScorer
-import java.util.IdentityHashMap
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import kotlin.math.exp
-import kotlin.math.log10
-import kotlin.math.sqrt
 
 /**
  * OPT-IN evaluation on local audio that is never committed (synthetic adult voices). Skipped unless
@@ -39,8 +39,18 @@ class JudgeEvalTest {
      * `detector`/`shipped` are the fast head (v0), `full`/`fullShipped` the same take with ZIPA (v1, "-" without it).
      */
     private data class Case(
-        val source: String, val group: String, val text: String, val target: SoundId, val level: Level, val position: Position,
-        val expected: String, val detector: String, val shipped: String, val top: String, val pCorrect: Float, val measureMs: Double,
+        val source: String,
+        val group: String,
+        val text: String,
+        val target: SoundId,
+        val level: Level,
+        val position: Position,
+        val expected: String,
+        val detector: String,
+        val shipped: String,
+        val top: String,
+        val pCorrect: Float,
+        val measureMs: Double,
         val note: String = "",
         val features: String = "",
         val voice: String = "",
@@ -110,8 +120,17 @@ class JudgeEvalTest {
     }
 
     private fun run(
-        source: String, group: String, talker: TalkerGroup, pcm: FloatArray, rate: Double, text: String, target: SoundId,
-        level: Level, position: Position, expected: String, note: String = "",
+        source: String,
+        group: String,
+        talker: TalkerGroup,
+        pcm: FloatArray,
+        rate: Double,
+        text: String,
+        target: SoundId,
+        level: Level,
+        position: Position,
+        expected: String,
+        note: String = "",
     ): TakeResult {
         val request = JudgeRequest(target, level, text, position, talker)
         val clip = Clip(pcm, rate, audioSource = "eval")
@@ -126,7 +145,8 @@ class JudgeEvalTest {
         val voice = voiceOf(source)
         fitCases += FitCase(voice, expected, measured, ph)
         cases.add(
-            Case(source, group, text, target, level, position, expected, label(d), label(s),
+            Case(
+                source, group, text, target, level, position, expected, label(d), label(s),
                 d.topError?.let { "${it.raw}:${"%.2f".format(d.topErrorProbability)}" } ?: "-", d.probabilities["correct"] ?: Float.NaN, ms, note,
                 shown.joinToString(" ") { k -> "$k=${d.evidence.features[k]?.let { v -> "%.2f".format(v) } ?: "-"}" } +
                     " snr=${"%.1f".format(d.evidence.capture?.bandSnrDb ?: Float.NaN)}",
@@ -210,7 +230,10 @@ class JudgeEvalTest {
     private fun catArrays(vararg parts: FloatArray): FloatArray {
         val out = FloatArray(parts.sumOf { it.size })
         var o = 0
-        for (p in parts) { p.copyInto(out, o); o += p.size }
+        for (p in parts) {
+            p.copyInto(out, o)
+            o += p.size
+        }
         return out
     }
 
@@ -331,11 +354,14 @@ class JudgeEvalTest {
                     run(source, group, talker, pcm, rate, swap(w, "s", "z"), SoundId.Z, level, pos, if (pos == Position.Final) "n/a:final" else "devoicing(s)")
                     run(source, group, talker, pcm, rate, swap(w, "s", "ț"), SoundId.Ts, level, pos, "deaffrication(s)")
                 }
+
                 SoundId.Sh -> {
                     run(source, group, talker, pcm, rate, swap(w, "ș", "s"), SoundId.S, level, pos, "placeSwap(ș)")
                     run(source, group, talker, pcm, rate, swap(w, "ș", "j"), SoundId.J, level, pos, if (pos == Position.Final) "n/a:final" else "devoicing(ș)")
                 }
+
                 SoundId.L -> if (level != Level.Isolated) run(source, group, talker, pcm, rate, swap(w, "l", "r"), SoundId.R, level, pos, "rToL(l)")
+
                 else -> Unit
             }
             // Manipulated takes of S and Ș words.
@@ -491,9 +517,13 @@ class JudgeEvalTest {
         File(dir, "cases.csv").printWriter().use { out ->
             out.println("source,voice,group,text,target,level,position,expected,detector,shipped,top,full,fullShipped,fullHead,fullTop,pCorrect,measureMs,note,features,zipa")
             for (c in cases) {
-                out.println(listOf(c.source, c.voice, c.group, c.text, c.target.raw, c.level.raw, c.position.raw, c.expected, c.detector, c.shipped, c.top,
-                    c.full, c.fullShipped, c.fullHead, c.fullTop,
-                    "%.3f".format(c.pCorrect), "%.1f".format(c.measureMs), c.note, c.features, c.zipa).joinToString(","))
+                out.println(
+                    listOf(
+                        c.source, c.voice, c.group, c.text, c.target.raw, c.level.raw, c.position.raw, c.expected, c.detector, c.shipped, c.top,
+                        c.full, c.fullShipped, c.fullHead, c.fullTop,
+                        "%.3f".format(c.pCorrect), "%.1f".format(c.measureMs), c.note, c.features, c.zipa,
+                    ).joinToString(","),
+                )
             }
         }
         val lines = ArrayList<String>()
@@ -549,7 +579,7 @@ class JudgeEvalTest {
             val heard = err.filter { it.expected.contains("(") && bucket(it.detector) == "named:" + it.expected.substringBefore("(") }
             lines += "- of those named right, heardAs right: ${pct(heard.count { it.detector.substringAfter("(", "").trimEnd(')') == it.expected.substringAfter("(").trimEnd(')') }, heard.size)}"
             val shippedNamed = sub.count { bucket(it.shipped).startsWith("named:") }
-            lines += "- shipped policy: named errors shown to the child ${shippedNamed} (wave 1 is in trial); verdict changed from the detector on ${sub.count { it.detector != it.shipped }} takes"
+            lines += "- shipped policy: named errors shown to the child $shippedNamed (wave 1 is in trial); verdict changed from the detector on ${sub.count { it.detector != it.shipped }} takes"
             val ms = sub.map { it.measureMs }.sorted()
             lines += "- P0–P3 time per take on this PC: median ${"%.0f".format(ms[ms.size / 2])} ms, p95 ${"%.0f".format(ms[(ms.size * 95) / 100])} ms"
             lines += ""
@@ -575,16 +605,20 @@ class JudgeEvalTest {
 
     /** Per-take cost of the grid search: false alarms and wrong praise weigh most, abstaining least. */
     private fun cost(expected: String, label: String): Double =
-        if (expected == "correct") when {
-            label == "correct" -> 0.0
-            label == "almost" -> 0.6
-            named(label) -> 6.0
-            else -> 1.0
-        } else when {
-            named(label) && kindOf(label) == kindOf(expected) -> 0.0
-            named(label) -> 3.0
-            label == "correct" -> 5.0
-            else -> 1.0
+        if (expected == "correct") {
+            when {
+                label == "correct" -> 0.0
+                label == "almost" -> 0.6
+                named(label) -> 6.0
+                else -> 1.0
+            }
+        } else {
+            when {
+                named(label) && kindOf(label) == kindOf(expected) -> 0.0
+                named(label) -> 3.0
+                label == "correct" -> 5.0
+                else -> 1.0
+            }
         }
 
     private fun judgeWith(params: FullHeadParams): TakeJudge {
@@ -641,19 +675,31 @@ class JudgeEvalTest {
         lines += summary("v1: full head with the shipped constants $shippedParams (in-sample: chosen on these takes)", full)
         // Grid search with leave-one-voice-out.
         val grid = ArrayList<FullHeadParams>()
-        for (a in listOf(0.25f, 0.5f, 0.75f, 1f)) for (c in listOf(0.5f, 0.75f, 1f, 1.5f, 2f)) for (g in listOf(0f, 0.25f, 0.5f)) for (b in listOf(-2f, -1.5f, -1f, -0.5f, 0f, 1f)) {
-            grid += FullHeadParams(a, c, g, b)
+        for (a in listOf(0.25f, 0.5f, 0.75f, 1f)) {
+            for (c in listOf(0.5f, 0.75f, 1f, 1.5f, 2f)) {
+                for (g in listOf(0f, 0.25f, 0.5f)) {
+                    for (b in listOf(-2f, -1.5f, -1f, -0.5f, 0f, 1f)) {
+                        grid += FullHeadParams(a, c, g, b)
+                    }
+                }
+            }
         }
-        val labels = grid.associateWith { p -> val j = judgeWith(p); withPhones.map { label(j.decide(it.measured, it.phones)) } }
+        val labels = grid.associateWith { p ->
+            val j = judgeWith(p)
+            withPhones.map { label(j.decide(it.measured, it.phones)) }
+        }
         val voices = withPhones.map { it.voice }.distinct().sorted()
+
         // Each voice weighs the same (the prompt voice has twice the takes of the three others together).
         fun meanCost(p: FullHeadParams, keep: (FitCase) -> Boolean): Double {
             val l = labels.getValue(p)
             val sum = HashMap<String, Double>()
             val n = HashMap<String, Int>()
-            for ((i, fc) in withPhones.withIndex()) if (keep(fc)) {
-                sum[fc.voice] = (sum[fc.voice] ?: 0.0) + cost(fc.expected, l[i])
-                n[fc.voice] = (n[fc.voice] ?: 0) + 1
+            for ((i, fc) in withPhones.withIndex()) {
+                if (keep(fc)) {
+                    sum[fc.voice] = (sum[fc.voice] ?: 0.0) + cost(fc.expected, l[i])
+                    n[fc.voice] = (n[fc.voice] ?: 0) + 1
+                }
             }
             return if (n.isEmpty()) Double.MAX_VALUE else sum.keys.sumOf { sum.getValue(it) / n.getValue(it) } / n.size
         }

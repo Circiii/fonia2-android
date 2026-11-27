@@ -55,7 +55,10 @@ fun WaveTitle(text: String, style: TextStyle, color: Color, modifier: Modifier =
     var index = 0
     val gap = with(androidx.compose.ui.platform.LocalDensity.current) { (style.fontSize.value * 0.28f).sp.toDp() }
     FlowRow(
-        modifier.clearAndSetSemantics { contentDescription = text; heading() },
+        modifier.clearAndSetSemantics {
+            contentDescription = text
+            heading()
+        },
         horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
         verticalArrangement = Arrangement.Center,
     ) {

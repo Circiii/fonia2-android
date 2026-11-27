@@ -1,7 +1,7 @@
 package tech.fonia.features.session
 
-import tech.fonia.audio.CapturedClip
 import java.util.UUID
+import tech.fonia.audio.CapturedClip
 
 /**
  * The end of a lesson's mixed block (iOS `Session/Playback.swift`). Its takes say nothing in the moment, only the soft

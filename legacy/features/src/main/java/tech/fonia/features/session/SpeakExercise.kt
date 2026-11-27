@@ -75,16 +75,22 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     var verdict by remember { mutableStateOf<TakeVerdict?>(null) }
     var adult by remember { mutableStateOf<Rating?>(null) }
     var waitingForChoice by remember { mutableStateOf(false) }
+
     /** A line in the capsule instead of the panel: "Mai spune o dată" while the trial starts over by itself. */
     var capsuleLine by remember { mutableStateOf<String?>(null) }
+
     /** What the new judge said about the last take (null: his judge decided). */
     var judged by remember { mutableStateOf<SoundJudge.Judged?>(null) }
+
     /** 3, 2, 1 in the capsule before it opens again after "Mai spune o dată". */
     var countdown by remember { mutableStateOf<Int?>(null) }
+
     /** „Vezi cum”: the sound's „Cum spun?” steps over the session, at this step (null: closed). */
     var howStep by remember { mutableStateOf<Int?>(null) }
+
     /** "Compară" is playing the example and then the take. */
     var comparing by remember { mutableStateOf(false) }
+
     /** The one thing to listen for, shown once both have played. */
     var compareQuestion by remember { mutableStateOf<String?>(null) }
     val haptics = rememberFoniaHaptics()
@@ -207,6 +213,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                     waitingForChoice = true
                 }
             }
+
             HearRules.Unjudged.Retake -> {
                 letter.retake()
                 FoniaSfx.play(SfxCue.Retake)
@@ -218,6 +225,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 }
                 run.retakeSameTrial()
             }
+
             HearRules.Unjudged.AlmostAndMoveOn -> {
                 val kind = TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Unclear, title = "Aproape! Mergem mai departe", keepsTake = false)
                 verdict = kind
@@ -255,6 +263,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 phase = SpeakPhase.Result
                 waitingForChoice = true
             }
+
             feedback == FeedbackLevel.Quick && !asked -> {
                 result.rating?.let { app.audio.effect(it.effect) }
                 phase = SpeakPhase.Result
@@ -264,6 +273,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
+
             feedback == FeedbackLevel.Teach && !asked && result.rating == Rating.yes -> {
                 // A good take doesn't wait for a tap: the pace is what builds the sound.
                 app.audio.effect(SoundEffect.Correct)
@@ -276,6 +286,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
+
             feedback == FeedbackLevel.Teach && !asked -> {
                 // Not yet right: the letter shows what to do, one short line, then the session moves on by itself.
                 result.rating?.let { app.audio.effect(it.effect) }
@@ -287,6 +298,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 if (adult != null || waitingForChoice) return
                 run.finishAttempt(exercise, machine = result.outcome, adult = null, take = take)
             }
+
             else -> {
                 if (feedback != FeedbackLevel.SelfJudge) result.rating?.let { app.audio.effect(it.effect) }
                 phase = SpeakPhase.Result
@@ -323,7 +335,10 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
     ): Pair<SoundJudge.Judged?, TakeVerdict> {
         val fresh = if (request != null && sound != null) {
             app.judge?.judge(
-                request, sound, clip, runtimeFor(run),
+                request,
+                sound,
+                clip,
+                runtimeFor(run),
                 talker = app.talkers.tracker(profile),
                 personal = app.voice.personal(profile.id),
                 profileIsAdult = !profile.isChild,
@@ -344,11 +359,13 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         if (fresh?.cue == SoundJudge.Cue.Retake) return fresh to fresh.verdict
         val result = when {
             fresh != null -> fresh.verdict.also { app.shadowSessionTake(run, trial, clip, it) }
+
             exercise is Exercise.Shadow -> {
                 // No recording to follow means nothing to compare with: a take can't be judged against itself.
                 val model = modelAsClip()
                 if (model != null) judge.shadow(model, clip) else TakeVerdict(rating = null, outcome = Attempt.Outcome.NotJudged, title = "Te-am auzit")
             }
+
             // His verdict as it is; the same take also goes to the ZIPA scorer of shadow mode, which never waits.
             else -> judge.judgeShadowed(app, run, trial, clip)
         }
@@ -445,7 +462,11 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
             val (own, room) = synchronized(personal) { personal.calibration() to personal.usableRoom }
             // His own S/Ș boundary and room once he has them („Calibrare”, or enough good takes); else the old anchors.
             app.audio.startListening(
-                app.talkers.group(profile), own ?: profile.calibration, fixtureText, fixtureLanguage, room = room,
+                app.talkers.group(profile),
+                own ?: profile.calibration,
+                fixtureText,
+                fixtureLanguage,
+                room = room,
                 spotSound = sound?.id?.takeIf { exercise.isRomanianSoundTake }?.let { tech.fonia.phones.TargetSound.fromRawValue(it.rawValue) },
             )
         } catch (cancelled: CancellationException) {
@@ -564,7 +585,11 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         if (shown.rating == Rating.yes) haptics.success() else haptics.tap()
     }
     FeedLetter(
-        letter, app.audio.levels, listening = phase == SpeakPhase.Listening, modelVoice = phase == SpeakPhase.Model, heard = { heard.value = it },
+        letter,
+        app.audio.levels,
+        listening = phase == SpeakPhase.Listening,
+        modelVoice = phase == SpeakPhase.Model,
+        heard = { heard.value = it },
         placeBias = placeBias(app.talkers.group(profile), app.voice.calibrated(profile.id)),
         aim = if (exercise.isRomanianSoundTake) LiveAim.of(sound?.id) else LiveAim.None,
         spot = app.audio.spot,
@@ -663,6 +688,7 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
         val model = modelText
         when {
             model != null -> run.modelSpeed()?.let { app.audio.sayAt(model.first, it, model.second) } ?: app.audio.say(model.first, model.second)
+
             exercise is Exercise.Retell -> {
                 for (line in exercise.prompt.lines) {
                     if (!isActive) break
@@ -670,7 +696,9 @@ fun SpeakExercise(trial: Trial, run: SessionRun, app: AppModel) {
                 }
                 app.audio.say(exercise.prompt.prompt)
             }
+
             exercise is Exercise.Describe -> app.audio.say(exercise.prompt.prompt)
+
             exercise is Exercise.Name && run.profile.isChild -> app.audio.sayIfRecorded(NAME_PROMPT)
         }
         if (!isActive) return@ExerciseTask

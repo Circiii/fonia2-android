@@ -1,9 +1,9 @@
 package tech.fonia.judge
 
-import tech.fonia.live.Clip
 import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.math.ln
+import tech.fonia.live.Clip
 
 /**
  * Who is speaking, heard from the voice itself rather than taken from the profile (a teenager with

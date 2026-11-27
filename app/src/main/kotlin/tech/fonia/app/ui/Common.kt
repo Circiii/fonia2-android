@@ -68,7 +68,10 @@ enum class FoniPose { Idle, Listens, Cheers, Points, AsksAdult }
 @Composable
 fun FoniMascot(modifier: Modifier = Modifier, size: Dp = 64.dp, pose: FoniPose = FoniPose.Idle) {
     // The parrot is the design system's; the drawn stand-in below is unreachable and kept only as reference.
-    if (true) { Foni(pose.mood(), modifier, size * 1.2f); return }
+    if (true) {
+        Foni(pose.mood(), modifier, size * 1.2f)
+        return
+    }
     val c = FoniaTheme.colors
     val reduce = FoniaTheme.reduceMotion
     val hop = remember { Animatable(0f) }
@@ -76,13 +79,24 @@ fun FoniMascot(modifier: Modifier = Modifier, size: Dp = 64.dp, pose: FoniPose =
         if (reduce) return@LaunchedEffect
         when (pose) {
             FoniPose.Cheers -> repeat(2) {
-                hop.animateTo(1f, tween(180, easing = FastOutSlowInEasing)); hop.animateTo(0f, tween(220, easing = FastOutSlowInEasing))
+                hop.animateTo(1f, tween(180, easing = FastOutSlowInEasing))
+                hop.animateTo(0f, tween(220, easing = FastOutSlowInEasing))
             }
-            FoniPose.Idle -> { hop.animateTo(0.35f, tween(500)); hop.animateTo(0f, tween(700)) }
+
+            FoniPose.Idle -> {
+                hop.animateTo(0.35f, tween(500))
+                hop.animateTo(0f, tween(700))
+            }
+
             else -> hop.animateTo(0f, tween(200))
         }
     }
-    val tilt = when (pose) { FoniPose.Listens -> -8f; FoniPose.AsksAdult -> 10f; FoniPose.Points -> -4f; else -> 0f }
+    val tilt = when (pose) {
+        FoniPose.Listens -> -8f
+        FoniPose.AsksAdult -> 10f
+        FoniPose.Points -> -4f
+        else -> 0f
+    }
     Box(
         modifier
             .size(size)
@@ -96,9 +110,15 @@ fun FoniMascot(modifier: Modifier = Modifier, size: Dp = 64.dp, pose: FoniPose =
 }
 
 private fun DrawScope.drawFoni(
-    body: androidx.compose.ui.graphics.Color, rim: androidx.compose.ui.graphics.Color, edge: androidx.compose.ui.graphics.Color,
-    beak: androidx.compose.ui.graphics.Color, beakRim: androidx.compose.ui.graphics.Color, ink: androidx.compose.ui.graphics.Color,
-    gloss: androidx.compose.ui.graphics.Color, shadow: androidx.compose.ui.graphics.Color, wingUp: Boolean,
+    body: androidx.compose.ui.graphics.Color,
+    rim: androidx.compose.ui.graphics.Color,
+    edge: androidx.compose.ui.graphics.Color,
+    beak: androidx.compose.ui.graphics.Color,
+    beakRim: androidx.compose.ui.graphics.Color,
+    ink: androidx.compose.ui.graphics.Color,
+    gloss: androidx.compose.ui.graphics.Color,
+    shadow: androidx.compose.ui.graphics.Color,
+    wingUp: Boolean,
 ) {
     val u = size.minDimension / 100f
     val cx = size.width / 2
@@ -112,7 +132,9 @@ private fun DrawScope.drawFoni(
     }
     // shadow, then the sticker rim and white edge around the whole silhouette
     drawCircle(shadow, r + 4 * u, bodyC + Offset(2 * u, 6 * u))
-    tuft(-22f, 18 * u); tuft(0f, 22 * u); tuft(22f, 16 * u)
+    tuft(-22f, 18 * u)
+    tuft(0f, 22 * u)
+    tuft(22f, 16 * u)
     drawCircle(rim, r + 4.5f * u, bodyC)
     drawCircle(edge, r + 2.5f * u, bodyC)
     drawCircle(body, r, bodyC)
@@ -130,7 +152,10 @@ private fun DrawScope.drawFoni(
         }
     } else {
         val wing = Path().apply {
-            moveTo(cx + 14 * u, 50 * u); quadraticTo(cx + 40 * u, 58 * u, cx + 30 * u, 86 * u); quadraticTo(cx + 16 * u, 74 * u, cx + 12 * u, 58 * u); close()
+            moveTo(cx + 14 * u, 50 * u)
+            quadraticTo(cx + 40 * u, 58 * u, cx + 30 * u, 86 * u)
+            quadraticTo(cx + 16 * u, 74 * u, cx + 12 * u, 58 * u)
+            close()
         }
         drawPath(wing, rim)
     }
@@ -140,7 +165,10 @@ private fun DrawScope.drawFoni(
     drawCircle(edge, 1.8f * u, Offset(cx - 5.8f * u, 47 * u))
     // beak
     val b = Path().apply {
-        moveTo(cx - 22 * u, 54 * u); quadraticTo(cx - 40 * u, 56 * u, cx - 34 * u, 70 * u); quadraticTo(cx - 28 * u, 62 * u, cx - 16 * u, 64 * u); close()
+        moveTo(cx - 22 * u, 54 * u)
+        quadraticTo(cx - 40 * u, 56 * u, cx - 34 * u, 70 * u)
+        quadraticTo(cx - 28 * u, 62 * u, cx - 16 * u, 64 * u)
+        close()
     }
     drawPath(b, beakRim, style = Stroke(3 * u, join = StrokeJoin.Round))
     drawPath(b, beak)
@@ -162,7 +190,12 @@ fun SpeechBubble(text: String, modifier: Modifier = Modifier, tailUp: Boolean = 
                 drawRoundRect(c.surface, Offset(tail, 0f), Size(size.width - tail, size.height), r)
                 drawRoundRect(c.separator, Offset(tail, 0f), Size(size.width - tail, size.height), r, style = Stroke(1.5.dp.toPx()))
                 val y = size.height / 2
-                val p = Path().apply { moveTo(tail + 1.dp.toPx(), y - 8.dp.toPx()); lineTo(0f, y); lineTo(tail + 1.dp.toPx(), y + 8.dp.toPx()); close() }
+                val p = Path().apply {
+                    moveTo(tail + 1.dp.toPx(), y - 8.dp.toPx())
+                    lineTo(0f, y)
+                    lineTo(tail + 1.dp.toPx(), y + 8.dp.toPx())
+                    close()
+                }
                 drawPath(p, c.surface)
                 drawLine(c.separator, Offset(tail, y - 8.dp.toPx()), Offset(0f, y), 1.5.dp.toPx())
                 drawLine(c.separator, Offset(0f, y), Offset(tail, y + 8.dp.toPx()), 1.5.dp.toPx())
@@ -186,7 +219,12 @@ private fun BubbleTailUp(text: String, modifier: Modifier) {
                 drawRoundRect(c.surface, Offset(0f, tail), Size(size.width, size.height - tail), r)
                 drawRoundRect(c.separator, Offset(0f, tail), Size(size.width, size.height - tail), r, style = Stroke(1.5.dp.toPx()))
                 val x = 40.dp.toPx()
-                val p = Path().apply { moveTo(x - 9.dp.toPx(), tail + 1.dp.toPx()); lineTo(x, 0f); lineTo(x + 9.dp.toPx(), tail + 1.dp.toPx()); close() }
+                val p = Path().apply {
+                    moveTo(x - 9.dp.toPx(), tail + 1.dp.toPx())
+                    lineTo(x, 0f)
+                    lineTo(x + 9.dp.toPx(), tail + 1.dp.toPx())
+                    close()
+                }
                 drawPath(p, c.surface)
                 drawLine(c.separator, Offset(x - 9.dp.toPx(), tail), Offset(x, 0f), 1.5.dp.toPx())
                 drawLine(c.separator, Offset(x, 0f), Offset(x + 9.dp.toPx(), tail), 1.5.dp.toPx())
@@ -211,7 +249,12 @@ fun StepDots(done: Int, total: Int, description: String, modifier: Modifier = Mo
                 Modifier.size(if (i == done) 14.dp else 12.dp).drawBehind {
                     when {
                         i < done -> drawCircle(c.accent)
-                        i == done -> { drawCircle(c.surface); drawCircle(c.accent, style = Stroke(2.5.dp.toPx())) }
+
+                        i == done -> {
+                            drawCircle(c.surface)
+                            drawCircle(c.accent, style = Stroke(2.5.dp.toPx()))
+                        }
+
                         else -> drawCircle(c.separator, style = Stroke(2.dp.toPx()))
                     }
                 },
@@ -255,13 +298,17 @@ fun MouthButton(description: String, onClick: () -> Unit, modifier: Modifier = M
                 val cx = size.width / 2
                 val cy = size.height / 2
                 val upper = Path().apply {
-                    moveTo(cx - 13 * u, cy); cubicTo(cx - 8 * u, cy - 8 * u, cx - 3 * u, cy - 6 * u, cx, cy - 3 * u)
+                    moveTo(cx - 13 * u, cy)
+                    cubicTo(cx - 8 * u, cy - 8 * u, cx - 3 * u, cy - 6 * u, cx, cy - 3 * u)
                     cubicTo(cx + 3 * u, cy - 6 * u, cx + 8 * u, cy - 8 * u, cx + 13 * u, cy)
-                    cubicTo(cx + 6 * u, cy - 1 * u, cx - 6 * u, cy - 1 * u, cx - 13 * u, cy); close()
+                    cubicTo(cx + 6 * u, cy - 1 * u, cx - 6 * u, cy - 1 * u, cx - 13 * u, cy)
+                    close()
                 }
                 val lower = Path().apply {
-                    moveTo(cx - 13 * u, cy + 0.5f * u); cubicTo(cx - 6 * u, cy + 10 * u, cx + 6 * u, cy + 10 * u, cx + 13 * u, cy + 0.5f * u)
-                    cubicTo(cx + 6 * u, cy + 2.5f * u, cx - 6 * u, cy + 2.5f * u, cx - 13 * u, cy + 0.5f * u); close()
+                    moveTo(cx - 13 * u, cy + 0.5f * u)
+                    cubicTo(cx - 6 * u, cy + 10 * u, cx + 6 * u, cy + 10 * u, cx + 13 * u, cy + 0.5f * u)
+                    cubicTo(cx + 6 * u, cy + 2.5f * u, cx - 6 * u, cy + 2.5f * u, cx - 13 * u, cy + 0.5f * u)
+                    close()
                 }
                 drawPath(upper, c.voice)
                 drawPath(lower, c.voice)

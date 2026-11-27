@@ -1,11 +1,11 @@
 package tech.fonia.judge
 
+import java.io.File
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import tech.fonia.model.ErrorKind
 import tech.fonia.model.SoundId
-import java.io.File
 
 // The judge's data files (docs/REGULI.md: thresholds, coefficients and durations are data in spec/, with a version saved
 // on each take). Android bundles the same files as assets and passes their text to [JudgeSpec.fromStrings].
@@ -327,11 +327,16 @@ data class UnlockSpec(
     fun problems(): List<String> = entries.mapNotNull { e ->
         when {
             e.state !in setOf("locked", "trial", "unlocked") -> "${e.sound}/${e.kind}: unknown state '${e.state}'"
+
             e.state == "unlocked" && e.evidence == null -> "${e.sound}/${e.kind}: unlocked without evidence"
+
             e.state == "unlocked" && e.evidenceLevel !in setOf("imitations", "children") ->
                 "${e.sound}/${e.kind}: unlocked needs evidenceLevel imitations or children"
+
             SoundId.of(e.sound) == null -> "${e.sound}: unknown sound"
+
             ErrorKind.of(e.kind) == null && ErrorKind.entries.none { it.name == e.kind } -> "${e.kind}: unknown kind"
+
             else -> null
         }
     }
@@ -392,13 +397,19 @@ class JudgeSpec(
     fun versions(sound: SoundId): SpecVersions {
         val f = fusion[sound]
         return SpecVersions(
-            thresholds = population.version, fusion = f?.version ?: "", unlock = unlock.version,
-            feedback = feedback.version, featureVersion = f?.featureVersion ?: "",
+            thresholds = population.version,
+            fusion = f?.version ?: "",
+            unlock = unlock.version,
+            feedback = feedback.version,
+            featureVersion = f?.featureVersion ?: "",
         )
     }
 
     companion object {
-        val json = Json { ignoreUnknownKeys = true; isLenient = false }
+        val json = Json {
+            ignoreUnknownKeys = true
+            isLenient = false
+        }
 
         /**
          * File names of the fusion specs, ASCII so asset paths survive every file system: `spec/fusion/<SoundId.name

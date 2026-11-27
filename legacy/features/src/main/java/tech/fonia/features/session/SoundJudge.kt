@@ -8,9 +8,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.flow.first
 import tech.fonia.audio.CapturedClip
 import tech.fonia.design.Rating
 import tech.fonia.domain.Exercise
@@ -25,15 +25,16 @@ import tech.fonia.dsp.VoiceGroup
 import tech.fonia.features.app.shortLetter
 import tech.fonia.judge.Head
 import tech.fonia.judge.HintKey
-import tech.fonia.judge.PersonalReference
-import tech.fonia.judge.PolicyLevel
-import tech.fonia.judge.TakeVisual
 import tech.fonia.judge.JudgeRequest
 import tech.fonia.judge.JudgeSpec
 import tech.fonia.judge.Level
+import tech.fonia.judge.PersonalReference
+import tech.fonia.judge.PolicyLevel
 import tech.fonia.judge.Position
 import tech.fonia.judge.RuntimeContext
+import tech.fonia.judge.TakeJudge as NewTakeJudge
 import tech.fonia.judge.TakeResult
+import tech.fonia.judge.TakeVisual
 import tech.fonia.judge.TalkerGroup
 import tech.fonia.judge.TalkerTracker
 import tech.fonia.judge.measureForVoice
@@ -44,7 +45,6 @@ import tech.fonia.model.ErrorKind
 import tech.fonia.model.SoundId
 import tech.fonia.model.Verdict
 import tech.fonia.store.Attempt
-import tech.fonia.judge.TakeJudge as NewTakeJudge
 import tech.fonia.words.WordMatcher
 import tech.fonia.words.WordsAdvice
 import tech.fonia.words.WordsCheck
@@ -208,6 +208,7 @@ class SoundJudge(
         val check = heardNow?.takeIf { isSentence }?.let { WordMatcher.check(request.text, it) }
         val judged = when {
             check != null -> withWords(bySound, check)
+
             // One word, praised by the sound heads, but the recogniser is sure another word was said („val” for
             // „pară”): not praised, said again. The practised sound itself is never the recogniser's business.
             // Asked again once at most: on a retry the sound verdict stands.
@@ -216,10 +217,15 @@ class SoundJudge(
                 Log.i(WORDS_TAG, "take '${request.text}' heard '${heardNow.text}' conf=${"%.2f".format(heardNow.confidence)}: another word, not praised")
                 bySound.copy(
                     verdict = TakeVerdict(rating = null, outcome = Attempt.Outcome.Unclear, title = "Mai spune o dată", keepsTake = false),
-                    cue = Cue.Retake, kind = null, hint = null, dot = null, joinedReference = false,
+                    cue = Cue.Retake,
+                    kind = null,
+                    hint = null,
+                    dot = null,
+                    joinedReference = false,
                     trace = "${bySound.trace} otherWord(asr='${heardNow.text}')",
                 )
             }
+
             else -> {
                 if (heardNow != null && !isSentence) Log.i(WORDS_TAG, "take '${request.text}' heard '${heardNow.text}' conf=${"%.2f".format(heardNow.confidence)}")
                 bySound
@@ -267,23 +273,32 @@ class SoundJudge(
         return when {
             bySound.cue == Cue.Correct && !check.mostSaid() -> bySound.copy(
                 verdict = TakeVerdict(
-                    rating = Rating.nearly, outcome = Attempt.Outcome.Almost,
+                    rating = Rating.nearly,
+                    outcome = Attempt.Outcome.Almost,
                     title = WordsAdvice.next(check) ?: "Mai spune o dată, cu toate cuvintele.",
                 ),
-                cue = Cue.Almost, trace = "${bySound.trace} $note",
+                cue = Cue.Almost,
+                trace = "${bySound.trace} $note",
             )
+
             // In a sentence the sound is short by nature: "too short / not heard" against every word heard (the word
             // with the sound included, written with its letter) is the length rule misfiring, not a missing sound.
             // Seen with a clear adult voice: „Păpușa are o șapcă.” 4/4 words, p=0.97, yet "N-am auzit Ș-ul".
             (bySound.cue == Cue.Instruct || bySound.cue == Cue.Almost) && check.allSaid() &&
                 (bySound.kind == tech.fonia.model.ErrorKind.WeakOrShort || bySound.kind == tech.fonia.model.ErrorKind.Omission) -> bySound.copy(
                 verdict = TakeVerdict(rating = Rating.yes, outcome = Attempt.Outcome.Good, title = "Ai spus toată propoziția!"),
-                cue = Cue.Correct, kind = null, hint = null, trace = "${bySound.trace} $note lengthRuleOverruled",
+                cue = Cue.Correct,
+                kind = null,
+                hint = null,
+                trace = "${bySound.trace} $note lengthRuleOverruled",
             )
+
             bySound.cue == Cue.Retake && check.allSaid() -> bySound.copy(
                 verdict = TakeVerdict(rating = Rating.yes, outcome = Attempt.Outcome.Good, title = "Ai spus toată propoziția!"),
-                cue = Cue.Correct, trace = "${bySound.trace} $note",
+                cue = Cue.Correct,
+                trace = "${bySound.trace} $note",
             )
+
             else -> bySound.copy(trace = "${bySound.trace} $note")
         }
     }
@@ -383,17 +398,24 @@ class SoundJudge(
                     if (p.language != Language.Ro) return null
                     val s = p.sound ?: return null
                     // "ț-ț-ț", "ci-ci-ci", "ge-ge-ge": the judge v2 has a burst rule (Level.Syllable with '-').
-                    Triple(s, p.text, when (p.level) {
-                        RepeatPrompt.Level.Syllable -> Level.Syllable
-                        RepeatPrompt.Level.Sentence -> Level.Sentence
-                        else -> Level.Word
-                    })
+                    Triple(
+                        s,
+                        p.text,
+                        when (p.level) {
+                            RepeatPrompt.Level.Syllable -> Level.Syllable
+                            RepeatPrompt.Level.Sentence -> Level.Sentence
+                            else -> Level.Word
+                        },
+                    )
                 }
+
                 is Exercise.Name -> Triple(exercise.sound, exercise.item.text, Level.Word)
+
                 is Exercise.Twister -> {
                     if (exercise.language != Language.Ro) return null
                     Triple(exercise.sound ?: return null, exercise.text, Level.Sentence)
                 }
+
                 else -> return null
             }
             return JudgeRequest(
@@ -427,8 +449,11 @@ class SoundJudge(
                     // The judge's own "heard as" only when it is that rival (GE: Z or J); anything else is not named.
                     heard?.takeIf { rival.split(" sau ").contains(it) } ?: rival
                 }
+
                 ErrorKind.RtoL -> if (id == SoundID.R) "L" else null
+
                 ErrorKind.LtoR -> if (id == SoundID.L) "R" else null
+
                 else -> null
             }
         }
@@ -441,15 +466,25 @@ class SoundJudge(
             swapHeard(id, kind, heardAs)?.let { return "Aproape. A sunat ca $it" }
             return when (kind) {
                 ErrorKind.Omission -> "N-am auzit $letter-ul"
+
                 ErrorKind.WeakOrShort -> "Sună puțin moale"
+
                 ErrorKind.Devoicing -> "Pornește vocea"
+
                 ErrorKind.Stopping -> "Aproape. Lasă aerul să curgă"
+
                 ErrorKind.Deaffrication -> "Aproape. Atinge, apoi lasă aerul"
+
                 ErrorKind.Lateral -> "Aproape. Aerul pe mijloc"
+
                 ErrorKind.Interdental -> "Aproape. Limba după dinți"
+
                 ErrorKind.RtoGlide, ErrorKind.RtoVowel -> "Aproape. Vârful limbii sus"
+
                 ErrorKind.RUvular -> "Aproape. Vârful limbii lucrează"
+
                 ErrorKind.LtoGlide -> "Aproape. Lipește limba sus"
+
                 // Only when the kind does not belong to this sound (an R swap on an L): a plain "almost".
                 ErrorKind.PlaceSwap, ErrorKind.AffricatePlace, ErrorKind.RtoL, ErrorKind.LtoR -> "Aproape. Încă o dată, mai clar"
             }
@@ -478,19 +513,27 @@ class SoundJudge(
             return when (val v = result.verdict) {
                 Verdict.Correct -> Judged(
                     TakeVerdict(rating = Rating.yes, outcome = Attempt.Outcome.Good, title = Praise.short.random()),
-                    Cue.Correct, trace = trace,
+                    Cue.Correct,
+                    trace = trace,
                 )
+
                 Verdict.Almost -> Judged(
                     TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Almost, title = "Aproape. Încă o dată, mai clar"),
-                    Cue.Almost, trace = trace,
+                    Cue.Almost,
+                    trace = trace,
                 )
+
                 is Verdict.NamedError -> {
                     val title = namedTitle(sound.id, sound.shortLetter, v.kind, v.heardAs)
                     Judged(
                         TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Almost, title = title, pose = sound.viseme),
-                        Cue.Instruct, kind = v.kind, heard = swapHeard(sound.id, v.kind, v.heardAs), trace = trace,
+                        Cue.Instruct,
+                        kind = v.kind,
+                        heard = swapHeard(sound.id, v.kind, v.heardAs),
+                        trace = trace,
                     )
                 }
+
                 Verdict.Unsure -> {
                     // A kind still "în probă" (spec/unlock.json) that the phone is sure of: no adult is asked any more,
                     // so the letter shows what to do (its instruction animation) under a kind "almost", without naming
@@ -499,12 +542,16 @@ class SoundJudge(
                     if (note != null && note.inTrial && note.probability >= TRIAL_INSTRUCT_AT) {
                         Judged(
                             TakeVerdict(rating = Rating.nearly, outcome = Attempt.Outcome.Almost, title = "Aproape. Uite cum", pose = sound.viseme),
-                            Cue.Instruct, kind = note.kind, heard = null, trace = "$trace trial=${note.kind.raw}",
+                            Cue.Instruct,
+                            kind = note.kind,
+                            heard = null,
+                            trace = "$trace trial=${note.kind.raw}",
                         )
                     } else {
                         Judged(retake, Cue.Retake, trace = trace)
                     }
                 }
+
                 // A capture gate says what to change, so "say it again" is never a riddle (max 8 words, nothing blamed).
                 Verdict.Retake -> Judged(
                     when (result.retakeReason) {
@@ -515,7 +562,8 @@ class SoundJudge(
                         tech.fonia.judge.RetakeReason.Noisy -> retake.copy(title = "E zgomot. Vino mai aproape")
                         else -> retake
                     },
-                    Cue.Retake, trace = trace,
+                    Cue.Retake,
+                    trace = trace,
                 )
             }
         }

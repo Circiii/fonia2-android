@@ -1,5 +1,10 @@
 package tech.fonia.features.home
 
+import java.io.File
+import java.nio.file.Files
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,11 +32,6 @@ import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import tech.fonia.store.SessionRecord
 import tech.fonia.store.SoundProgress
-import java.io.File
-import java.nio.file.Files
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * `PathModelTests.swift` (suite "PathModel"), test for test, with the same inputs and expectations. The model runs on

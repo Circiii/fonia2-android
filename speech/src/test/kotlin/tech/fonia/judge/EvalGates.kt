@@ -1,8 +1,8 @@
 package tech.fonia.judge
 
-import tech.fonia.model.SoundId
 import java.io.File
 import java.util.Locale
+import tech.fonia.model.SoundId
 
 /**
  * The opt-in judge gates on the evaluation set ([EvalV2Runner]); all of them are off in the shipped spec
@@ -42,11 +42,16 @@ class EvalGates(private val runner: EvalV2Runner) {
         SoundId.Ce, SoundId.Ge -> {
             val out = ArrayList<Setting>()
             // On the prompt voice good CE / GE sit around 0.3 and Ș / J around 0.15–0.25, so the grid goes low.
-            for (t in listOf(2f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f)) for (v in listOf(-1f, 0.05f, 0.1f, 0.15f, 0.2f, 0.3f))
-                out += Setting(AffricateGate(t, if (t <= 1f) fricatives.getValue(sound) else emptyList(), v))
+            for (t in listOf(2f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f)) {
+                for (v in listOf(-1f, 0.05f, 0.1f, 0.15f, 0.2f, 0.3f)) {
+                    out += Setting(AffricateGate(t, if (t <= 1f) fricatives.getValue(sound) else emptyList(), v))
+                }
+            }
             out
         }
+
         SoundId.L -> listOf(Setting()) + listOf(4f, 6f, 8f, 10f, 12f).flatMap { m -> listOf(false, true).map { Setting(finalL = FinalLThresholds(m, it)) } }
+
         else -> emptyList()
     }
 
@@ -163,24 +168,30 @@ class EvalGates(private val runner: EvalV2Runner) {
         md += "To ship a gate: copy `gates.json` into `spec/thresholds/population.json` → `judge2`, bump its version, and put"
         md += "the held-out numbers above (with the clips they came from) in `spec/fusion/EVAL_v2.md`."
         File(out, "gates.md").writeText(md.joinToString("\n") + "\n")
-        File(out, "gates.json").writeText(buildString {
-            append("{\n  \"affricate\": {")
-            append(all.entries.mapNotNull { (s, c) -> c.affricate?.takeIf { it.trustAt <= 1f || it.vetoAt >= 0f }?.let { s to it } }
-                .joinToString(", ") { (s, a) ->
-                    "\"${s.raw}\": {\"trustAt\": ${a.trustAt}, \"trust\": [${a.trust.joinToString(", ") { "\"$it\"" }}], \"vetoAt\": ${a.vetoAt}}"
-                })
-            val fl = all[SoundId.L]?.finalL ?: FinalLThresholds()
-            append("},\n  \"finalL\": {\"minGlideNats\": ${fl.minGlideNats}, \"mask\": ${fl.mask}}\n}\n")
-        })
+        File(out, "gates.json").writeText(
+            buildString {
+                append("{\n  \"affricate\": {")
+                append(
+                    all.entries.mapNotNull { (s, c) -> c.affricate?.takeIf { it.trustAt <= 1f || it.vetoAt >= 0f }?.let { s to it } }
+                        .joinToString(", ") { (s, a) ->
+                            "\"${s.raw}\": {\"trustAt\": ${a.trustAt}, \"trust\": [${a.trust.joinToString(", ") { "\"$it\"" }}], \"vetoAt\": ${a.vetoAt}}"
+                        },
+                )
+                val fl = all[SoundId.L]?.finalL ?: FinalLThresholds()
+                append("},\n  \"finalL\": {\"minGlideNats\": ${fl.minGlideNats}, \"mask\": ${fl.mask}}\n}\n")
+            },
+        )
         val rows = ArrayList<String>()
         rows += "id,voice,sound,expected,shipped,heldout,stopOnset,onsetAttackDb,onsetSpikeDb,voiceLeadMs,gapMs,wordFinal,lprGlide"
         for (sound in sounds) {
             val shipped = labels(sound, Setting())
             for ((i, it) in subset(sound).withIndex()) {
                 val f = features(it)
-                rows += listOf(it.id, it.voice, sound.raw, it.expected, shipped[i], held[it.id] ?: "", f3(f[Features.STOP_ONSET]),
+                rows += listOf(
+                    it.id, it.voice, sound.raw, it.expected, shipped[i], held[it.id] ?: "", f3(f[Features.STOP_ONSET]),
                     f3(f[Features.ONSET_ATTACK]), f3(f[Features.ONSET_SPIKE]), f3(f[Features.VOICE_LEAD]), f3(f[Features.GAP]),
-                    it.phones?.wordFinal?.toString() ?: "", f3(it.phones?.lpr?.get("j+w"))).joinToString(",") { v ->
+                    it.phones?.wordFinal?.toString() ?: "", f3(it.phones?.lpr?.get("j+w")),
+                ).joinToString(",") { v ->
                     if (v.contains(',') || v.contains('"')) "\"" + v.replace("\"", "\"\"") + "\"" else v
                 }
             }
@@ -190,8 +201,15 @@ class EvalGates(private val runner: EvalV2Runner) {
 
     /** Section 1: the onset per expected label, and the final L's glide evidence. */
     private fun separation(md: MutableList<String>) {
-        val cues = listOf(Features.STOP_ONSET, Features.ONSET_ATTACK, Features.ONSET_SPIKE, Features.VOICE_LEAD, Features.GAP,
-            Features.RISE, Features.BURST)
+        val cues = listOf(
+            Features.STOP_ONSET,
+            Features.ONSET_ATTACK,
+            Features.ONSET_SPIKE,
+            Features.VOICE_LEAD,
+            Features.GAP,
+            Features.RISE,
+            Features.BURST,
+        )
         md += "## 1. How the frication starts, per expected label (median; n with a value)"
         md += ""
         md += "| sound | expected | takes | " + cues.joinToString(" | ") + " |"
@@ -257,7 +275,17 @@ class EvalGates(private val runner: EvalV2Runner) {
     private fun auc(a: List<Float>, b: List<Float>): Double? {
         if (a.isEmpty() || b.isEmpty()) return null
         var s = 0.0
-        for (x in a) for (y in b) s += if (x > y) 1.0 else if (x == y) 0.5 else 0.0
+        for (x in a) {
+            for (y in b) {
+                s += if (x > y) {
+                    1.0
+                } else if (x == y) {
+                    0.5
+                } else {
+                    0.0
+                }
+            }
+        }
         return s / (a.size * b.size)
     }
 
