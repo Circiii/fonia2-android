@@ -46,7 +46,6 @@ import tech.fonia.features.pilot.PilotSlot
 import tech.fonia.features.pilot.PilotSwitch
 import tech.fonia.features.pilot.pilotEnvironment
 import tech.fonia.features.probe.ProbeCopy
-import tech.fonia.features.probe.ProbePlan
 import tech.fonia.features.probe.ProbeStore
 import tech.fonia.features.probe.bundled
 import tech.fonia.features.probe.probe
@@ -56,139 +55,9 @@ import tech.fonia.store.FoniaDatabase
 import tech.fonia.store.FoniaRepository
 import tech.fonia.store.Profile
 import tech.fonia.store.SessionRecord
-import tech.fonia.whisper.FoniaWhisper
-import tech.fonia.whisper.WhisperCppModel
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.UUID
-
-/** Which of the two counts [AppRoute.Tally] opens on. */
-enum class TallyFocus { Days, Stars }
-
-/** Where a tap can lead: the pages pushed on the one navigation stack of the tabs. */
-sealed interface AppRoute {
-    data class Guide(val sound: SoundID) : AppRoute
-
-    data class Mirror(val sound: SoundID) : AppRoute
-
-    data class Coach(val key: String) : AppRoute
-
-    // `.unit(String)` on iOS. Inside this interface `Unit` names the route, not kotlin.Unit.
-    data class Unit(val id: String) : AppRoute
-
-    data object AllSounds : AppRoute
-
-    data object Warmup : AppRoute
-
-    data object Play : AppRoute
-
-    data object Journal : AppRoute
-
-    data object Guides : AppRoute
-
-    data object Stories : AppRoute
-
-    data object English : AppRoute
-
-    data object Speaking : AppRoute
-
-    data object Settings : AppRoute
-
-    /** The days and stars behind the two counts on Home. */
-    data class Tally(val focus: TallyFocus) : AppRoute
-
-    /** „La cameră”: the speech coach. [launch] (debug) = `<seconds>:<promptId>[:go]`. */
-    data class SpeechCoach(val launch: String? = null) : AppRoute
-
-    /** „Antrenament de dicție” of a sound: the ladder of drills. */
-    data class Training(val sound: SoundID) : AppRoute
-
-    companion object {
-        /**
-         * Parses `foniaRoute`: `journal`, `settings`, `sounds`, `warmup`, `play`, `guides`, `stories`, `english`,
-         * `speaking`, `speech[:<seconds>:<promptId>[:go]]`, `unit:<id>`, `guide:<sound>`, `mirror:<sound>`, `coach:<key>`.
-         */
-        fun parse(text: String): AppRoute? {
-            val parts = text.split(":", limit = 2)
-            return when (parts[0]) {
-                "journal" -> Journal
-                "settings" -> Settings
-                "sounds" -> AllSounds
-                "warmup" -> Warmup
-                "play" -> Play
-                "guides" -> Guides
-                "stories" -> Stories
-                "english" -> English
-                "speaking" -> Speaking
-                "speech" -> SpeechCoach(parts.getOrNull(1))
-                "unit" -> parts.getOrNull(1)?.let { Unit(it) }
-                "guide" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Guide(it) }
-                "mirror" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Mirror(it) }
-                "coach" -> parts.getOrNull(1)?.let { Coach(it) }
-                "training" -> parts.getOrNull(1)?.let { SoundID.fromRawValue(it) }?.let { Training(it) }
-                else -> null
-            }
-        }
-    }
-}
-
-/** What's on screen as a full-screen cover: a practice session. */
-data class SessionTicket(
-    val id: UUID = UUID.randomUUID(),
-    val focus: SessionFocus,
-    val title: String,
-    val sound: SoundID?,
-    /** Trials the app prepared itself (the quick check, a diction drill) instead of the session builder's. */
-    val custom: CustomRun? = null,
-) {
-    /** „Cuvinte noi” before a lesson (`ProbeRules`): its items replace the builder's, and the lesson follows. */
-    val probe: ProbePlan? get() = (custom?.kind as? CustomRun.Kind.Probe)?.plan
-}
-
-/** A run of trials made by the app, played through the same session screen, take cycle and judge. */
-data class CustomRun(
-    val kind: Kind,
-    val trials: List<Trial>,
-    /** Per trial, the speed the model is played at (a twister's tempo ladder); null: normal. */
-    val modelSpeeds: List<Float>? = null,
-) {
-    sealed interface Kind {
-        /** „Verificare rapidă”: one or two words per sound; ends on the three groups. */
-        data object Check : Kind
-
-        /** One drill of the diction training of [sound], the [index]-th of its ladder. */
-        data class Drill(val sound: SoundID, val index: Int) : Kind
-
-        /** „Cuvinte noi” before a lesson (iOS `SessionTicket.probe`): nothing of it is practice. */
-        data class Probe(val plan: ProbePlan) : Kind
-    }
-}
-
-/**
- * What the audio backend is built from, as `AudioHub(voices:effectsDirectory:usesFixtures:)` is on iOS: the app's
- * context, the folder of sound effects (`voice/sfx`, null when it isn't there), and whether takes come from clips.
- */
-class AudioEnvironment(val context: Context, val usesFixtures: Boolean, val effectsDirectory: ClipLocation?)
-
-/**
- * The platform engines. The defaults are the real ones: the :audio engines (with a `FixtureSource` in place of the
- * microphone when `foniaFixtures` asks for recorded takes) and the Whisper model of :whisper. The stand-ins are for
- * the JVM tests (`NoAudioBackend`) and for `foniaFakeSpeech` (`FakeSpeechModel`).
- */
-class FoniaPlatform(
-    val audio: (AudioEnvironment) -> AudioBackend = { environment ->
-        LiveAudioBackend(environment.context, environment.effectsDirectory)
-    },
-    val speechModel: (Context, LaunchArguments) -> SpeechModelPort = { context, arguments ->
-        if (arguments.fakeSpeech) {
-            FakeSpeechModel()
-        } else {
-            StoreSpeechModel(FoniaWhisper.modelStore(context), WhisperCppModel.megabytes())
-        }
-    },
-    /** `makePreferredFaceSource()`, asked each time the mouth coach opens. See `FaceSources.kt`. */
-    val face: (Context, LaunchArguments) -> FaceSource = { context, arguments -> makePreferredFaceSource(context, arguments) },
-)
 
 /** `AppModel`: the app's state. Snapshot state instead of `@Observable`; main thread only, as `@MainActor`. */
 class AppModel(
