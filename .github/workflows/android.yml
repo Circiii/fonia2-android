@@ -1,7 +1,8 @@
 # JVM tests and lint on every pull request and push to main.
 #
-# content/ is the private Circiii/fonia-content repository, owned by a personal account: the CONTENT_TOKEN
-# secret is a fine-grained token made by that account, limited to fonia-content with Contents: read. The speech
+# content/ is the private Circiii/fonia-content repository, owned by a personal account. A fine-grained token
+# cannot reach another user's repository even for a collaborator, so CONTENT_TOKEN is a classic token with the
+# repo scope, made by a collaborator on fonia-content. It expires: renew it in both repositories' secrets. The speech
 # models are downloaded and SHA-256 checked by the build into ~/.gradle/fonia-models, cached here by
 # spec/models/manifest.json. Parakeet-Ro is not downloadable, so CI builds without it, as any machine without
 # the file does.
