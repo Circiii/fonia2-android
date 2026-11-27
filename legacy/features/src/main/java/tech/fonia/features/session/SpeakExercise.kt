@@ -1,28 +1,12 @@
 package tech.fonia.features.session
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,24 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlin.math.max
@@ -60,39 +30,12 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tech.fonia.audio.CapturedClip
-import tech.fonia.audio.LiveLevels
-import tech.fonia.design.Field
-import tech.fonia.design.Foni
-import tech.fonia.design.FoniButtonStyle
-import tech.fonia.design.FoniMood
-import tech.fonia.design.FoniTone
-import tech.fonia.design.FoniaIcon
-import tech.fonia.design.FoniaIconView
-import tech.fonia.design.FoniaLabel
 import tech.fonia.design.FoniaSfx
 import tech.fonia.design.FoniaText
-import tech.fonia.design.IconOverTitle
-import tech.fonia.design.IconTileButtonStyle
 import tech.fonia.design.MarkedWord
-import tech.fonia.design.Palette
-import tech.fonia.design.PillButtonStyle
 import tech.fonia.design.Rating
-import tech.fonia.design.RatingChoice
-import tech.fonia.design.RatingMark
-import tech.fonia.design.RatingRow
 import tech.fonia.design.SfxCue
-import tech.fonia.design.StyledButton
-import tech.fonia.design.TextRole
-import tech.fonia.design.UIWeight
-import tech.fonia.design.VoiceBars
-import tech.fonia.design.VoiceRings
-import tech.fonia.design.fBody
-import tech.fonia.design.fBodyStrong
-import tech.fonia.design.fButton
 import tech.fonia.design.fPrompt
-import tech.fonia.design.ping
-import tech.fonia.design.shine
-import tech.fonia.design.ui
 import tech.fonia.designsystem.motion.BurstStyle
 import tech.fonia.designsystem.motion.CelebrationBurst
 import tech.fonia.designsystem.motion.rememberFoniaHaptics
@@ -100,17 +43,14 @@ import tech.fonia.domain.Exercise
 import tech.fonia.domain.FeedbackLevel
 import tech.fonia.domain.IntonationAsk
 import tech.fonia.domain.Language
-import tech.fonia.domain.Prosody
 import tech.fonia.domain.RepeatPrompt
 import tech.fonia.domain.SoundDef
 import tech.fonia.domain.SoundDetector
 import tech.fonia.domain.Trial
 import tech.fonia.features.app.AppModel
 import tech.fonia.features.app.ClipDecoder
-import tech.fonia.features.app.LocalStillMeters
 import tech.fonia.features.app.SoundEffect
 import tech.fonia.features.app.calibration
-import tech.fonia.features.app.dspGroup
 import tech.fonia.features.app.isChild
 import tech.fonia.features.ml.judgeShadowed
 import tech.fonia.features.ml.shadowSessionTake
@@ -752,353 +692,3 @@ private val tech.fonia.domain.Exercise.isRomanianSoundTake: Boolean
 /** What the session knows at decision time: no adult in the loop; calibrated once there are ten anchors. */
 internal fun runtimeFor(run: SessionRun): RuntimeContext =
     RuntimeContext(adultPresent = false, calibrationTier = if ((run.profile.calibration?.anchors?.size ?: 0) >= 10) 1 else 0)
-
-/**
- * The waiting state under the prompt: Foni in the rings of the voice, then the sheet at the bottom with the live meters
- * right above one line that always says whose turn it is.
- */
-@Composable
-private fun ListeningBar(
-    sound: tech.fonia.domain.SoundID?,
-    /** Set when this take shows no meter but the session's others do: its room stays, empty. */
-    reservedMeter: tech.fonia.domain.SoundID?,
-    drive: tech.fonia.designsystem.letter.LetterDrive,
-    phase: SpeakPhase,
-    field: Field,
-    isChild: Boolean,
-    showsHeardColour: Boolean,
-    app: AppModel,
-    line: String?,
-    countdown: Int?,
-    heard: HeardLevel,
-    onStop: () -> Unit,
-) {
-    val levels = app.audio.levels
-    val still = LocalStillMeters.current
-    val level: () -> Float = if (phase == SpeakPhase.Model) ({ levels.talk }) else ({ levels.level })
-    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        // The rings are wider than the row: they spread over the prompt above and the sheet below, under both.
-        Box(Modifier.fillMaxWidth().height(124.dp), contentAlignment = Alignment.Center) {
-            VoiceRings(
-                color = FoniTone(field).glow,
-                isLive = (phase == SpeakPhase.Listening || phase == SpeakPhase.Model) && !still,
-                level = level,
-                modifier = Modifier.requiredSize(180.dp),
-                heard = if (showsHeardColour && phase == SpeakPhase.Listening) ({ levels.heardColour }) else null,
-            )
-            Foni(Modifier.size(124.dp), mood = if (phase == SpeakPhase.Listening) FoniMood.listening else FoniMood.idle, level = level)
-            // Over Foni rather than under the line, so the sheet below keeps its size when it shows.
-            NoMicCue(app, field, listening = phase == SpeakPhase.Listening, modifier = Modifier.align(Alignment.BottomCenter))
-        }
-        DockSheet {
-            if (sound != null) {
-                LiveMeters(sound, drive, listening = phase == SpeakPhase.Listening)
-            } else if (reservedMeter != null) {
-                LiveMeters(reservedMeter, remember { tech.fonia.designsystem.letter.LetterDrive() }, listening = false, modifier = Modifier.alpha(0f))
-            }
-            TurnLine(
-                mode = when (phase) {
-                    SpeakPhase.Listening -> TurnMode.Listening
-                    SpeakPhase.Thinking -> TurnMode.Thinking
-                    SpeakPhase.Heard -> TurnMode.Finished(HEARD, praised = false)
-                    else -> TurnMode.Model
-                },
-                field = field,
-                height = DockMetrics.rowHeight(isChild),
-                heard = heard,
-                level = { levels.level },
-                line = line,
-                countdown = countdown,
-                onStop = onStop,
-            )
-        }
-    }
-}
-
-/** What the turn line says: Foni talks, the phone listens, it works the take out, or a held sound has ended. */
-internal sealed interface TurnMode {
-    data object Model : TurnMode
-
-    data object Listening : TurnMode
-
-    data object Thinking : TurnMode
-
-    data class Finished(val line: String, val praised: Boolean) : TurnMode
-}
-
-/** iOS `SessionVoice.thinking`. */
-internal const val THINKING = "Mă gândesc"
-
-/** iOS `SessionVoice.heard`: a take at automatizare whose verdict stays hidden. A recorded line. */
-internal const val HEARD = "Te-am auzit"
-
-/**
- * Whose turn it is, at the bottom of the sheet. Each state looks different without sound or reading: the speaker on a
- * pale disc while Foni talks, a solid disc with the microphone and a ring round the capsule while the phone listens,
- * the hourglass while it works the take out. The words change in place, the old ones gone before the new ones come.
- * [line] replaces "Mă gândesc" while thinking (a retake's line), with its [countdown].
- */
-@Composable
-internal fun TurnLine(
-    mode: TurnMode,
-    field: Field,
-    height: Dp,
-    heard: HeardLevel,
-    level: () -> Float,
-    line: String? = null,
-    countdown: Int? = null,
-    onStop: (() -> Unit)? = null,
-) {
-    val listening = mode == TurnMode.Listening
-    val still = LocalStillMeters.current
-    val reduceMotion = tech.fonia.design.LocalReduceMotion.current
-    val density = LocalDensity.current
-    val title = when (mode) {
-        TurnMode.Model -> "Ascultă"
-        TurnMode.Listening -> if (heard.isHeard) "Te aud" else "Acum tu"
-        TurnMode.Thinking -> line ?: THINKING
-        is TurnMode.Finished -> mode.line
-    }
-    val icon = when (mode) {
-        TurnMode.Model -> FoniaIcon.speaker
-        TurnMode.Listening -> FoniaIcon.microphone
-        TurnMode.Thinking -> if (line != null) FoniaIcon.retry else FoniaIcon.hourglass
-        is TurnMode.Finished -> if (mode.praised) FoniaIcon.star else FoniaIcon.ear
-    }
-    val edge by animateDpAsState(if (listening) 2.dp else 1.5.dp, tween(160), label = "edge")
-    val edgeColor by animateColorAsState(if (listening) field.deep.copy(alpha = 0.85f) else Palette.line, tween(160), label = "edgeColor")
-    val disc by animateColorAsState(if (listening) field.deep else Palette.cloud, tween(160), label = "disc")
-    Box(Modifier.fillMaxWidth()) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = height)
-                .background(Palette.paper, RoundedCornerShape(50))
-                .border(edge, edgeColor, RoundedCornerShape(50))
-                .padding(start = 4.dp, end = 16.dp)
-                .semantics(mergeDescendants = true) {},
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // The ring grows inside this square and never past it, so it can't reach the words.
-            Box(
-                Modifier
-                    .size(HEAR_REACH)
-                    .drawBehind {
-                        val e = if (listening) heard.value else 0f
-                        if (e <= 0.005f) return@drawBehind
-                        val r = 20.dp.toPx()
-                        val most = HEAR_REACH.toPx() / 40.dp.toPx()
-                        val k = (e * 1.8f).coerceAtMost(1f)
-                        drawCircle(Palette.accent.copy(alpha = 0.22f + 0.4f * k), radius = r * (0.8f + (most - 0.8f) * k))
-                        val stroke = 3.dp.toPx()
-                        drawCircle(
-                            Palette.accent.copy(alpha = 0.55f * k),
-                            radius = r * (1f + (most - 1f) * k) - stroke / 2f,
-                            style = Stroke(width = stroke),
-                        )
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                // Two green rings leave the disc the moment the mic opens: it is listening now.
-                Box(
-                    Modifier
-                        .size(40.dp)
-                        .ping(trigger = listening, color = Palette.accent.copy(alpha = 0.5f), enabled = listening, count = 2)
-                        .background(disc, CircleShape),
-                )
-                AnimatedContent(targetState = icon, transitionSpec = { DockMotion.swap(reduceMotion, density) }, label = "turnIcon") { shown ->
-                    FoniaIconView(shown, size = 22f, tint = if (listening) Palette.buttonLabel else field.deep)
-                }
-            }
-            // One line in one place: the old words leave before the new ones come in.
-            AnimatedContent(
-                targetState = title,
-                modifier = Modifier.weight(1f),
-                transitionSpec = { DockMotion.swap(reduceMotion, density) },
-                contentAlignment = Alignment.CenterStart,
-                label = "turnTitle",
-            ) { shown ->
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    FoniaText(shown, style = fButton, color = Palette.ink, maxLines = 2)
-                    if (mode == TurnMode.Thinking && line != null && countdown != null) {
-                        FoniaText("$countdown", style = fButton, color = field.deep)
-                    }
-                }
-            }
-            // Always laid out, shown only while listening: the line keeps its length in every state.
-            VoiceBars(
-                isLive = listening && !still,
-                color = field.deep,
-                level = level,
-                modifier = Modifier.width(84.dp).height(28.dp).alpha(if (listening) 1f else 0f).clearAndSetSemantics {},
-            )
-        }
-        if (listening && onStop != null) {
-            Box(
-                Modifier
-                    .matchParentSize()
-                    .clip(RoundedCornerShape(50))
-                    .clickable(role = Role.Button, onClick = onStop)
-                    .semantics { contentDescription = "Am terminat" },
-            )
-        }
-    }
-}
-
-/** The square the "Te aud" ring may fill at its loudest, round a 40 dp disc. */
-private val HEAR_REACH = 56.dp
-
-/** What the microphone hears, as the colour of the sound's family. Null while it isn't a hiss. */
-val LiveLevels.heardColour: Color?
-    get() {
-        if (!isFricative) return null
-        return if (sNess >= 0.5f) FoniTone.cold.glow else FoniTone.warm.glow
-    }
-
-/** The result, sized to the feedback level: a mark, a line, and only what's needed next. */
-@Composable
-private fun ResultPanel(
-    verdict: TakeVerdict,
-    judged: SoundJudge.Judged?,
-    soundId: tech.fonia.domain.SoundID?,
-    field: Field,
-    onHow: (tech.fonia.judge.HintKey) -> Unit,
-    feedback: FeedbackLevel,
-    adult: Rating?,
-    canReplay: Boolean,
-    onPick: (Rating) -> Unit,
-    onReplay: () -> Unit,
-    onModel: () -> Unit,
-    onSlow: (() -> Unit)?,
-    onRetry: (() -> Unit)?,
-    onNext: () -> Unit,
-    /** Set when "Compară" is offered. */
-    compare: CompareState? = null,
-    onCompare: () -> Unit = {},
-    isChild: Boolean = false,
-) {
-    // Only the learner's own rating is asked (self-judge trials); never an adult.
-    val asks = feedback == FeedbackLevel.SelfJudge
-    val question = "Cum ți s-a părut?"
-    val pillHeight = DockMetrics.tapHeight(isChild)
-    val rowHeight = DockMetrics.rowHeight(isChild)
-    val stacked = LocalDensity.current.fontScale >= 1.5f
-    // Flips once the card is up, so the light on "Mai departe" plays after it lands rather than with it.
-    var landed by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { landed = true }
-    DockSheet {
-        if (!asks || feedback != FeedbackLevel.SelfJudge) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Foni(Modifier.size(62.dp).foniReaction(verdict.rating), mood = if (verdict.rating == Rating.yes) FoniMood.happy else FoniMood.listening)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        verdict.rating?.let { RatingMark(it, Modifier.size(24.dp)) }
-                        // One word says how it went ("Aproape"); the letter shows the rest.
-                        PraiseTitle(if (verdict.rating == Rating.nearly) verdict.title.substringBefore(". ") else verdict.title, popping = verdict.rating == Rating.yes)
-                    }
-                    verdict.detail?.let { FoniaText(it, style = fBody, color = Palette.inkSoft) }
-                }
-            }
-        }
-        verdict.tip?.let { FoniaText(it, style = ui(18, UIWeight.medium, TextRole.body), color = Palette.ink, textAlign = TextAlign.Center) }
-        // The one hint for a take that isn't there yet (only when the policy allows it): seen, not said.
-        val hint = judged?.hint
-        if (hint != null && verdict.rating != Rating.yes && !asks) HintCard(hint, field, onHow = { onHow(hint) })
-
-        // Three small equals in one row; stacked when the text is too large to share a line.
-        if (stacked) {
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (canReplay) Pill("Ascultă-te", FoniaIcon.listenBack, pillHeight, onReplay)
-                Pill("Așa se spune", FoniaIcon.speaker, pillHeight, onModel)
-                if (onSlow != null) Pill("Mai rar", FoniaIcon.glide, pillHeight, onSlow)
-            }
-        } else {
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Max), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                val tile = Modifier.weight(1f).fillMaxHeight()
-                if (canReplay) Tile("Ascultă-te", FoniaIcon.listenBack, maxOf(pillHeight, 54.dp), onReplay, tile)
-                Tile("Așa se spune", FoniaIcon.speaker, maxOf(pillHeight, 54.dp), onModel, tile)
-                if (onSlow != null) Tile("Mai rar", FoniaIcon.glide, maxOf(pillHeight, 54.dp), onSlow, tile)
-            }
-        }
-
-        if (compare != null) CompareRow(compare, onCompare)
-
-        // What the take looked like, right above the last row: where the live meter was while listening.
-        val visual = judged?.visual
-        if (visual != null && soundId != null && !asks) TakeStrip(visual, soundId, field, correct = verdict.rating == Rating.yes)
-
-        if (asks) {
-            FoniaText(question, style = fBodyStrong, color = Palette.ink, textAlign = TextAlign.Center)
-            RatingRow(
-                choices = listOf(RatingChoice(Rating.yes, "Bine"), RatingChoice(Rating.nearly, "Aproape"), RatingChoice(Rating.notYet, "Încă nu")),
-                onPick = onPick,
-                suggested = if (feedback == FeedbackLevel.SelfJudge) null else verdict.rating,
-                selected = adult,
-            )
-        } else {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (onRetry != null) {
-                    StyledButton(
-                        onClick = onRetry,
-                        style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular, kind = FoniButtonStyle.Kind.secondary, minHeight = rowHeight),
-                        modifier = Modifier.weight(1f),
-                    ) { FoniaText("Încă o dată") }
-                }
-                StyledButton(
-                    onClick = onNext,
-                    style = FoniButtonStyle(field = Field.paper, size = FoniButtonStyle.Size.regular, minHeight = rowHeight),
-                    // A light passing over the way on, once, after a take that came out right.
-                    modifier = Modifier.weight(1f).shine(landed, enabled = verdict.rating == Rating.yes, delayMillis = 550),
-                ) { FoniaText("Mai departe") }
-            }
-        }
-    }
-}
-
-/** What the "Compară" line shows: whether it is playing, and the question once it has. */
-private data class CompareState(val isPlaying: Boolean, val question: String?)
-
-/** Its own line under the listening pills: one action, then the question it leads to. */
-@Composable
-private fun CompareRow(compare: CompareState, onCompare: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        StyledButton(
-            onClick = onCompare,
-            style = PillButtonStyle(),
-            enabled = !compare.isPlaying,
-            onClickLabel = "Întâi exemplul, apoi tu",
-            modifier = Modifier.semantics { if (compare.isPlaying) stateDescription = "Se aude" },
-        ) { FoniaLabel(GuidedCompare.TITLE, FoniaIcon.ear, iconSize = 20f) }
-        compare.question?.let {
-            FoniaText(
-                it,
-                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                style = fBodyStrong,
-                color = Palette.ink,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
-}
-
-@Composable
-private fun Pill(title: String, icon: FoniaIcon, minHeight: Dp, onClick: () -> Unit) {
-    StyledButton(onClick = onClick, style = PillButtonStyle(minHeight)) { FoniaLabel(title, icon, iconSize = 20f) }
-}
-
-@Composable
-private fun Tile(title: String, icon: FoniaIcon, minHeight: Dp, onClick: () -> Unit, modifier: Modifier) {
-    StyledButton(onClick = onClick, style = IconTileButtonStyle(minHeight), modifier = modifier) { IconOverTitle(title, icon) }
-}
-
-/** Mixed practice asks for the same word in different ways. Neutral says nothing. */
-val Prosody.cue: String?
-    get() = when (this) {
-        Prosody.Neutral -> null
-        Prosody.Loud -> "Tare"
-        Prosody.Slow -> "Rar"
-        Prosody.Fast -> "Repede"
-        Prosody.Question -> "Ca o întrebare"
-        Prosody.Exclamation -> "Cu bucurie"
-    }
