@@ -77,6 +77,27 @@ jobs:
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.gradle/fonia-models
+          key: fonia-models-${{ hashFiles('spec/models/manifest.json') }}
+      # Linting :platform:ml packs the models into its assets, and that step only copies from the cache.
+      - name: Fetch the required models
+        shell: python3 {0}
+        run: |
+          import hashlib, json, pathlib, urllib.request
+          cache = pathlib.Path.home() / ".gradle/fonia-models"
+          for model in json.load(open("spec/models/manifest.json"))["models"]:
+              target = cache / model["cache"]
+              if model.get("optional") or target.is_file():
+                  continue
+              target.parent.mkdir(parents=True, exist_ok=True)
+              partial = target.with_suffix(".part")
+              urllib.request.urlretrieve(model["source"], partial)
+              data = partial.read_bytes()
+              if len(data) != model["bytes"] or hashlib.sha256(data).hexdigest() != model["sha256"]:
+                  raise SystemExit(f"{model['id']}: size or SHA-256 does not match the manifest")
+              partial.rename(target)
       - run: ./gradlew spotlessCheck lintDebug --continue
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
